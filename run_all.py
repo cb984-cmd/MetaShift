@@ -51,8 +51,19 @@ def run(command: list[str]) -> None:
     subprocess.run(command, cwd=ROOT, check=True)
 
 
+def require_clean_worktree() -> None:
+    status = subprocess.check_output(
+        ["git", "status", "--porcelain"], cwd=ROOT, text=True, encoding="utf-8"
+    )
+    if status.strip():
+        raise RuntimeError(
+            "run_all.py requires a clean source worktree so outputs can be tied "
+            "to a fixed commit. Commit or discard source changes first."
+        )
+
+
 def write_run_manifest(config: dict[str, object]) -> None:
-    import subprocess
+    from importlib.metadata import version
 
     commit = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, encoding="utf-8"
@@ -62,6 +73,10 @@ def write_run_manifest(config: dict[str, object]) -> None:
         "git_commit": commit,
         "python": sys.version,
         "platform": platform.platform(),
+        "packages": {
+            package: version(package)
+            for package in ("numpy", "pandas", "scipy", "ruptures", "matplotlib")
+        },
         "config": config,
     }
     artifacts = ROOT / "artifacts"
@@ -73,6 +88,7 @@ def write_run_manifest(config: dict[str, object]) -> None:
 
 def main() -> None:
     args = parse_args()
+    require_clean_worktree()
     config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     python = sys.executable
     multipliers = [

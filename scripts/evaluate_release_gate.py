@@ -12,6 +12,7 @@ import pandas as pd
 
 ARTIFACTS = Path("artifacts")
 RESULTS = Path("results")
+CONFIG_PATH = Path("configs/benchmark_release_v1.json")
 
 
 def exists(path: Path) -> bool:
@@ -44,6 +45,27 @@ def main() -> None:
         )
     else:
         checks.append(check("88101_data_manifest", False, "Missing data manifest"))
+
+    stable_manifest_path = ARTIFACTS / "stable_synthetic_case_manifest.json"
+    if exists(stable_manifest_path) and exists(CONFIG_PATH):
+        stable_manifest = json.loads(stable_manifest_path.read_text(encoding="utf-8"))
+        frozen_config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+        checks.append(
+            check(
+                "frozen_stable_case_manifest",
+                stable_manifest["case_and_donor_sha256"]
+                == frozen_config["stable_synthetic_cases"]["case_and_donor_sha256"],
+                "Generated stable-case manifest matches the frozen configuration hash.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "frozen_stable_case_manifest",
+                False,
+                "Missing stable-case manifest or frozen benchmark configuration.",
+            )
+        )
 
     figure_manifest = Path("figures/figure_manifest.csv")
     checks.append(
@@ -196,6 +218,25 @@ def main() -> None:
             "Required protocol, decision, and reconstruction documents",
         )
     )
+
+    reproducibility_comparison = RESULTS / "reproducibility_comparison.json"
+    if exists(reproducibility_comparison):
+        comparison = json.loads(reproducibility_comparison.read_text(encoding="utf-8"))
+        checks.append(
+            check(
+                "two_environment_reproduction",
+                bool(comparison.get("all_core_artifacts_match")),
+                "Two independently captured core-result hash sets must match.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "two_environment_reproduction",
+                False,
+                "Awaiting two-environment core-result hash comparison.",
+            )
+        )
 
     output = {
         "generated_at_utc": datetime.now(UTC).isoformat(),

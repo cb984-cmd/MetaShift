@@ -20,7 +20,7 @@ python -m pip install -r requirements.txt
 ```
 
 The project has been run with Python 3.13. The package versions installed in a
-new environment should be recorded in the generated run manifest.
+new environment are recorded in the generated run manifest.
 
 ## Full reconstruction
 
@@ -69,3 +69,19 @@ Important outputs include:
 
 The `MODEL_DECISION.md` file documents why the project does not claim
 algorithmic superiority over standard synthetic control.
+
+## Cross-environment consistency
+
+After two independent full runs, capture and compare the deterministic core
+result hashes:
+
+```powershell
+python scripts\verify_reproducibility.py capture --label environment_a
+python scripts\verify_reproducibility.py capture --label environment_b
+python scripts\verify_reproducibility.py compare `
+  --first artifacts\reproducibility_hashes_environment_a.json `
+  --second artifacts\reproducibility_hashes_environment_b.json
+```
+
+The comparison intentionally hashes core CSV artifacts rather than files with
+run timestamps or API request timestamps.

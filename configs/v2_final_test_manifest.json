@@ -1,0 +1,11 @@
+{
+  "purpose": "MetaShift v2 state-disjoint final target-event evaluation",
+  "target_states": [
+    "17",
+    "25"
+  ],
+  "event_count": 67,
+  "event_id_sha256": "452d7a0ceb8f9c0ce16a92efa0112b5ade052f1857cbd066998bfdcb24791290",
+  "outcome_accessed": false,
+  "status": "Frozen target IDs only; no performance result has been calculated."
+}

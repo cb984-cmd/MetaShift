@@ -16,6 +16,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from metashift.baselines import cusum_change_point, pelt_change_points, rolling_median_change_point
 from metashift.counterfactual import (
+    cross_validated_reliability_weights,
     donor_weights,
     estimate_metadata_anchor,
     reliability_constrained_weights,
@@ -36,7 +37,20 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--start-year", type=int, default=None)
     parser.add_argument("--end-year", type=int, default=None)
+    parser.add_argument(
+        "--exclude-states",
+        nargs="*",
+        default=[],
+        help="AQS target state codes excluded from the evaluation split.",
+    )
     parser.add_argument("--event-count", type=int, default=EVENT_COUNT)
+    parser.add_argument(
+        "--magnitude-multipliers",
+        type=float,
+        nargs="+",
+        default=[1.0],
+        help="Fixed positive multipliers that create distinct perturbation repeats.",
+    )
     parser.add_argument("--ridge-penalty", type=float, default=0.1)
     parser.add_argument("--prior-penalty", type=float, default=0.1)
     parser.add_argument(
@@ -110,16 +124,23 @@ def fit_weights(
     calibration = slice(date - pd.Timedelta(days=180), date - pd.Timedelta(days=15))
     nearest = pd.Series(0.0, index=donors.columns)
     nearest.iloc[0] = 1.0
+    fixed_weights = reliability_constrained_weights(
+        target.loc[calibration],
+        donors.loc[calibration],
+        reliability,
+        ridge_penalty=ridge_penalty,
+        prior_penalty=prior_penalty,
+    )
+    cross_validated = cross_validated_reliability_weights(
+        target.loc[calibration],
+        donors.loc[calibration],
+        reliability,
+    )
     return {
         "nearest_neighbor_did": nearest,
         "standard_synthetic_control": synthetic_control_weights(target, donors, date),
-        "metashift": reliability_constrained_weights(
-            target.loc[calibration],
-            donors.loc[calibration],
-            reliability,
-            ridge_penalty=ridge_penalty,
-            prior_penalty=prior_penalty,
-        ),
+        "metashift_v1_fixed": fixed_weights,
+        "metashift_v2_cv": cross_validated.weights,
     }
 
 
@@ -226,6 +247,8 @@ def main() -> None:
     args = parse_args()
     if args.event_count <= 0:
         raise ValueError("--event-count must be positive.")
+    if any(multiplier <= 0 for multiplier in args.magnitude_multipliers):
+        raise ValueError("--magnitude-multipliers must all be positive.")
     label = re.sub(r"[^a-zA-Z0-9_-]+", "_", args.label).strip("_")
     if not label:
         raise ValueError("--label must contain at least one letter or number.")
@@ -237,6 +260,9 @@ def main() -> None:
         events = events.loc[events["start_date"].dt.year >= args.start_year]
     if args.end_year is not None:
         events = events.loc[events["start_date"].dt.year <= args.end_year]
+    excluded_states = {str(state).zfill(2) for state in args.exclude_states}
+    if excluded_states:
+        events = events.loc[~events["State Code"].isin(excluded_states)]
     if len(events) < args.event_count:
         raise ValueError(
             f"Only {len(events)} eligible events within the requested date split; "
@@ -274,38 +300,56 @@ def main() -> None:
             exclusions.append({"anchor_id": event_id, "reason": str(error)})
             print(f"Excluded {event_id}: {error}")
             continue
-        variants = (
-            (
-                PerturbationKind.ADDITIVE_STEP,
-                magnitude,
-                "paired_local_vs_regional_additive",
-            ),
-            (
-                PerturbationKind.REGIONAL_ADDITIVE_STEP,
-                magnitude,
-                "paired_local_vs_regional_additive",
-            ),
-            (PerturbationKind.PROPORTIONAL_STEP, 0.25, "local_shape_profile"),
-            (PerturbationKind.GRADUAL_DRIFT, magnitude, "local_shape_profile"),
-            (PerturbationKind.TEMPORARY_STEP, magnitude, "local_shape_profile"),
-            (PerturbationKind.VARIANCE_INCREASE, 1.0, "local_shape_profile"),
-        )
-        for kind, variant_magnitude, comparison_group in variants:
-            variant_rows = evaluate_variant(
-                target,
-                donors,
-                weights,
-                date,
-                kind,
-                variant_magnitude,
-                completed_events + 1,
-                comparison_group,
+        for repeat_index, multiplier in enumerate(args.magnitude_multipliers):
+            variants = (
+                (
+                    PerturbationKind.ADDITIVE_STEP,
+                    magnitude * multiplier,
+                    "paired_local_vs_regional_additive",
+                ),
+                (
+                    PerturbationKind.REGIONAL_ADDITIVE_STEP,
+                    magnitude * multiplier,
+                    "paired_local_vs_regional_additive",
+                ),
+                (
+                    PerturbationKind.PROPORTIONAL_STEP,
+                    0.25 * multiplier,
+                    "local_shape_profile",
+                ),
+                (
+                    PerturbationKind.GRADUAL_DRIFT,
+                    magnitude * multiplier,
+                    "local_shape_profile",
+                ),
+                (
+                    PerturbationKind.TEMPORARY_STEP,
+                    magnitude * multiplier,
+                    "local_shape_profile",
+                ),
+                (
+                    PerturbationKind.VARIANCE_INCREASE,
+                    multiplier,
+                    "local_shape_profile",
+                ),
             )
-            for row in variant_rows:
-                row["anchor_id"] = event_id
-                row["magnitude"] = variant_magnitude
-                row["evaluation_label"] = args.label
-                results.append(row)
+            for kind, variant_magnitude, comparison_group in variants:
+                variant_rows = evaluate_variant(
+                    target,
+                    donors,
+                    weights,
+                    date,
+                    kind,
+                    variant_magnitude,
+                    (completed_events + 1) * 10_000 + repeat_index,
+                    comparison_group,
+                )
+                for row in variant_rows:
+                    row["anchor_id"] = event_id
+                    row["magnitude"] = variant_magnitude
+                    row["magnitude_multiplier"] = multiplier
+                    row["evaluation_label"] = args.label
+                    results.append(row)
         completed_events += 1
         print(
             f"Completed paired synthetic benchmark {completed_events}/{args.event_count}: "

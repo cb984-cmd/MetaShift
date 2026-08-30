@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 from metashift.counterfactual import (
+    cross_validated_reliability_weights,
     donor_weights,
     estimate_metadata_anchor,
     reliability_constrained_weights,
@@ -86,3 +87,27 @@ class MetaShiftEstimateTests(unittest.TestCase):
             reliability,
         )
         np.testing.assert_allclose(weights.to_numpy(), unchanged_weights.to_numpy())
+
+    def test_cross_validated_weights_use_only_supplied_pre_data(self) -> None:
+        reliability = pd.Series(
+            {"donor_a": 0.5, "donor_b": 0.3, "donor_c": 0.2}
+        )
+        pre_target = self.target.loc[: self.anchor - pd.Timedelta(days=1)]
+        pre_donors = self.donors.loc[: self.anchor - pd.Timedelta(days=1)]
+        selected = cross_validated_reliability_weights(
+            pre_target, pre_donors, reliability, validation_days=45
+        )
+        self.assertTrue((selected.weights >= 0).all())
+        self.assertAlmostEqual(float(selected.weights.sum()), 1.0, places=8)
+
+        changed_post_target = self.target.copy()
+        changed_post_target.loc[self.anchor :] += 1_000
+        unchanged = cross_validated_reliability_weights(
+            changed_post_target.loc[: self.anchor - pd.Timedelta(days=1)],
+            pre_donors,
+            reliability,
+            validation_days=45,
+        )
+        np.testing.assert_allclose(
+            selected.weights.to_numpy(), unchanged.weights.to_numpy()
+        )

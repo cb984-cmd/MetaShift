@@ -26,6 +26,16 @@ class MetaShiftEstimate:
     calibration_residual_rmse: float
 
 
+@dataclass(frozen=True)
+class ReliabilityWeightSelection:
+    """Pre-event validation result for an event-specific reliability constraint."""
+
+    weights: pd.Series
+    ridge_penalty: float
+    prior_penalty: float
+    validation_rmse: float
+
+
 def _require_datetime_index(values: pd.Series | pd.DataFrame) -> None:
     if not isinstance(values.index, pd.DatetimeIndex):
         raise TypeError("MetaShift inputs must use a DatetimeIndex.")
@@ -125,6 +135,87 @@ def reliability_constrained_weights(
             f"Reliability-constrained weight optimization failed: {solution.message}"
         )
     return pd.Series(solution.x, index=columns, name="reliability_constrained_weight")
+
+
+def cross_validated_reliability_weights(
+    target: pd.Series,
+    donors: pd.DataFrame,
+    reliability_prior: pd.Series,
+    *,
+    candidate_penalties: tuple[tuple[float, float], ...] = (
+        (0.0, 0.0),
+        (0.0, 0.01),
+        (0.0, 0.1),
+        (0.001, 0.01),
+        (0.01, 0.1),
+        (0.1, 0.1),
+        (0.1, 1.0),
+    ),
+    validation_days: int = 45,
+    min_training_observations: int = 60,
+) -> ReliabilityWeightSelection:
+    """Select reliability penalties by a final pre-event temporal validation block.
+
+    No anchor-post data is accepted by this function. The winning weights are
+    refit on the complete supplied pre-event calibration period only.
+    """
+
+    if validation_days <= 0 or min_training_observations <= 0:
+        raise ValueError("Validation and training sizes must be positive.")
+    if not candidate_penalties:
+        raise ValueError("At least one candidate penalty pair is required.")
+    columns = donors.columns.intersection(reliability_prior.index)
+    table = pd.concat(
+        [target.rename("target"), donors.loc[:, columns]], axis="columns", sort=False
+    ).dropna()
+    if len(table) < min_training_observations + validation_days:
+        raise ValueError("Insufficient pre-event observations for temporal validation.")
+    training = table.iloc[:-validation_days]
+    validation = table.iloc[-validation_days:]
+    target_validation = np.log1p(validation.pop("target").clip(lower=0.0).to_numpy())
+    donor_validation = np.log1p(validation.clip(lower=0.0).to_numpy())
+
+    candidates: list[tuple[float, float, float]] = []
+    for ridge_penalty, prior_penalty in candidate_penalties:
+        weights = reliability_constrained_weights(
+            training["target"],
+            training.drop(columns="target"),
+            reliability_prior,
+            ridge_penalty=ridge_penalty,
+            prior_penalty=prior_penalty,
+            min_observations=min_training_observations,
+        )
+        train_target = np.log1p(training["target"].clip(lower=0.0).to_numpy())
+        train_donors = np.log1p(
+            training.drop(columns="target").clip(lower=0.0).to_numpy()
+        )
+        intercept = float(np.mean(train_target - train_donors @ weights.to_numpy()))
+        validation_rmse = float(
+            np.sqrt(
+                np.mean(
+                    np.square(
+                        target_validation - (intercept + donor_validation @ weights.to_numpy())
+                    )
+                )
+            )
+        )
+        candidates.append((validation_rmse, ridge_penalty, prior_penalty))
+
+    validation_rmse, ridge_penalty, prior_penalty = min(candidates)
+    fitted = reliability_constrained_weights(
+        table["target"],
+        table.drop(columns="target"),
+        reliability_prior,
+        ridge_penalty=ridge_penalty,
+        prior_penalty=prior_penalty,
+        min_observations=min_training_observations + validation_days,
+    )
+    return ReliabilityWeightSelection(
+        fitted,
+        ridge_penalty,
+        prior_penalty,
+        validation_rmse,
+    )
 
 
 def weighted_donor_series(

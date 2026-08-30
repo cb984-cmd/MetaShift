@@ -29,12 +29,17 @@ instrument replacement or measurement bias.
 - [x] Approve one bounded MetaShift v2 redesign with a new state-disjoint final
   target-event test set (Illinois and Massachusetts); the previously viewed
   v1 time test remains archived and unavailable for v2 tuning.
+- [x] Run an initial V2 development-only audit without accessing final-test
+  target states: 40 complete cases from 141 candidates, with 37 passing the
+  pre-fit quality gate and 9 having a dynamic-placebo p-value at most 0.10.
+  The 101 explicit exclusions show that complete-case coverage is 28.4%, so
+  V2 must report coverage rather than silently analyze only favorable events.
 
 ## Active benchmark work
 
-- [ ] **M0 — Implement bounded MetaShift v2.** Add quality gates, residual
-  shape models, placebo calibration, and `insufficient_evidence` abstention
-  using development target states only.
+- [x] **M0 — Implement bounded MetaShift v2.** Quality gates, residual shape
+  models, dynamic placebo calibration, and `insufficient_evidence` abstention
+  now run on development target states only.
 - [x] **M1 — Document comparative model result.** The development-selected
   MetaShift configuration did not beat standard synthetic control on the frozen
   2023--2025 paired test (MAE 0.02210 versus 0.02146; regional residual score

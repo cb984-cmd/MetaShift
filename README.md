@@ -60,3 +60,13 @@ python scripts\run_colocated_validation.py
 It produces `artifacts\colocated_validation.csv`. These are Tier C *candidates*:
 POC separates reported monitor streams but does not independently prove a
 physical instrument identity or calibration truth.
+
+With locally configured AQS API credentials, the QA-collocation download is:
+
+```powershell
+python scripts\download_qa_collocation.py
+```
+
+Raw API responses are stored under the ignored `data\raw\aqs_qa\` directory;
+their credential-free request metadata and record counts are written to
+`artifacts\qa_collocation_manifest.json`.

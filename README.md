@@ -56,6 +56,13 @@ cases separately as observational evidence.
 ## Benchmark commands
 
 ```powershell
+python run_all.py --with-aqs-api
+```
+
+The one-command release reconstruction runs the commands below, then writes
+`results\release_gate.json`.
+
+```powershell
 python scripts\build_stable_synthetic_cases.py
 python scripts\run_stable_synthetic_benchmark.py --label stable_full_v1
 python scripts\run_reliability_ablations.py --label stable_full_v1
@@ -65,6 +72,8 @@ python scripts\run_additional_placebos.py
 python scripts\analyze_external_validation.py
 python scripts\scan_data_gate.py --parameter-code 88502 --output-dir artifacts\data_gate_88502 --download
 python scripts\run_real_transition_audit.py --parameter-code 88502 --label 88502
+python scripts\make_figures.py
+python scripts\evaluate_release_gate.py
 ```
 
 Generated data and results are intentionally ignored by Git. The source

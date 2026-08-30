@@ -58,7 +58,8 @@ replacement or measurement bias.
   bootstrap intervals.
 - [ ] **B2 — Freeze benchmark release configuration.** Version event rules,
   seeds, perturbations, baseline definitions, metrics, and rerun the release
-  benchmark without changing them.
+  benchmark without changing them. Configuration is committed; first clean
+  end-to-end rerun is next.
 - [x] **B3 — Audit all 563 real metadata anchors.** Report eligibility,
   pre-fit, effects, abstentions, and failure reasons without treating anchors
   as confirmed bias labels.

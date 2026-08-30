@@ -6,7 +6,9 @@ import argparse
 import hashlib
 import json
 import sys
+import zipfile
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from urllib.request import urlretrieve
 
@@ -14,7 +16,8 @@ import numpy as np
 import pandas as pd
 
 
-EPA_AIRDATA_URL = "https://aqs.epa.gov/aqsweb/airdata/daily_88101_{year}.zip"
+EPA_AIRDATA_URL = "https://aqs.epa.gov/aqsweb/airdata/daily_{parameter_code}_{year}.zip"
+DEFAULT_PARAMETER_CODE = "88101"
 SERIES_KEYS = ["State Code", "County Code", "Site Num", "POC"]
 SITE_KEYS = SERIES_KEYS[:3]
 SIGNAL_DURATION = "24-HR BLK AVG"
@@ -24,6 +27,7 @@ USE_COLUMNS = [
     "County Code",
     "Site Num",
     "POC",
+    "Parameter Code",
     "Sample Duration",
     "Date Local",
     "Arithmetic Mean",
@@ -42,6 +46,7 @@ DTYPES = {
     "County Code": "string",
     "Site Num": "string",
     "POC": "string",
+    "Parameter Code": "string",
     "Sample Duration": "category",
     "Arithmetic Mean": "float32",
     "Observation Percent": "float32",
@@ -107,11 +112,16 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Download missing archives from EPA AirData.",
     )
+    parser.add_argument(
+        "--parameter-code",
+        default=DEFAULT_PARAMETER_CODE,
+        help="AQS parameter code, kept separate for each analysis pipeline.",
+    )
     return parser.parse_args()
 
 
-def archive_path(raw_dir: Path, year: int) -> Path:
-    return raw_dir / f"daily_88101_{year}.zip"
+def archive_path(raw_dir: Path, year: int, parameter_code: str = DEFAULT_PARAMETER_CODE) -> Path:
+    return raw_dir / f"daily_{parameter_code}_{year}.zip"
 
 
 def file_sha256(path: Path) -> str:
@@ -122,42 +132,65 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def ensure_archives(raw_dir: Path, years: tuple[int, ...], download: bool) -> list[Path]:
+def ensure_archives(
+    raw_dir: Path,
+    years: tuple[int, ...],
+    download: bool,
+    parameter_code: str = DEFAULT_PARAMETER_CODE,
+) -> list[Path]:
     raw_dir.mkdir(parents=True, exist_ok=True)
     paths: list[Path] = []
     for year in years:
-        path = archive_path(raw_dir, year)
+        path = archive_path(raw_dir, year, parameter_code)
         if not path.exists():
             if not download:
                 raise FileNotFoundError(
                     f"Missing {path}. Re-run with --download or place the EPA archive there."
                 )
-            url = EPA_AIRDATA_URL.format(year=year)
+            url = EPA_AIRDATA_URL.format(year=year, parameter_code=parameter_code)
             print(f"Downloading {url}", flush=True)
             urlretrieve(url, path)
         paths.append(path)
     return paths
 
 
-def write_source_manifest(paths: list[Path], output_dir: Path) -> None:
+def write_source_manifest(
+    paths: list[Path], output_dir: Path, parameter_code: str = DEFAULT_PARAMETER_CODE
+) -> None:
     manifest = []
     for path in paths:
         year = int(path.stem.rsplit("_", 1)[1])
+        with zipfile.ZipFile(path) as archive:
+            members = archive.namelist()
+            if len(members) != 1 or not members[0].endswith(".csv"):
+                raise ValueError(f"Expected exactly one CSV member in {path}.")
+            member = members[0]
+            with archive.open(member) as csv_file:
+                row_count = sum(1 for _ in csv_file) - 1
         manifest.append(
             {
                 "year": year,
-                "url": EPA_AIRDATA_URL.format(year=year),
+                "parameter_code": parameter_code,
+                "url": EPA_AIRDATA_URL.format(year=year, parameter_code=parameter_code),
                 "path": str(path),
                 "bytes": path.stat().st_size,
+                "file_modified_utc": datetime.fromtimestamp(
+                    path.stat().st_mtime, UTC
+                ).isoformat(),
                 "sha256": file_sha256(path),
+                "csv_member": member,
+                "csv_data_rows": row_count,
             }
         )
     (output_dir / "source_manifest.json").write_text(
         json.dumps(manifest, indent=2), encoding="utf-8"
     )
+    pd.DataFrame(manifest).to_csv(output_dir / "data_manifest.csv", index=False)
 
 
-def load_canonical_signal(paths: list[Path]) -> pd.DataFrame:
+def load_canonical_signal(
+    paths: list[Path], parameter_code: str = DEFAULT_PARAMETER_CODE
+) -> pd.DataFrame:
     frames: list[pd.DataFrame] = []
     for path in paths:
         frame = pd.read_csv(
@@ -172,6 +205,7 @@ def load_canonical_signal(paths: list[Path]) -> pd.DataFrame:
         event_type = frame["Event Type"].astype("string").fillna("")
         valid = (
             (frame["Sample Duration"] == SIGNAL_DURATION)
+            & (frame["Parameter Code"] == parameter_code)
             & (event_type != "Excluded")
             & frame["Arithmetic Mean"].notna()
             & np.isfinite(frame["Arithmetic Mean"])
@@ -459,6 +493,7 @@ def write_outputs(
     colocated_controls: pd.DataFrame,
     output_dir: Path,
     config: GateConfig,
+    parameter_code: str = DEFAULT_PARAMETER_CODE,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     runs.to_csv(output_dir / "method_runs.csv", index=False)
@@ -502,6 +537,7 @@ def write_outputs(
         ),
         "config": {
             "years": list(config.years),
+            "parameter_code": parameter_code,
             "signal_duration": SIGNAL_DURATION,
             "minimum_window_days": config.min_window_days,
             "minimum_window_observations": config.min_window_observations,
@@ -533,10 +569,11 @@ def main() -> int:
         min_correlation=DEFAULT_CONFIG.min_correlation,
         max_distance_km=DEFAULT_CONFIG.max_distance_km,
     )
-    paths = ensure_archives(args.raw_dir, years, args.download)
+    parameter_code = str(args.parameter_code)
+    paths = ensure_archives(args.raw_dir, years, args.download, parameter_code)
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    write_source_manifest(paths, args.output_dir)
-    data = load_canonical_signal(paths)
+    write_source_manifest(paths, args.output_dir, parameter_code)
+    data = load_canonical_signal(paths, parameter_code)
     runs = build_runs(data)
     anchors = select_anchors(runs, config)
     anchor_inventory, controls, colocated_controls = match_controls(
@@ -550,6 +587,7 @@ def main() -> int:
         colocated_controls,
         args.output_dir,
         config,
+        parameter_code,
     )
     return 0
 

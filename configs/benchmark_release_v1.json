@@ -1,0 +1,47 @@
+{
+  "benchmark_id": "metashift_bench_v1",
+  "status": "Frozen for release rerun; no algorithm-superiority claim.",
+  "primary_parameter_code": "88101",
+  "years": [2019, 2020, 2021, 2022, 2023, 2024, 2025],
+  "signal": {
+    "sample_duration": "24-HR BLK AVG",
+    "minimum_observation_percent": 75,
+    "excluded_event_type": "Excluded"
+  },
+  "stable_synthetic_cases": {
+    "case_count": 80,
+    "calibration_cases": 40,
+    "evaluation_cases": 40,
+    "excluded_v2_algorithm_test_target_states": ["17", "25"],
+    "minimum_transition_distance_days": 60,
+    "case_and_donor_sha256": "78eb9de4325a4c5c06f07c57a542f6188f38407a4d09e783f04025c97b3d9323"
+  },
+  "synthetic_perturbations": {
+    "magnitude_multipliers": [0.5, 1.0, 1.5, 2.0, 3.0],
+    "base_local_shapes": [
+      "additive_step",
+      "proportional_step",
+      "gradual_drift",
+      "temporary_step",
+      "variance_increase"
+    ],
+    "matched_regional_controls": true,
+    "seed_derivation": "20260830 plus deterministic case, multiplier, and variant offsets"
+  },
+  "counterfactual": {
+    "calibration_days": 180,
+    "calibration_buffer_days": 15,
+    "comparison_days": 60,
+    "minimum_window_observations": 30,
+    "minimum_available_donors": 2,
+    "fixed_ridge_penalty": 0.1,
+    "fixed_graph_prior_penalty": 0.1
+  },
+  "threshold_selection": "Optimize macro-F1 only on the 40 calibration cases; evaluate unchanged threshold on 40 disjoint cases.",
+  "bootstrap": {
+    "cluster": "case_id",
+    "repetitions": 1000,
+    "seed": 20260830
+  },
+  "method_decision": "See MODEL_DECISION.md; retained as a benchmark comparison, not a superiority claim."
+}

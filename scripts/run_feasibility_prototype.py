@@ -44,9 +44,12 @@ DTYPES = {
 }
 
 
-def load_series() -> dict[tuple[str, str, str, str], pd.Series]:
+def load_series(
+    parameter_code: str = "88101", raw_dir: Path = Path("data") / "raw"
+) -> dict[tuple[str, str, str, str], pd.Series]:
     frames = []
-    for raw_path in sorted(glob.glob(RAW_GLOB)):
+    pattern = str(raw_dir / f"daily_{parameter_code}_*.zip")
+    for raw_path in sorted(glob.glob(pattern)):
         frame = pd.read_csv(
             raw_path,
             usecols=USE_COLUMNS,
@@ -65,6 +68,8 @@ def load_series() -> dict[tuple[str, str, str, str], pd.Series]:
         )
         frames.append(frame.loc[valid, SERIES_KEYS + ["Date Local", "Arithmetic Mean"]])
 
+    if not frames:
+        raise FileNotFoundError(f"No AQS daily archives matched {pattern}.")
     data = pd.concat(frames, ignore_index=True)
     if data.duplicated(SERIES_KEYS + ["Date Local"]).any():
         raise ValueError("Canonical data has duplicate monitor-days.")
@@ -81,7 +86,9 @@ def synthetic_control_weights(
 ) -> pd.Series:
     """Fit nonnegative sum-to-one weights exclusively before the anchor."""
 
-    calibration = pd.concat([target.rename("target"), donors], axis=1, sort=False)
+    calibration = pd.concat(
+        [target.rename("target"), donors], axis=1, sort=False
+    ).sort_index()
     calibration = calibration.loc[
         anchor_date - pd.Timedelta(days=180) : anchor_date - pd.Timedelta(days=15)
     ].dropna()

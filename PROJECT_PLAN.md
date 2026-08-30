@@ -1,16 +1,15 @@
 # MetaShift execution plan
 
 **Updated:** 2026-08-30  
-**Research status:** bounded V2 development; no final performance claim is frozen.
+**Research status:** MetaShift-Bench execution; algorithm-superiority claim closed.
 
 ## Evidence rule
 
 The project is scoped as a metadata-anchored audit and evaluation benchmark.
 MetaShift remains one transparent cross-site counterfactual estimator in the
-comparison set; it is not claimed to outperform standard synthetic control
-unless a separately designed and independently held-out study supports that
-claim. A Method Code transition is a metadata anchor, not proof of physical
-instrument replacement or measurement bias.
+comparison set; it is not claimed to outperform standard synthetic control.
+A Method Code transition is a metadata anchor, not proof of physical instrument
+replacement or measurement bias.
 
 ## Current checkpoint
 
@@ -38,34 +37,48 @@ instrument replacement or measurement bias.
   drift, temporary shifts, variance changes, and matched regional shocks; a
   five-event development smoke run completed all six variants. Full
   development-scale results remain pending.
+- [x] Close bounded V2 optimization after two development rounds without stable
+  improvement over standard synthetic control. The untouched Illinois and
+  Massachusetts V2 test is not used to rescue the claim; see
+  [`MODEL_DECISION.md`](MODEL_DECISION.md).
+- [x] Replace superseded anchor-injection smoke experiments with a stable-regime
+  benchmark: 80 distinct target monitors, 40 calibration / 40 evaluation,
+  five fixed strengths, and 200 evaluation samples per local or matched
+  regional perturbation family. The resulting algorithm metrics do not meet
+  the stated algorithm-route release criteria.
 
-## Active benchmark work
+## MetaShift-Bench execution
 
-- [x] **M0 — Implement bounded MetaShift v2.** Quality gates, residual shape
-  models, dynamic placebo calibration, and `insufficient_evidence` abstention
-  now run on development target states only.
-- [x] **M1 — Document comparative model result.** The development-selected
-  MetaShift configuration did not beat standard synthetic control on the frozen
-  2023--2025 paired test (MAE 0.02210 versus 0.02146; regional residual score
-  0.05672 versus 0.05180). This null comparison is retained in the benchmark.
-- [ ] **M2 — Complete synthetic perturbations.** Add proportional changes,
-  gradual drift, temporary effects, variance shifts, and matched regional
-  controls. Report the full comparative profile rather than an unsupported
-  single-method superiority claim.
-- [ ] **M3 — Freeze benchmark configuration.** Save event splits, random
-  seeds, perturbation rules, and evaluation rules before final results.
+- [x] **M0 — Close bounded MetaShift v2.** The V2 primitives and two
+  development rounds are retained as comparative evidence; no further
+  optimization is permitted.
+- [x] **B1 — Complete stable synthetic benchmark.** Six perturbation families
+  have 200 independent evaluation samples each, with fixed seeds, threshold
+  calibration separation, F1/AUPRC, effect error, coverage, and event-cluster
+  bootstrap intervals.
+- [ ] **B2 — Freeze benchmark release configuration.** Version event rules,
+  seeds, perturbations, baseline definitions, metrics, and rerun the release
+  benchmark without changing them.
+- [x] **B3 — Audit all 563 real metadata anchors.** Report eligibility,
+  pre-fit, effects, abstentions, and failure reasons without treating anchors
+  as confirmed bias labels.
 
 ## Validation and analysis
 
 - [ ] **V1 — Run real transition audit.** Report every eligible event's
   pre-fit, effect, uncertainty, and failure reason; do not select only strong
   examples.
-- [ ] **V2 — Analyze QA and same-site POC evidence.** Use it only as graded
+- [x] **V2 — Analyze QA and same-site POC evidence.** Eleven same-site
+  alternate-POC candidates have paired records; downloaded QA responses have
+  no candidate with both target-POC matching and at least three pre/post QA
+  records. Use them only as graded
   external consistency evidence, never as unquestioned physical ground truth.
-- [ ] **V3 — Run placebos and ablations.** Time, donor-as-treated, date
-  permutation, and regional shock placebos; eight preregistered ablations.
-- [ ] **V4 — Run 88502 sensitivity analysis.** Keep it independent of the
-  88101 primary analysis.
+- [x] **V3 — Run placebos and key ablations.** Time, donor-as-treated, date
+  resampling, and regional-shock placebos are complete; reliability-prior and
+  regularization ablations are complete.
+- [x] **V4 — Run 88502 sensitivity analysis.** The separate 88502 scan has
+  34 anchors but only 3 complete common-method comparisons; it is retained as
+  a limited sensitivity result and is never mixed with 88101.
 
 ## Deliverables
 

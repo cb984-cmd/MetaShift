@@ -9,6 +9,21 @@ changes only as metadata-anchored candidate dates.
 The preregistered study boundary, estimand, evaluation protocol, and claims to
 avoid are in [`docs/study_protocol.md`](docs/study_protocol.md).
 
+## Current research decision
+
+The project is proceeding on the **MetaShift-Bench** route. Two bounded model
+iterations did not produce a confidence-supported, stable improvement over
+standard synthetic control, so the repository does not claim estimator
+superiority. [`MODEL_DECISION.md`](MODEL_DECISION.md) records the protected
+test policy, the superseded early anchor-injection diagnostics, and the
+evidence for this decision.
+
+The replacement stable-regime benchmark uses 80 distinct monitors: 40 cases
+for score-threshold calibration and 40 disjoint evaluation cases. Its
+pseudo-anchors lie at least 60 days from a target or selected donor Method
+Code transition. Each local and matched regional perturbation family has 200
+evaluation samples.
+
 ## Data gate
 
 The first reproducible gate scans EPA AQS daily PM2.5 archives:
@@ -37,6 +52,25 @@ The gate is passed only if the resulting inventory and controls meet the
 predeclared thresholds. The subsequent study will evaluate attribution on
 controlled local and regional perturbations, then report real metadata-anchor
 cases separately as observational evidence.
+
+## Benchmark commands
+
+```powershell
+python scripts\build_stable_synthetic_cases.py
+python scripts\run_stable_synthetic_benchmark.py --label stable_full_v1
+python scripts\run_reliability_ablations.py --label stable_full_v1
+python scripts\run_real_transition_audit.py --parameter-code 88101 --label 88101
+python scripts\run_time_placebos.py
+python scripts\run_additional_placebos.py
+python scripts\analyze_external_validation.py
+python scripts\scan_data_gate.py --parameter-code 88502 --output-dir artifacts\data_gate_88502 --download
+python scripts\run_real_transition_audit.py --parameter-code 88502 --label 88502
+```
+
+Generated data and results are intentionally ignored by Git. The source
+scripts preserve raw-data provenance, the 563-event audit records exclusions,
+and the final report will distinguish a metadata-associated discontinuity from
+a confirmed instrument fault.
 
 ## Tonight's feasibility prototype
 

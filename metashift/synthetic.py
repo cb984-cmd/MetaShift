@@ -17,6 +17,9 @@ class PerturbationKind(StrEnum):
     VARIANCE_INCREASE = "variance_increase"
     REGIONAL_ADDITIVE_STEP = "regional_additive_step"
     REGIONAL_PROPORTIONAL_STEP = "regional_proportional_step"
+    REGIONAL_GRADUAL_DRIFT = "regional_gradual_drift"
+    REGIONAL_TEMPORARY_STEP = "regional_temporary_step"
+    REGIONAL_VARIANCE_INCREASE = "regional_variance_increase"
 
 
 @dataclass(frozen=True)
@@ -104,6 +107,36 @@ def inject_perturbation(
     elif perturbation is PerturbationKind.REGIONAL_PROPORTIONAL_STEP:
         target.loc[post_mask] *= 1 + magnitude
         donors.loc[donor_post_mask, :] *= 1 + magnitude
+        affected_columns = ("target", *map(str, donors.columns))
+    elif perturbation is PerturbationKind.REGIONAL_GRADUAL_DRIFT:
+        target_elapsed = (target.index[post_mask] - date).days.to_numpy()
+        donor_elapsed = (donors.index[donor_post_mask] - date).days.to_numpy()
+        target.loc[post_mask] += magnitude * np.minimum(target_elapsed / drift_days, 1.0)
+        donors.loc[donor_post_mask, :] += (
+            magnitude * np.minimum(donor_elapsed / drift_days, 1.0)
+        )[:, np.newaxis]
+        affected_columns = ("target", *map(str, donors.columns))
+    elif perturbation is PerturbationKind.REGIONAL_TEMPORARY_STEP:
+        affected_end_date = date + pd.Timedelta(days=duration_days - 1)
+        target_mask = (target.index >= date) & (target.index <= affected_end_date)
+        donor_mask = (donors.index >= date) & (donors.index <= affected_end_date)
+        target.loc[target_mask] += magnitude
+        donors.loc[donor_mask, :] += magnitude
+        affected_columns = ("target", *map(str, donors.columns))
+    elif perturbation is PerturbationKind.REGIONAL_VARIANCE_INCREASE:
+        pre_values = target.loc[target.index < date].dropna().to_numpy()
+        if len(pre_values) < 30:
+            raise ValueError("Variance injection requires at least 30 pre-anchor values.")
+        noise_scale = magnitude * (
+            1.4826 * np.median(np.abs(pre_values - np.median(pre_values)))
+        )
+        shared_noise = rng.normal(0, noise_scale, post_mask.sum())
+        target.loc[post_mask] += shared_noise
+        donor_dates = donors.index[donor_post_mask]
+        shared_by_date = pd.Series(shared_noise, index=target.index[post_mask])
+        donors.loc[donor_dates, :] += (
+            shared_by_date.reindex(donor_dates).to_numpy()[:, np.newaxis]
+        )
         affected_columns = ("target", *map(str, donors.columns))
     else:
         raise AssertionError(f"Unhandled perturbation kind: {perturbation}")

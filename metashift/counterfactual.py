@@ -53,9 +53,18 @@ def _robust_scale(values: pd.Series) -> float:
 
 
 def donor_weights(
-    controls: pd.DataFrame, distance_decay_km: float = 50.0
+    controls: pd.DataFrame,
+    distance_decay_km: float = 50.0,
+    *,
+    use_correlation: bool = True,
+    use_distance: bool = True,
+    use_coverage: bool = False,
 ) -> pd.Series:
-    """Compute fixed pre-period donor weights from control-match metadata."""
+    """Compute fixed pre-period donor weights from control-match metadata.
+
+    Switches exist for preregistered ablations. All enabled terms are computed
+    from pre-event metadata only.
+    """
 
     required = {"pre_transition_log_correlation", "distance_km"}
     missing = required.difference(controls.columns)
@@ -64,9 +73,22 @@ def donor_weights(
     if distance_decay_km <= 0:
         raise ValueError("distance_decay_km must be positive.")
 
+    if not any((use_correlation, use_distance, use_coverage)):
+        raise ValueError("At least one reliability component must be enabled.")
     correlations = controls["pre_transition_log_correlation"].clip(lower=0.0)
     distances = controls["distance_km"].clip(lower=0.0)
-    unnormalized = correlations.pow(2) * np.exp(-distances / distance_decay_km)
+    unnormalized = pd.Series(1.0, index=controls.index)
+    if use_correlation:
+        unnormalized *= correlations.pow(2)
+    if use_distance:
+        unnormalized *= np.exp(-distances / distance_decay_km)
+    if use_coverage:
+        if "pre_transition_paired_days" not in controls.columns:
+            raise ValueError(
+                "Coverage weighting requires a pre_transition_paired_days column."
+            )
+        coverage = controls["pre_transition_paired_days"].clip(lower=0.0)
+        unnormalized *= coverage / max(float(coverage.max()), 1.0)
     total = float(unnormalized.sum())
     if not np.isfinite(total) or total <= 0:
         raise ValueError("Eligible controls did not yield positive donor weights.")
@@ -100,7 +122,7 @@ def reliability_constrained_weights(
 
     table = pd.concat(
         [target.rename("target"), donors.loc[:, columns]], axis="columns", sort=False
-    ).dropna()
+    ).sort_index().dropna()
     if len(table) < min_observations:
         raise ValueError("Insufficient complete pre-event observations for weight fitting.")
 
@@ -291,7 +313,7 @@ def estimate_metadata_anchor(
         ],
         axis="columns",
         sort=False,
-    )
+    ).sort_index()
     table = table.loc[table["available_donors"] >= min_available_donors].dropna(
         subset=["target_raw", "target_log", "donor_raw", "donor_log"]
     )

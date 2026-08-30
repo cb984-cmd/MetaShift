@@ -56,3 +56,31 @@ class SyntheticInjectionTests(unittest.TestCase):
         self.assertTrue((donors.loc[self.anchor :, "a"] == 13.0).all())
         self.assertTrue((donors.loc[self.anchor :, "b"] == 11.0).all())
         self.assertEqual(truth.affected_columns, ("target", "a", "b"))
+
+    def test_regional_drift_changes_target_and_donors(self) -> None:
+        injected, donors, truth = inject_perturbation(
+            self.target,
+            self.donors,
+            self.anchor,
+            PerturbationKind.REGIONAL_GRADUAL_DRIFT,
+            3.0,
+            drift_days=3,
+        )
+
+        self.assertEqual(injected.loc[self.anchor], 10.0)
+        self.assertEqual(injected.loc[self.anchor + pd.Timedelta(days=3)], 13.0)
+        self.assertEqual(donors.loc[self.anchor + pd.Timedelta(days=3), "a"], 13.0)
+        self.assertEqual(truth.affected_columns, ("target", "a", "b"))
+
+    def test_regional_variance_shares_the_same_noise(self) -> None:
+        injected, donors, _ = inject_perturbation(
+            self.target,
+            self.donors,
+            self.anchor,
+            PerturbationKind.REGIONAL_VARIANCE_INCREASE,
+            1.0,
+            random_seed=12,
+        )
+        target_change = injected.loc[self.anchor :] - self.target.loc[self.anchor :]
+        donor_change = donors.loc[self.anchor :, "a"] - self.donors.loc[self.anchor :, "a"]
+        np.testing.assert_allclose(target_change.to_numpy(), donor_change.to_numpy())

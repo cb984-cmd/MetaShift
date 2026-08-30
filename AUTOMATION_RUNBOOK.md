@@ -22,9 +22,9 @@ from turning preliminary results into unsupported claims.
 
 | Phase | Objective | Completion evidence | Stop condition |
 | --- | --- | --- | --- |
-| M0 | Build bounded MetaShift v2 on development targets | Versioned V2 protocol and validated components | Any final-test target state used for tuning |
-| M2 | Complete comparative synthetic benchmark | Saved per-event results and metric table | Label, leakage, or reproducibility defect |
-| M3 | Freeze benchmark configuration | Versioned config and preregistration | Parameters chosen using held-out results |
+| B1 | Complete six-type comparative synthetic benchmark | Saved per-event results, CIs, and metric table | Label, leakage, or reproducibility defect |
+| B2 | Freeze benchmark configuration | Versioned config and preregistration | Parameters chosen after configuration freeze |
+| B3 | Audit real metadata anchors | Full result and exclusion inventories | Anchor treated as confirmed physical bias |
 | V1 | Audit all real method transitions | Full result and exclusion inventories | Pre-fit failure dominates eligible events |
 | V2 | Integrate QA and same-site POC evidence | Tiered external-validation table | Evidence is insufficient for causal wording |
 | V3 | Run placebos, ablations, and sensitivity analyses | Saved comparison tables | Main claim is not robust |

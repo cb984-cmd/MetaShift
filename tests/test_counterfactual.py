@@ -111,3 +111,39 @@ class MetaShiftEstimateTests(unittest.TestCase):
         np.testing.assert_allclose(
             selected.weights.to_numpy(), unchanged.weights.to_numpy()
         )
+
+    def test_weight_fitting_handles_misaligned_observation_dates(self) -> None:
+        donors = self.donors.drop(self.dates[[5, 24, 77]])
+        reliability = pd.Series(
+            {"donor_a": 0.5, "donor_b": 0.3, "donor_c": 0.2}
+        )
+
+        weights = reliability_constrained_weights(
+            self.target.loc[: self.anchor - pd.Timedelta(days=1)],
+            donors.loc[: self.anchor - pd.Timedelta(days=1)],
+            reliability,
+        )
+
+        self.assertAlmostEqual(float(weights.sum()), 1.0, places=8)
+
+    def test_donor_weight_ablation_components_are_normalized(self) -> None:
+        controls = pd.DataFrame(
+            {
+                "pre_transition_log_correlation": [0.9, 0.8],
+                "distance_km": [5.0, 20.0],
+                "pre_transition_paired_days": [100, 80],
+            },
+            index=["a", "b"],
+        )
+        for kwargs in (
+            {"use_correlation": True, "use_distance": False},
+            {"use_correlation": False, "use_distance": True},
+            {
+                "use_correlation": True,
+                "use_distance": True,
+                "use_coverage": True,
+            },
+        ):
+            weights = donor_weights(controls, **kwargs)
+            self.assertTrue((weights >= 0).all())
+            self.assertAlmostEqual(float(weights.sum()), 1.0, places=8)

@@ -2,7 +2,7 @@
 
 ## Working title
 
-**MetaShift: metadata-anchored cross-site counterfactual screening of PM2.5
+**MetaShift: a metadata-anchored benchmark and audit protocol for PM2.5
 measurement-regime discontinuities**
 
 The title is intentionally narrower than “instrument-change bias attribution.”
@@ -19,7 +19,9 @@ relative to placebo dates and placebo target stations?
 
 The project estimates evidence *consistent with* a station-specific
 measurement-regime discontinuity. It does not infer the true physical cause or
-automatically correct historical concentrations.
+automatically correct historical concentrations. MetaShift is evaluated as one
+interpretable counterfactual estimator, not presumed or claimed to dominate
+standard synthetic control.
 
 ## Data and analytical unit
 
@@ -63,7 +65,7 @@ Transitions explicitly enabling “Network Data Alignment” will be analyzed as
 configuration-change stratum. They will not be merged without distinction with
 transitions whose method descriptions indicate different analyzer families.
 
-## MetaShift estimator
+## Comparative estimators
 
 For target series `i`, anchor date `tau`, and donors `j`, transform a
 concentration `y` to:
@@ -83,7 +85,9 @@ The primary effect is the difference between median residuals in the 60-day
 post- and pre-anchor windows. The standardized MetaShift score divides this
 effect by the robust MAD scale of a 180-to-15-day pre-anchor calibration
 residual. Raw-unit residual differences are reported as a secondary
-interpretation aid.
+interpretation aid. All conclusions compare it with nearest-neighbor
+difference-in-differences, standard synthetic control, and single-station
+change-point baselines.
 
 ## Evaluation
 

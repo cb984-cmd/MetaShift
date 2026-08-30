@@ -5,10 +5,12 @@
 
 ## Evidence rule
 
-MetaShift is retained only if it improves on the preregistered comparison set in
-at least two primary metrics without relying on selected cases. A Method Code
-transition is a metadata anchor, not proof of physical instrument replacement
-or measurement bias.
+The project is scoped as a metadata-anchored audit and evaluation benchmark.
+MetaShift remains one transparent cross-site counterfactual estimator in the
+comparison set; it is not claimed to outperform standard synthetic control
+unless a separately designed and independently held-out study supports that
+claim. A Method Code transition is a metadata anchor, not proof of physical
+instrument replacement or measurement bias.
 
 ## Current checkpoint
 
@@ -21,27 +23,22 @@ or measurement bias.
 - [x] Run initial paired 30-event synthetic local-versus-regional benchmark.
 - [!] Diagnose initial result: MetaShift separates local from regional shocks,
   but does not yet beat standard synthetic control on local effect MAE.
+- [x] Narrow main contribution to a reproducible event benchmark, evidence
+  hierarchy, and comparative audit after the held-out result did not support an
+  enhanced-estimator claim.
 
-## Active model work
+## Active benchmark work
 
-- [x] **M1 — Tune reliability constraints on development events.** A 30-event
-  pre-2023 complete-case development search selected ridge=0.1 and
-  graph-prior=0.1 by local-effect MAE. MetaShift MAE was 0.02365 log versus
-  0.02965 for standard synthetic control (absolute gain 0.00600). This is
-  provisional until the frozen held-out evaluation; it must not be retuned on
-  final-test events.
-- [!] **M2 — Reliability-constraint evidence gap.** On the frozen 2023--2025
-  paired 30-event test, MetaShift had 0.02210 local-effect MAE versus 0.02146
-  for standard synthetic control, and a higher regional residual score
-  (0.05672 versus 0.05180). The development advantage did not reproduce.
-  Parameters will not be retuned on this held-out set. The enhanced-algorithm
-  claim is blocked pending an independently retestable redesign or a narrower
-  benchmark-and-audit contribution.
-- [ ] **M3 — Complete synthetic perturbations.** Add proportional changes,
+- [x] **M1 — Document comparative model result.** The development-selected
+  MetaShift configuration did not beat standard synthetic control on the frozen
+  2023--2025 paired test (MAE 0.02210 versus 0.02146; regional residual score
+  0.05672 versus 0.05180). This null comparison is retained in the benchmark.
+- [ ] **M2 — Complete synthetic perturbations.** Add proportional changes,
   gradual drift, temporary effects, variance shifts, and matched regional
-  controls. Report AUPRC, effect MAE, localization error, and false attribution.
-- [ ] **M4 — Freeze the model.** Save the selected configuration, event split,
-  random seeds, and evaluation rules before final test results are inspected.
+  controls. Report the full comparative profile rather than an unsupported
+  single-method superiority claim.
+- [ ] **M3 — Freeze benchmark configuration.** Save event splits, random
+  seeds, perturbation rules, and evaluation rules before final results.
 
 ## Validation and analysis
 

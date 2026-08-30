@@ -22,9 +22,8 @@ from turning preliminary results into unsupported claims.
 
 | Phase | Objective | Completion evidence | Stop condition |
 | --- | --- | --- | --- |
-| M2 | Evaluate reliability features and pre-fit diagnostics | Development-only comparison table | No reliable gain over standard synthetic control |
-| M3 | Complete station-isolated synthetic benchmark | Saved per-event results and metric table | Label, leakage, or reproducibility defect |
-| M4 | Freeze configuration and held-out split | Versioned config and preregistration | Parameters chosen using held-out results |
+| M2 | Complete comparative synthetic benchmark | Saved per-event results and metric table | Label, leakage, or reproducibility defect |
+| M3 | Freeze benchmark configuration | Versioned config and preregistration | Parameters chosen using held-out results |
 | V1 | Audit all real method transitions | Full result and exclusion inventories | Pre-fit failure dominates eligible events |
 | V2 | Integrate QA and same-site POC evidence | Tiered external-validation table | Evidence is insufficient for causal wording |
 | V3 | Run placebos, ablations, and sensitivity analyses | Saved comparison tables | Main claim is not robust |

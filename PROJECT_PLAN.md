@@ -1,7 +1,7 @@
 # MetaShift execution plan
 
 **Updated:** 2026-08-30  
-**Research status:** development phase; no final performance claim is frozen.
+**Research status:** bounded V2 development; no final performance claim is frozen.
 
 ## Evidence rule
 
@@ -26,9 +26,15 @@ instrument replacement or measurement bias.
 - [x] Narrow main contribution to a reproducible event benchmark, evidence
   hierarchy, and comparative audit after the held-out result did not support an
   enhanced-estimator claim.
+- [x] Approve one bounded MetaShift v2 redesign with a new state-disjoint final
+  target-event test set (Illinois and Massachusetts); the previously viewed
+  v1 time test remains archived and unavailable for v2 tuning.
 
 ## Active benchmark work
 
+- [ ] **M0 — Implement bounded MetaShift v2.** Add quality gates, residual
+  shape models, placebo calibration, and `insufficient_evidence` abstention
+  using development target states only.
 - [x] **M1 — Document comparative model result.** The development-selected
   MetaShift configuration did not beat standard synthetic control on the frozen
   2023--2025 paired test (MAE 0.02210 versus 0.02146; regional residual score

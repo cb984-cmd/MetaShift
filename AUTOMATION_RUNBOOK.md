@@ -22,6 +22,7 @@ from turning preliminary results into unsupported claims.
 
 | Phase | Objective | Completion evidence | Stop condition |
 | --- | --- | --- | --- |
+| M0 | Build bounded MetaShift v2 on development targets | Versioned V2 protocol and validated components | Any final-test target state used for tuning |
 | M2 | Complete comparative synthetic benchmark | Saved per-event results and metric table | Label, leakage, or reproducibility defect |
 | M3 | Freeze benchmark configuration | Versioned config and preregistration | Parameters chosen using held-out results |
 | V1 | Audit all real method transitions | Full result and exclusion inventories | Pre-fit failure dominates eligible events |

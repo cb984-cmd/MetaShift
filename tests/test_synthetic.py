@@ -42,3 +42,17 @@ class SyntheticInjectionTests(unittest.TestCase):
         self.assertTrue((donors.loc[self.anchor :, "a"] == 12.0).all())
         self.assertTrue((donors.loc[self.anchor :, "b"] == 9.6).all())
         self.assertEqual(truth.affected_columns, ("target", "a", "b"))
+
+    def test_regional_additive_step_is_shared(self) -> None:
+        injected, donors, truth = inject_perturbation(
+            self.target,
+            self.donors,
+            self.anchor,
+            PerturbationKind.REGIONAL_ADDITIVE_STEP,
+            3.0,
+        )
+
+        self.assertTrue((injected.loc[self.anchor :] == 13.0).all())
+        self.assertTrue((donors.loc[self.anchor :, "a"] == 13.0).all())
+        self.assertTrue((donors.loc[self.anchor :, "b"] == 11.0).all())
+        self.assertEqual(truth.affected_columns, ("target", "a", "b"))

@@ -15,6 +15,7 @@ class PerturbationKind(StrEnum):
     GRADUAL_DRIFT = "gradual_drift"
     TEMPORARY_STEP = "temporary_step"
     VARIANCE_INCREASE = "variance_increase"
+    REGIONAL_ADDITIVE_STEP = "regional_additive_step"
     REGIONAL_PROPORTIONAL_STEP = "regional_proportional_step"
 
 
@@ -73,6 +74,7 @@ def inject_perturbation(
         raise ValueError("Synthetic durations must be positive.")
 
     post_mask = target.index >= date
+    donor_post_mask = donors.index >= date
     affected_end_date: pd.Timestamp | None = None
     affected_columns: tuple[str, ...] = ("target",)
     rng = np.random.default_rng(random_seed)
@@ -95,9 +97,13 @@ def inject_perturbation(
             raise ValueError("Variance injection requires at least 30 pre-anchor values.")
         noise_scale = magnitude * (1.4826 * np.median(np.abs(pre_values - np.median(pre_values))))
         target.loc[post_mask] += rng.normal(0, noise_scale, post_mask.sum())
+    elif perturbation is PerturbationKind.REGIONAL_ADDITIVE_STEP:
+        target.loc[post_mask] += magnitude
+        donors.loc[donor_post_mask, :] += magnitude
+        affected_columns = ("target", *map(str, donors.columns))
     elif perturbation is PerturbationKind.REGIONAL_PROPORTIONAL_STEP:
         target.loc[post_mask] *= 1 + magnitude
-        donors.loc[post_mask, :] *= 1 + magnitude
+        donors.loc[donor_post_mask, :] *= 1 + magnitude
         affected_columns = ("target", *map(str, donors.columns))
     else:
         raise AssertionError(f"Unhandled perturbation kind: {perturbation}")

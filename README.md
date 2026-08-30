@@ -70,3 +70,16 @@ python scripts\download_qa_collocation.py
 Raw API responses are stored under the ignored `data\raw\aqs_qa\` directory;
 their credential-free request metadata and record counts are written to
 `artifacts\qa_collocation_manifest.json`.
+
+## Initial paired synthetic benchmark
+
+```powershell
+python scripts\run_synthetic_benchmark.py
+```
+
+This first benchmark selects 30 events with a long pre-transition regime and
+at least three eligible donors. At each metadata date it injects matched
+target-only additive and target-plus-donor regional shocks. It reports
+per-event scores and a method-level summary. The paired shocks isolate an
+estimator's response to the injected effect; they are not a substitute for the
+final station-disjoint stable-window benchmark.

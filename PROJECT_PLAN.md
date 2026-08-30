@@ -34,6 +34,10 @@ instrument replacement or measurement bias.
   pre-fit quality gate and 9 having a dynamic-placebo p-value at most 0.10.
   The 101 explicit exclusions show that complete-case coverage is 28.4%, so
   V2 must report coverage rather than silently analyze only favorable events.
+- [x] Extend the synthetic runner to additive/proportional steps, gradual
+  drift, temporary shifts, variance changes, and matched regional shocks; a
+  five-event development smoke run completed all six variants. Full
+  development-scale results remain pending.
 
 ## Active benchmark work
 

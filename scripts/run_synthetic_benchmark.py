@@ -152,6 +152,7 @@ def evaluate_variant(
     kind: PerturbationKind,
     magnitude: float,
     seed: int,
+    comparison_group: str,
 ) -> list[dict[str, object]]:
     altered_target, altered_donors, truth = inject_perturbation(
         target, donors, date, kind, magnitude, random_seed=seed
@@ -165,7 +166,11 @@ def evaluate_variant(
         for name, value in weights.items()
     }
     rows = []
-    is_local = kind is PerturbationKind.ADDITIVE_STEP
+    is_local = kind not in {
+        PerturbationKind.REGIONAL_ADDITIVE_STEP,
+        PerturbationKind.REGIONAL_PROPORTIONAL_STEP,
+    }
+    has_level_effect = kind not in {PerturbationKind.VARIANCE_INCREASE}
     expected_increment = float(
         np.median(
             np.log1p(altered_target.loc[date : date + pd.Timedelta(days=59)].clip(lower=0))
@@ -179,10 +184,19 @@ def evaluate_variant(
             {
                 "method": method,
                 "perturbation": kind.value,
+                "comparison_group": comparison_group,
                 "is_local": int(is_local),
-                "expected_log_increment": np.nan if not is_local else expected_increment,
+                "has_level_effect": int(has_level_effect),
+                "expected_log_increment": expected_increment
+                if has_level_effect
+                else np.nan,
                 "estimated_log_increment": increment,
-                "absolute_error": abs(increment - (expected_increment if is_local else 0.0)),
+                "absolute_error": abs(
+                    increment
+                    - (expected_increment if is_local and has_level_effect else 0.0)
+                )
+                if has_level_effect
+                else np.nan,
                 "ranking_score": abs(increment),
                 "truth_anchor_date": truth.anchor_date.date().isoformat(),
             }
@@ -195,7 +209,9 @@ def evaluate_variant(
             {
                 "method": name,
                 "perturbation": kind.value,
+                "comparison_group": comparison_group,
                 "is_local": int(is_local),
+                "has_level_effect": int(has_level_effect),
                 "expected_log_increment": np.nan,
                 "estimated_log_increment": np.nan,
                 "absolute_error": np.nan,
@@ -258,22 +274,36 @@ def main() -> None:
             exclusions.append({"anchor_id": event_id, "reason": str(error)})
             print(f"Excluded {event_id}: {error}")
             continue
-        for kind in (
-            PerturbationKind.ADDITIVE_STEP,
-            PerturbationKind.REGIONAL_ADDITIVE_STEP,
-        ):
+        variants = (
+            (
+                PerturbationKind.ADDITIVE_STEP,
+                magnitude,
+                "paired_local_vs_regional_additive",
+            ),
+            (
+                PerturbationKind.REGIONAL_ADDITIVE_STEP,
+                magnitude,
+                "paired_local_vs_regional_additive",
+            ),
+            (PerturbationKind.PROPORTIONAL_STEP, 0.25, "local_shape_profile"),
+            (PerturbationKind.GRADUAL_DRIFT, magnitude, "local_shape_profile"),
+            (PerturbationKind.TEMPORARY_STEP, magnitude, "local_shape_profile"),
+            (PerturbationKind.VARIANCE_INCREASE, 1.0, "local_shape_profile"),
+        )
+        for kind, variant_magnitude, comparison_group in variants:
             variant_rows = evaluate_variant(
                 target,
                 donors,
                 weights,
                 date,
                 kind,
-                magnitude,
+                variant_magnitude,
                 completed_events + 1,
+                comparison_group,
             )
             for row in variant_rows:
                 row["anchor_id"] = event_id
-                row["magnitude"] = magnitude
+                row["magnitude"] = variant_magnitude
                 row["evaluation_label"] = args.label
                 results.append(row)
         completed_events += 1
@@ -293,15 +323,24 @@ def main() -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output.to_csv(output_path, index=False)
     summary_rows = []
-    for method, group in output.groupby("method", sort=True):
+    for (comparison_group, method), group in output.groupby(
+        ["comparison_group", "method"], sort=True
+    ):
         labels = group["is_local"].to_numpy(dtype=int)
         scores = group["ranking_score"].to_numpy(dtype=float)
-        effect_errors = group.loc[group["is_local"] == 1, "absolute_error"].dropna()
+        effect_errors = group.loc[
+            (group["is_local"] == 1) & (group["has_level_effect"] == 1),
+            "absolute_error",
+        ].dropna()
+        has_both_labels = labels.min() != labels.max()
         summary_rows.append(
             {
+                "comparison_group": comparison_group,
                 "method": method,
                 "instances": len(group),
-                "local_average_precision": average_precision(labels, scores),
+                "local_average_precision": average_precision(labels, scores)
+                if has_both_labels
+                else np.nan,
                 "local_effect_mae_log": float(effect_errors.mean()) if len(effect_errors) else np.nan,
                 "regional_false_attribution_mean_score": float(
                     group.loc[group["is_local"] == 0, "ranking_score"].mean()

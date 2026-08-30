@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -24,11 +26,25 @@ from run_feasibility_prototype import event_donors, load_series, synthetic_contr
 
 ANCHORS_PATH = Path("artifacts/data_gate/anchor_inventory.csv")
 CONTROLS_PATH = Path("artifacts/data_gate/geographic_controls.csv")
-OUTPUT_PATH = Path("artifacts/synthetic_event_results.csv")
-SUMMARY_PATH = Path("artifacts/synthetic_summary.csv")
-EXCLUSIONS_PATH = Path("artifacts/synthetic_event_exclusions.csv")
 SERIES_KEYS = ["State Code", "County Code", "Site Num", "POC"]
 EVENT_COUNT = 30
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Run paired synthetic local-versus-regional MetaShift evaluation."
+    )
+    parser.add_argument("--start-year", type=int, default=None)
+    parser.add_argument("--end-year", type=int, default=None)
+    parser.add_argument("--event-count", type=int, default=EVENT_COUNT)
+    parser.add_argument("--ridge-penalty", type=float, default=0.1)
+    parser.add_argument("--prior-penalty", type=float, default=0.1)
+    parser.add_argument(
+        "--label",
+        default="development",
+        help="Label included in every output row to preserve evaluation provenance.",
+    )
+    return parser.parse_args()
 
 
 def average_precision(labels: np.ndarray, scores: np.ndarray) -> float:
@@ -81,7 +97,12 @@ def pre_scale(target: pd.Series, date: pd.Timestamp) -> float:
 
 
 def fit_weights(
-    target: pd.Series, donors: pd.DataFrame, metadata: pd.DataFrame, date: pd.Timestamp
+    target: pd.Series,
+    donors: pd.DataFrame,
+    metadata: pd.DataFrame,
+    date: pd.Timestamp,
+    ridge_penalty: float,
+    prior_penalty: float,
 ) -> dict[str, pd.Series]:
     metadata = metadata.copy()
     metadata.index = donors.columns
@@ -93,7 +114,11 @@ def fit_weights(
         "nearest_neighbor_did": nearest,
         "standard_synthetic_control": synthetic_control_weights(target, donors, date),
         "metashift": reliability_constrained_weights(
-            target.loc[calibration], donors.loc[calibration], reliability
+            target.loc[calibration],
+            donors.loc[calibration],
+            reliability,
+            ridge_penalty=ridge_penalty,
+            prior_penalty=prior_penalty,
         ),
     }
 
@@ -182,14 +207,32 @@ def evaluate_variant(
 
 
 def main() -> None:
+    args = parse_args()
+    if args.event_count <= 0:
+        raise ValueError("--event-count must be positive.")
+    label = re.sub(r"[^a-zA-Z0-9_-]+", "_", args.label).strip("_")
+    if not label:
+        raise ValueError("--label must contain at least one letter or number.")
+    output_path = Path("artifacts") / f"synthetic_{label}_event_results.csv"
+    summary_path = Path("artifacts") / f"synthetic_{label}_summary.csv"
+    exclusions_path = Path("artifacts") / f"synthetic_{label}_event_exclusions.csv"
     events, controls = prepare_events()
+    if args.start_year is not None:
+        events = events.loc[events["start_date"].dt.year >= args.start_year]
+    if args.end_year is not None:
+        events = events.loc[events["start_date"].dt.year <= args.end_year]
+    if len(events) < args.event_count:
+        raise ValueError(
+            f"Only {len(events)} eligible events within the requested date split; "
+            f"expected {args.event_count}."
+        )
     series = load_series()
     results: list[dict[str, object]] = []
 
     exclusions: list[dict[str, str]] = []
     completed_events = 0
     for _, event in events.iterrows():
-        if completed_events == EVENT_COUNT:
+        if completed_events == args.event_count:
             break
         event_id = str(event["anchor_id"])
         target_key = tuple(str(event[column]) for column in SERIES_KEYS)
@@ -201,7 +244,14 @@ def main() -> None:
                 "rank"
             ).head(5)
             magnitude = pre_scale(target, date) * 2
-            weights = fit_weights(target, donors, metadata, date)
+            weights = fit_weights(
+                target,
+                donors,
+                metadata,
+                date,
+                args.ridge_penalty,
+                args.prior_penalty,
+            )
             # Confirm the single-station window before committing this event.
             single_station_scores(target, date)
         except ValueError as error:
@@ -224,23 +274,24 @@ def main() -> None:
             for row in variant_rows:
                 row["anchor_id"] = event_id
                 row["magnitude"] = magnitude
+                row["evaluation_label"] = args.label
                 results.append(row)
         completed_events += 1
         print(
-            f"Completed paired synthetic benchmark {completed_events}/{EVENT_COUNT}: "
+            f"Completed paired synthetic benchmark {completed_events}/{args.event_count}: "
             f"{event_id}"
         )
 
-    pd.DataFrame(exclusions).to_csv(EXCLUSIONS_PATH, index=False)
-    if completed_events < EVENT_COUNT:
+    pd.DataFrame(exclusions).to_csv(exclusions_path, index=False)
+    if completed_events < args.event_count:
         raise RuntimeError(
             f"Only {completed_events} complete benchmark events were available; "
-            f"expected {EVENT_COUNT}. See {EXCLUSIONS_PATH}."
+            f"expected {args.event_count}. See {exclusions_path}."
         )
 
     output = pd.DataFrame(results)
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    output.to_csv(OUTPUT_PATH, index=False)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output.to_csv(output_path, index=False)
     summary_rows = []
     for method, group in output.groupby("method", sort=True):
         labels = group["is_local"].to_numpy(dtype=int)
@@ -258,10 +309,10 @@ def main() -> None:
             }
         )
     summary = pd.DataFrame(summary_rows).sort_values("local_average_precision", ascending=False)
-    summary.to_csv(SUMMARY_PATH, index=False)
+    summary.to_csv(summary_path, index=False)
     print("\nSynthetic benchmark summary:")
     print(summary.to_string(index=False))
-    print(f"\nWrote {OUTPUT_PATH} and {SUMMARY_PATH}")
+    print(f"\nWrote {output_path} and {summary_path}")
 
 
 if __name__ == "__main__":

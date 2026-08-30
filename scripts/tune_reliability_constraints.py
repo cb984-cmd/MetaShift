@@ -18,7 +18,11 @@ from metashift.counterfactual import (
     reliability_constrained_weights,
 )
 from metashift.synthetic import PerturbationKind, inject_perturbation
-from run_feasibility_prototype import event_donors, load_series
+from run_feasibility_prototype import (
+    event_donors,
+    load_series,
+    synthetic_control_weights,
+)
 from run_synthetic_benchmark import CONTROLS_PATH, prepare_events, pre_scale
 
 
@@ -90,6 +94,7 @@ def main() -> None:
             )
             # Complete-case eligibility is stricter than the initial gate.
             estimate_metadata_anchor(target, donors, initial_weights, date)
+            synthetic_control_weights(target, donors, date)
             prepared.append(
                 (event_id, target, donors, prior, date, pre_scale(target, date) * 2)
             )
@@ -136,6 +141,20 @@ def main() -> None:
 
     results = pd.DataFrame(rows).sort_values(
         ["local_effect_mae_log", "local_effect_median_ae_log"], kind="stable"
+    )
+    standard_errors = [
+        local_injection_error(
+            target,
+            donors,
+            synthetic_control_weights(target, donors, date),
+            date,
+            magnitude,
+        )
+        for _, target, donors, _, date, magnitude in prepared
+    ]
+    results["standard_synthetic_control_mae_log"] = float(np.mean(standard_errors))
+    results["mae_gain_over_standard"] = (
+        results["standard_synthetic_control_mae_log"] - results["local_effect_mae_log"]
     )
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     results.to_csv(OUTPUT_PATH, index=False)

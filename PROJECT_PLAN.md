@@ -25,12 +25,18 @@ or measurement bias.
 ## Active model work
 
 - [x] **M1 — Tune reliability constraints on development events.** A 30-event
-  pre-2023 development search selected ridge=0.001 and graph-prior=1.0 by
-  local-effect MAE. This is provisional until the frozen held-out evaluation;
-  it must not be retuned on final-test events.
-- [ ] **M2 — Add reliability features.** Compare correlation, distance,
-  paired-observation coverage, donor concentration, and pre-fit diagnostics.
-  Retain a feature only if it improves held-out development performance.
+  pre-2023 complete-case development search selected ridge=0.1 and
+  graph-prior=0.1 by local-effect MAE. MetaShift MAE was 0.02365 log versus
+  0.02965 for standard synthetic control (absolute gain 0.00600). This is
+  provisional until the frozen held-out evaluation; it must not be retuned on
+  final-test events.
+- [!] **M2 — Reliability-constraint evidence gap.** On the frozen 2023--2025
+  paired 30-event test, MetaShift had 0.02210 local-effect MAE versus 0.02146
+  for standard synthetic control, and a higher regional residual score
+  (0.05672 versus 0.05180). The development advantage did not reproduce.
+  Parameters will not be retuned on this held-out set. The enhanced-algorithm
+  claim is blocked pending an independently retestable redesign or a narrower
+  benchmark-and-audit contribution.
 - [ ] **M3 — Complete synthetic perturbations.** Add proportional changes,
   gradual drift, temporary effects, variance shifts, and matched regional
   controls. Report AUPRC, effect MAE, localization error, and false attribution.

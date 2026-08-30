@@ -56,10 +56,9 @@ replacement or measurement bias.
   have 200 independent evaluation samples each, with fixed seeds, threshold
   calibration separation, F1/AUPRC, effect error, coverage, and event-cluster
   bootstrap intervals.
-- [ ] **B2 — Freeze benchmark release configuration.** Version event rules,
-  seeds, perturbations, baseline definitions, metrics, and rerun the release
-  benchmark without changing them. Configuration is committed; first clean
-  end-to-end rerun is next.
+- [x] **B2 — Freeze benchmark release configuration.** Configuration is
+  versioned; two complete reconstructions in independent Python environments
+  produced identical SHA256 hashes for 11 core result artifacts.
 - [x] **B3 — Audit all 563 real metadata anchors.** Report eligibility,
   pre-fit, effects, abstentions, and failure reasons without treating anchors
   as confirmed bias labels.
@@ -83,6 +82,20 @@ replacement or measurement bias.
 
 ## Deliverables
 
-- [ ] Reproducible benchmark tables and figures generated only from saved CSVs.
-- [ ] Frozen result package, source manifest, run log, and environment record.
+- [x] Reproducible benchmark tables and six figures generated only from saved
+  CSVs.
+- [x] Frozen configuration, source manifests, run manifest, test-access log,
+  two-environment hash comparison, and machine-readable
+  `results/release_gate.json`.
 - [ ] Research report with limitations, null results, and contribution records.
+
+## Final code-stage result
+
+**MetaShift-Bench has passed its code and evidence release checklist.** The
+algorithm-superiority route did not pass and remains closed: on the stable
+synthetic benchmark, the MetaShift variants' lower effect MAE versus standard
+synthetic control had bootstrap confidence intervals crossing zero, while their
+macro-F1/AUPRC did not meet the predeclared algorithm thresholds. The
+publishable contribution is therefore the reproducible benchmark, full
+metadata-anchor audit, graded evidence hierarchy, comparative results, and
+documented applicability boundary.

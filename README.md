@@ -24,6 +24,30 @@ pseudo-anchors lie at least 60 days from a target or selected donor Method
 Code transition. Each local and matched regional perturbation family has 200
 evaluation samples.
 
+## Benchmark snapshot
+
+At the frozen release configuration:
+
+| Result | Value |
+| --- | ---: |
+| AQS 88101 eligible metadata anchors | 563 |
+| Complete common-method observational comparisons | 261 |
+| Explicit insufficient-donor exclusions | 292 |
+| Stable synthetic evaluation samples per perturbation | 200 |
+| Time-placebo-calibrated real anchors | 167 / 261 |
+| Donor-as-treated placebo records | 1,050 |
+| Independent 88502 anchors / complete comparisons | 34 / 3 |
+
+In the stable synthetic evaluation, standard synthetic control achieved
+macro-F1/AUPRC of **0.829 / 0.906**. Fixed-prior and pre-period
+cross-validated MetaShift achieved **0.798 / 0.884** and **0.794 / 0.885**.
+Their lower local-effect MAE was not confidence-supported by paired event
+bootstrap, so the repository makes **no algorithm-superiority claim**.
+
+The `results\release_gate.json` checklist passes after two full builds in
+independent Python environments produced identical hashes for all core
+result artifacts. Figures are generated from saved CSV outputs only.
+
 ## Data gate
 
 The first reproducible gate scans EPA AQS daily PM2.5 archives:

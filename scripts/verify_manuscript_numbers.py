@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
@@ -17,6 +18,29 @@ ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = ROOT / "artifacts"
 PAPER_PATH = ROOT / "paper/MANUSCRIPT_DRAFT.md"
 OUTPUT_PATH = ROOT / "results/manuscript_number_verification.json"
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Verify Markdown manuscript numeric claims against frozen artifacts."
+    )
+    parser.add_argument(
+        "--manuscript",
+        type=Path,
+        default=PAPER_PATH,
+        help="Markdown manuscript path, relative to the repository root by default.",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=OUTPUT_PATH,
+        help="Verification JSON path, relative to the repository root by default.",
+    )
+    return parser.parse_args()
+
+
+def resolve_from_root(path: Path) -> Path:
+    return path if path.is_absolute() else ROOT / path
 
 
 def exact_table_row(
@@ -80,6 +104,20 @@ def collect_expectations() -> dict[str, str]:
         ARTIFACTS / "effect_window_sensitivity_summary.csv"
     )
     screening = pd.read_csv(ARTIFACTS / "screening_sensitivity_summary.csv")
+    coverage = pd.read_csv(ARTIFACTS / "synthetic_interval_coverage_v2_summary.csv")
+    tier_sensitivity = pd.read_csv(
+        ARTIFACTS / "evidence_tier_sensitivity_v2_summary.csv"
+    ).pivot(index="setting", columns="evidence_tier", values="anchor_count")
+    reporting_scale = pd.read_csv(
+        ARTIFACTS / "reporting_scale_sensitivity_summary.csv"
+    ).set_index("method")
+    method_results = pd.read_csv(
+        ARTIFACTS / "real_transition_88101_method_results.csv"
+    )
+    donor_placebos = pd.read_csv(ARTIFACTS / "donor_as_treated_placebos.csv")
+    date_permutations = pd.read_csv(
+        ARTIFACTS / "time_placebo_date_permutations.csv"
+    )
     external_documents = json.loads(
         (ARTIFACTS / "external_document_review_summary.json").read_text(
             encoding="utf-8"
@@ -113,6 +151,24 @@ def collect_expectations() -> dict[str, str]:
         (effect_windows["method"] == "metashift_v1_fixed")
         & (effect_windows["status"] == "complete")
     ].set_index("comparison_window_days")
+    unavailable_windows = effect_windows.loc[
+        (effect_windows["method"] == "metashift_v1_fixed")
+        & (effect_windows["status"] != "complete")
+    ].set_index("comparison_window_days")
+    method_medians = method_results.groupby("method")["log_effect"].median()
+    conditional_coverage = coverage.loc[
+        (coverage["interval_type"] == "conditional_block_bootstrap")
+        & (coverage["split"] == "evaluation")
+        & (coverage["stratum_type"] == "all")
+    ]
+    conformal_coverage = coverage.loc[
+        (coverage["interval_type"] == "split_conformal")
+        & (coverage["split"] == "evaluation")
+        & (coverage["stratum_type"] == "all")
+    ]
+    date_resampling_upper_tail = (
+        1 + (date_permutations["mean_score_difference"] <= 0).sum()
+    ) / (len(date_permutations) + 1)
     complete_real_events = int((audit["audit_status"] == "complete").sum())
 
     expectations = {
@@ -125,8 +181,10 @@ def collect_expectations() -> dict[str, str]:
         "insufficient_donors": f"| Fewer than three geographic donors | {int((audit['audit_status'] == 'insufficient_geographic_donors').sum())} |",
         "input_failures": f"| Estimator input-window failure | {int((audit['audit_status'] == 'estimator_input_failure').sum())} |",
         "nested_intervals": (
-            f"Selection-aware nested intervals complete all {len(nested)} real "
-            f"comparison events with 1,000 repetitions each."
+            f"Selection-aware nested intervals are available for {len(nested)}/"
+            f"{complete_real_events} complete real comparisons; each requested "
+            "1,000 repetitions and retained at least "
+            f"{int(nested['valid_repetitions'].min())} valid repetitions."
         ),
         "nested_zero_exclusion": (
             f"Selection-aware intervals exclude zero for "
@@ -146,6 +204,14 @@ def collect_expectations() -> dict[str, str]:
         "time_placebos": (
             f"{len(complete_placebos)} complete events have at least 50 unique "
             "stable post-transition time placebos."
+        ),
+        "time_placebos_100": (
+            f"{int((placebos['placebo_count'] >= 100).sum())} of these have 100 "
+            "unique placebos."
+        ),
+        "raw_placebo_screen": (
+            f"{int((complete_placebos['placebo_p_value'] <= 0.10).sum())} events "
+            "have raw within-event placebo probability at most 0.10;"
         ),
         "fdr_screen": (
             f"{int((q_values <= 0.10).sum())} events pass exploratory "
@@ -205,8 +271,79 @@ def collect_expectations() -> dict[str, str]:
         "external_document_review": (
             f"A targeted review of {int(external_documents['reviewed_events'])} "
             "preselected official documentation cases also found "
-            f"{int(external_documents['site_specific_dated_confirmations'])} dated, "
+            f"{int(external_documents['site_specific_dated_confirmations'])}/"
+            f"{int(external_documents['reviewed_events'])} dated, "
             "site-specific confirmations"
+        ),
+        "donor_as_treated_placebos": (
+            f"The donor-as-treated analysis contains {len(donor_placebos):,} "
+            "records, with median standardized score "
+            f"{format_decimal(donor_placebos['standardized_score'].median(), 5)}."
+        ),
+        "date_resampling_placebos": (
+            f"The {len(date_permutations)}-resampling global comparison gives an "
+            "upper-tail probability of "
+            f"{format_decimal(date_resampling_upper_tail, 5)}"
+        ),
+        "real_effect_medians": (
+            "is "
+            f"{format_decimal(method_medians['metashift_v1_fixed'], 5)} for "
+            "fixed-prior MetaShift, "
+            f"{format_decimal(method_medians['standard_synthetic_control'], 5)} "
+            "for standard synthetic control, and "
+            f"{format_decimal(method_medians['nearest_neighbor_did'], 5)} "
+            "for nearest-neighbor DiD."
+        ),
+        "effect_window_medians": (
+            "The corresponding fixed-prior MetaShift median log effects are "
+            f"{format_decimal(metashift_windows.loc[45, 'median_log_effect'], 5)}, "
+            f"{format_decimal(metashift_windows.loc[60, 'median_log_effect'], 5)}, "
+            f"and {format_decimal(metashift_windows.loc[90, 'median_log_effect'], 5)} "
+            "for 45, 60, and 90 days. "
+            f"{int(unavailable_windows.loc[45, 'event_count'])} 45-day and "
+            f"{int(unavailable_windows.loc[90, 'event_count'])} 90-day events "
+            "are unavailable"
+        ),
+        "reporting_scale": (
+            "At the 60-day primary window, log-effect and raw-unit effect signs "
+            "agree for "
+            f"{format_decimal(100 * reporting_scale.loc['metashift_v1_fixed', 'log_raw_direction_agreement'], 1)}% "
+            "of MetaShift events, "
+            f"{format_decimal(100 * reporting_scale.loc['standard_synthetic_control', 'log_raw_direction_agreement'], 1)}% "
+            "of standard synthetic-control events, and "
+            f"{format_decimal(100 * reporting_scale.loc['nearest_neighbor_did', 'log_raw_direction_agreement'], 1)}% "
+            "of nearest-neighbor events. Absolute log effects also have Spearman "
+            "correlations of "
+            f"{format_decimal(reporting_scale.loc['metashift_v1_fixed', 'spearman_abs_log_vs_raw'], 3)}, "
+            f"{format_decimal(reporting_scale.loc['standard_synthetic_control', 'spearman_abs_log_vs_raw'], 3)}, "
+            f"and {format_decimal(reporting_scale.loc['nearest_neighbor_did', 'spearman_abs_log_vs_raw'], 3)} "
+            "with absolute raw effects"
+        ),
+        "tier_sensitivity": (
+            "supported-candidate counts are "
+            f"{int(tier_sensitivity.loc['strict', 'supported_candidate_discontinuity'])}, "
+            f"{int(tier_sensitivity.loc['primary', 'supported_candidate_discontinuity'])}, "
+            f"and {int(tier_sensitivity.loc['lenient', 'supported_candidate_discontinuity'])}. "
+            "The corresponding not-supported counts are "
+            f"{int(tier_sensitivity.loc['strict', 'not_supported_by_available_evidence'])}, "
+            f"{int(tier_sensitivity.loc['primary', 'not_supported_by_available_evidence'])}, "
+            f"and {int(tier_sensitivity.loc['lenient', 'not_supported_by_available_evidence'])}; "
+            "all three settings retain "
+            f"{int(tier_sensitivity.loc['primary', 'inconclusive_insufficient_evidence'])} "
+            "inconclusive events."
+        ),
+        "conditional_coverage": (
+            "conditional block-bootstrap intervals cover "
+            f"{format_decimal(100 * conditional_coverage['empirical_coverage'].min(), 3)}%--"
+            f"{format_decimal(100 * conditional_coverage['empirical_coverage'].max(), 3)}% "
+            "of known truths across methods, despite "
+            f"{int(conditional_coverage['event_instances'].iloc[0]):,} effect "
+            "instances per method."
+        ),
+        "conformal_coverage": (
+            "Nominal-90% split-conformal intervals cover "
+            f"{format_decimal(100 * conformal_coverage['empirical_coverage'].min(), 4)}%--"
+            f"{format_decimal(100 * conformal_coverage['empirical_coverage'].max(), 4)}%."
         ),
     }
     for method, row in aggregate.iterrows():
@@ -291,7 +428,10 @@ def collect_expectations() -> dict[str, str]:
 
 
 def main() -> None:
-    manuscript = PAPER_PATH.read_text(encoding="utf-8")
+    args = parse_args()
+    paper_path = resolve_from_root(args.manuscript)
+    output_path = resolve_from_root(args.output)
+    manuscript = paper_path.read_text(encoding="utf-8")
     normalized_manuscript = re.sub(r"\s+", " ", manuscript)
     expectations = collect_expectations()
     checks = []
@@ -323,12 +463,12 @@ def main() -> None:
         "git_commit": subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, encoding="utf-8"
         ).strip(),
-        "manuscript": str(PAPER_PATH.relative_to(ROOT)),
+        "manuscript": str(paper_path.relative_to(ROOT)),
         "all_numbers_match": all(check["passed"] for check in checks),
         "checks": checks,
     }
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH.write_text(json.dumps(output, indent=2), encoding="utf-8")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(output, indent=2), encoding="utf-8")
     failed = [check["name"] for check in checks if not check["passed"]]
     print(json.dumps(output, indent=2))
     if failed:

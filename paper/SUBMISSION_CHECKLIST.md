@@ -4,12 +4,14 @@
 
 ## Technical readiness (autonomous — complete)
 
-- [x] Release gate 26/26 pass
-- [x] Manuscript numbers machine-verified (56/56)
+- [x] Release gate 35/35 pass
+- [x] Public-document consistency machine-verified (12/12)
+- [x] Manuscript numbers machine-verified (57/57)
 - [x] Two-environment hash reproducibility confirmed
 - [x] 59 unit tests pass
 - [x] All v2 distinct-donor artifacts rebuilt
-- [x] Release tag `v0.3.0-distinct-donors` pushed
+- [x] Frozen release tag `v0.3.2-evidence-final` points to `57d678ecabebff724d898abe626c9ef80538775b`
+- [x] Evidence release published at https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final
 - [x] GitHub repo public at https://github.com/cb984-cmd/MetaShift
 - [x] Source code, configs, and documentation committed
 - [x] `.gitignore` excludes raw data, credentials, and generated artifacts

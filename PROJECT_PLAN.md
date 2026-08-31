@@ -1,9 +1,13 @@
 # MetaShift execution plan
 
 **Updated:** 2026-08-31
-**Research status:** Integrity remediation complete (I0/I1/I2). Release gate
-34/34 pass. Manuscript verified. v0.3.2-evidence-final tagged and released.
-Awaiting student completion of submission materials for 9/15 deadline.
+**Research status:** Integrity remediation complete (I0/I1/I2). The frozen
+evidence release is
+[`v0.3.2-evidence-final`](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final)
+at `57d678ecabebff724d898abe626c9ef80538775b`: release gate 35/35,
+document consistency 12/12, manuscript-number verification 57/57, and 34
+designated two-environment core-artifact hashes match. Formal competition-report
+drafting is in progress; taxonomy stratification remains human-blocked.
 
 ## Evidence rule
 
@@ -17,7 +21,10 @@ replacement or measurement bias.
 
 - [x] Build 2019--2025 AQS 88101 canonical daily dataset and provenance manifest.
 - [x] Extract 563 eligible persistent Method Code transitions.
-- [x] Establish 271 events with at least three eligible geographic donors.
+- [x] **Historical baseline (superseded):** An earlier POC-level inventory
+  reported 271 events with at least three geographic donors. It was invalidated
+  because multiple POCs at one physical site could be counted as distinct
+  donors; it is not current scientific evidence.
 - [x] Identify and audit 11 same-site alternate-POC candidates.
 - [x] Implement pre-anchor-only reliability-constrained counterfactual weights.
 - [x] Implement single-station and cross-site baseline interfaces.
@@ -58,17 +65,19 @@ replacement or measurement bias.
   benchmark has six perturbation families with 400 independent evaluation
   samples each, fixed seeds, threshold calibration separation, F1/AUPRC, effect
   error, coverage, and event-cluster bootstrap intervals.
-- [x] **B2 — Freeze benchmark release configuration.** The corrected manifest
-  hash is `4e0f66af...1b1ca01b`; default and locked-environment reconstructions
-  matched every one of 34 core result hashes.
+- [x] **B2 — Freeze benchmark release configuration.** The distinct-physical-
+  donor case-manifest hash is
+  `065b1b65c231c5298fb4969a7b5669f3ae8850b9228d50afee7d98422575e099`;
+  default and locked-environment reconstructions matched all 34 designated core
+  result hashes.
 - [x] **B3 — Audit all 563 real metadata anchors.** Report eligibility,
   pre-fit, effects, abstentions, and failure reasons without treating anchors
   as confirmed bias labels.
-- [x] **B4 — Quantify real-event uncertainty and donor dependence.** *(v0.2
-  counts superseded; see I0–I2 for v0.3 rebuild.)* All 228 complete cross-site
+- [x] **B4 — Quantify real-event uncertainty and donor dependence.** *(Superseded
+  v0.2 counts; see I0–I2 for v0.3 rebuild.)* All 228 complete cross-site
   events have conditional intervals and leave-one-donor-out sensitivity.
-- [x] **B5 — Synthesize observational evidence tiers.** *(v0.2 counts
-  superseded; see I0–I2 for v0.3 rebuild.)* All 563 anchors are transparently
+- [x] **B5 — Synthesize observational evidence tiers.** *(Superseded v0.2
+  counts; see I0–I2 for v0.3 rebuild.)* All 563 anchors are transparently
   categorized as supported candidate (34), not supported (122), or inconclusive
   (407) using fixed quality, selection-aware nested interval, 50--100 date
   placebo/FDR, and donor-sensitivity diagnostics; no tier is a
@@ -100,15 +109,16 @@ replacement or measurement bias.
 - [x] Reproducible benchmark tables and six figures generated only from saved
   CSVs.
 - [x] Frozen configuration, source manifests, run manifest, test-access log,
-  two-environment hash comparison, and machine-readable
-  `results/release_gate.json`. The prior v0.1.0 release applies to the
-  superseded split; the corrected evidence is v0.2.0.
+  two-environment hash comparison, tracked
+  `configs/current_evidence_summary_v2.json`, and machine-readable
+  `results/release_gate.json`. The current evidence is v0.3.2; v0.1 and v0.2
+  releases apply only to superseded historical splits.
 - [x] Evidence-backed English research-report draft and claim-to-artifact map,
   with identity, contribution, and AI-disclosure verification placeholders.
 
 ## Final code-stage result
 
-## Post-review remediation
+## Historical remediation record and completed v0.3 rebuild
 
 - [x] Detect and retire the prior synthetic split's target/selected-donor
   overlap across calibration and evaluation.
@@ -124,30 +134,30 @@ replacement or measurement bias.
   retained two API failures as unavailable.
 - [x] Centralize synthetic random seeds and verify all 7,300 shared Standard
   SC rows match exactly between the primary benchmark and ablation experiment.
-- [x] Add conditional 1,000-repetition moving-block intervals *(v0.2: 261
-  events; v0.3 rebuild: 228 events with distinct physical donors).*
-- [x] Add leave-one-donor-out refits: 260 events completed every removal; one
-  unavailable removal is retained with its reason.
+- [x] Add conditional 1,000-repetition moving-block intervals. The earlier
+  v0.2 261-event result is superseded; the distinct-physical-donor v0.3.2
+  rebuild retains 228 complete events.
+- [x] Add leave-one-donor-out refits: 227 v0.3.2 events complete all donor
+  removals, 202 retain effect direction under every removal, and one partial
+  result is retained with its machine-readable reason.
 - [x] Revise the protocol to remove an unsupported labeled real
   exceptional-event claim while retaining synthetic regional, time, and donor
   negative controls.
 - [x] Add `requirements-lock.txt` and public GitHub Actions unit-test CI.
 - [x] Rebuild under the corrected fixed configuration in default and lock-file
   environments; 34 core-result hashes match exactly.
-- [x] Publish a new safe, versioned evidence bundle after a final sensitive-data
-  scan:
-  [v0.2.0-paper-evidence](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.2.0-paper-evidence)
-  points to the verified evidence commit
-  [`a738f03`](https://github.com/cb984-cmd/MetaShift/commit/a738f039915abadfce37c274f210578e9319310e).
-  The prior
-  [v0.1.0-benchmark-evidence](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.1.0-benchmark-evidence)
-  release documents the superseded split and is not the paper-evidence release.
-- [x] Attach a complete public-safe process archive to v0.2.0: 269 safe
-  generated outputs, an exact source snapshot, and Git history. Its manifest
-  records every file hash and explicitly excludes raw EPA archives, raw AQS API
-  responses, credentials, and virtual environments.
+- [x] Publish a safe, versioned evidence bundle after a sensitive-data scan:
+  [v0.3.2-evidence-final](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final)
+  points to the frozen evidence commit
+  [`57d678e`](https://github.com/cb984-cmd/MetaShift/commit/57d678ecabebff724d898abe626c9ef80538775b).
+  v0.1 and v0.2 releases are retained as immutable, superseded history and are
+  not the current paper-evidence release.
+- [x] Attach complete and compact public-safe v0.3.2 evidence archives with
+  per-file SHA-256 manifests, source snapshot, and Git history. They explicitly
+  exclude raw EPA archives, raw AQS API responses, credentials, and virtual
+  environments.
 
-**Baseline code and research stage:** superseded pending integrity remediation.
+**Pre-remediation baseline:** superseded after completed integrity remediation.
 The v0.2.0 control inventory can count multiple POCs from one physical donor
 site as different geographic donors. Therefore its cross-site benchmark,
 observational audit, evidence tiers, and derived interval/coverage results
@@ -170,18 +180,19 @@ route remains closed; it cannot be reopened using this defect.
   (34 supported, 122 not-supported, 407 inconclusive), tier sensitivity,
   case studies, figures (16), and all downstream scripts migrated to v2 paths.
   Committed 495c3c9.
-- [x] **I2 — Revalidate and release.** Manuscript updated to v2 numbers (all
-  56 verifier checks pass). Release gate: **34/34 pass** including
-  two-environment reproduction, document consistency, and expanded integrity
-  checks. All evidence-tier, auditability, and same-site analyses rebuilt
-  with v2 distinct-donor data. v0.3.2-evidence-final released.
+- [x] **I2 — Revalidate and release.** Manuscript updated to v2 numbers (57
+  manuscript-number checks pass). Release gate: **35/35 pass**, including
+  two-environment reproduction, document consistency (12/12), and expanded
+  integrity checks. All evidence-tier, auditability, and same-site analyses
+  were rebuilt with v2 distinct-donor data. v0.3.2-evidence-final released.
 
 ## Paper-strengthening extension
 
 The v0.2.0 release is retained as an immutable but superseded archival
-baseline. New analyses are governed by `configs/paper_extension_protocol_v1.json`;
-they cannot select or tune against the already viewed 80-site
-stable-synthetic evaluation set.
+baseline. Current paper work is governed by
+`configs/paper_extension_protocol_v1.json` and
+`configs/current_evidence_summary_v2.json`; it cannot select or tune against
+the already viewed 80-site stable-synthetic evaluation set.
 
 - [x] **E0 — Freeze extension protocol.** Define taxonomy, observational
   stratification, uncertainty-calibration, representativeness, and new-model
@@ -189,45 +200,46 @@ stable-synthetic evaluation set.
 - [!] **E1 — Freeze and review Method Code taxonomy.** A 34-pair,
   metadata-only table covers all 563 anchors and is validated without outcome
   data. Student/teacher row-level review is required before stratification.
-- [!] **E2 — Calibrate synthetic uncertainty intervals.** The frozen 66/80
-  run completed 23,360 known-effect instances with 1,000 repetitions each.
-  Conditional nominal-95% intervals undercovered on evaluation (62.47%--67.56%
-  by method), while target-cluster nominal-90% split-conformal intervals
-  overcovered (98.22%--99.56%). No post-evaluation tuning is permitted; fixed
-  intervals are conditional diagnostics, not coverage-calibrated confidence
-  intervals. This result is superseded pending the physical-donor rebuild.
-- [ ] **E2b — Test selection-aware interval coverage.** The current synthetic
-  coverage result applies to fixed-weight conditional intervals. Any
-  selection-aware coverage study requires a separately frozen, computationally
-  feasible protocol and may not tune against the viewed 80-site split.
-- [!] **E3 — Analyze auditability and selection boundaries.** *(v0.2 counts
-  superseded; see I0–I2 for v0.3 rebuild.)* v2 retains all 563 anchors; 228
-  complete comparisons and 335 unavailable comparisons with distinct physical
-  donors. These are applicability boundaries, not inferred measurement effects.
+- [x] **E2 — Calibrate fixed-weight synthetic uncertainty intervals.** The
+  frozen v2 66/80 evaluation has 3,200 effect instances per method.
+  Conditional nominal-95% intervals under-cover at 63.875%--67.281% across the
+  four methods, while nominal-90% split-conformal intervals over-cover at
+  98.8125%--99.5625%. No post-evaluation tuning is permitted; fixed intervals
+  are conditional diagnostics, not coverage-calibrated confidence intervals.
+- [x] **E2b — Freeze selection-aware coverage protocol and record feasibility.**
+  `configs/selection_aware_coverage_protocol_v2.json` was frozen before
+  outcomes and records the full donor-reselection synthetic coverage study as
+  infeasible within the deadline. Therefore real-event selection-aware
+  intervals are not described as coverage-calibrated.
+- [x] **E3 — Analyze auditability and selection boundaries.** v2 retains all
+  563 anchors: 228 complete comparisons, 325 distinct-donor insufficiencies,
+  and 10 estimator-input failures. These are applicability boundaries, not
+  inferred measurement effects.
 - [ ] **E4 — Run taxonomy-stratified descriptive analysis.** Blocked until E1
   receives independent human review.
-- [!] **E5 — Re-run evidence-tier sensitivity with varying q thresholds.**
-  *(v0.2 counts superseded; see I0–I2.)* v2 preserves all 563 primary labels
-  exactly and yields 0/34/53 supported candidates under strict/primary/lenient
-  thresholds. Results remain exploratory evidence labels.
-- [!] **E6 — Strengthen same-site overlap and cross-family document evidence.**
+- [x] **E5 — Re-run evidence-tier sensitivity with varying q thresholds.**
+  v2 retains all 563 primary labels and yields 0/34/55 supported candidates
+  under strict/primary/lenient thresholds. Results remain exploratory evidence
+  labels.
+- [x] **E6 — Strengthen same-site overlap and cross-family document evidence.**
   The same-site portion completes 11 qualified daily and 9 qualified hourly
   alternate-POC comparisons: daily/hourly direction agreement is 8/9 and each
   cross-site method agrees in 7/8 comparable cases. These are consistency
-  context only; its cross-site comparisons are superseded pending rebuild.
+  context only, not physical-instrument ground truth.
   E6b freezes an effect-blind, 30-anchor cross-family
   public-document review before searching.
-- [ ] **E7 — Write the formal competition report.** Requires E1--E6 evidence
-  and a new release; any new learned method additionally requires its own
-  blind, input-disjoint test manifest.
+- [!] **E7 — Write the formal competition report.** In progress, using only
+  frozen v0.3.2 non-taxonomy evidence. Any new learned method additionally
+  requires its own blind, input-disjoint test manifest.
 
 ## Human submission handoff
 
 The superseded baseline evidence release remains pinned to
 [`a738f03`](https://github.com/cb984-cmd/MetaShift/commit/a738f039915abadfce37c274f210578e9319310e);
 no new model tuning or selective-decision development may reuse its viewed
-80-site evaluation inputs. Its numerical cross-site results await the I0--I2
-remediation above.
+80-site evaluation inputs. Its numerical cross-site results were superseded by
+the completed distinct-physical-donor remediation and cannot support current
+claims.
 
 - [ ] Students and supervising teacher independently reproduce and explain the
   submitted methods, code, data rules, results, and limitations.

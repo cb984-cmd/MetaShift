@@ -1,9 +1,11 @@
 # MetaShift-Bench: A Metadata-Anchored Counterfactual Benchmark for Auditing Measurement-Method Transitions in Air-Quality Networks
 
-> **Working draft (v0.3.0 distinct-donor rebuild).** All cross-site results
-> verified against v2 artifacts (56/56 manuscript checks pass, 26/26 release
-> gate checks pass). Replace all bracketed identity fields, verify every
-> citation, and complete the AI-use and contribution records before submission.
+> **Working draft source (v0.3.2 frozen evidence).** The scientific evidence is
+> [`v0.3.2-evidence-final`](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final)
+> at `57d678ecabebff724d898abe626c9ef80538775b`, with 35/35 release-gate,
+> 12/12 document-consistency, and 57/57 manuscript-number checks passing.
+> Replace all bracketed identity fields, verify every citation, and complete
+> human AI-use and contribution records before submission.
 
 **Student author(s):** [Name(s)]  
 **School, province/state, country:** [Fill in]  
@@ -348,17 +350,18 @@ Table 3. Full 88101 audit status.
 | Total | 563 |
 
 For the 228 complete comparisons, the median signed 60-day log residual effect
-is -0.07093 for fixed-prior MetaShift, -0.06418 for standard synthetic
-control, and -0.06894 for nearest-neighbor DiD. These are observational
+is -0.08704 for fixed-prior MetaShift, -0.07078 for standard synthetic
+control, and -0.07490 for nearest-neighbor DiD. These are observational
 estimates, not measured instrument-bias labels.
 
 Fixed-weight conditional block-bootstrap intervals exclude zero for 159/228
 MetaShift events, 145/228 standard synthetic-control events, and 134/228
-nearest-neighbor events. Selection-aware nested intervals complete all 227
-real comparison events with 1,000 repetitions each. Selection-aware intervals
-exclude zero for 153/227 MetaShift events. The nested interval is modestly
-wider on average than the fixed-weight interval because it reselects donors
-and refits weights inside each bootstrap repetition.
+nearest-neighbor events. Selection-aware nested intervals are available for
+227/228 complete real comparisons; each requested 1,000 repetitions and
+retained at least 521 valid repetitions. Selection-aware intervals exclude
+zero for 153/227 MetaShift events. The nested interval is modestly wider on
+average than the fixed-weight interval because it reselects donors and refits
+weights inside each bootstrap repetition.
 
 Leave-one-donor-out refitting completes every removal for 227 events; 202/227
 complete leave-one-donor-out events retain direction under every donor removal.
@@ -372,26 +375,26 @@ not confirmed method-caused biases.
 ### 6.3 Placebos, POC/QA, and parameter sensitivity
 
 Of 228 complete events, 157 complete events have at least 50 unique stable
-post-transition time placebos. One hundred twenty of these have 100 unique
-placebos. Seventy events have raw within-event placebo probability at most
+post-transition time placebos. 128 of these have 100 unique
+placebos. 71 events have raw within-event placebo probability at most
 0.10; 40 events pass exploratory Benjamini-Hochberg q<=0.10 screening. The
 200-resampling global comparison gives an upper-tail probability of 0.00498
 for the actual-anchor mean score against sampled stable post-transition dates.
-The donor-as-treated analysis contains 1,050 records, with median standardized
-score 0.46802.
+The donor-as-treated analysis contains 866 records, with median standardized
+score 0.40831.
 
 Under strict (raw p<=0.05, donor-direction stability at least 95%), primary
 (raw p<=0.10, stability at least 90%), and lenient (raw p<=0.20, stability at
-least 80%) settings, the evidence-tier counts remain 34 supported, 122
-not-supported, and 407 inconclusive because the shared BH q<=0.10 condition is
-the limiting rule. These q values are exploratory screening quantities, not
-causal p-values.
+least 80%) settings, supported-candidate counts are 0, 34, and 55. The
+corresponding not-supported counts are 156, 122, and 101; all three settings
+retain 407 inconclusive events. These q values are exploratory screening
+quantities, not causal p-values.
 
 Eleven same-site alternate-POC candidates have paired pre/post data. However,
 the retrieved QA collocation responses yield no case that simultaneously has
 the target POC in a QA pair and at least three matched pre- and post-transition
 records. A targeted review of 20 preselected official documentation cases also
-found 0 dated, site-specific confirmations; all 20 only corroborate the
+found 0/20 dated, site-specific confirmations; all 20 only corroborate the
 reported AQS metadata context or general method context. QA and document
 evidence are thus explicitly limited supplements, not external causal truth.
 
@@ -412,15 +415,15 @@ For the real-event effect audit, changing the symmetric pre/post window from
 the target's intended pre/post segments and every fixed donor. The 45-day
 window is complete for 224/228 events with 93.3% direction agreement to 60
 days; the 90-day window is complete for 196/228 events with 93.9% agreement.
-The corresponding fixed-prior MetaShift median log effects are -0.07552,
--0.07093, and -0.06908 for 45, 60, and 90 days. Three 45-day and 36 90-day
+The corresponding fixed-prior MetaShift median log effects are -0.08769,
+-0.08704, and -0.08064 for 45, 60, and 90 days. 4 45-day and 32 90-day
 events are unavailable because the full window is not method-stable or does
 not meet its specified observation requirement.
 
 At the 60-day primary window, log-effect and raw-unit effect signs agree for
-94.3% of MetaShift events, 92.3% of standard synthetic-control events, and
-91.2% of nearest-neighbor events. Absolute log effects also have Spearman
-correlations of 0.807, 0.833, and 0.848 with absolute raw effects,
+95.2% of MetaShift events, 92.5% of standard synthetic-control events, and
+92.1% of nearest-neighbor events. Absolute log effects also have Spearman
+correlations of 0.829, 0.868, and 0.843 with absolute raw effects,
 respectively. This is reporting-scale concordance, not equivalence of causal
 estimands.
 
@@ -455,6 +458,14 @@ geographic donors.
 | Donor radius 200 km | 563 | 426 |
 | Correlation rho>=0.50 | 563 | 241 |
 | Correlation rho>=0.70 | 563 | 230 |
+
+On the 80-site held-out synthetic evaluation, the nominal-95% fixed-weight
+conditional block-bootstrap intervals cover 63.875%--67.281% of known truths
+across methods, despite 3,200 effect instances per method. Nominal-90%
+split-conformal intervals cover 98.8125%--99.5625%. Thus neither interval
+construction may be described as empirically calibrated for real anchors:
+the first under-covers and the second is highly conservative under this
+synthetic design.
 
 ## 7. Discussion
 
@@ -493,11 +504,13 @@ additional constraints do not yet justify a general method claim.
 9. The external-document review found 0/20 dated, site-specific confirmations for
    its 20 selected records. Failure to locate a public notice is not evidence
    that no physical change occurred.
-10. The conditional block-bootstrap intervals show 64--67% empirical coverage at
-    95% nominal on synthetic evaluation data. The selection-aware nested
-    bootstrap was validated on 227/228 real events but its synthetic coverage
-    properties were not evaluated within the project timeline; its real-event
-    intervals should be treated as conservative diagnostic bounds rather than
+10. Nominal-95% conditional block-bootstrap intervals show
+    63.875%--67.281% empirical coverage on synthetic evaluation data, while
+    nominal-90% split-conformal intervals show 98.8125%--99.5625%. The frozen
+    full donor-reselection selection-aware coverage protocol was infeasible
+    within the project deadline. Although selection-aware nested intervals were
+    computed for 227/228 real comparisons, their synthetic coverage properties
+    were not evaluated; they are conditional diagnostic intervals, not
     calibrated confidence intervals.
 
 ## 9. Conclusion

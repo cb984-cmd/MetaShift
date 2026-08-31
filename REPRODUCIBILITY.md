@@ -7,11 +7,21 @@ benchmark from public EPA AQS AirData files. Raw downloads, AQS API responses,
 and generated results are excluded from Git because they are large, may be
 updated by EPA, or require local credentials.
 
-The frozen source configuration is
+The frozen scientific-evidence source configuration is
 [`configs/benchmark_release_v2.json`](configs/benchmark_release_v2.json).
 It defines the stable synthetic case split, effect-strength grid, estimator
 settings, and bootstrap seed. It also records the stable-case manifest hash
 expected for the current AirData snapshot.
+
+The CI-safe public evidence contract is
+[`configs/current_evidence_summary_v2.json`](configs/current_evidence_summary_v2.json).
+It records the frozen tag and commit, headline values, provenance boundary, and
+SHA-256 hashes for each local artifact source. Rebuild or verify it locally
+after a full evidence reconstruction:
+
+```powershell
+python scripts\build_current_evidence_summary.py --check
+```
 
 ## Environment
 
@@ -82,9 +92,11 @@ algorithmic superiority over standard synthetic control.
 
 ## Public evidence bundle
 
-After the full reconstruction, create a safe evidence bundle for review:
+After the full reconstruction, verify the frozen summary and create a safe
+evidence bundle for review:
 
 ```powershell
+python scripts\build_current_evidence_summary.py --check
 python scripts\export_evidence_bundle.py
 ```
 
@@ -109,9 +121,12 @@ credentials, and virtual environments. Legacy development artifacts are
 included only as historical diagnostics; final claims remain limited to the
 passing release-gate evidence.
 
-The verified full archive and its SHA-256 manifest are attached to the public
-[v0.3.0-distinct-donors release](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.0-distinct-donors).
-The earlier v0.2.0 release is superseded and should not be cited for current results.
+The verified complete and compact archives, their SHA-256 manifests, the
+35/35 release gate, the 12/12 document-consistency report, and the 57/57
+manuscript-number report are attached to the public
+[v0.3.2-evidence-final release](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final)
+at `57d678ecabebff724d898abe626c9ef80538775b`. The v0.1, v0.2, v0.3.0, and
+v0.3.1 releases are superseded and must not be cited for current results.
 
 ## Cross-environment consistency
 

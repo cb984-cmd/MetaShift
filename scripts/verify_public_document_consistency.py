@@ -9,6 +9,7 @@ Two-layer design:
 
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 import re
@@ -21,16 +22,34 @@ ROOT = Path(__file__).resolve().parents[1]
 RESULTS_PATH = ROOT / "results" / "document_consistency.json"
 SUMMARY_PATH = ROOT / "configs" / "current_evidence_summary_v2.json"
 
-V2_PATH_FILES = [
+PUBLIC_DOCUMENTS = [
     ROOT / "README.md",
+    ROOT / "PROJECT_PLAN.md",
+    ROOT / "PAPER_OPTIMIZATION_PLAN.md",
     ROOT / "REPRODUCIBILITY.md",
+    ROOT / "MODEL_DECISION.md",
+    ROOT / "docs" / "study_protocol.md",
     ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
     ROOT / "paper" / "CLAIM_EVIDENCE_MAP.csv",
     ROOT / "paper" / "SUBMISSION_CHECKLIST.md",
 ]
 
-STALE_COUNT_FILES = [
+V2_PATH_FILES = PUBLIC_DOCUMENTS
+
+STALE_COUNT_FILES = PUBLIC_DOCUMENTS
+
+CURRENT_RELEASE_DOCUMENTS = [
     ROOT / "README.md",
+    ROOT / "PROJECT_PLAN.md",
+    ROOT / "PAPER_OPTIMIZATION_PLAN.md",
+    ROOT / "REPRODUCIBILITY.md",
+    ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
+    ROOT / "paper" / "SUBMISSION_CHECKLIST.md",
+]
+
+EXTERNAL_REVIEW_DOCUMENTS = [
+    ROOT / "README.md",
+    ROOT / "PAPER_OPTIMIZATION_PLAN.md",
     ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
     ROOT / "paper" / "CLAIM_EVIDENCE_MAP.csv",
 ]
@@ -60,10 +79,27 @@ STALE_LANGUAGE_FILES = {
     ROOT / "PROJECT_PLAN.md": [
         "ready for evidence release tag",
         "awaiting evidence release",
+        "awaiting donor rebuild",
+        "waiting for donor rebuild",
+    ],
+    ROOT / "PAPER_OPTIMIZATION_PLAN.md": [
+        "ready for evidence release tag",
+        "awaiting evidence release",
+        "awaiting rebuild",
+    ],
+    ROOT / "docs" / "study_protocol.md": [
+        "ready for evidence release tag",
+        "awaiting evidence release",
+        "awaiting rebuild",
     ],
 }
 
-ACTIVE_SECTION_BLOCKERS = ("superseded", "historical", "archived", "v0.1", "v0.2")
+HISTORICAL_SECTION_MARKERS = (
+    "superseded",
+    "historical",
+    "archived",
+    "pre-remediation",
+)
 V2_PATH_TOKENS = [
     "stable_full_v1",
     "benchmark_release_v1",
@@ -72,7 +108,18 @@ V2_PATH_TOKENS = [
     "real_event_coverage_summary.json",
     "evidence_tier_sensitivity_summary.csv",
 ]
-STALE_COUNT_PATTERNS = [r"\b261\b", r"\b292\b", r"\b113\b", r"\b414\b"]
+STALE_COUNT_PATTERNS = [
+    r"\b261\s*[- ]event",
+    r"\b271\s+events with at least three",
+    r"\b1,050\s+records",
+    r"\b0\.46802\b",
+    r"\b26/26\b",
+    r"\b34/34\b",
+    r"\b56/56\b",
+    r"\b0/34/53\b",
+    r"\b62\.47%--67\.56%\b",
+    r"\b98\.22%--99\.56%\b",
+]
 SENSITIVE_GIT_PATTERNS = [
     "*.env",
     "*credentials*",
@@ -84,6 +131,23 @@ SENSITIVE_GIT_PATTERNS = [
     "*.pickle",
     "*venv*",
 ]
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Verify tracked MetaShift public-document consistency."
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=RESULTS_PATH,
+        help="Report path, relative to the repository root by default.",
+    )
+    return parser.parse_args()
+
+
+def resolve_from_root(path: Path) -> Path:
+    return path if path.is_absolute() else ROOT / path
 
 
 def git_commit() -> str:
@@ -109,19 +173,23 @@ def load_summary() -> dict:
 
 def in_historical_context(lines: list[str], index: int) -> bool:
     line = lines[index].lower()
-    if any(token in line for token in ACTIVE_SECTION_BLOCKERS):
+    if any(token in line for token in HISTORICAL_SECTION_MARKERS):
         return True
     start = max(0, index - 6)
-    for cursor in range(start, index):
+    for cursor in range(index - 1, start - 1, -1):
         previous = lines[cursor].strip().lower()
         if not previous:
             continue
-        if "historical" in previous or "superseded" in previous:
+        if any(token in previous for token in HISTORICAL_SECTION_MARKERS):
             return True
         if previous.startswith("#") and not (
-            "historical" in previous or "superseded" in previous
+            any(token in previous for token in HISTORICAL_SECTION_MARKERS)
         ):
             break
+    for cursor in range(index + 1, min(len(lines), index + 3)):
+        following = lines[cursor].strip().lower()
+        if any(token in following for token in HISTORICAL_SECTION_MARKERS):
+            return True
     return False
 
 
@@ -184,10 +252,16 @@ def check_current_numbers_from_summary() -> dict[str, object]:
     manuscript = (ROOT / "paper" / "MANUSCRIPT_DRAFT.md").read_text(encoding="utf-8")
     normalized = re.sub(r"\s+", " ", manuscript)
     required = {
+        "canonical_records": summary["data_gate"]["canonical_records"],
+        "monitor_series": summary["data_gate"]["monitor_series"],
         "eligible_anchors": summary["data_gate"]["eligible_anchors"],
+        "anchors_1donor": summary["data_gate"][
+            "anchors_with_one_distinct_physical_donor"
+        ],
         "anchors_3donors": summary["data_gate"]["anchors_with_three_distinct_physical_donors"],
         "complete": summary["real_event_audit"]["complete_comparisons"],
         "insufficient_donors": summary["real_event_audit"]["insufficient_geographic_donors"],
+        "input_failure": summary["real_event_audit"]["estimator_input_failure"],
         "supported": summary["evidence_tiers"]["supported_candidate_discontinuity"],
         "not_supported": summary["evidence_tiers"]["not_supported_by_available_evidence"],
         "inconclusive": summary["evidence_tiers"]["inconclusive_insufficient_evidence"],
@@ -211,20 +285,10 @@ def check_external_audit_consistency() -> dict[str, object]:
     reviewed = summary["external_document_review"]["reviewed_events"]
     confirmations = summary["external_document_review"]["site_specific_dated_confirmations"]
     expected_pattern = rf"{confirmations}/{reviewed}"  # e.g. "0/20"
-    files_to_check = [
-        ROOT / "README.md",
-        ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
-    ]
     violations: list[dict[str, object]] = []
-    for path in files_to_check:
+    for path in EXTERNAL_REVIEW_DOCUMENTS:
         text = path.read_text(encoding="utf-8")
-        # Check the file contains the correct ratio
         if expected_pattern not in text:
-            # Check if it has a wrong ratio like 0/30
-            wrong = re.findall(r"\b\d+/\d+\b", text)
-            doc_review_wrong = [w for w in wrong if w.endswith(f"/{reviewed}") is False
-                                and "document" in text[max(0, text.find(w)-100):text.find(w)+100].lower()
-                                and "/" in w]
             violations.append({
                 "file": str(path.relative_to(ROOT)),
                 "expected": expected_pattern,
@@ -242,40 +306,45 @@ def check_release_gate_count() -> dict[str, object]:
     """Public docs must reference the correct release gate check count."""
     summary = load_summary()
     target = summary["release_gate_target_checks"]
-    readme = (ROOT / "README.md").read_text(encoding="utf-8")
     violations: list[dict[str, object]] = []
-    # Check README mentions the correct gate count
     gate_pattern = rf"\b{target}/{target}\b"
-    if not re.search(gate_pattern, readme):
-        violations.append({
-            "file": "README.md",
-            "expected": f"{target}/{target}",
-            "issue": "README does not show current release gate check count",
-        })
+    for path in CURRENT_RELEASE_DOCUMENTS:
+        if not re.search(gate_pattern, path.read_text(encoding="utf-8")):
+            violations.append({
+                "file": str(path.relative_to(ROOT)),
+                "expected": f"{target}/{target}",
+                "issue": "Document does not show current release-gate check count",
+            })
     return make_check(
         "release_gate_count_consistency",
         not violations,
-        f"README must reference {target}/{target} release gate.",
+        f"All current release documents must reference {target}/{target}.",
         violations,
     )
 
 
 def check_evidence_version_consistency() -> dict[str, object]:
-    """Current evidence version must be consistent in README."""
+    """Current tag and release URL must be consistent across public entry points."""
     summary = load_summary()
     version = summary["evidence_version"]
-    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    frozen = summary["frozen_evidence"]
+    tag = frozen["tag"]
+    release_url = frozen["release_url"]
     violations: list[dict[str, object]] = []
-    if version not in readme:
-        violations.append({
-            "file": "README.md",
-            "expected_version": version,
-            "issue": f"Evidence version {version} not found in README",
-        })
+    for path in CURRENT_RELEASE_DOCUMENTS:
+        text = path.read_text(encoding="utf-8")
+        if tag not in text or release_url not in text:
+            violations.append({
+                "file": str(path.relative_to(ROOT)),
+                "expected_version": version,
+                "expected_tag": tag,
+                "expected_release_url": release_url,
+                "issue": "Current frozen evidence tag or release URL is missing",
+            })
     return make_check(
         "evidence_version_consistency",
         not violations,
-        f"README must reference evidence version {version}.",
+        f"Current release documents must reference {tag}.",
         violations,
     )
 
@@ -285,13 +354,38 @@ def check_interval_coverage_status() -> dict[str, object]:
     summary = load_summary()
     fixed_status = summary["interval_coverage"]["fixed_weight_status"]
     selection_status = summary["interval_coverage"]["selection_aware_status"]
-    manuscript = (ROOT / "paper" / "MANUSCRIPT_DRAFT.md").read_text(encoding="utf-8").lower()
+    required_ranges = [
+        f"{100 * summary['interval_coverage']['conditional_bootstrap_95_eval_coverage_range'][0]:.3f}%",
+        f"{100 * summary['interval_coverage']['conditional_bootstrap_95_eval_coverage_range'][1]:.3f}%",
+        f"{100 * summary['interval_coverage']['split_conformal_90_eval_coverage_range'][0]:.4f}%",
+        f"{100 * summary['interval_coverage']['split_conformal_90_eval_coverage_range'][1]:.4f}%",
+    ]
+    documents = [
+        ROOT / "PROJECT_PLAN.md",
+        ROOT / "PAPER_OPTIMIZATION_PLAN.md",
+        ROOT / "docs" / "study_protocol.md",
+        ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
+    ]
     violations: list[dict[str, object]] = []
-    if fixed_status == "complete" and "coverage" not in manuscript:
-        violations.append({"issue": "Manuscript does not discuss coverage"})
+    for path in documents:
+        text = path.read_text(encoding="utf-8")
+        if fixed_status == "complete" and not all(token in text for token in required_ranges):
+            violations.append(
+                {
+                    "file": str(path.relative_to(ROOT)),
+                    "issue": "Fixed-weight interval coverage values are missing or stale",
+                }
+            )
     if selection_status == "infeasible_within_deadline":
-        if "selection" not in manuscript and "donor-selection" not in manuscript:
-            violations.append({"issue": "Manuscript does not mention selection-aware limitation"})
+        for path in documents:
+            text = path.read_text(encoding="utf-8").lower()
+            if "selection-aware" not in text or "infeasible" not in text:
+                violations.append(
+                    {
+                        "file": str(path.relative_to(ROOT)),
+                        "issue": "Selection-aware coverage infeasibility is missing",
+                    }
+                )
     return make_check(
         "interval_coverage_documented",
         not violations,
@@ -332,20 +426,19 @@ def check_stale_status_language() -> dict[str, object]:
 
 def check_v02_not_presented_as_current() -> dict[str, object]:
     violations: list[dict[str, object]] = []
-    readme_lines = (ROOT / "README.md").read_text(encoding="utf-8").splitlines()
-    for line_number, line in enumerate(readme_lines, start=1):
-        if "v0.2" not in line.lower():
-            continue
-        lowered = line.lower()
-        if in_historical_context(readme_lines, line_number - 1):
-            continue
-        if any(token in lowered for token in ("current", "active", "latest")):
+    for path in PUBLIC_DOCUMENTS:
+        lines = path.read_text(encoding="utf-8").splitlines()
+        for line_number, line in enumerate(lines, start=1):
+            if not any(version in line.lower() for version in ("v0.2", "v0.3.0", "v0.3.1")):
+                continue
+            if in_historical_context(lines, line_number - 1):
+                continue
             violations.append(
                 {
-                    "file": "README.md",
+                    "file": str(path.relative_to(ROOT)),
                     "line": line_number,
                     "content": line.strip(),
-                    "issue": "v0.2 presented as current/active",
+                    "issue": "Superseded evidence version lacks historical marker",
                 }
             )
     reproducibility = (ROOT / "REPRODUCIBILITY.md").read_text(encoding="utf-8")
@@ -363,7 +456,7 @@ def check_v02_not_presented_as_current() -> dict[str, object]:
     return make_check(
         "v0_2_not_presented_as_current",
         not violations,
-        "README must not present v0.2 as current, and reproducibility guidance must point to v2 configs.",
+        "Superseded releases must be explicitly historical, and reproducibility guidance must point to v2 configs.",
         violations,
     )
 
@@ -407,10 +500,19 @@ def check_claim_evidence_map_v2() -> dict[str, object]:
     violations: list[dict[str, object]] = []
     if "stable_full_v1" in text:
         violations.append({"issue": "CLAIM_EVIDENCE_MAP contains stale v1 paths"})
+    if "configs/current_evidence_summary_v2.json" not in text:
+        violations.append({"issue": "CLAIM_EVIDENCE_MAP does not reference frozen v2 summary"})
+    with path.open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    if not rows or any(
+        not row.get("claim_id") or not row.get("evidence_artifact") or not row.get("status")
+        for row in rows
+    ):
+        violations.append({"issue": "CLAIM_EVIDENCE_MAP has an incomplete claim row"})
     return make_check(
         "claim_evidence_map_v2_paths",
         not violations,
-        "CLAIM_EVIDENCE_MAP.csv must not reference v1 result paths.",
+        "CLAIM_EVIDENCE_MAP.csv must use current sources and complete claim rows.",
         violations,
     )
 
@@ -466,9 +568,11 @@ def build_report() -> dict[str, object]:
 
 
 def main() -> None:
+    args = parse_args()
+    output_path = resolve_from_root(args.output)
     report = build_report()
-    RESULTS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    RESULTS_PATH.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(json.dumps(report, indent=2))
     raise SystemExit(0 if report["all_checks_passed"] else 1)
 

@@ -45,10 +45,23 @@ jobs:
           python -c "
           import json, pathlib
           s = json.loads(pathlib.Path('configs/current_evidence_summary_v2.json').read_text())
+          assert s['schema_version'] == 2
+          assert s['frozen_evidence']['tag'] == 'v0.3.2-evidence-final'
+          assert s['frozen_evidence']['commit'] == '57d678ecabebff724d898abe626c9ef80538775b'
+          assert s['frozen_evidence']['release_url'].endswith('/v0.3.2-evidence-final')
           assert s['data_gate']['eligible_anchors'] == 563
+          assert s['data_gate']['anchors_with_three_distinct_physical_donors'] == 238
           assert s['real_event_audit']['complete_comparisons'] == 228
           assert s['evidence_tiers']['supported_candidate_discontinuity'] == 34
+          assert s['external_document_review'] == {
+            'reviewed_events': 20,
+            'site_specific_dated_confirmations': 0,
+          }
+          assert s['interval_coverage']['fixed_weight_status'] == 'complete'
+          assert s['interval_coverage']['selection_aware_status'] == 'infeasible_within_deadline'
           assert s['release_gate_target_checks'] == 35
           assert s['algorithm_superiority_claim'] is False
+          assert len(s['artifact_sources']) >= 20
+          assert all(len(item['sha256']) == 64 for item in s['artifact_sources'])
           print('Evidence summary OK:', s['evidence_version'])
           "

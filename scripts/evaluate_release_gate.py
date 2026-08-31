@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import fnmatch
+import hashlib
 import json
 import subprocess
 from datetime import UTC, datetime
@@ -43,6 +44,14 @@ def csv_row_count(path: Path) -> int:
     if path.stat().st_size == 0:
         return 0
     return len(pd.read_csv(path))
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for block in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def main() -> None:
@@ -775,25 +784,76 @@ def main() -> None:
         )
     )
 
-    # Verify tracked evidence summary matches actual artifacts (Layer 2)
+    # Layer 2: verify both headline values and every immutable analysis-artifact
+    # hash listed in the CI-safe tracked summary. Result reports are deliberately
+    # excluded from this hash loop because this gate writes its own report.
     summary_path = Path("configs/current_evidence_summary_v2.json")
     if exists(summary_path) and exists(real_audit_path):
         summary = json.loads(summary_path.read_text(encoding="utf-8"))
         audit = pd.read_csv(real_audit_path)
+        data_gate_summary = json.loads(
+            (ARTIFACTS / "data_gate/summary.json").read_text(encoding="utf-8")
+        )
+        tier_summary = json.loads(
+            (ARTIFACTS / "real_transition_88101_evidence_tier_summary.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        case_manifest = json.loads(
+            (ARTIFACTS / "stable_synthetic_case_manifest.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        artifact_hash_violations = []
+        artifact_sources = [
+            item
+            for item in summary.get("artifact_sources", [])
+            if str(item.get("path", "")).startswith("artifacts/")
+        ]
+        for source in artifact_sources:
+            source_path = Path(str(source["path"]))
+            if not exists(source_path):
+                artifact_hash_violations.append(
+                    {"path": str(source_path), "issue": "missing"}
+                )
+            elif sha256(source_path) != source["sha256"]:
+                artifact_hash_violations.append(
+                    {"path": str(source_path), "issue": "sha256_mismatch"}
+                )
         summary_ok = (
-            summary["data_gate"]["eligible_anchors"] == 563
+            summary["frozen_evidence"]["commit"] == git_commit()
+            and summary["data_gate"]["canonical_records"]
+            == int(data_gate_summary["canonical_records"])
+            and summary["data_gate"]["monitor_series"]
+            == int(data_gate_summary["monitor_series"])
+            and summary["data_gate"]["eligible_anchors"]
+            == int(data_gate_summary["eligible_anchors"])
+            and summary["data_gate"]["anchors_with_three_distinct_physical_donors"]
+            == int(data_gate_summary["anchors_with_three_geographic_controls"])
             and summary["real_event_audit"]["complete_comparisons"]
             == int((audit["audit_status"] == "complete").sum())
             and summary["real_event_audit"]["insufficient_geographic_donors"]
             == int((audit["audit_status"] == "insufficient_geographic_donors").sum())
             and summary["real_event_audit"]["estimator_input_failure"]
             == int((audit["audit_status"] == "estimator_input_failure").sum())
+            and summary["evidence_tiers"]["supported_candidate_discontinuity"]
+            == int(tier_summary["counts"]["supported_candidate_discontinuity"])
+            and summary["evidence_tiers"]["not_supported_by_available_evidence"]
+            == int(tier_summary["counts"]["not_supported_by_available_evidence"])
+            and summary["evidence_tiers"]["inconclusive_insufficient_evidence"]
+            == int(tier_summary["counts"]["inconclusive_insufficient_evidence"])
+            and summary["case_manifest_sha256"]
+            == case_manifest["case_and_donor_sha256"]
+            and len(artifact_sources) >= 19
+            and not artifact_hash_violations
         )
         checks.append(
             check(
                 "tracked_summary_matches_artifacts",
                 summary_ok,
-                "configs/current_evidence_summary_v2.json must match actual generated artifacts.",
+                "Tracked summary values and "
+                f"{len(artifact_sources)} immutable artifact hashes must match; "
+                f"{len(artifact_hash_violations)} mismatches.",
             )
         )
     else:

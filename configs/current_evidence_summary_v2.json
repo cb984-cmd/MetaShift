@@ -1,16 +1,29 @@
 {
-  "generated_at_utc": "2026-08-31T20:33:15.165980+00:00",
-  "source_git_commit": "ea697bf2e87c68e81e0fa4ca0ba7bf546218e19c",
+  "schema_version": 2,
+  "generated_at_utc": "2026-08-31T21:28:28.057423+00:00",
   "evidence_version": "v0.3.2",
-  "supersedes": "v0.3.1",
-  "case_manifest_sha256": "065b1b65c231c5298fb4969a7b5669f3ae8850b9228d50afee7d98422575e099",
+  "release_gate_target_checks": 35,
+  "document_consistency_target_checks": 12,
+  "manuscript_number_target_checks": 57,
+  "frozen_evidence": {
+    "tag": "v0.3.2-evidence-final",
+    "commit": "57d678ecabebff724d898abe626c9ef80538775b",
+    "release_url": "https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final",
+    "supersedes": [
+      "v0.3.0-distinct-donors",
+      "v0.3.1-evidence-final"
+    ]
+  },
   "result_label": "stable_full_v2",
+  "case_manifest_sha256": "065b1b65c231c5298fb4969a7b5669f3ae8850b9228d50afee7d98422575e099",
   "geographic_donor_rule": "one_best_poc_per_physical_site",
   "data_gate": {
     "canonical_records": 2424793,
     "monitor_series": 1689,
     "eligible_anchors": 563,
-    "anchors_with_three_distinct_physical_donors": 238
+    "anchors_with_one_distinct_physical_donor": 394,
+    "anchors_with_three_distinct_physical_donors": 238,
+    "same_site_poc_candidates": 11
   },
   "real_event_audit": {
     "total_anchors": 563,
@@ -18,23 +31,234 @@
     "insufficient_geographic_donors": 325,
     "estimator_input_failure": 10
   },
+  "synthetic_benchmark": {
+    "case_count": 146,
+    "calibration_case_count": 66,
+    "evaluation_case_count": 80,
+    "all_input_physical_sites_disjoint": true,
+    "standard_synthetic_control": {
+      "local_effect_mae_log": 0.099826950207563,
+      "average_precision": 0.9147598004123992,
+      "macro_f1": 0.8164065770277416,
+      "regional_false_positive_rate": 0.14
+    },
+    "cross_validated_metashift": {
+      "local_effect_mae_log": 0.0974233266504054,
+      "average_precision": 0.9017820023244296,
+      "macro_f1": 0.8091568475545025,
+      "regional_false_positive_rate": 0.1345,
+      "paired_mae_difference_vs_standard": -0.0024036235571576,
+      "paired_mae_difference_95ci": [
+        -0.0077245192734533,
+        0.0034679096725244
+      ]
+    },
+    "fixed_prior_metashift": {
+      "local_effect_mae_log": 0.1034388396477101,
+      "average_precision": 0.8983171904885203,
+      "macro_f1": 0.7951471051270831,
+      "regional_false_positive_rate": 0.15,
+      "paired_mae_difference_vs_standard": 0.0036118894401471,
+      "paired_mae_difference_95ci": [
+        -0.0040072460575476,
+        0.0116273417413598
+      ]
+    }
+  },
+  "synthetic_alignment": {
+    "shared_standard_synthetic_control_rows": 7300,
+    "tolerance": 1e-10,
+    "all_rows_aligned": true
+  },
   "evidence_tiers": {
     "supported_candidate_discontinuity": 34,
     "not_supported_by_available_evidence": 122,
     "inconclusive_insufficient_evidence": 407
   },
+  "placebos": {
+    "time_placebo_rows": 228,
+    "complete_with_at_least_50": 157,
+    "complete_with_100": 128,
+    "donor_as_treated_rows": 866,
+    "donor_as_treated_median_standardized_score": 0.4083098458345921,
+    "date_resamples": 200,
+    "date_resampling_upper_tail_probability": 0.004975124378109453
+  },
+  "real_event_intervals": {
+    "fixed_weight_events_by_method": {
+      "metashift_v1_fixed": {
+        "events": 228,
+        "excludes_zero": 159
+      },
+      "nearest_neighbor_did": {
+        "events": 228,
+        "excludes_zero": 134
+      },
+      "standard_synthetic_control": {
+        "events": 228,
+        "excludes_zero": 145
+      }
+    },
+    "selection_aware_events": 227,
+    "selection_aware_excludes_zero": 153,
+    "selection_aware_mean_width_log": 0.1905745370628923,
+    "leave_one_donor_out_complete_events": 227,
+    "leave_one_donor_out_direction_stable_events": 202
+  },
+  "interval_coverage": {
+    "fixed_weight_status": "complete",
+    "conditional_bootstrap_nominal_coverage": 0.95,
+    "conditional_bootstrap_95_eval_coverage_range": [
+      0.63875,
+      0.6728125
+    ],
+    "split_conformal_nominal_coverage": 0.9,
+    "split_conformal_90_eval_coverage_range": [
+      0.988125,
+      0.995625
+    ],
+    "evaluation_instances_per_method": 3200,
+    "selection_aware_status": "infeasible_within_deadline",
+    "selection_aware_protocol": "configs/selection_aware_coverage_protocol_v2.json"
+  },
   "external_document_review": {
     "reviewed_events": 20,
     "site_specific_dated_confirmations": 0
   },
-  "interval_coverage": {
-    "fixed_weight_status": "complete",
-    "conditional_bootstrap_95_eval_coverage_range": "0.63-0.67",
-    "split_conformal_90_eval_coverage_range": "0.987-0.996",
-    "selection_aware_status": "infeasible_within_deadline",
-    "selection_aware_protocol": "configs/selection_aware_coverage_protocol_v2.json"
+  "hourly_same_site_poc": {
+    "candidate_events": 11,
+    "usable_paired_events": 9,
+    "daily_hourly_direction_agreement": 8
   },
-  "release_gate_target_checks": 35,
+  "secondary_88502": {
+    "eligible_anchors": 34,
+    "complete_comparisons": 3
+  },
+  "verification": {
+    "release_gate_checks": 35,
+    "document_consistency_checks": 12,
+    "manuscript_number_checks": 57,
+    "two_environment_core_artifact_hashes": 34,
+    "all_release_checks_passed": true,
+    "all_core_artifact_hashes_match": true
+  },
   "algorithm_superiority_claim": false,
-  "interpretation_boundary": "A Method Code transition is a metadata anchor, not a confirmed instrument fault or causal measurement bias."
+  "interpretation_boundary": "A Method Code transition is a metadata anchor, not a confirmed instrument fault, physical replacement, or causal measurement bias.",
+  "artifact_sources": [
+    {
+      "path": "artifacts/data_gate/summary.json",
+      "bytes": 787,
+      "sha256": "10a0117f6a1debc664795705008002e91be9d1783315efbe30dc717804d2d906"
+    },
+    {
+      "path": "artifacts/stable_synthetic_case_manifest.json",
+      "bytes": 1027,
+      "sha256": "77b695d3e8e7a230512fd4b697b93d3ce0f920116fb15286ea20cce5d9e123e7"
+    },
+    {
+      "path": "artifacts/stable_synthetic_case_split_audit.json",
+      "bytes": 497,
+      "sha256": "56671b8d44ed2581d7be3a181178551bece2daecdf6357a9d91fceb0806956d5"
+    },
+    {
+      "path": "artifacts/stable_synthetic_stable_full_v2_metrics.csv",
+      "bytes": 7467,
+      "sha256": "11b5d30af48b639558baf7f437d244b7c6c121f54be43e0e31f12f6bbe49e34f"
+    },
+    {
+      "path": "artifacts/stable_synthetic_stable_full_v2_bootstrap.csv",
+      "bytes": 450,
+      "sha256": "23a7f15fbd5f2f0d5b436a3acb5bec41ab616bbad19cf861b6e81ca1e3350ca9"
+    },
+    {
+      "path": "artifacts/benchmark_ablation_alignment_stable_full_v2.json",
+      "bytes": 271,
+      "sha256": "7d93bcfcca37992a5a411c5d6a454f1362fe2220f649185db01daed1c414ccce"
+    },
+    {
+      "path": "artifacts/real_transition_88101_event_audit.csv",
+      "bytes": 144105,
+      "sha256": "b00851ceab1c094c5ac16d2368a3c1fa0ad16dc3a04926a7ec30b02f2fc653ae"
+    },
+    {
+      "path": "artifacts/real_transition_88101_event_intervals.csv",
+      "bytes": 179440,
+      "sha256": "2df64031df462e68a76ea9f8f21e8ab2a73a5c38d13ce2938d30df4e3e28bf5e"
+    },
+    {
+      "path": "artifacts/real_transition_88101_nested_selection_intervals.csv",
+      "bytes": 123502,
+      "sha256": "5931a62542073b73cf26daf4d3060e6889063727b412d1825c2fd4abfd5f4d85"
+    },
+    {
+      "path": "artifacts/leave_one_donor_out_summary.csv",
+      "bytes": 33766,
+      "sha256": "8a953bbd998bf95d2ccac5eede6843135a7f9f90f21b3207bbdd9071ac2f618f"
+    },
+    {
+      "path": "artifacts/time_placebo_summary.csv",
+      "bytes": 26279,
+      "sha256": "99331922d82556a4c7d9633114fe6684415b352ac3c6deee9ccb93fd14d2bf9e"
+    },
+    {
+      "path": "artifacts/time_placebo_date_permutations.csv",
+      "bytes": 21014,
+      "sha256": "447783420b4729385635dd4f53ba579ea21a5525c2f0bfd09ce48eca09d5a390"
+    },
+    {
+      "path": "artifacts/donor_as_treated_placebos.csv",
+      "bytes": 117684,
+      "sha256": "0a611e7aaf81335ab91d6071b1949f2135ed5d5626d966f533bdcacf26df4df2"
+    },
+    {
+      "path": "artifacts/real_transition_88101_evidence_tier_summary.json",
+      "bytes": 1158,
+      "sha256": "ecdedc02e6cbc60a868c54ec1ccbaf03c0807cb3323399b56798bef81a709ba1"
+    },
+    {
+      "path": "artifacts/synthetic_interval_coverage_v2_summary.csv",
+      "bytes": 38549,
+      "sha256": "b3258d780b11d8e9d8c823256ea1ff91abcc50679b35760bf9509419a6716d36"
+    },
+    {
+      "path": "artifacts/hourly_poc_validation_summary.csv",
+      "bytes": 3711,
+      "sha256": "16fa583f0348837ce4486aa26a41fe4c8644ff249446c6276d3ed87ffffb04c4"
+    },
+    {
+      "path": "artifacts/external_document_review_summary.json",
+      "bytes": 308,
+      "sha256": "91660c3ba7b05fd436a4256508bd9f8b13984b4e10e4b754a5e268e8bfebbe17"
+    },
+    {
+      "path": "artifacts/data_gate_88502/summary.json",
+      "bytes": 779,
+      "sha256": "f8cc86b7ecc22fe6f6889ec08f96b01a3cf3e5f2d5905f1b850f61d54afc3b85"
+    },
+    {
+      "path": "artifacts/real_transition_88502_event_audit.csv",
+      "bytes": 9220,
+      "sha256": "65b9e27b23606f47814a60df703405223eb24750d14e176a4dddd5e3be762311"
+    },
+    {
+      "path": "results/release_gate.json",
+      "bytes": 6423,
+      "sha256": "ea5aa3f508cc7f1dc29790865f3b4692880d5e26f39748a3daeb205c1c2b52e1"
+    },
+    {
+      "path": "results/document_consistency.json",
+      "bytes": 2571,
+      "sha256": "a26c391c33b5e78d35fe359ee8555fcf408564b1ed02e09cbef3c4685ff85bff"
+    },
+    {
+      "path": "results/manuscript_number_verification.json",
+      "bytes": 10229,
+      "sha256": "66dd2a7106b6b9f0445ea6206ecfe9729cc97774e89a054eaaa8ba00c2388cc7"
+    },
+    {
+      "path": "results/reproducibility_comparison.json",
+      "bytes": 11970,
+      "sha256": "28ee496122acc632052e41cb179c04808b589ec98dbb17903aa201e184267eb2"
+    }
+  ]
 }

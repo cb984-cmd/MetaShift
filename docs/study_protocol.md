@@ -57,9 +57,9 @@ different-POC series is never a geographic donor; it is reserved for an
 external consistency check.
 
 The national data gate produced 563 eligible anchors, 394 with at least one
-geographic donor, 271 with at least three, and 11 with a same-site alternate
-POC donor. These values are data-availability evidence, not counts of confirmed
-measurement biases.
+distinct physical geographic donor, 238 with at least three distinct physical
+geographic donors, and 11 same-site alternate-POC candidates. These values are
+data-availability evidence, not counts of confirmed measurement biases.
 
 Transitions explicitly enabling “Network Data Alignment” will be analyzed as a
 configuration-change stratum. They will not be merged without distinction with
@@ -139,11 +139,13 @@ availability are reported as graded evidence limitations.
 
 ## Paper-strengthening extension protocol
 
-The v0.2.0 evidence release is a superseded archival baseline (its control
-inventory counted multiple POCs per physical site as separate donors; replaced
-by v0.3.0-distinct-donors). The following extension is frozen before its new
-outcome analyses; it does not reopen the closed claim that MetaShift is
-superior to standard synthetic control.
+The v0.2.0 evidence release is a superseded archival baseline: its control
+inventory counted multiple POCs per physical site as separate donors. Current
+evidence is frozen at
+[`v0.3.2-evidence-final`](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final),
+which applies one-best-POC-per-physical-site donor deduplication. The following
+extension is frozen before its new outcome analyses; it does not reopen the
+closed claim that MetaShift is superior to standard synthetic control.
 
 The extension adds a Method Code transition taxonomy based only on the old and
 new AQS Method Codes, their reported Method Names, and predeclared official
@@ -168,16 +170,21 @@ blind stable-synthetic manifest with at least 60 targets and completely
 disjoint target-plus-donor physical input footprints from both the existing
 66 calibration and 80 evaluation target sets.
 
-The frozen fixed-weight interval coverage study completed 23,360
-effect-identifiable synthetic instances. Its nominal-95% conditional
-moving-block intervals covered only 62.47%--67.56% of held-out truths across
-the four cross-site methods. Target-cluster split-conformal nominal-90%
-intervals covered 98.22%--99.56% and were therefore substantially
-conservative. These results are retained as a negative calibration finding:
-fixed-weight intervals may be reported only as conditional resampling
-diagnostics, not as coverage-calibrated real-event confidence intervals. No
-bootstrap block length, conformal score, threshold, or model parameter may be
-changed using this 80-site evaluation result.
+The frozen v2 fixed-weight interval coverage study evaluates 3,200 held-out
+effect instances per method. Its nominal-95% conditional moving-block
+intervals cover only 63.875%--67.281% of held-out truths across the four
+cross-site methods. Nominal-90% split-conformal intervals cover
+98.8125%--99.5625% and are therefore substantially conservative. These are
+negative calibration findings: fixed-weight intervals may be reported only as
+conditional resampling diagnostics, not as coverage-calibrated real-event
+confidence intervals. No bootstrap block length, conformal score, threshold,
+or model parameter may be changed using this 80-site evaluation result.
+
+The separately frozen full donor-reselection selection-aware coverage protocol
+is documented in `configs/selection_aware_coverage_protocol_v2.json`. Its
+pre-outcome feasibility assessment concludes that the complete study is
+infeasible within the deadline. Accordingly, real-event selection-aware
+intervals are not described as calibrated 95% coverage intervals.
 
 ## Claims and limitations
 

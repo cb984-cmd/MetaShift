@@ -1,7 +1,8 @@
 # MetaShift model decision
 
 > **Integrity remediation complete (2026-08-31):** All cross-site results have
-> been rebuilt with physical-site-unique geographic donors (v0.3.0). The
+> been rebuilt with physical-site-unique geographic donors in
+> `v0.3.2-evidence-final`. The
 > decision not to claim MetaShift superiority remains in force.
 
 **Decision date:** 2026-08-30  
@@ -63,15 +64,16 @@ strengths per case. Calibration and evaluation have disjoint complete
 target-plus-donor physical input footprints. Each local and matched regional
 perturbation variant has 400 evaluation samples.
 
-On this replacement benchmark, standard synthetic control had macro-F1 0.828
-and AUPRC 0.910; MetaShift fixed-prior and cross-validated variants had
-macro-F1 0.788/0.798 and AUPRC 0.888/0.895. Their local-effect MAE values were
-0.10483/0.10335 versus 0.10772 for standard synthetic control. The paired 95%
-bootstrap interval for fixed-prior MetaShift minus standard synthetic control
-was [-0.01095, 0.00412]; the cross-validated interval was
-[-0.01138, 0.00208]. Both cross zero. These results fail the algorithm-route
-release thresholds for confidence-supported MAE improvement, F1/AUPRC, and
-regional false-attribution control.
+On the frozen `stable_full_v2` replacement benchmark, standard synthetic
+control had local-effect MAE 0.09983, macro-F1 0.81641, AUPRC 0.91476, and
+regional false-positive rate 0.140. Fixed-prior and cross-validated MetaShift
+had MAE 0.10344/0.09742, macro-F1 0.79515/0.80916, AUPRC 0.89832/0.90178,
+and regional false-positive rate 0.150/0.135. The paired 95% bootstrap
+interval for fixed-prior MetaShift minus standard synthetic control was
+[-0.00401, 0.01163]; the cross-validated interval was
+[-0.00772, 0.00347]. Both cross zero. These results fail the algorithm-route
+criterion for confidence-supported aggregate MAE improvement and do not
+support a general superiority claim.
 
 ## MetaShift-Bench scope
 

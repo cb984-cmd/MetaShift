@@ -93,6 +93,22 @@ clean source worktree. It contains summary results, hashes, manifests, figures,
 configuration, and audit tables. It rejects raw AirData archives and AQS API
 responses, and it does not include credentials.
 
+## Complete public-safe archive
+
+To package every safe local result, figure, process record, and a source
+snapshot for a GitHub Release asset:
+
+```powershell
+python scripts\export_complete_public_archive.py
+```
+
+The generated archive remains ignored by Git. It includes every safe file under
+`artifacts\`, `results\`, and `figures\`, plus the full source snapshot and Git
+history. It explicitly excludes raw EPA archives, raw AQS API responses,
+credentials, and virtual environments. Legacy development artifacts are
+included only as historical diagnostics; final claims remain limited to the
+passing release-gate evidence.
+
 ## Cross-environment consistency
 
 After two independent full runs, capture and compare the deterministic core

@@ -1,8 +1,9 @@
 # MetaShift execution plan
 
 **Updated:** 2026-08-31
-**Research status:** physical-donor uniqueness integrity remediation active;
-all cross-site benchmark and audit conclusions are paused pending rebuild.
+**Research status:** Integrity remediation complete (I0/I1/I2). Release gate
+26/26 pass. Manuscript verified. v0.3.0-distinct-donors tagged. Awaiting
+student completion of submission materials for 9/15 deadline.
 
 ## Evidence rule
 

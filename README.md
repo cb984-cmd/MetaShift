@@ -86,6 +86,11 @@ and reproducibility hashes, but excludes raw EPA archives, API responses, and
 credentials. The earlier v0.1.0 evidence release applies to the superseded
 synthetic split.
 
+The same release also contains a complete public-safe archive with all 269 safe
+local outputs, a source snapshot, Git history, and a per-file SHA-256 manifest.
+Legacy development artifacts are included for process transparency, not as
+support for the final benchmark claims.
+
 An evidence-backed English manuscript draft is at
 [`paper/MANUSCRIPT_DRAFT.md`](paper/MANUSCRIPT_DRAFT.md). It is deliberately
 marked as a draft: student identities, author contributions, teacher approval,

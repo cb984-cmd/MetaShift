@@ -141,6 +141,10 @@ replacement or measurement bias.
   The prior
   [v0.1.0-benchmark-evidence](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.1.0-benchmark-evidence)
   release documents the superseded split and is not the paper-evidence release.
+- [x] Attach a complete public-safe process archive to v0.2.0: 269 safe
+  generated outputs, an exact source snapshot, and Git history. Its manifest
+  records every file hash and explicitly excludes raw EPA archives, raw AQS API
+  responses, credentials, and virtual environments.
 
 **Code and research stage:** complete for the MetaShift-Bench route. The
 algorithm-superiority route remains closed: on the corrected stable benchmark,

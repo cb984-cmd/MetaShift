@@ -109,6 +109,9 @@ credentials, and virtual environments. Legacy development artifacts are
 included only as historical diagnostics; final claims remain limited to the
 passing release-gate evidence.
 
+The verified full archive and its SHA-256 manifest are attached to the public
+[v0.2.0-paper-evidence release](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.2.0-paper-evidence).
+
 ## Cross-environment consistency
 
 After two independent full runs, capture and compare the deterministic core

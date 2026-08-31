@@ -102,6 +102,30 @@ def main() -> None:
     else:
         checks.append(check("full_88101_anchor_audit", False, "Missing real audit files"))
 
+    interval_path = ARTIFACTS / "real_transition_88101_event_intervals.csv"
+    loo_path = ARTIFACTS / "leave_one_donor_out_summary.csv"
+    if exists(interval_path) and exists(loo_path):
+        intervals = pd.read_csv(interval_path)
+        leave_one_out = pd.read_csv(loo_path)
+        checks.append(
+            check(
+                "event_intervals_and_donor_sensitivity",
+                len(intervals) == 261 * 3
+                and len(leave_one_out) == 261
+                and {"ci95_lower", "ci95_upper"}.issubset(intervals.columns),
+                f"{len(intervals)} conditional intervals and {len(leave_one_out)} "
+                "leave-one-donor-out event summaries",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "event_intervals_and_donor_sensitivity",
+                False,
+                "Missing event-level interval or donor-sensitivity artifacts.",
+            )
+        )
+
     synthetic_path = ARTIFACTS / "stable_synthetic_stable_full_v1_event_results.csv"
     metric_path = ARTIFACTS / "stable_synthetic_stable_full_v1_metrics.csv"
     bootstrap_path = ARTIFACTS / "stable_synthetic_stable_full_v1_bootstrap.csv"
@@ -150,6 +174,26 @@ def main() -> None:
             "Reliability prior, distance, correlation, coverage, and regularization ablations",
         )
     )
+
+    alignment_path = ARTIFACTS / "benchmark_ablation_alignment.json"
+    if exists(alignment_path):
+        alignment = json.loads(alignment_path.read_text(encoding="utf-8"))
+        checks.append(
+            check(
+                "main_ablation_synthetic_alignment",
+                bool(alignment.get("all_rows_aligned")),
+                "Standard synthetic-control rows must match to 1e-10 across "
+                "main and ablation experiments.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "main_ablation_synthetic_alignment",
+                False,
+                "Missing main-versus-ablation alignment report.",
+            )
+        )
 
     time_path = ARTIFACTS / "time_placebo_summary.csv"
     donor_path = ARTIFACTS / "donor_as_treated_placebos.csv"

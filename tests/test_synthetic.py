@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from metashift.synthetic import PerturbationKind, inject_perturbation
+from metashift.synthetic import PerturbationKind, benchmark_seed, inject_perturbation
 
 
 class SyntheticInjectionTests(unittest.TestCase):
@@ -84,3 +84,9 @@ class SyntheticInjectionTests(unittest.TestCase):
         target_change = injected.loc[self.anchor :] - self.target.loc[self.anchor :]
         donor_change = donors.loc[self.anchor :, "a"] - self.donors.loc[self.anchor :, "a"]
         np.testing.assert_allclose(target_change.to_numpy(), donor_change.to_numpy())
+
+    def test_benchmark_seed_is_deterministic_and_coordinate_sensitive(self) -> None:
+        self.assertEqual(benchmark_seed(1, 2, 3), benchmark_seed(1, 2, 3))
+        self.assertNotEqual(benchmark_seed(1, 2, 3), benchmark_seed(1, 2, 4))
+        with self.assertRaises(ValueError):
+            benchmark_seed(-1, 0, 0)

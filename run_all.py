@@ -127,6 +127,7 @@ def main() -> None:
             *multipliers,
         ]
     )
+    run([python, "scripts/verify_benchmark_ablation_alignment.py"])
     run(
         [
             python,
@@ -137,6 +138,8 @@ def main() -> None:
             "88101",
         ]
     )
+    run([python, "scripts/run_event_intervals.py"])
+    run([python, "scripts/run_leave_one_donor_out.py"])
     run([python, "scripts/run_colocated_validation.py"])
     if args.with_aqs_api:
         load_windows_user_environment()
@@ -180,6 +183,7 @@ def main() -> None:
     write_run_manifest(config)
     run([python, "scripts/make_figures.py"])
     run([python, "scripts/evaluate_release_gate.py"])
+    run([python, "scripts/export_evidence_bundle.py"])
 
 
 if __name__ == "__main__":

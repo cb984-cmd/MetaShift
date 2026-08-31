@@ -36,6 +36,15 @@ class ReliabilityWeightSelection:
     validation_rmse: float
 
 
+@dataclass(frozen=True)
+class AnchorResidualWindows:
+    """Calibrated residual windows for an anchor with pre-fitted donor weights."""
+
+    calibration: pd.DataFrame
+    pre: pd.DataFrame
+    post: pd.DataFrame
+
+
 def _require_datetime_index(values: pd.Series | pd.DataFrame) -> None:
     if not isinstance(values.index, pd.DatetimeIndex):
         raise TypeError("MetaShift inputs must use a DatetimeIndex.")
@@ -293,6 +302,70 @@ def estimate_metadata_anchor(
     if comparison_days <= 0 or min_window_observations <= 0:
         raise ValueError("Window sizes must be positive.")
 
+    date = pd.Timestamp(anchor_date)
+    windows = anchor_residual_windows(
+        target,
+        donors,
+        weights,
+        date,
+        calibration_days=calibration_days,
+        calibration_buffer_days=calibration_buffer_days,
+        comparison_days=comparison_days,
+        min_window_observations=min_window_observations,
+        min_available_donors=min_available_donors,
+    )
+    calibration = windows.calibration
+    pre = windows.pre
+    post = windows.post
+    calibration_residuals = calibration["log_residual"]
+    pre_residuals = pre["log_residual"]
+    post_residuals = post["log_residual"]
+    log_effect = float(np.median(post_residuals) - np.median(pre_residuals))
+    raw_effect = float(
+        np.median(post["raw_residual"]) - np.median(pre["raw_residual"])
+    )
+    residual_scale = _robust_scale(calibration_residuals)
+
+    return MetaShiftEstimate(
+        anchor_date=date,
+        calibration_observations=len(calibration),
+        pre_observations=len(pre),
+        post_observations=len(post),
+        mean_available_donors=float(
+            pd.concat(
+                [pre["available_donors"], post["available_donors"]], sort=False
+            ).mean()
+        ),
+        log_effect=log_effect,
+        relative_effect=float(np.expm1(log_effect)),
+        raw_effect=raw_effect,
+        standardized_score=log_effect / residual_scale,
+        calibration_residual_scale=residual_scale,
+        calibration_residual_rmse=float(
+            np.sqrt(np.mean(np.square(calibration_residuals)))
+        ),
+    )
+
+
+def anchor_residual_windows(
+    target: pd.Series,
+    donors: pd.DataFrame,
+    weights: pd.Series,
+    anchor_date: pd.Timestamp | str,
+    *,
+    calibration_days: int = 180,
+    calibration_buffer_days: int = 15,
+    comparison_days: int = 60,
+    min_window_observations: int = 30,
+    min_available_donors: int = 2,
+) -> AnchorResidualWindows:
+    """Return residual windows using donor weights fixed before the anchor."""
+
+    if calibration_days <= calibration_buffer_days:
+        raise ValueError("calibration_days must exceed calibration_buffer_days.")
+    if comparison_days <= 0 or min_window_observations <= 0:
+        raise ValueError("Window sizes must be positive.")
+
     target = target.astype(float).sort_index()
     donors = donors.sort_index()
     _require_datetime_index(target)
@@ -324,23 +397,23 @@ def estimate_metadata_anchor(
     pre_end = date - pd.Timedelta(days=1)
     post_end = date + pd.Timedelta(days=comparison_days - 1)
 
-    calibration = table.loc[calibration_start:calibration_end].copy()
-    pre = table.loc[pre_start:pre_end].copy()
-    post = table.loc[date:post_end].copy()
+    calibration_base = table.loc[calibration_start:calibration_end]
+    pre_base = table.loc[pre_start:pre_end]
+    post_base = table.loc[date:post_end]
     if (
-        len(calibration) < min_window_observations
-        or len(pre) < min_window_observations
-        or len(post) < min_window_observations
+        len(calibration_base) < min_window_observations
+        or len(pre_base) < min_window_observations
+        or len(post_base) < min_window_observations
     ):
         raise ValueError(
             "Insufficient observations for calibration or anchor comparison windows."
         )
 
     calibration_log_offset = float(
-        np.median(calibration["target_log"] - calibration["donor_log"])
+        np.median(calibration_base["target_log"] - calibration_base["donor_log"])
     )
     calibration_raw_offset = float(
-        np.median(calibration["target_raw"] - calibration["donor_raw"])
+        np.median(calibration_base["target_raw"] - calibration_base["donor_raw"])
     )
     table["log_residual"] = (
         table["target_log"] - table["donor_log"] - calibration_log_offset
@@ -349,32 +422,8 @@ def estimate_metadata_anchor(
         table["target_raw"] - table["donor_raw"] - calibration_raw_offset
     )
 
-    calibration_residuals = table.loc[
-        calibration_start:calibration_end, "log_residual"
-    ]
-    pre_residuals = table.loc[pre_start:pre_end, "log_residual"]
-    post_residuals = table.loc[date:post_end, "log_residual"]
-    log_effect = float(np.median(post_residuals) - np.median(pre_residuals))
-    raw_effect = float(
-        np.median(table.loc[date:post_end, "raw_residual"])
-        - np.median(table.loc[pre_start:pre_end, "raw_residual"])
-    )
-    residual_scale = _robust_scale(calibration_residuals)
-
-    return MetaShiftEstimate(
-        anchor_date=date,
-        calibration_observations=len(calibration),
-        pre_observations=len(pre),
-        post_observations=len(post),
-        mean_available_donors=float(
-            pd.concat([pre["available_donors"], post["available_donors"]]).mean()
-        ),
-        log_effect=log_effect,
-        relative_effect=float(np.expm1(log_effect)),
-        raw_effect=raw_effect,
-        standardized_score=log_effect / residual_scale,
-        calibration_residual_scale=residual_scale,
-        calibration_residual_rmse=float(
-            np.sqrt(np.mean(np.square(calibration_residuals)))
-        ),
+    return AnchorResidualWindows(
+        calibration=table.loc[calibration_start:calibration_end].copy(),
+        pre=table.loc[pre_start:pre_end].copy(),
+        post=table.loc[date:post_end].copy(),
     )

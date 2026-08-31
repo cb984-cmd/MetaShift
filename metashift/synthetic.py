@@ -9,6 +9,9 @@ import numpy as np
 import pandas as pd
 
 
+BENCHMARK_RANDOM_SEED = 20_260_830
+
+
 class PerturbationKind(StrEnum):
     ADDITIVE_STEP = "additive_step"
     PROPORTIONAL_STEP = "proportional_step"
@@ -32,6 +35,20 @@ class SyntheticTruth:
     affected_end_date: pd.Timestamp | None
     magnitude: float
     random_seed: int
+
+
+def benchmark_seed(
+    case_index: int,
+    multiplier_index: int,
+    variant_index: int,
+    *,
+    base_seed: int = BENCHMARK_RANDOM_SEED,
+) -> int:
+    """Derive the shared deterministic seed for one benchmark perturbation."""
+
+    if min(case_index, multiplier_index, variant_index) < 0:
+        raise ValueError("Benchmark seed coordinates cannot be negative.")
+    return base_seed + case_index * 1_000 + multiplier_index * 100 + variant_index
 
 
 def _validate_inputs(

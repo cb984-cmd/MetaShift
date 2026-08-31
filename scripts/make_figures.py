@@ -228,6 +228,47 @@ def real_effect_distribution(manifest: list[dict[str, str]]) -> None:
     )
 
 
+def interval_and_donor_sensitivity(manifest: list[dict[str, str]]) -> None:
+    intervals = pd.read_csv(ARTIFACTS / "real_transition_88101_event_intervals.csv")
+    leave_one_out = pd.read_csv(ARTIFACTS / "leave_one_donor_out_summary.csv")
+    figure, axes = plt.subplots(1, 2, figsize=(10, 3.5))
+
+    interval_summary = (
+        intervals.groupby("method")["ci_excludes_zero"].mean().sort_values()
+    )
+    axes[0].barh(
+        interval_summary.index.str.replace("_", " "),
+        interval_summary.to_numpy(),
+        color="#2563eb",
+    )
+    axes[0].set_xlim(0, 1)
+    axes[0].set_xlabel("Fraction of conditional 95% CIs excluding zero")
+    axes[0].set_title("Event-level conditional block-bootstrap intervals")
+
+    complete = leave_one_out.loc[
+        leave_one_out["summary_status"].isin(
+            ["complete", "partial_after_donor_removal"]
+        )
+    ]
+    axes[1].hist(
+        complete["leave_one_out_max_abs_deviation"].dropna(),
+        bins=30,
+        color="#7c3aed",
+        alpha=0.8,
+    )
+    axes[1].set_xlabel("Maximum leave-one-donor-out effect deviation")
+    axes[1].set_ylabel("Real metadata anchors")
+    axes[1].set_title("Sensitivity to removing one donor")
+    save_figure(
+        figure,
+        "figure_7_interval_and_donor_sensitivity.png",
+        "Event uncertainty and leave-one-donor-out sensitivity",
+        "artifacts/real_transition_88101_event_intervals.csv; "
+        "artifacts/leave_one_donor_out_summary.csv",
+        manifest,
+    )
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     manifest: list[dict[str, str]] = []
@@ -237,6 +278,7 @@ def main() -> None:
     reliability_ablation(manifest)
     placebo_distribution(manifest)
     real_effect_distribution(manifest)
+    interval_and_donor_sensitivity(manifest)
     with (OUTPUT_DIR / "figure_manifest.csv").open("w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=["figure", "title", "source_artifact"])
         writer.writeheader()

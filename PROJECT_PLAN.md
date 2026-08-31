@@ -62,6 +62,10 @@ replacement or measurement bias.
 - [x] **B3 — Audit all 563 real metadata anchors.** Report eligibility,
   pre-fit, effects, abstentions, and failure reasons without treating anchors
   as confirmed bias labels.
+- [x] **B4 — Quantify real-event uncertainty and donor dependence.** All 261
+  complete cross-site events have 1,000-repetition conditional block-bootstrap
+  intervals; leave-one-donor-out sensitivity completes all removals for 260
+  events and records the single unavailable removal.
 
 ## Validation and analysis
 
@@ -79,6 +83,10 @@ replacement or measurement bias.
 - [x] **V4 — Run 88502 sensitivity analysis.** The separate 88502 scan has
   34 anchors but only 3 complete common-method comparisons; it is retained as
   a limited sensitivity result and is never mixed with 88101.
+- [x] **V5 — Revise evidence commitments to match available labels.** The
+  protocol no longer claims a labeled real exceptional-event accuracy analysis;
+  it defines the completed synthetic regional, time, and donor placebos as
+  environmental negative controls and records QA limitations.
 
 ## Deliverables
 
@@ -91,11 +99,26 @@ replacement or measurement bias.
 
 ## Final code-stage result
 
-**MetaShift-Bench has passed its code and evidence release checklist.** The
-algorithm-superiority route did not pass and remains closed: on the stable
-synthetic benchmark, the MetaShift variants' lower effect MAE versus standard
-synthetic control had bootstrap confidence intervals crossing zero, while their
-macro-F1/AUPRC did not meet the predeclared algorithm thresholds. The
-publishable contribution is therefore the reproducible benchmark, full
+## Post-review remediation
+
+- [x] Centralize synthetic random seeds and verify all 4,000 shared Standard
+  SC rows match exactly between the primary benchmark and ablation experiment.
+- [x] Add conditional 1,000-repetition moving-block intervals for all 261
+  complete real events and three cross-site methods.
+- [x] Add leave-one-donor-out refits: 260 events completed every removal; one
+  unavailable removal is retained with its reason.
+- [x] Revise the protocol to remove an unsupported labeled real
+  exceptional-event claim while retaining synthetic regional, time, and donor
+  negative controls.
+- [x] Add `requirements-lock.txt` and public GitHub Actions unit-test CI.
+- [ ] Export and publish the safe, versioned evidence bundle after the
+  remediated release rerun.
+
+**Code and research stage:** pending the remediated release rerun and public
+evidence-bundle publication. The algorithm-superiority route remains closed:
+on the stable synthetic benchmark, MetaShift's lower effect-MAE point estimates
+versus standard synthetic control had bootstrap confidence intervals crossing
+zero, while Macro-F1/AUPRC did not meet the predeclared algorithm thresholds.
+The publishable contribution is the reproducible benchmark, full
 metadata-anchor audit, graded evidence hierarchy, comparative results, and
 documented applicability boundary.

@@ -106,10 +106,18 @@ perturbation experiments:
 
 For real anchors, report the residual effect, uncertainty interval,
 pre-transition fit, donor composition, missingness, pseudo-date placebo
-distribution, donor-as-treated placebo distribution, leave-one-donor-out
-sensitivity, and a restricted exceptional-event/QA analysis. A real event is
-classified only as supported, unsupported, or inconclusive as a candidate
-method-associated discontinuity.
+distribution, donor-as-treated placebo distribution, and leave-one-donor-out
+sensitivity. A real event is classified only as supported, unsupported, or
+inconclusive as a candidate method-associated discontinuity.
+
+The primary daily AQS files do not supply a validated real-world
+exceptional-event label suitable for causal attribution, and the retrieved QA
+collocation responses do not provide adequate matched pre/post validation for
+the candidate target POCs. Therefore, this study does not claim an
+exceptional-event-specific real-label accuracy result. Environmental negative
+controls are instead the matched regional synthetic perturbations, stable
+post-transition time placebos, and donor-as-treated placebos. QA and qualifier
+availability are reported as graded evidence limitations.
 
 ## Claims and limitations
 

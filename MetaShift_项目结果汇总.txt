@@ -9,7 +9,9 @@ MetaShift 项目结果汇总
 
 当前研究定位
 ------------
-本项目已完成代码、数据审计、实验和可复现性阶段，当前可进入论文写作。
+本项目已完成第一轮代码、数据审计、实验和可复现性阶段，并已根据外部审查开始
+整改。整改后的主结果尚需在最终冻结提交上重新完成两环境复现后才可完全冻结；
+当前可以开始论文大纲、相关工作和方法章节，但不应直接作为最终参赛版本提交。
 
 最终路线为 MetaShift-Bench（元数据锚定审计与评测基准），而不是“MetaShift
 显著优于所有基线”的算法优越性路线。两轮有边界的模型优化没有得到稳定、具有
@@ -32,13 +34,49 @@ https://github.com/cb984-cmd/MetaShift
 release gate：
 results/release_gate.json
 
-状态：全部通过（all_checks_passed = true）
+状态：整改前版本全部通过（all_checks_passed = true）；整改后版本将重新生成。
 
 复现：
 1. 默认 Python 环境完整运行 run_all.py --with-aqs-api。
 2. 全新独立 Python 虚拟环境再次完整运行相同命令。
 3. 两次对 11 个核心结果文件的 SHA256 完全一致。
 4. 代码单元测试在完整重建的开始和结束均通过。
+
+审查整改进展
+------------
+1. 随机种子统一
+   - 主基准与消融实验已改为调用同一个 benchmark_seed 函数。
+   - 在相同 80 个稳定案例、相同扰动与相同噪声上，4,000 条共同的 Standard
+     synthetic-control 记录逐行完全一致。
+   - estimated_log_effect、absolute_effect_error 与 ranking_score 的最大绝对差
+     均为 0.0（要求不超过 1e-10）。
+
+2. 事件级不确定性
+   - 为 261 个完整真实事件的 MetaShift、Standard SC 与 Nearest-neighbor DiD
+     分别计算 1,000 次循环移动块 bootstrap 条件 95% CI，共 783 条区间记录。
+   - MetaShift：182 / 261 个区间排除 0。
+   - Standard SC：166 / 261 个区间排除 0。
+   - Nearest-neighbor DiD：154 / 261 个区间排除 0。
+   - 这些区间以固定的转换前供体权重为条件，不包含供体选择和模型设定的不确定性。
+
+3. Leave-one-donor-out 敏感性
+   - 260 个事件完成所有供体移除后的重新拟合。
+   - 其中 238 / 260（91.54%）在移除任一单一供体后保持效应方向。
+   - 1 个事件的一次供体移除后缺少足够观测，已明确记录为不可估计，而非删除。
+   - 完整事件的留一效应最大绝对偏差中位数为 0.03130 log，95% 分位数为
+     0.11080 log。
+
+4. 协议承诺修订
+   - 不再承诺没有可靠标签支撑的“真实 exceptional-event 分类准确率”。
+   - 已完成的环境负对照定义为：匹配的区域共同合成冲击、稳定转换后时间安慰剂
+     和 donor-as-treated 站点安慰剂。
+   - QA collocation 的数据不足限制仍保留并披露。
+
+5. 可复现性和公开审计
+   - 新增 requirements-lock.txt，锁定完整证据环境。
+   - 新增 GitHub Actions，使用锁定依赖自动运行全部单元测试。
+   - 新增安全证据包导出器，只导出配置、数据清单、汇总表、图、哈希和审计表；
+     它拒绝原始 EPA 文件、AQS API 原始响应和任何凭据。
 
 主数据：EPA AQS 参数 88101
 --------------------------
@@ -327,3 +365,7 @@ REPRODUCIBILITY.md           一键重建与跨环境复现说明
 docs/study_protocol.md       研究边界、数据与估计协议
 configs/benchmark_release_v1.json
                              冻结的基准配置
+docs/AI_ASSISTANCE_RECORD_TEMPLATE.md
+                             必须由学生和指导老师如实完成的 AI 使用记录模板
+docs/AUTHOR_CONTRIBUTION_TEMPLATE.md
+                             必须由学生和指导老师如实完成的贡献与外部帮助模板

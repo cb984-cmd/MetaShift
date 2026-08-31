@@ -40,7 +40,11 @@ from metashift.metrics import (  # noqa: E402
     metrics_as_dict,
     select_macro_f1_threshold,
 )
-from metashift.synthetic import PerturbationKind, inject_perturbation  # noqa: E402
+from metashift.synthetic import (  # noqa: E402
+    PerturbationKind,
+    benchmark_seed,
+    inject_perturbation,
+)
 from run_feasibility_prototype import load_series, synthetic_control_weights  # noqa: E402
 
 
@@ -508,11 +512,8 @@ def main() -> None:
                 for variant_index, (kind, magnitude, family) in enumerate(
                     variant_specs(scale, multiplier)
                 ):
-                    seed = (
-                        20_260_830
-                        + case_index * 1_000
-                        + multiplier_index * 100
-                        + variant_index
+                    seed = benchmark_seed(
+                        case_index, multiplier_index, variant_index
                     )
                     results.extend(
                         evaluate_variant(

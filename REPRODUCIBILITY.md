@@ -16,11 +16,12 @@ expected for the current AirData snapshot.
 ## Environment
 
 ```powershell
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-lock.txt
 ```
 
-The project has been run with Python 3.13. The package versions installed in a
-new environment are recorded in the generated run manifest.
+`requirements-lock.txt` is the frozen evidence environment. The version-range
+`requirements.txt` remains for development only. The project has been run with
+Python 3.13; package versions are also recorded in the generated run manifest.
 
 ## Full reconstruction
 
@@ -62,6 +63,8 @@ Important outputs include:
 | `artifacts/stable_synthetic_stable_full_v1_metrics.csv` | Threshold-isolated synthetic metrics |
 | `artifacts/reliability_ablation_stable_full_v1_metrics.csv` | Reliability-component ablation metrics |
 | `artifacts/real_transition_88101_event_audit.csv` | All 563 anchors and explicit audit status |
+| `artifacts/real_transition_88101_event_intervals.csv` | Conditional block-bootstrap event intervals |
+| `artifacts/leave_one_donor_out_summary.csv` | Donor-removal sensitivity by event |
 | `artifacts/time_placebo_summary.csv` | Per-event time-placebo calibration |
 | `artifacts/external_validation_evidence.csv` | Same-site POC and QA evidence status |
 | `artifacts/data_gate_88502/data_manifest.csv` | Independent 88502 source provenance |
@@ -69,6 +72,18 @@ Important outputs include:
 
 The `MODEL_DECISION.md` file documents why the project does not claim
 algorithmic superiority over standard synthetic control.
+
+## Public evidence bundle
+
+After the full reconstruction, create a safe evidence bundle for review:
+
+```powershell
+python scripts\export_evidence_bundle.py
+```
+
+The export contains summary results, hashes, manifests, figures, configuration,
+and audit tables. It rejects raw AirData archives and AQS API responses, and it
+does not include credentials.
 
 ## Cross-environment consistency
 

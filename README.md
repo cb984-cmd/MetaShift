@@ -48,6 +48,23 @@ The `results\release_gate.json` checklist passes after two full builds in
 independent Python environments produced identical hashes for all core
 result artifacts. Figures are generated from saved CSV outputs only.
 
+## Review remediation
+
+The primary synthetic benchmark and reliability ablations now call the same
+centralized seed function. Their 4,000 shared Standard synthetic-control
+rows match exactly to an absolute tolerance of `1e-10`; the generated
+alignment report is `artifacts\benchmark_ablation_alignment.json`.
+
+The real-event audit now includes conditional 1,000-repetition moving-block
+bootstrap intervals and leave-one-donor-out refits. These describe residual
+uncertainty conditional on fixed pre-event donor weights; they do not turn
+observational anchors into confirmed physical-instrument events.
+
+Use `requirements-lock.txt` for the frozen evidence environment. The public
+CI workflow in `.github\workflows\tests.yml` installs it and runs unit tests.
+The AI-use and contribution templates in `docs\` must be completed accurately
+by students and the supervising teacher before any competition submission.
+
 ## Data gate
 
 The first reproducible gate scans EPA AQS daily PM2.5 archives:

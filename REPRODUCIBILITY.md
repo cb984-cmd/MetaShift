@@ -1,4 +1,4 @@
-# Reproducibility
+﻿# Reproducibility
 
 ## Scope
 
@@ -8,7 +8,7 @@ and generated results are excluded from Git because they are large, may be
 updated by EPA, or require local credentials.
 
 The frozen source configuration is
-[`configs/benchmark_release_v1.json`](configs/benchmark_release_v1.json).
+[`configs/benchmark_release_v2.json`](configs/benchmark_release_v2.json).
 It defines the stable synthetic case split, effect-strength grid, estimator
 settings, and bootstrap seed. It also records the stable-case manifest hash
 expected for the current AirData snapshot.
@@ -67,8 +67,8 @@ Important outputs include:
 | `artifacts/data_gate/data_manifest.csv` | Public 88101 source provenance |
 | `artifacts/stable_synthetic_case_manifest.json` | Stable synthetic case hash and split |
 | `artifacts/stable_synthetic_case_split_audit.json` | Complete target-plus-donor physical-input split audit |
-| `artifacts/stable_synthetic_stable_full_v1_metrics.csv` | Threshold-isolated synthetic metrics |
-| `artifacts/reliability_ablation_stable_full_v1_metrics.csv` | Reliability-component ablation metrics |
+| `artifacts/stable_synthetic_stable_full_v2_metrics.csv` | Threshold-isolated synthetic metrics |
+| `artifacts/reliability_ablation_stable_full_v2_metrics.csv` | Reliability-component ablation metrics |
 | `artifacts/real_transition_88101_event_audit.csv` | All 563 anchors and explicit audit status |
 | `artifacts/real_transition_88101_event_intervals.csv` | Conditional block-bootstrap event intervals |
 | `artifacts/leave_one_donor_out_summary.csv` | Donor-removal sensitivity by event |

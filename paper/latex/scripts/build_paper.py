@@ -65,6 +65,7 @@ def main() -> None:
     )
     run([sys.executable, "scripts/verify_paper_source.py"], LATEX_ROOT)
     run([sys.executable, "scripts/verify_references.py"], LATEX_ROOT)
+    run([sys.executable, "scripts/verify_paper_asset_determinism.py"], LATEX_ROOT)
     latex_command = [
         pdflatex,
         "-interaction=nonstopmode",
@@ -108,6 +109,7 @@ def main() -> None:
             "verify_claim_ledger --require-assets",
             "verify_paper_source",
             "verify_references",
+            "verify_paper_asset_determinism",
             "pdflatex, bibtex, pdflatex, pdflatex",
             "pdftoppm -png -r 144",
             "verify_formal_report",

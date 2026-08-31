@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-from datetime import UTC, datetime
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 from typing import Any
@@ -1002,6 +1001,8 @@ def save_figure(
         metadata={
             "Title": title,
             "Creator": "MetaShift-Bench formal-paper asset generator",
+            "CreationDate": None,
+            "ModDate": None,
         },
     )
     plt.close(figure)
@@ -1427,8 +1428,7 @@ def write_assets() -> None:
     create_figures(summary, data, outputs)
     add_output_hashes(outputs)
     manifest = {
-        "schema_version": 1,
-        "generated_at_utc": datetime.now(UTC).isoformat(),
+        "schema_version": 2,
         "generator": "paper/latex/scripts/generate_paper_assets.py",
         "frozen_evidence": summary["frozen_evidence"],
         "result_label": summary["result_label"],

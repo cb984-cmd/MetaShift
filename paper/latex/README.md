@@ -9,6 +9,7 @@ python scripts\generate_paper_assets.py --write
 python scripts\verify_claim_ledger.py --require-assets
 python scripts\verify_paper_source.py
 python scripts\verify_references.py
+python scripts\verify_paper_asset_determinism.py
 python scripts\build_paper.py
 python scripts\verify_formal_report.py
 ```

@@ -18,6 +18,13 @@
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage{fancyhdr}
 
+\ifdefined\pdfinfoomitdate
+  \pdfinfoomitdate=1
+\fi
+\ifdefined\pdftrailerid
+  \pdftrailerid{}
+\fi
+
 \graphicspath{{generated/figures/}}
 \setlength{\parskip}{0.45em}
 \setlength{\parindent}{1.5em}

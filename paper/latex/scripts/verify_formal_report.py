@@ -24,6 +24,9 @@ ASSET_MANIFEST_PATH = LATEX_ROOT / "generated" / "asset_manifest.json"
 LEDGER_REPORT_PATH = LATEX_ROOT / "generated" / "claim_ledger_validation.json"
 SOURCE_REPORT_PATH = LATEX_ROOT / "generated" / "paper_source_validation.json"
 REFERENCE_REPORT_PATH = LATEX_ROOT / "generated" / "reference_validation.json"
+ASSET_DETERMINISM_REPORT_PATH = (
+    LATEX_ROOT / "generated" / "asset_determinism_validation.json"
+)
 BUILD_REPORT_PATH = LATEX_ROOT / "generated" / "build_report.json"
 FINAL_PDF_PATH = LATEX_ROOT / "MetaShift_Bench_Yau_2026.pdf"
 RENDER_DIR = LATEX_ROOT / "rendered_pages"
@@ -109,6 +112,9 @@ def main() -> None:
     ledger = load_json(LEDGER_REPORT_PATH, record_violations, "claim_ledger_validation")
     source = load_json(SOURCE_REPORT_PATH, record_violations, "paper_source_validation")
     references = load_json(REFERENCE_REPORT_PATH, record_violations, "reference_validation")
+    asset_determinism = load_json(
+        ASSET_DETERMINISM_REPORT_PATH, record_violations, "asset_determinism_validation"
+    )
     build = load_json(BUILD_REPORT_PATH, record_violations, "build_report")
 
     checks: list[dict[str, object]] = []
@@ -213,6 +219,14 @@ def main() -> None:
         "source_and_citation_validation",
         source_ok and references.get("all_checks_passed") is True,
         "All cited references are defined, used, and structurally complete.",
+    )
+
+    add_check(
+        checks,
+        "generated_asset_determinism",
+        asset_determinism.get("all_hashes_match") is True
+        and asset_determinism.get("output_count", 0) >= 20,
+        "Two independent paper-asset generations have identical asset and manifest hashes.",
     )
 
     taxonomy_and_boundary_ok = (

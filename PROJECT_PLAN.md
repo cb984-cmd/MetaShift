@@ -1,6 +1,6 @@
 # MetaShift execution plan
 
-**Updated:** 2026-08-30  
+**Updated:** 2026-08-31
 **Research status:** MetaShift-Bench evidence release complete; algorithm-superiority
 claim closed.
 
@@ -149,3 +149,16 @@ still have bootstrap confidence intervals crossing zero, while Macro-F1/AUPRC
 do not meet the predeclared algorithm thresholds. The publishable contribution
 is the reproducible benchmark, full metadata-anchor audit, graded evidence
 hierarchy, comparative results, and documented applicability boundary.
+
+## Human submission handoff
+
+The verified evidence release remains pinned to
+[`a738f03`](https://github.com/cb984-cmd/MetaShift/commit/a738f039915abadfce37c274f210578e9319310e);
+no further automated model tuning or result regeneration is authorized.
+
+- [ ] Students and supervising teacher independently reproduce and explain the
+  submitted methods, code, data rules, results, and limitations.
+- [ ] Complete the author-contribution and AI-assistance records from verified
+  project history, then obtain the required signatures and institutional forms.
+- [ ] Replace manuscript identity placeholders and perform the final human
+  citation, formatting, and submission-package review.

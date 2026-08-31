@@ -1,0 +1,46 @@
+\section{Data and event construction}
+
+\subsection{Primary public-data corpus}
+
+The primary corpus comprises EPA AirData daily archives for parameter 88101,
+PM2.5 local conditions, for 2019--2025
+\citep{epa_obtaining_aqs,epa_airdata_formats}. The canonical signal is the
+\texttt{Arithmetic Mean} for \texttt{24-HR BLK AVG} observations. The
+predeclared cleaning rule retains nonempty Method Code records with observation
+percent at least 75 and an Event Type other than \texttt{Excluded}. It prevents
+alternative daily summaries for the same monitor-day from being treated as
+independent observations.
+
+\input{generated/tables/table_data_summary}
+
+The source files, archive size, checksum, selected CSV member, and retained row
+count are preserved in the frozen data manifest. The daily data are public, but
+raw downloads and API responses are not included in this manuscript repository
+or its paper assets. That separation keeps the report reproducible without
+placing raw files or local credentials under version control.
+
+\subsection{Metadata anchors and distinct physical donors}
+
+An anchor is a persistent reported Method Code transition with at least 60
+calendar days on each side, at least 45 retained observations in each adjacent
+method run, and no more than a seven-day transition gap. An eligible geographic
+donor is at a different physical site, within the predeclared distance limit,
+method-stable in the target window, sufficiently paired in the pre-event
+period, and sufficiently correlated before the anchor.
+
+Physical donor identity is State Code + County Code + Site Number. A target's
+candidate donor list can contain multiple POCs for one physical site, but the
+ranked donor rule retains at most one: highest pre-event correlation, then
+shorter distance, then more paired days, then POC as a deterministic
+tie-breaker. This rule remediates an earlier superseded inventory in which
+multiple POCs could be treated as independent geographic donors. Same-site
+alternate POCs are excluded from geographic donor construction and reserved for
+contextual consistency analysis.
+
+\subsection{Audit disposition}
+
+Every anchor is retained in the event audit. A complete comparison means that
+the required common cross-site inputs exist; donor insufficiency and
+input-window failure are explicit machine-readable outcomes rather than omitted
+rows. This complete accounting is necessary because a result on only the
+well-matched subset would overstate the scope of cross-site inference.

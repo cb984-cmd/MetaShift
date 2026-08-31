@@ -47,6 +47,20 @@ has a confidence-supported overall advantage over standard synthetic control.
    a submission-ready status until students and supervising teacher complete
    the required review and attestations.
 
+## Automated draft status
+
+The automated writing stage produces `MetaShift_Bench_Yau_2026.pdf`, generated
+tables and figures, a source-to-evidence claim ledger, citation validation, and
+a rendered-page/format-compliance record. All of these outputs derive only from
+the frozen v0.3.2 evidence contract and remain reproducible through the local
+build commands.
+
+This is a pre-submission draft, not a completed competition submission. The
+human completion checklist remains authoritative for identity, student
+understanding, contribution statements, advisor and compensation disclosure,
+AI-use disclosure, Method Code taxonomy review, signatures, stamps, plagiarism
+report, and final truthfulness attestation.
+
 ## Quantitative source contract
 
 Numeric prose must be generated or checked against these sources:

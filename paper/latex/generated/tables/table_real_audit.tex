@@ -1,0 +1,30 @@
+\begin{table}[tbp]
+\centering
+\caption{Complete 88101 event audit and real-event diagnostics.}
+\label{tab:real-audit}
+\small
+\begin{tabular}{lr}
+\toprule
+Audit disposition & Anchors \\
+\midrule
+Complete common-method comparison & 228 \\
+Fewer than three distinct physical donors & 325 \\
+Estimator input-window failure & 10 \\
+Total & 563 \\
+\bottomrule
+\end{tabular}
+\par\medskip
+\begin{tabular}{lrrr}
+\toprule
+Method & Events & Fixed CI excludes 0 & Median log effect \\
+\midrule
+MetaShift fixed & 228 & 159 & -0.08704 \\
+Standard SC & 228 & 145 & -0.07078 \\
+Nearest-neighbor DiD & 228 & 134 & -0.07490 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.94\linewidth}
+\footnotesize\textit{Note.} Nested selection-aware intervals are available for 227/228 complete events; 153 exclude zero. Their mean width is 0.19057 log units versus 0.17863 for fixed-weight MetaShift intervals. Leave-one-donor-out refits complete for 227 events, with 202 retaining direction under every donor removal. All intervals are diagnostic, not calibrated physical-bias confidence intervals.
+\end{minipage}
+\end{table}

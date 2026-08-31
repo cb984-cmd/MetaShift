@@ -1,6 +1,6 @@
 {
-  "schema_version": 2,
-  "generated_at_utc": "2026-08-31T21:28:28.057423+00:00",
+  "schema_version": 3,
+  "generated_at_utc": "2026-08-31T21:51:40.130113+00:00",
   "evidence_version": "v0.3.2",
   "release_gate_target_checks": 35,
   "document_consistency_target_checks": 12,
@@ -176,9 +176,24 @@
       "sha256": "7d93bcfcca37992a5a411c5d6a454f1362fe2220f649185db01daed1c414ccce"
     },
     {
+      "path": "artifacts/reliability_ablation_stable_full_v2_metrics.csv",
+      "bytes": 1770,
+      "sha256": "d39d9c69ea3161b5bf319b0accc227fd06286bfb8f446e7d24bcd8019ea4ed70"
+    },
+    {
+      "path": "artifacts/reliability_ablation_stable_full_v2_bootstrap.csv",
+      "bytes": 1507,
+      "sha256": "0d6ceb5243918d9a11ac94ed665e8b185e33bddc4931020e3fedb94c451b1177"
+    },
+    {
       "path": "artifacts/real_transition_88101_event_audit.csv",
       "bytes": 144105,
       "sha256": "b00851ceab1c094c5ac16d2368a3c1fa0ad16dc3a04926a7ec30b02f2fc653ae"
+    },
+    {
+      "path": "artifacts/real_transition_88101_method_results.csv",
+      "bytes": 549302,
+      "sha256": "d6883efae80bd5a8c6b173db6c7345515c16f6170c2e27be46e59e77f469ae1c"
     },
     {
       "path": "artifacts/real_transition_88101_event_intervals.csv",
@@ -216,9 +231,39 @@
       "sha256": "ecdedc02e6cbc60a868c54ec1ccbaf03c0807cb3323399b56798bef81a709ba1"
     },
     {
+      "path": "artifacts/real_transition_88101_evidence_tiers.csv",
+      "bytes": 356532,
+      "sha256": "c30ebcb0d8fa6213b343d71c8fcc01b5c263f6cf3251348578cf33951082add0"
+    },
+    {
+      "path": "artifacts/evidence_tier_sensitivity_v2_summary.csv",
+      "bytes": 461,
+      "sha256": "85a5fa834853ca3ef6daea9e651b5ad2619cc297e3eb4868a292090a42a33974"
+    },
+    {
       "path": "artifacts/synthetic_interval_coverage_v2_summary.csv",
       "bytes": 38549,
       "sha256": "b3258d780b11d8e9d8c823256ea1ff91abcc50679b35760bf9509419a6716d36"
+    },
+    {
+      "path": "artifacts/effect_window_sensitivity_summary.csv",
+      "bytes": 1600,
+      "sha256": "3ed0a6e0ff2abdcc14d0d2dde00b3540d5ee1571d80c5010f857e851afad05cb"
+    },
+    {
+      "path": "artifacts/reporting_scale_sensitivity_summary.csv",
+      "bytes": 736,
+      "sha256": "b1c27c23f1d75caa41111d2965c274f1bb8945996c45930fdd22b633d03975f3"
+    },
+    {
+      "path": "artifacts/screening_sensitivity_summary.csv",
+      "bytes": 2384,
+      "sha256": "80771cc0a2461365d787ca09e1926ff9313d7ea8354a2401b061ae15745762b5"
+    },
+    {
+      "path": "artifacts/synthetic_risk_coverage_stable_full_v2.csv",
+      "bytes": 3408,
+      "sha256": "72247348e7ea83a8816fd4948b4bbfd0da27aab7fea248b3ea89c3edd7f486fc"
     },
     {
       "path": "artifacts/hourly_poc_validation_summary.csv",
@@ -259,6 +304,18 @@
       "path": "results/reproducibility_comparison.json",
       "bytes": 11970,
       "sha256": "28ee496122acc632052e41cb179c04808b589ec98dbb17903aa201e184267eb2"
+    }
+  ],
+  "frozen_protocol_sources": [
+    {
+      "path": "configs/selection_aware_coverage_protocol_v2.json",
+      "bytes": 2754,
+      "sha256": "4e6e4021df6b050fbcd473de1fb6535d697078b96232751a323acc90f91cd0a5"
+    },
+    {
+      "path": "paper/EXTERNAL_DOCUMENT_REVIEW.csv",
+      "bytes": 5437,
+      "sha256": "cf5ff2fd0f263c570d301adfc3a871df25630305e52cf880615333e403b8d068"
     }
   ]
 }

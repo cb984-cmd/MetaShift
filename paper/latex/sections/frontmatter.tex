@@ -1,0 +1,52 @@
+\begin{center}
+{\LARGE\bfseries \ReportTitle\par}
+\vspace{0.8em}
+{\large \StudentAuthors\par}
+\vspace{0.4em}
+{\small \SchoolAffiliation\par}
+\vspace{0.4em}
+{\small \SupervisingTeachers\par}
+\end{center}
+
+\section*{Abstract}
+Regulatory monitoring records can exhibit discontinuities caused by changing
+environmental conditions, data processing, or a reported measurement method.
+An isolated time series cannot distinguish a station-specific discontinuity from
+a regional pattern. This report presents MetaShift-Bench, a reproducible
+metadata-anchored audit benchmark for reported United States Environmental
+Protection Agency (EPA) Air Quality System (AQS) PM2.5 Method Code
+transitions. A Method Code transition is treated as a reproducible event anchor,
+not as proof of physical instrument replacement, fault, or causal measurement
+bias. The protocol constructs pre-transition geographically constrained
+counterfactuals, compares cross-site and single-series methods under known
+synthetic perturbations, and preserves every eligible real event with its
+diagnostics or explicit failure reason.
+
+The frozen evidence inventory contains \CanonicalRecords{} canonical daily
+observations from \MonitorSeries{} monitor time series and \TotalAnchors{}
+persistent anchors. Only \ThreeDonorAnchors{} anchors retain at least three
+distinct physical donors; \CompleteComparisons{} receive complete common-method
+comparisons, while \InsufficientDonorAnchors{} are donor-insufficient and
+\InputFailureAnchors{} have estimator input-window failures. The
+stable-regime benchmark uses \SyntheticCases{} physical target sites split into
+\CalibrationCases{} calibration and \EvaluationCases{} evaluation sites with
+disjoint complete target-plus-donor footprints. Standard synthetic control has
+aggregate local-effect MAE \StdSCMAE{}, AUPRC \StdSCAUPRC{}, and macro-F1
+\StdSCFOne{}. Cross-validated MetaShift has lower point-estimate MAE
+(\CVMAE{}) but its paired difference versus standard synthetic control is
+\CVPairedMAEDifference{} (95\% CI [\CVPairedMALower{},
+\CVPairedMAEUpper{}]). Thus the evidence does not support a general MetaShift
+superiority claim. The contribution is instead a transparent benchmark,
+complete event audit, layered diagnostics, and a reproducible account of
+applicability limits.
+
+\noindent\textbf{Keywords:} air-quality monitoring; PM2.5; metadata anchors;
+synthetic control; change-point attribution; reproducible audit.
+
+\paragraph{Frozen-evidence statement.}
+All quantitative findings in this report are generated from the
+\EvidenceTag{} evidence release at commit \texttt{\EvidenceCommit{}}; see the
+\href{\EvidenceReleaseURL}{official frozen evidence release}. The full
+case-manifest SHA-256 is recorded in the frozen evidence configuration and
+reproducibility table. This document does not modify the frozen study protocol
+or reopen model tuning.

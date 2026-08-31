@@ -1,0 +1,20 @@
+\begin{table}[tbp]
+\centering
+\caption{Independent stable-regime synthetic evaluation.}
+\label{tab:synthetic-metrics}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Method & MAE & AUPRC & Macro-F1 & Regional FPR \\
+\midrule
+Standard SC & 0.09983 & 0.91476 & 0.81641 & 0.140 \\
+MetaShift fixed & 0.10344 & 0.89832 & 0.79515 & 0.150 \\
+MetaShift CV & 0.09742 & 0.90178 & 0.80916 & 0.135 \\
+Nearest-neighbor DiD & 0.11150 & 0.88443 & 0.78852 & 0.075 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.94\linewidth}
+\footnotesize\textit{Note.} Metrics are aggregates over the frozen \texttt{stable\_full\_v2} evaluation set. Lower MAE and regional false-positive rate are preferable; higher AUPRC and macro-F1 are preferable.
+\end{minipage}
+\end{table}

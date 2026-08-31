@@ -96,6 +96,12 @@ An evidence-backed English manuscript draft is at
 marked as a draft: student identities, author contributions, teacher approval,
 AI-use disclosure, and all submitted claims require human verification.
 
+A formal A4 pre-submission report, its source, and its frozen-evidence
+generators are in [`paper/latex/`](paper/latex/). The
+[`MetaShift_Bench_Yau_2026.pdf`](paper/latex/MetaShift_Bench_Yau_2026.pdf) build
+is a machine-validated draft, not a submitted paper: all visible human-completion
+fields, the taxonomy review, and official forms remain required.
+
 The targeted public-document review is intentionally conservative:
 [`docs/EXTERNAL_DOCUMENT_REVIEW.md`](docs/EXTERNAL_DOCUMENT_REVIEW.md) records
 20 preselected AQS metadata boundaries, with 0/20 dated,

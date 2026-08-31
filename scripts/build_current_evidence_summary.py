@@ -25,14 +25,17 @@ RELEASE_URL = (
     "https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final"
 )
 
-SOURCE_PATHS = (
+ARTIFACT_SOURCE_PATHS = (
     "artifacts/data_gate/summary.json",
     "artifacts/stable_synthetic_case_manifest.json",
     "artifacts/stable_synthetic_case_split_audit.json",
     "artifacts/stable_synthetic_stable_full_v2_metrics.csv",
     "artifacts/stable_synthetic_stable_full_v2_bootstrap.csv",
     "artifacts/benchmark_ablation_alignment_stable_full_v2.json",
+    "artifacts/reliability_ablation_stable_full_v2_metrics.csv",
+    "artifacts/reliability_ablation_stable_full_v2_bootstrap.csv",
     "artifacts/real_transition_88101_event_audit.csv",
+    "artifacts/real_transition_88101_method_results.csv",
     "artifacts/real_transition_88101_event_intervals.csv",
     "artifacts/real_transition_88101_nested_selection_intervals.csv",
     "artifacts/leave_one_donor_out_summary.csv",
@@ -40,7 +43,13 @@ SOURCE_PATHS = (
     "artifacts/time_placebo_date_permutations.csv",
     "artifacts/donor_as_treated_placebos.csv",
     "artifacts/real_transition_88101_evidence_tier_summary.json",
+    "artifacts/real_transition_88101_evidence_tiers.csv",
+    "artifacts/evidence_tier_sensitivity_v2_summary.csv",
     "artifacts/synthetic_interval_coverage_v2_summary.csv",
+    "artifacts/effect_window_sensitivity_summary.csv",
+    "artifacts/reporting_scale_sensitivity_summary.csv",
+    "artifacts/screening_sensitivity_summary.csv",
+    "artifacts/synthetic_risk_coverage_stable_full_v2.csv",
     "artifacts/hourly_poc_validation_summary.csv",
     "artifacts/external_document_review_summary.json",
     "artifacts/data_gate_88502/summary.json",
@@ -49,6 +58,10 @@ SOURCE_PATHS = (
     "results/document_consistency.json",
     "results/manuscript_number_verification.json",
     "results/reproducibility_comparison.json",
+)
+FROZEN_PROTOCOL_SOURCE_PATHS = (
+    "configs/selection_aware_coverage_protocol_v2.json",
+    "paper/EXTERNAL_DOCUMENT_REVIEW.csv",
 )
 
 
@@ -118,9 +131,9 @@ def require_matching_frozen_provenance(
         )
 
 
-def source_records() -> list[dict[str, object]]:
+def source_records(paths: tuple[str, ...]) -> list[dict[str, object]]:
     records = []
-    for relative_path in SOURCE_PATHS:
+    for relative_path in paths:
         path = ROOT / relative_path
         if not path.is_file():
             raise FileNotFoundError(f"Required frozen evidence source is missing: {path}")
@@ -213,7 +226,7 @@ def build_summary() -> dict[str, object]:
     ]
 
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "generated_at_utc": datetime.now(UTC).isoformat(),
         "evidence_version": "v0.3.2",
         "release_gate_target_checks": integer(len(release_gate["checks"])),
@@ -466,7 +479,8 @@ def build_summary() -> dict[str, object]:
             "A Method Code transition is a metadata anchor, not a confirmed "
             "instrument fault, physical replacement, or causal measurement bias."
         ),
-        "artifact_sources": source_records(),
+        "artifact_sources": source_records(ARTIFACT_SOURCE_PATHS),
+        "frozen_protocol_sources": source_records(FROZEN_PROTOCOL_SOURCE_PATHS),
     }
 
 

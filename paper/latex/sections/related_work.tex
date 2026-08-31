@@ -1,0 +1,49 @@
+\section{Background and related work}
+
+\subsection{Monitoring comparability and public metadata}
+
+Monitoring comparability is an empirical problem rather than a label inferred
+from a single administrative field. EPA publishes AQS file formats, a Method
+Code reference, and continuous-monitor comparability resources
+\citep{epa_airdata_formats,epa_method_code,epa_pm25_comparability}. Collocated
+Federal Reference Method and Federal Equivalent Method studies show why
+configuration-specific comparison is important \citep{khan2024}. They do not,
+however, supply a dated physical-change ground truth for every historical AQS
+Method Code transition.
+
+Low-cost PM2.5 sensor studies similarly motivate careful calibration and
+reference comparison \citep{clements2017,barkjohn2021,chu2020}. Their
+calibration settings, instruments, and outcomes differ from a retrospective
+audit of reported regulatory-monitor metadata. MetaShift-Bench uses these works
+as measurement-quality context, not as evidence that an AQS transition has a
+particular physical cause.
+
+\subsection{Reference series, counterfactuals, and change points}
+
+Single-series change-point methods such as PELT identify changes in a sequence
+efficiently \citep{killick2012}. Environmental analyses can combine
+change-point tests with meteorological normalization
+\citep{gagliardi2022}. Such methods remain valuable baselines, but a
+single series cannot determine whether a discontinuity is local to the monitor
+or shared across a region.
+
+Pairwise homogenization of climate records is a closer design analogue:
+reference stations and station histories can expose inhomogeneity while leaving
+causal interpretation conditional on assumptions \citep{menne2009}. Synthetic
+control provides donor-weighted counterfactuals and in-space placebo logic
+\citep{abadie2010}; difference-in-differences formalizes stronger treatment
+identification assumptions \citep{callaway2021}. This study adapts those
+ideas as diagnostics, not as proof that the causal assumptions of a policy
+intervention apply to a reported monitoring-method transition.
+
+\subsection{Contribution boundary}
+
+MetaShift-Bench integrates established ingredients into one constrained
+workflow: AQS Method Code metadata defines anchors; distinct physical sites
+define geographic donors; stable windows receive known synthetic perturbations;
+and every eligible real anchor receives either a result or an explicit
+exclusion. We are not aware of a prior benchmark that jointly uses reported AQS
+measurement-method transitions as reproducible metadata anchors, cross-site
+diagnostic controls, stable-window synthetic perturbations, and complete
+eligible-event accounting. This is a scoped literature statement, not an
+assertion of being first in a broader field.

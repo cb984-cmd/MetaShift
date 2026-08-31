@@ -1,0 +1,22 @@
+\begin{table}[tbp]
+\centering
+\caption{Held-out synthetic interval coverage by method.}
+\label{tab:interval-coverage}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrr}
+\toprule
+Method & Fixed 95\% coverage & Fixed mean width & Conformal 90\% coverage & Conformal mean width \\
+\midrule
+Standard SC & 67.281\% & 0.265 & 98.8125\% & 0.396 \\
+MetaShift fixed & 63.875\% & 0.270 & 99.4375\% & 0.471 \\
+MetaShift CV & 65.406\% & 0.265 & 98.9375\% & 0.437 \\
+Nearest-neighbor DiD & 66.656\% & 0.287 & 99.5625\% & 0.565 \\
+\bottomrule
+\end{tabular}
+}
+\par\smallskip
+\begin{minipage}{0.94\linewidth}
+\footnotesize\textit{Note.} Each method has 3,200 evaluation effect instances. Fixed-weight intervals under-cover and split-conformal intervals over-cover under this frozen synthetic design.
+\end{minipage}
+\end{table}

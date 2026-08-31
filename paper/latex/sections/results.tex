@@ -1,0 +1,168 @@
+\section{Results}
+
+\subsection{RQ1: Stable-window synthetic comparison}
+
+\textbf{Answer.} The synthetic benchmark differentiates cross-site methods, but
+no method is uniformly best across all metrics and perturbation families.
+Table~\ref{tab:synthetic-metrics} reports the held-out aggregate results, and
+Figure~\ref{fig:synthetic-metrics} visualizes the primary trade-offs.
+
+\input{generated/tables/table_synthetic_metrics}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_synthetic_metrics.pdf}
+\caption{Held-out stable-regime synthetic metrics generated from the frozen
+stable synthetic metrics table.}
+\label{fig:synthetic-metrics}
+\end{figure}
+
+Standard synthetic control has stronger aggregate attribution ranking and
+macro-F1 than both MetaShift variants, while cross-validated MetaShift has the
+smallest aggregate local-effect MAE. Nearest-neighbor difference-in-differences
+has the lowest regional false-positive rate among these four methods but weaker
+effect error and attribution metrics. These are benchmark-specific trade-offs,
+not a ranking for every monitoring network.
+
+\subsection{RQ2: Bound on a MetaShift superiority claim}
+
+\textbf{Answer.} Neither MetaShift variant has a confidence-supported aggregate
+MAE advantage over standard synthetic control. The paired bootstrap intervals
+in Table~\ref{tab:paired-bootstrap} cross zero for both frozen variants.
+
+\input{generated/tables/table_paired_bootstrap}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.84\linewidth]{fig_paired_bootstrap.pdf}
+\caption{Paired event-cluster bootstrap intervals for MetaShift minus standard
+synthetic-control local-effect MAE. The dashed line is no difference.}
+\label{fig:paired-bootstrap}
+\end{figure}
+
+The main and ablation experiments share \SharedStandardRows{} standard
+synthetic-control records exactly to the configured numerical tolerance.
+Table~\ref{tab:ablations} therefore compares reliability-prior variants without
+changing the standard-control reference rows. The ablations do not establish a
+stable overall MetaShift advantage; this negative result closes the
+model-superiority route for the frozen benchmark.
+
+\input{generated/tables/table_ablation}
+
+\subsection{RQ3: Complete real-anchor audit}
+
+\textbf{Answer.} Only \CompleteComparisons{} of \TotalAnchors{} anchors support
+a complete common cross-site comparison under the distinct-physical-donor
+rule. The remaining \InsufficientDonorAnchors{} donor-insufficient and
+\InputFailureAnchors{} input-window events are retained as applicability
+boundaries rather than removed.
+
+\input{generated/tables/table_real_audit}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.82\linewidth]{fig_event_flow.pdf}
+\caption{Complete disposition of all 88101 metadata anchors.}
+\label{fig:event-flow}
+\end{figure}
+
+The exploratory evidence synthesis assigns \SupportedCandidates{} supported
+candidates, \NotSupportedEvents{} not-supported events, and
+\InconclusiveEvents{} inconclusive events. The supported label means that
+predeclared diagnostic conditions were jointly met; it does not confirm a
+physical failure, replacement, or causal bias.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.76\linewidth]{fig_evidence_tiers.pdf}
+\caption{Exploratory evidence tiers for the full anchor inventory.}
+\label{fig:evidence-tiers}
+\end{figure}
+
+Time-placebo coverage is available for \TimePlaceboEvents{} complete events
+with at least 50 dates, including \FullTimePlaceboEvents{} with 100 dates.
+The donor-as-treated table contains \DonorPlaceboRecords{} rows, and the
+200-resample date comparison has upper-tail probability \DateResamplingP{}.
+These are diagnostic falsifications rather than causal probabilities.
+
+\input{generated/tables/table_placebo_external}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_placebos.pdf}
+\caption{Time-placebo availability and raw within-event probability
+distribution. The vertical line marks the exploratory 0.10 screening
+threshold.}
+\label{fig:placebos}
+\end{figure}
+
+\subsection{RQ4: Interval coverage and sensitivity}
+
+\textbf{Answer.} The two available fixed-protocol interval constructions do not
+support a generic calibration claim. At nominal 95\%, fixed-weight conditional
+block-bootstrap coverage ranges from \ConditionalCoverageLow{} to
+\ConditionalCoverageHigh{} over \CoverageInstancesPerMethod{} held-out effect
+instances per method. At nominal 90\%, split-conformal coverage ranges from
+\ConformalCoverageLow{} to \ConformalCoverageHigh{} and is highly
+conservative.
+
+\input{generated/tables/table_interval_coverage}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_interval_coverage.pdf}
+\caption{Empirical held-out synthetic coverage. Dashed lines show nominal
+coverage levels for each construction.}
+\label{fig:interval-coverage}
+\end{figure}
+
+Selection-aware nested intervals exist for \NestedIntervalEvents{} complete
+real events and exclude zero for \NestedExcludesZero{}. Each requested 1,000
+repetitions and retained at least \NestedIntervalValidMinimum{} valid
+repetitions. This result does not validate their coverage: the frozen full
+selection-aware synthetic coverage protocol is infeasible within the deadline.
+The intervals are therefore reported as conditional diagnostics.
+
+Table~\ref{tab:window-scale-sensitivity} reports predeclared effect-window and
+reporting-scale sensitivity; Table~\ref{tab:screening-sensitivity} reports
+one-factor screening availability. The geographic donor radius visibly changes
+how many anchors can be analyzed, so these settings are documented rather than
+optimized after viewing results.
+
+\input{generated/tables/table_window_scale_sensitivity}
+\input{generated/tables/table_screening_sensitivity}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_screening_sensitivity.pdf}
+\caption{Predeclared geographic screening and evidence-tier threshold
+sensitivity. These describe availability and exploratory tiers, not physical
+causality.}
+\label{fig:screening-sensitivity}
+\end{figure}
+
+\subsection{RQ5: External context and transfer boundary}
+
+\textbf{Answer.} External evidence supplies limited contextual support, not
+ground truth. Of \POCCandidates{} same-site POC candidates,
+\POCUsablePairs{} have usable paired hourly windows and
+\POCDirectionAgreements{} agree in daily/hourly direction. The targeted
+official-document review found \ExternalReviewConfirmations{}/\ExternalReviewEvents{}
+dated site-specific confirmations. A missing public notice is unavailable
+evidence, not evidence that no physical change occurred.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_external_evidence.pdf}
+\caption{Availability of same-site POC and targeted official-document context.}
+\label{fig:external-evidence}
+\end{figure}
+
+The independent 88502 pipeline has \SecondaryAnchors{} eligible metadata
+anchors and only \SecondaryComplete{} complete common-method comparisons. It
+demonstrates separate-pipeline feasibility but is too sparse to support broad
+generalization. EPA documentation about network data alignment provides useful
+method context \citep{epa_t640_alignment}; it is not a dated site-specific
+confirmation for the reviewed anchors.
+
+\FloatBarrier

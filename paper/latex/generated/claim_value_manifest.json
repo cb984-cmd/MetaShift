@@ -1,0 +1,226 @@
+{
+  "schema_version": 1,
+  "evidence_version": "v0.3.2",
+  "frozen_evidence": {
+    "tag": "v0.3.2-evidence-final",
+    "commit": "57d678ecabebff724d898abe626c9ef80538775b",
+    "release_url": "https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final",
+    "supersedes": [
+      "v0.3.0-distinct-donors",
+      "v0.3.1-evidence-final"
+    ]
+  },
+  "claims": {
+    "Q01": {
+      "expected_ledger_fragments": [
+        "2,424,793",
+        "1,689"
+      ]
+    },
+    "Q02": {
+      "expected_ledger_fragments": [
+        "563"
+      ]
+    },
+    "Q03": {
+      "expected_ledger_fragments": [
+        "238"
+      ]
+    },
+    "Q04": {
+      "expected_ledger_fragments": [
+        "228",
+        "325",
+        "10"
+      ]
+    },
+    "Q05": {
+      "expected_ledger_fragments": [
+        "146",
+        "66",
+        "80"
+      ]
+    },
+    "Q06": {
+      "expected_ledger_fragments": [
+        "400"
+      ]
+    },
+    "Q07": {
+      "expected_ledger_fragments": [
+        "0.09983",
+        "0.91476",
+        "0.81641",
+        "0.140"
+      ]
+    },
+    "Q08": {
+      "expected_ledger_fragments": [
+        "fixed-prior",
+        "cross-validated"
+      ]
+    },
+    "Q09": {
+      "expected_ledger_fragments": [
+        "-0.00240",
+        "-0.00772",
+        "0.00347"
+      ]
+    },
+    "Q10": {
+      "expected_ledger_fragments": [
+        "0.00361",
+        "-0.00401",
+        "0.01163"
+      ]
+    },
+    "Q11": {
+      "expected_ledger_fragments": [
+        "7,300",
+        "1e-10"
+      ]
+    },
+    "Q12": {
+      "expected_ledger_fragments": [
+        "34",
+        "122",
+        "407"
+      ]
+    },
+    "Q13": {
+      "expected_ledger_fragments": [
+        "157",
+        "128"
+      ]
+    },
+    "Q14": {
+      "expected_ledger_fragments": [
+        "71",
+        "40",
+        "0.10"
+      ]
+    },
+    "Q15": {
+      "expected_ledger_fragments": [
+        "200",
+        "0.00498"
+      ]
+    },
+    "Q16": {
+      "expected_ledger_fragments": [
+        "866",
+        "0.40831"
+      ]
+    },
+    "Q17": {
+      "expected_ledger_fragments": [
+        "159/228",
+        "145/228",
+        "134/228"
+      ]
+    },
+    "Q18": {
+      "expected_ledger_fragments": [
+        "227",
+        "153",
+        "0.19057"
+      ]
+    },
+    "Q19": {
+      "expected_ledger_fragments": [
+        "227",
+        "202"
+      ]
+    },
+    "Q20": {
+      "expected_ledger_fragments": [
+        "95%",
+        "63.9%",
+        "67.3%"
+      ]
+    },
+    "Q21": {
+      "expected_ledger_fragments": [
+        "90%",
+        "98.8%",
+        "99.6%"
+      ]
+    },
+    "Q22": {
+      "expected_ledger_fragments": [
+        "infeasible within the deadline"
+      ]
+    },
+    "Q23": {
+      "expected_ledger_fragments": [
+        "9/11",
+        "8/9"
+      ]
+    },
+    "Q24": {
+      "expected_ledger_fragments": [
+        "0/20"
+      ]
+    },
+    "Q25": {
+      "expected_ledger_fragments": [
+        "34",
+        "3"
+      ]
+    },
+    "Q26": {
+      "expected_ledger_fragments": [
+        "35",
+        "12",
+        "57",
+        "34"
+      ]
+    },
+    "Q27": {
+      "expected_ledger_fragments": [
+        "-0.08704",
+        "-0.07078",
+        "-0.07490"
+      ]
+    },
+    "Q28": {
+      "expected_ledger_fragments": [
+        "224/228",
+        "228/228",
+        "196/228",
+        "93.3%",
+        "93.9%"
+      ]
+    },
+    "Q29": {
+      "expected_ledger_fragments": [
+        "95.2%",
+        "92.5%",
+        "92.1%"
+      ]
+    },
+    "Q30": {
+      "expected_ledger_fragments": [
+        "238",
+        "100 km",
+        "102",
+        "50 km",
+        "426",
+        "200 km"
+      ]
+    },
+    "Q31": {
+      "expected_ledger_fragments": [
+        "75/80",
+        "0.09274",
+        "0.09983"
+      ]
+    },
+    "Q32": {
+      "expected_ledger_fragments": [
+        "same",
+        "confidence-supported"
+      ]
+    }
+  }
+}

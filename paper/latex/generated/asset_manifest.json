@@ -1,0 +1,338 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-08-31T21:52:26.456884+00:00",
+  "generator": "paper/latex/scripts/generate_paper_assets.py",
+  "frozen_evidence": {
+    "tag": "v0.3.2-evidence-final",
+    "commit": "57d678ecabebff724d898abe626c9ef80538775b",
+    "release_url": "https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final",
+    "supersedes": [
+      "v0.3.0-distinct-donors",
+      "v0.3.1-evidence-final"
+    ]
+  },
+  "result_label": "stable_full_v2",
+  "input_summary_sha256": "7a4c7219af77cb80c7c3aa5a2175a1ffa29f6ac826f8ec95305185d66f05bc55",
+  "input_artifact_sources": [
+    {
+      "path": "artifacts/data_gate/summary.json",
+      "sha256": "10a0117f6a1debc664795705008002e91be9d1783315efbe30dc717804d2d906"
+    },
+    {
+      "path": "artifacts/stable_synthetic_case_manifest.json",
+      "sha256": "77b695d3e8e7a230512fd4b697b93d3ce0f920116fb15286ea20cce5d9e123e7"
+    },
+    {
+      "path": "artifacts/stable_synthetic_case_split_audit.json",
+      "sha256": "56671b8d44ed2581d7be3a181178551bece2daecdf6357a9d91fceb0806956d5"
+    },
+    {
+      "path": "artifacts/stable_synthetic_stable_full_v2_metrics.csv",
+      "sha256": "11b5d30af48b639558baf7f437d244b7c6c121f54be43e0e31f12f6bbe49e34f"
+    },
+    {
+      "path": "artifacts/stable_synthetic_stable_full_v2_bootstrap.csv",
+      "sha256": "23a7f15fbd5f2f0d5b436a3acb5bec41ab616bbad19cf861b6e81ca1e3350ca9"
+    },
+    {
+      "path": "artifacts/reliability_ablation_stable_full_v2_metrics.csv",
+      "sha256": "d39d9c69ea3161b5bf319b0accc227fd06286bfb8f446e7d24bcd8019ea4ed70"
+    },
+    {
+      "path": "artifacts/reliability_ablation_stable_full_v2_bootstrap.csv",
+      "sha256": "0d6ceb5243918d9a11ac94ed665e8b185e33bddc4931020e3fedb94c451b1177"
+    },
+    {
+      "path": "artifacts/benchmark_ablation_alignment_stable_full_v2.json",
+      "sha256": "7d93bcfcca37992a5a411c5d6a454f1362fe2220f649185db01daed1c414ccce"
+    },
+    {
+      "path": "artifacts/real_transition_88101_event_audit.csv",
+      "sha256": "b00851ceab1c094c5ac16d2368a3c1fa0ad16dc3a04926a7ec30b02f2fc653ae"
+    },
+    {
+      "path": "artifacts/real_transition_88101_method_results.csv",
+      "sha256": "d6883efae80bd5a8c6b173db6c7345515c16f6170c2e27be46e59e77f469ae1c"
+    },
+    {
+      "path": "artifacts/real_transition_88101_event_intervals.csv",
+      "sha256": "2df64031df462e68a76ea9f8f21e8ab2a73a5c38d13ce2938d30df4e3e28bf5e"
+    },
+    {
+      "path": "artifacts/real_transition_88101_nested_selection_intervals.csv",
+      "sha256": "5931a62542073b73cf26daf4d3060e6889063727b412d1825c2fd4abfd5f4d85"
+    },
+    {
+      "path": "artifacts/leave_one_donor_out_summary.csv",
+      "sha256": "8a953bbd998bf95d2ccac5eede6843135a7f9f90f21b3207bbdd9071ac2f618f"
+    },
+    {
+      "path": "artifacts/time_placebo_summary.csv",
+      "sha256": "99331922d82556a4c7d9633114fe6684415b352ac3c6deee9ccb93fd14d2bf9e"
+    },
+    {
+      "path": "artifacts/time_placebo_date_permutations.csv",
+      "sha256": "447783420b4729385635dd4f53ba579ea21a5525c2f0bfd09ce48eca09d5a390"
+    },
+    {
+      "path": "artifacts/donor_as_treated_placebos.csv",
+      "sha256": "0a611e7aaf81335ab91d6071b1949f2135ed5d5626d966f533bdcacf26df4df2"
+    },
+    {
+      "path": "artifacts/real_transition_88101_evidence_tier_summary.json",
+      "sha256": "ecdedc02e6cbc60a868c54ec1ccbaf03c0807cb3323399b56798bef81a709ba1"
+    },
+    {
+      "path": "artifacts/real_transition_88101_evidence_tiers.csv",
+      "sha256": "c30ebcb0d8fa6213b343d71c8fcc01b5c263f6cf3251348578cf33951082add0"
+    },
+    {
+      "path": "artifacts/evidence_tier_sensitivity_v2_summary.csv",
+      "sha256": "85a5fa834853ca3ef6daea9e651b5ad2619cc297e3eb4868a292090a42a33974"
+    },
+    {
+      "path": "artifacts/synthetic_interval_coverage_v2_summary.csv",
+      "sha256": "b3258d780b11d8e9d8c823256ea1ff91abcc50679b35760bf9509419a6716d36"
+    },
+    {
+      "path": "artifacts/effect_window_sensitivity_summary.csv",
+      "sha256": "3ed0a6e0ff2abdcc14d0d2dde00b3540d5ee1571d80c5010f857e851afad05cb"
+    },
+    {
+      "path": "artifacts/reporting_scale_sensitivity_summary.csv",
+      "sha256": "b1c27c23f1d75caa41111d2965c274f1bb8945996c45930fdd22b633d03975f3"
+    },
+    {
+      "path": "artifacts/screening_sensitivity_summary.csv",
+      "sha256": "80771cc0a2461365d787ca09e1926ff9313d7ea8354a2401b061ae15745762b5"
+    },
+    {
+      "path": "artifacts/synthetic_risk_coverage_stable_full_v2.csv",
+      "sha256": "72247348e7ea83a8816fd4948b4bbfd0da27aab7fea248b3ea89c3edd7f486fc"
+    },
+    {
+      "path": "artifacts/hourly_poc_validation_summary.csv",
+      "sha256": "16fa583f0348837ce4486aa26a41fe4c8644ff249446c6276d3ed87ffffb04c4"
+    },
+    {
+      "path": "artifacts/external_document_review_summary.json",
+      "sha256": "91660c3ba7b05fd436a4256508bd9f8b13984b4e10e4b754a5e268e8bfebbe17"
+    },
+    {
+      "path": "artifacts/data_gate_88502/summary.json",
+      "sha256": "f8cc86b7ecc22fe6f6889ec08f96b01a3cf3e5f2d5905f1b850f61d54afc3b85"
+    },
+    {
+      "path": "artifacts/real_transition_88502_event_audit.csv",
+      "sha256": "65b9e27b23606f47814a60df703405223eb24750d14e176a4dddd5e3be762311"
+    },
+    {
+      "path": "results/release_gate.json",
+      "sha256": "ea5aa3f508cc7f1dc29790865f3b4692880d5e26f39748a3daeb205c1c2b52e1"
+    },
+    {
+      "path": "results/document_consistency.json",
+      "sha256": "a26c391c33b5e78d35fe359ee8555fcf408564b1ed02e09cbef3c4685ff85bff"
+    },
+    {
+      "path": "results/manuscript_number_verification.json",
+      "sha256": "66dd2a7106b6b9f0445ea6206ecfe9729cc97774e89a054eaaa8ba00c2388cc7"
+    },
+    {
+      "path": "results/reproducibility_comparison.json",
+      "sha256": "28ee496122acc632052e41cb179c04808b589ec98dbb17903aa201e184267eb2"
+    },
+    {
+      "path": "configs/selection_aware_coverage_protocol_v2.json",
+      "sha256": "4e6e4021df6b050fbcd473de1fb6535d697078b96232751a323acc90f91cd0a5"
+    },
+    {
+      "path": "paper/EXTERNAL_DOCUMENT_REVIEW.csv",
+      "sha256": "cf5ff2fd0f263c570d301adfc3a871df25630305e52cf880615333e403b8d068"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "generated/evidence_macros.tex",
+      "kind": "latex_macros",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 2782,
+      "sha256": "deb8f0b5fac2b3f01d64af05bcdd6b810e16fc3883dd670fcc7bfa4abf0b4afd"
+    },
+    {
+      "path": "generated/claim_value_manifest.json",
+      "kind": "claim_value_manifest",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 3870,
+      "sha256": "530278e46a13dbc6ee8ef927ab2c9f688c0231e3bf8668051ca1f3baa3493027"
+    },
+    {
+      "path": "generated/tables/table_data_summary.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 773,
+      "sha256": "a9125f367cc123dfb0c0f93d8c776891833b28077c105a1e59b7e4341767f9e2"
+    },
+    {
+      "path": "generated/tables/table_synthetic_metrics.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 753,
+      "sha256": "82a94a08bb843678ada1088156945c189c2e45077979f341a3a06eb37a7e873d"
+    },
+    {
+      "path": "generated/tables/table_paired_bootstrap.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 631,
+      "sha256": "f0d38686a75a3e22e20da8da8251ea4a1eab2ef2a990fa955e9aea10ba92c7a8"
+    },
+    {
+      "path": "generated/tables/table_ablation.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 1001,
+      "sha256": "2233809623477b58febfcf693211954c5f45e33359007e172fe7c8d2e40f9aa9"
+    },
+    {
+      "path": "generated/tables/table_real_audit.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 1112,
+      "sha256": "387ff1e8276a8362566b4b325b42cfded4cb320395adc419bed73a8f11e9d850"
+    },
+    {
+      "path": "generated/tables/table_interval_coverage.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 823,
+      "sha256": "4cbb01c27b8a0c2c84ee8ca65499001519d27901934d88581efb4eb862aca653"
+    },
+    {
+      "path": "generated/tables/table_window_scale_sensitivity.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 947,
+      "sha256": "657e974d928c5878e65aba122a953c28d5e4e7f166372ec412f324808f146a39"
+    },
+    {
+      "path": "generated/tables/table_screening_sensitivity.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 901,
+      "sha256": "de83818d8710182d6562128c65416bef6e747bc26b20dba6b32450091f0991f3"
+    },
+    {
+      "path": "generated/tables/table_placebo_external.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 977,
+      "sha256": "35810a76b59731bdf69421539b8d6666d2684ec4d72a1a6ae953d743b8d5ecf6"
+    },
+    {
+      "path": "generated/tables/table_reproducibility.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 818,
+      "sha256": "ea29e0a885bbc3ab145af92892456b3b4e4fd69910269b5c33fb100ed88d89d7"
+    },
+    {
+      "path": "generated/figures/fig_event_flow.pdf",
+      "kind": "vector_figure",
+      "sources": [
+        "artifacts/real_transition_88101_event_audit.csv"
+      ],
+      "bytes": 12532,
+      "sha256": "41e6a64cab2eccdfed81b7e7832c15da8d88af5bd0fffc8ecbd196abff1f2018"
+    },
+    {
+      "path": "generated/figures/fig_synthetic_metrics.pdf",
+      "kind": "vector_figure",
+      "sources": [
+        "artifacts/stable_synthetic_stable_full_v2_metrics.csv"
+      ],
+      "bytes": 20729,
+      "sha256": "43f79f218b706f07c121107a599ac856f2a17429b5cea9859617e077b7e655d8"
+    },
+    {
+      "path": "generated/figures/fig_paired_bootstrap.pdf",
+      "kind": "vector_figure",
+      "sources": [
+        "artifacts/stable_synthetic_stable_full_v2_bootstrap.csv"
+      ],
+      "bytes": 15462,
+      "sha256": "d0eb419825ca135d17ed32658a7b137ef94a122f82d71192f99fd163317c06ef"
+    },
+    {
+      "path": "generated/figures/fig_evidence_tiers.pdf",
+      "kind": "vector_figure",
+      "sources": [
+        "artifacts/real_transition_88101_evidence_tier_summary.json"
+      ],
+      "bytes": 12727,
+      "sha256": "dfd5d944676716cb7aaccd845ccc89f67d22f3145a7685467b5295f60205ab48"
+    },
+    {
+      "path": "generated/figures/fig_placebos.pdf",
+      "kind": "vector_figure",
+      "sources": [
+        "artifacts/time_placebo_summary.csv"
+      ],
+      "bytes": 14535,
+      "sha256": "215f74ca273bbfc966c7f910dc45e2de57c7b15e19f7d5c5ac8b2b8a1eef9bce"
+    },
+    {
+      "path": "generated/figures/fig_interval_coverage.pdf",
+      "kind": "vector_figure",
+      "sources": [
+        "artifacts/synthetic_interval_coverage_v2_summary.csv"
+      ],
+      "bytes": 18367,
+      "sha256": "68cadf6cce889e9fcf82a5793f63903384dacf66cd3f57e374b8fe122371667f"
+    },
+    {
+      "path": "generated/figures/fig_screening_sensitivity.pdf",
+      "kind": "vector_figure",
+      "sources": [
+        "artifacts/screening_sensitivity_summary.csv",
+        "artifacts/evidence_tier_sensitivity_v2_summary.csv"
+      ],
+      "bytes": 16062,
+      "sha256": "b6b6a41bf19918e9b694c8e1e49a73aad3f4936fd7518b5558eff3f322a26afa"
+    },
+    {
+      "path": "generated/figures/fig_external_evidence.pdf",
+      "kind": "vector_figure",
+      "sources": [
+        "artifacts/hourly_poc_validation_summary.csv",
+        "artifacts/external_document_review_summary.json"
+      ],
+      "bytes": 17628,
+      "sha256": "c976cbb752c0694a1bbb05c0cefe32a6b88800caef6beb79b6175e0d375480fa"
+    }
+  ]
+}

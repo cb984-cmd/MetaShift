@@ -1,0 +1,60 @@
+\section{Methods}
+
+\subsection{Counterfactual residual}
+
+For target monitor $i$, date $t$, and selected geographic donors $j \in N_i$,
+the daily concentration $y_{i,t}$ is transformed as
+\[
+z_{i,t} = \log(1 + \max(y_{i,t}, 0)).
+\]
+For a donor-weighted counterfactual, the residual is
+\[
+r_{i,t} = z_{i,t} - \sum_{j \in N_i} w_{ij}z_{j,t}
+- \operatorname{median}_{s \in T_{\mathrm{cal}}}
+\left(z_{i,s} - \sum_{j \in N_i}w_{ij}z_{j,s}\right).
+\]
+Weights are nonnegative and sum to one. They are fitted using only the
+pre-anchor calibration interval, ending before a buffer immediately preceding
+the anchor. The primary effect is the difference between post- and pre-anchor
+median residuals in symmetric windows. Raw-unit effects are retained as an
+interpretation aid, not as interchangeable causal estimands.
+
+Fixed-prior MetaShift uses a reliability preference based on pre-event
+correlation and distance. Cross-validated MetaShift selects among frozen
+pre-event settings only. Standard synthetic control fits its donor weights
+without the MetaShift reliability prior; nearest-neighbor difference-in-
+differences uses the closest qualified donor reference. Before-after median,
+Bayesian mean shift, CUSUM, rolling-MAD, and PELT provide single-series
+comparators.
+
+\subsection{Evidence diagnostics}
+
+The real-event audit combines several diagnostics without assigning a physical
+cause:
+\begin{enumerate}
+  \item pre-event counterfactual fit;
+  \item fixed-weight moving-block intervals;
+  \item selection-aware nested moving-block intervals that re-evaluate donor
+  correlation eligibility, donor selection, and weight fitting inside the
+  observed candidate pool;
+  \item stable post-transition time placebos and exploratory
+  Benjamini--Hochberg-adjusted screening quantities;
+  \item donor-as-treated and date-resampling placebos; and
+  \item leave-one-donor-out refits.
+\end{enumerate}
+
+An anchor is labelled a supported candidate discontinuity only when all
+predeclared available evidence conditions hold. An event with available but
+failed conditions is not supported by the available evidence; an event without
+a necessary comparative or diagnostic input is inconclusive. These are
+observational audit tiers. They are not labels for instrument failures,
+confirmed bias, or true pollution corrections.
+
+\subsection{Inference boundary}
+
+The nested procedure captures some time-resampling, donor-reselection, and
+weight-refitting variation within the observed candidate pool. It does not
+capture uncertainty in source metadata, site geography, or initial candidate-
+pool construction. Accordingly, even when an interval excludes zero it is a
+diagnostic statement about the protocol-defined residual, not a calibrated
+confidence interval for a physical measurement bias.

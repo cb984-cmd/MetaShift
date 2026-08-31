@@ -1,0 +1,29 @@
+\begin{table}[tbp]
+\centering
+\caption{Predeclared effect-window and reporting-scale sensitivity.}
+\label{tab:window-scale-sensitivity}
+\small
+\begin{tabular}{lrrr}
+\toprule
+MetaShift window & Complete events & Median log effect & Sign agreement with 60 days \\
+\midrule
+45 days & 224 & -0.08769 & 93.3\% \\
+60 days & 228 & -0.08704 & reference \\
+90 days & 196 & -0.08064 & 93.9\% \\
+\bottomrule
+\end{tabular}
+\par\medskip
+\begin{tabular}{lrr}
+\toprule
+Method & Log/raw sign agreement & Spearman $\rho$ \\
+\midrule
+MetaShift fixed & 95.2\% & 0.829 \\
+Standard SC & 92.5\% & 0.868 \\
+Nearest-neighbor DiD & 92.1\% & 0.843 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.94\linewidth}
+\footnotesize\textit{Note.} Window sensitivity adds a full method-stability check for every target and donor window. Reporting-scale agreement is a concordance diagnostic and does not equate raw and log causal estimands.
+\end{minipage}
+\end{table}

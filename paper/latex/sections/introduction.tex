@@ -1,0 +1,50 @@
+\section{Introduction}
+
+Air-quality measurements support public communication, regulatory compliance,
+trend analysis, exposure assessment, and health research. A visible break in a
+monitor's PM2.5 series can have multiple explanations. It may reflect
+meteorology, wildfire smoke, local emissions, siting, operational changes, data
+processing, or a change in the reported measurement method. These explanations
+cannot be separated by a numerical change-point alone.
+
+The AQS data model makes it possible to formulate a narrower, auditable
+question. Its daily records expose a reported Method Code, a Method Name, and a
+Parameter Occurrence Code (POC) for each series \citep{epa_airdata_formats,
+epa_method_code,epa_poc}. A Method Code transition can therefore define a
+reproducible candidate date before inspecting local residual effects. It does
+not reveal a physical instrument log: a POC is not a universal
+physical-instrument identifier, and the code transition may have several
+non-hardware explanations.
+
+MetaShift-Bench asks whether the target-minus-reference residual near a
+reported transition is unusual relative to stable dates and reference sites.
+The goal is an evidence audit, not an automatic correction of historical
+concentrations. Cross-site counterfactual methods can help isolate
+station-specific departures, but they rely on pre-event agreement and
+geographically plausible reference series. Synthetic control and
+difference-in-differences supply useful counterfactual and placebo precedents
+\citep{abadie2010,callaway2021}; they do not turn a monitoring metadata record
+into a causal intervention.
+
+The report addresses five predeclared questions:
+\begin{enumerate}
+  \item \textbf{RQ1:} How do cross-site and single-series methods behave under
+  known local and matched regional perturbations in stable monitoring windows?
+  \item \textbf{RQ2:} Does either frozen MetaShift variant establish a
+  confidence-supported aggregate advantage over standard synthetic control?
+  \item \textbf{RQ3:} What fraction of the complete metadata-anchor universe
+  supports a common cross-site comparison, and what do its placebo and
+  sensitivity diagnostics show?
+  \item \textbf{RQ4:} How well do the reported interval constructions cover
+  known synthetic effects, and what uncertainty remains uncalibrated?
+  \item \textbf{RQ5:} What contextual support is available from same-site POC
+  records, official documents, and a separate PM2.5 parameter pipeline?
+\end{enumerate}
+
+The central contribution is a measurement-method transition \emph{audit
+benchmark}: public source provenance, a complete eligible-event ledger, a
+distinct-physical-donor rule, synthetic truth, placebos, sensitivity analyses,
+and explicit abstention. No taxonomy-stratified analysis is reported because
+the frozen Method Code taxonomy remains pending independent student and teacher
+review. The benchmark does not claim that a Method Code change proves a device
+replacement, a measurement failure, or a causal measurement bias.

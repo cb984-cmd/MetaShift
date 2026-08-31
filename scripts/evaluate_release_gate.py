@@ -810,6 +810,7 @@ def main() -> None:
             for item in summary.get("artifact_sources", [])
             if str(item.get("path", "")).startswith("artifacts/")
         ]
+        frozen_protocol_sources = summary.get("frozen_protocol_sources", [])
         for source in artifact_sources:
             source_path = Path(str(source["path"]))
             if not exists(source_path):
@@ -818,6 +819,17 @@ def main() -> None:
                 )
             elif sha256(source_path) != source["sha256"]:
                 artifact_hash_violations.append(
+                    {"path": str(source_path), "issue": "sha256_mismatch"}
+                )
+        frozen_protocol_violations = []
+        for source in frozen_protocol_sources:
+            source_path = Path(str(source["path"]))
+            if not exists(source_path):
+                frozen_protocol_violations.append(
+                    {"path": str(source_path), "issue": "missing"}
+                )
+            elif sha256(source_path) != source["sha256"]:
+                frozen_protocol_violations.append(
                     {"path": str(source_path), "issue": "sha256_mismatch"}
                 )
         summary_ok = (
@@ -845,7 +857,9 @@ def main() -> None:
             and summary["case_manifest_sha256"]
             == case_manifest["case_and_donor_sha256"]
             and len(artifact_sources) >= 19
+            and len(frozen_protocol_sources) == 2
             and not artifact_hash_violations
+            and not frozen_protocol_violations
         )
         checks.append(
             check(
@@ -853,7 +867,9 @@ def main() -> None:
                 summary_ok,
                 "Tracked summary values and "
                 f"{len(artifact_sources)} immutable artifact hashes must match; "
-                f"{len(artifact_hash_violations)} mismatches.",
+                f"{len(frozen_protocol_sources)} frozen protocol-source hashes must "
+                f"match; {len(artifact_hash_violations) + len(frozen_protocol_violations)} "
+                "mismatches.",
             )
         )
     else:

@@ -1,0 +1,50 @@
+\section{Experimental design}
+
+\subsection{Stable-regime synthetic benchmark}
+
+Real metadata anchors have no physical-bias ground truth. Known-effect
+evaluation therefore uses only stable target and donor regimes that are
+separated from nearby reported transitions. The frozen
+\texttt{stable\_full\_v2} manifest contains \SyntheticCases{} physical target
+sites. Whole connected components of the complete target-plus-donor physical
+input graph were assigned to the \CalibrationCases{}-site calibration subset or
+the \EvaluationCases{}-site held-out evaluation subset, so no physical input
+site crosses the split.
+
+The benchmark injects target-only additive, proportional, gradual-drift,
+temporary-step, and variance changes, together with matched target-and-donor
+regional variants. Each perturbation variant contains \SamplesPerVariant{}
+held-out evaluation samples. The effect shape, magnitudes, seeds, candidate
+rule, model settings, and metrics were frozen before evaluation. The viewed
+evaluation partition is not used for model, threshold, donor-weight, gate, or
+taxonomy adjustment.
+
+\subsection{Real-anchor audit and sensitivity}
+
+The real-anchor workflow uses the same distinct-physical-donor construction,
+pre-event fitting boundaries, and effect window across methods. It records
+complete comparisons and explicit non-complete dispositions for all
+\TotalAnchors{} anchors. Predeclared sensitivity analyses vary screening rules,
+effect windows, reporting scale, and evidence-tier thresholds one factor at a
+time. Their purpose is to expose dependence and availability boundaries, not to
+select a more favorable specification.
+
+\subsection{Interval coverage protocol}
+
+Fixed-weight interval coverage is evaluated on the held-out synthetic effects.
+The confidence level, block length, perturbation types, and repetitions are
+fixed in the frozen configuration. The separate full selection-aware synthetic
+coverage protocol was frozen before outcomes. Its feasibility assessment
+records that full donor re-screening and weight refitting at the specified
+nested scale is infeasible within the submission deadline. The report
+therefore does not convert real-event selection-aware intervals into
+coverage-calibrated physical-bias intervals.
+
+\subsection{External context and reproducibility}
+
+Same-site alternate-POC records, narrow hourly POC windows, QA availability,
+and targeted official-document review supply contextual checks with known
+limitations. A separate parameter-88502 pipeline uses its own scan and audit;
+it is never pooled with 88101. The frozen release records the exact source
+commit, locked Python environment, source manifests, machine-readable checks,
+and a two-environment comparison of designated core artifact hashes.

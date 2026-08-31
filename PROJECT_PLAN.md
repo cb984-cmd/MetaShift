@@ -228,9 +228,12 @@ the already viewed 80-site stable-synthetic evaluation set.
   context only, not physical-instrument ground truth.
   E6b freezes an effect-blind, 30-anchor cross-family
   public-document review before searching.
-- [!] **E7 — Write the formal competition report.** In progress, using only
-  frozen v0.3.2 non-taxonomy evidence. Any new learned method additionally
-  requires its own blind, input-disjoint test manifest.
+- [x] **E7 — Build the formal competition-report draft.** The A4 LaTeX source,
+  generated tables and figures, claim ledger, citation validator, format
+  compliance record, and rendered PDF use only frozen v0.3.2 non-taxonomy
+  evidence. The draft is machine-validated but remains a pre-submission
+  document until the human handoff below is complete. Any new learned method
+  additionally requires its own blind, input-disjoint test manifest.
 
 ## Human submission handoff
 

@@ -585,7 +585,74 @@ https://www.epa.gov/system/files/documents/2024-05/2_supplemental-info_t640-data
 
 ## Acknowledgements and contributions
 
-Complete `docs/AUTHOR_CONTRIBUTION_TEMPLATE.md` with verified student,
-teacher, and external contributions. Complete
-`docs/AI_ASSISTANCE_RECORD_TEMPLATE.md` accurately before submission. Do not
-represent tool-generated work as independently performed by a student.
+### Topic origin
+
+[Describe how the research topic was selected. State whether the topic was
+suggested by an advisor, discovered through reading, or originated from student
+curiosity. Be specific about the intellectual path from initial interest to
+the research question.]
+
+### Data acquisition
+
+All data were downloaded programmatically from the U.S. EPA Air Quality System
+(AQS) public data portal using the AQS Data API. No proprietary or restricted
+data were used. API credentials are free and available to any registered user.
+The data processing pipeline is fully documented in the public repository.
+
+### Data analysis and computation
+
+All statistical analysis, algorithm implementation, and computation were
+performed using Python with the NumPy, pandas, SciPy, ruptures, and matplotlib
+libraries. The complete source code is publicly available at
+https://github.com/cb984-cmd/MetaShift. All reported results are reproducible
+from the committed source code and frozen configuration files.
+
+### Experimental design and execution
+
+The study protocol, evaluation split, and analysis decisions were predeclared
+in `docs/study_protocol.md` before examining evaluation results. The synthetic
+benchmark uses physically disjoint calibration (66 sites) and evaluation
+(80 sites) splits. No evaluation-set result was used to modify the method or
+its parameters.
+
+### Paper writing
+
+[State who drafted each section. Note any AI-assisted drafting and the extent
+of human review and revision. Reference `docs/AI_ASSISTANCE_RECORD_TEMPLATE.md`
+for detailed AI usage disclosure.]
+
+### Advisor relationship and role
+
+[State each advisor's institutional affiliation, the nature of the advising
+relationship (school teacher, university faculty, etc.), and what specific
+guidance each advisor provided. State explicitly whether any paid tutoring or
+commercial training is involved. Per competition rules, advisors from
+for-profit companies or training institutions are not permitted.]
+
+### Individual contributions
+
+[For each team member, state their specific technical contributions:
+which code they wrote, which experiments they ran, which analysis they
+performed, which sections they drafted. Every team member must have a
+substantive contribution; listing without contribution is prohibited.]
+
+### Difficulties encountered
+
+[Describe the main technical challenges encountered during the research and
+how they were resolved. Include the physical-donor uniqueness defect discovered
+during development and the complete rebuild that followed.]
+
+### External help and AI assistance
+
+This project used AI coding assistants (GitHub Copilot) for code generation,
+debugging, data pipeline construction, and manuscript drafting assistance.
+All AI-generated code and text were reviewed, verified, and modified by the
+student author(s). The complete AI assistance record is maintained in
+`docs/AI_ASSISTANCE_RECORD_TEMPLATE.md` and must be accurately completed
+before submission. No AI tool independently designed the research question,
+chose the methodology, or interpreted the results.
+
+### Disclosure
+
+[State whether this work has been submitted to or presented at any other
+competition, conference, or publication venue. If yes, provide details.]

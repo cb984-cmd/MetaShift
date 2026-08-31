@@ -1,0 +1,59 @@
+{
+  "analysis_id": "auditability_representativeness_v1",
+  "status": "frozen before representativeness outcomes",
+  "population": "All 563 eligible 2019-2025 AQS 88101 Method Code anchors",
+  "outcome": {
+    "name": "auditable",
+    "definition": "audit_status equals complete",
+    "non_auditable_statuses": [
+      "insufficient_geographic_donors",
+      "estimator_input_failure"
+    ]
+  },
+  "descriptive_features": [
+    "epa_region",
+    "anchor_year",
+    "transition_pair",
+    "pre_span_days",
+    "post_span_days",
+    "transition_gap_days",
+    "geographic_control_count",
+    "colocated_control_count",
+    "nearest_qualified_control_distance_km",
+    "mean_qualified_control_correlation",
+    "site_poc_count",
+    "target_pre_median_ug_m3"
+  ],
+  "unavailable_feature": {
+    "name": "urban_rural_status",
+    "value": "not_available_in_aqs_daily_slice",
+    "reason": "No verified urban/rural classification is included in the frozen AQS daily-data slice."
+  },
+  "descriptive_logistic_model": {
+    "subpopulation": "Anchors with at least one qualified geographic donor",
+    "features": [
+      "anchor_year",
+      "pre_span_days",
+      "post_span_days",
+      "transition_gap_days",
+      "nearest_qualified_control_distance_km",
+      "site_poc_count",
+      "target_pre_median_ug_m3"
+    ],
+    "excluded_predictor": "geographic_control_count",
+    "excluded_predictor_reason": "It directly participates in the auditability eligibility rule and would create a tautological model.",
+    "ridge_penalty": 1.0,
+    "interpretation": "Descriptive association only; coefficients do not assign effects or predict physical measurement bias."
+  },
+  "reporting": {
+    "standardized_difference": "Complete minus unavailable anchors using pooled sample standard deviation.",
+    "minimum_group_size_for_rate": 1,
+    "geographic_reporting": "EPA regions using fixed state-code mapping.",
+    "forbidden_outcome_inputs": [
+      "real-event effect estimates",
+      "evidence tiers",
+      "synthetic performance labels"
+    ]
+  },
+  "interpretation_boundary": "An unavailable comparison cannot be imputed as biased or unbiased. This analysis describes benchmark applicability only."
+}

@@ -65,7 +65,7 @@ already viewed 80-site synthetic evaluation split.
 | P0 | Freeze metadata-only Method Code taxonomy | In progress | `configs/method_transition_taxonomy_v1.csv` covers all 34 observed pairs and is validated without outcome data; student/teacher review remains required |
 | P0 | Test synthetic uncertainty calibration | Complete with evidence shortfall | Conditional nominal-95% intervals cover only 62.47%--67.56% on evaluation; target-cluster nominal-90% conformal intervals cover 98.22%--99.56%. Neither is presented as a calibrated real-event confidence interval, and no post-evaluation tuning occurred |
 | P0 | Test selection-aware interval coverage | Pending | The existing nested selection bootstrap still needs a separately frozen synthetic-coverage protocol; it must not tune against the viewed 80-site split |
-| P0 | Analyze auditability representativeness | Pending | Compare complete and unavailable anchors descriptively; never infer a missing event's physical effect |
+| P0 | Analyze auditability representativeness | In progress | `configs/auditability_representativeness_v1.json` fixes feature definitions, an explicit urban/rural-data limitation, and a noncausal model restricted to anchors with at least one qualified donor |
 | P1 | Stratify observations by frozen taxonomy | Blocked on human taxonomy review | Descriptive only; no equipment-change or causal label |
 | P1 | Vary evidence-tier q thresholds | Pending | Strict/primary/lenient settings must vary raw p, q, and donor-stability cutoffs together |
 | P1 | Enhance same-site overlap evidence | Pending | Use AQS paired POC overlap only as independent consistency context |

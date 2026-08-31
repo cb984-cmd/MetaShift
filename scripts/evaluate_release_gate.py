@@ -468,7 +468,7 @@ def main() -> None:
         )
 
     risk_coverage_path = ARTIFACTS / "synthetic_risk_coverage_stable_full_v2.csv"
-    real_coverage_path = ARTIFACTS / "real_event_coverage_summary.json"
+    real_coverage_path = ARTIFACTS / "real_event_coverage_stable_full_v2.json"
     if exists(risk_coverage_path) and exists(real_coverage_path):
         risk_coverage = pd.read_csv(risk_coverage_path)
         real_coverage = json.loads(real_coverage_path.read_text(encoding="utf-8"))

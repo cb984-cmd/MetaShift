@@ -493,6 +493,12 @@ additional constraints do not yet justify a general method claim.
 9. The external-document review found no dated, site-specific confirmation for
    its 20 selected records. Failure to locate a public notice is not evidence
    that no physical change occurred.
+10. The conditional block-bootstrap intervals show 64--67% empirical coverage at
+    95% nominal on synthetic evaluation data. The selection-aware nested
+    bootstrap was validated on 227/228 real events but its synthetic coverage
+    properties were not evaluated within the project timeline; its real-event
+    intervals should be treated as conservative diagnostic bounds rather than
+    calibrated confidence intervals.
 
 ## 9. Conclusion
 

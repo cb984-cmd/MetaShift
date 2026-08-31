@@ -192,7 +192,9 @@ or tune against the already viewed 80-site stable-synthetic evaluation set.
   candidates under strict/primary/lenient thresholds. Its funnel makes visible
   that only 77 events reach the adequate-placebo stage and q≤0.05 eliminates
   all 44 strict raw-p survivors; results remain exploratory evidence labels.
-- [ ] **E6 — Strengthen same-site overlap and cross-family document evidence.**
+- [!] **E6 — Strengthen same-site overlap and cross-family document evidence.**
+  The overlap-consistency protocol fixes daily/hourly eligibility and
+  direction/rank comparisons before joining cross-site residual outputs.
 - [ ] **E7 — Write the formal competition report.** Requires E1--E6 evidence
   and a new release; any new learned method additionally requires its own
   blind, input-disjoint test manifest.

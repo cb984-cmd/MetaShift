@@ -1,0 +1,18 @@
+{
+  "analysis_id": "same_site_overlap_consistency_v1",
+  "status": "frozen before overlap-consistency outcomes",
+  "minimum_paired_daily_observations_per_period": 30,
+  "minimum_paired_hourly_observations_per_period": 30,
+  "cross_site_methods": [
+    "nearest_neighbor_did",
+    "standard_synthetic_control",
+    "metashift_v1_fixed"
+  ],
+  "comparisons": [
+    "same_site_daily_vs_same_site_hourly",
+    "same_site_daily_vs_cross_site_raw_residual"
+  ],
+  "direction_rule": "Direction agreement is defined only when both finite effects are nonzero.",
+  "association_metric": "Spearman rank correlation reported only when at least three paired events are available.",
+  "interpretation_boundary": "Same-site alternate-POC comparisons reduce spatial variation but do not establish physical instrument identity, a causal mechanism, or a ground-truth measurement bias."
+}

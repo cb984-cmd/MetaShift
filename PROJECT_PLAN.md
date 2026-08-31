@@ -178,13 +178,13 @@ or tune against the already viewed 80-site stable-synthetic evaluation set.
   coverage result applies to fixed-weight conditional intervals. Any
   selection-aware coverage study requires a separately frozen, computationally
   feasible protocol and may not tune against the viewed 80-site split.
-- [!] **E3 — Analyze auditability and selection boundaries.** The initial
-  metadata-only protocol stopped before producing results because one eligible
-  anchor lacked 30 observations in an auxiliary fixed pre-window. v2 replaces
-  that feature with the complete prior Method Code run, whose 45-observation
-  minimum is guaranteed by anchor eligibility. One AQS state-code-80 anchor is
-  retained as “Outside EPA mapped regions” rather than forced into an EPA
-  region; the analysis still excludes effects and evidence tiers.
+- [x] **E3 — Analyze auditability and selection boundaries.** v2 retains all
+  563 anchors, including one separate “Outside EPA mapped regions” record, and
+  excludes effect estimates, evidence tiers, and synthetic labels. It finds
+  261 complete comparisons and 302 unavailable comparisons; nearest qualified
+  donor distance is the largest descriptive difference (32.6 km vs 63.9 km;
+  pooled standardized difference −1.20). These are applicability boundaries,
+  not inferred measurement effects.
 - [ ] **E4 — Run taxonomy-stratified descriptive analysis.** Blocked until E1
   receives independent human review.
 - [ ] **E5 — Re-run evidence-tier sensitivity with varying q thresholds.**

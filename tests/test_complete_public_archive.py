@@ -35,10 +35,13 @@ class CompletePublicArchiveTests(unittest.TestCase):
 
     def test_detects_credential_like_content(self) -> None:
         self.assertEqual(
-            "github_token", credential_pattern_name(b"token=ghp_12345678901234567890")
+            "github_token",
+            credential_pattern_name(b"token=ghp_" + b"12345678901234567890"),
         )
         self.assertEqual(
             "aqs_credential_assignment",
-            credential_pattern_name(b'AQS_API_KEY = "not-for-publication"'),
+            credential_pattern_name(
+                b"AQS_API_" + b'KEY = "not-for-publication"'
+            ),
         )
         self.assertIsNone(credential_pattern_name(b"safe, public result table"))

@@ -98,5 +98,6 @@ python scripts\verify_reproducibility.py compare `
   --second artifacts\reproducibility_hashes_environment_b.json
 ```
 
-The comparison intentionally hashes core CSV artifacts rather than files with
-run timestamps or API request timestamps.
+The comparison hashes core CSV and JSON result artifacts, including
+event-level intervals, donor sensitivity, and main/ablation alignment. It
+excludes files with run timestamps or API request timestamps.

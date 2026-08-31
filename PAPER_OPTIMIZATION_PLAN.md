@@ -67,6 +67,6 @@ already viewed 80-site synthetic evaluation split.
 | P0 | Test selection-aware interval coverage | Pending | The existing nested selection bootstrap still needs a separately frozen synthetic-coverage protocol; it must not tune against the viewed 80-site split |
 | P0 | Analyze auditability representativeness | Complete | v1 stopped before output because an auxiliary fixed pre-window was incomplete for one eligible anchor. v2 retains all 563 anchors, excludes effects/evidence tiers, and finds nearest qualified donor distance is the main descriptive coverage boundary (32.6 km complete vs 63.9 km unavailable-with-donor) |
 | P1 | Stratify observations by frozen taxonomy | Blocked on human taxonomy review | Descriptive only; no equipment-change or causal label |
-| P1 | Vary evidence-tier q thresholds | In progress | v2 freezes strict/primary/lenient raw-p, BH-q, and donor-stability cutoffs together, with a sequential event-attrition funnel |
+| P1 | Vary evidence-tier q thresholds | Complete | v2 preserves all 563 primary labels exactly; supported candidates are 0/36/53 under strict/primary/lenient thresholds, and the funnel exposes q≤0.05 as the strict setting's terminal limitation |
 | P1 | Enhance same-site overlap evidence | Pending | Use AQS paired POC overlap only as independent consistency context |
 | P2 | New selective model or gate | Deferred | Requires a new blind 60-plus-target input-disjoint manifest; existing 66/80 split is ineligible |

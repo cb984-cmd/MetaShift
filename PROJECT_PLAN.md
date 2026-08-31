@@ -187,9 +187,11 @@ or tune against the already viewed 80-site stable-synthetic evaluation set.
   not inferred measurement effects.
 - [ ] **E4 — Run taxonomy-stratified descriptive analysis.** Blocked until E1
   receives independent human review.
-- [!] **E5 — Re-run evidence-tier sensitivity with varying q thresholds.** v2
-  freezes simultaneous strict/primary/lenient raw-p, BH-q, and donor-stability
-  cutoffs plus an event-attrition funnel.
+- [x] **E5 — Re-run evidence-tier sensitivity with varying q thresholds.** v2
+  preserves all 563 primary labels exactly and yields 0/36/53 supported
+  candidates under strict/primary/lenient thresholds. Its funnel makes visible
+  that only 77 events reach the adequate-placebo stage and q≤0.05 eliminates
+  all 44 strict raw-p survivors; results remain exploratory evidence labels.
 - [ ] **E6 — Strengthen same-site overlap and cross-family document evidence.**
 - [ ] **E7 — Write the formal competition report.** Requires E1--E6 evidence
   and a new release; any new learned method additionally requires its own

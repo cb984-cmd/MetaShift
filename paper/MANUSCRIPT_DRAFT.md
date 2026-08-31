@@ -1,11 +1,12 @@
 # MetaShift-Bench: A Metadata-Anchored Counterfactual Benchmark for Auditing Measurement-Method Transitions in Air-Quality Networks
 
-> **Superseded internal draft, not a submission-ready report.** Its cross-site
-> numerical results use a donor inventory that can count multiple POCs from one
-> physical donor site. Rebuild and revalidate all dependent values before
-> citing this text. Replace all bracketed identity fields, verify every citation
-> and number against the final evidence release, and complete the AI-use and
-> contribution records before submission.
+> **Superseded internal draft, not a submission-ready report. Updated to v2
+> distinct-donor results. Its cross-site numerical results previously used a donor
+> inventory that could count multiple POCs from one physical donor site. Rebuild
+> and revalidate all dependent values before citing this text. Replace all
+> bracketed identity fields, verify every citation and number against the final
+> evidence release, and complete the AI-use and contribution records before
+> submission.
 
 **Student author(s):** [Name(s)]  
 **School, province/state, country:** [Fill in]  
@@ -29,17 +30,17 @@ discontinuity; and reports quality, uncertainty, placebo, and donor-sensitivity
 diagnostics.
 
 From 2019--2025 daily AQS parameter 88101 PM2.5 records, the pipeline
-reconstructs 563 persistent Method Code transitions. Of these, 261 have a
-common comparison set with at least three geographic donors; 292 are retained
+reconstructs 563 persistent Method Code transitions. Of these, 228 have a
+common comparison set with at least three geographic donors; 325 are retained
 as insufficient-donor cases and 10 as input-window failures. A stable-regime
 synthetic benchmark uses 146 distinct physical target sites, with 66 for
 threshold calibration and 80 for independent evaluation. Each local and
 matched regional perturbation variant has 400 evaluation samples. Standard
-synthetic control obtains macro-F1/AUPRC of 0.828/0.910, while fixed-prior and
-pre-period cross-validated MetaShift obtain 0.788/0.888 and 0.798/0.895.
+synthetic control obtains macro-F1/AUPRC of 0.816/0.915, while fixed-prior and
+pre-period cross-validated MetaShift obtain 0.795/0.898 and 0.809/0.902.
 Cross-validated MetaShift has a lower local-effect MAE point estimate
-(0.10335 versus 0.10772), but its paired bootstrap difference against standard
-synthetic control is -0.00437 (95% CI [-0.01138, 0.00208]). We therefore do
+(0.09742 versus 0.09983), but its paired bootstrap difference against standard
+synthetic control is -0.00240 (95% CI [-0.00772, 0.00347]). We therefore do
 not claim algorithmic superiority. Instead, the contribution is a transparent
 benchmark, complete event audit, graded observational evidence hierarchy, and
 reproducible documentation of where cross-site attribution is supported,
@@ -161,7 +162,7 @@ Table 1. Primary 88101 data construction.
 | Monitor time series | 1,689 |
 | Persistent Method Code anchors | 563 |
 | Anchors with at least one geographic donor | 394 |
-| Anchors with at least three geographic donors | 271 |
+| Anchors with at least three geographic donors | 238 |
 | Same-site alternate-POC candidates | 11 |
 
 Each archive's URL, local modification time, byte size, SHA256, CSV member, and
@@ -295,23 +296,23 @@ Table 2. Aggregate independent synthetic-evaluation performance.
 
 | Method | Local-effect MAE | AUPRC | Macro-F1 | Regional FPR |
 | --- | ---: | ---: | ---: | ---: |
-| Standard synthetic control | 0.10772 | 0.90956 | 0.82788 | 0.053 |
-| MetaShift fixed-prior | 0.10483 | 0.88837 | 0.78849 | 0.142 |
-| MetaShift cross-validated | 0.10335 | 0.89484 | 0.79757 | 0.144 |
-| Nearest-neighbor DiD | 0.11536 | 0.87035 | 0.76987 | 0.168 |
-| Bayesian mean shift | 0.23148 | 0.50118 | 0.49965 | 0.465 |
-| Before-after median | 0.24169 | 0.50132 | 0.50096 | 0.447 |
-| CUSUM | N/A | 0.50154 | 0.50124 | 0.503 |
-| PELT | N/A | 0.50203 | 0.50122 | 0.475 |
-| Rolling-MAD | N/A | 0.49983 | 0.49580 | 0.432 |
+| Standard synthetic control | 0.09983 | 0.91476 | 0.81641 | 0.140 |
+| MetaShift fixed-prior | 0.10344 | 0.89832 | 0.79515 | 0.150 |
+| MetaShift cross-validated | 0.09742 | 0.90178 | 0.80916 | 0.135 |
+| Nearest-neighbor DiD | 0.11150 | 0.88443 | 0.78852 | 0.075 |
+| Bayesian mean shift | 0.24672 | 0.50116 | 0.49962 | 0.542 |
+| Before-after median | 0.25330 | 0.50125 | 0.50024 | 0.505 |
+| CUSUM | N/A | 0.50117 | 0.49720 | 0.581 |
+| PELT | N/A | 0.50025 | 0.49976 | 0.522 |
+| Rolling-MAD | N/A | 0.50112 | 0.49427 | 0.402 |
 
 Cross-validated MetaShift has a lower point-estimate MAE than standard
 synthetic control, but standard synthetic control has better attribution
 ranking, macro-F1, and regional false-attribution rate. The paired
 event-cluster bootstrap difference for fixed-prior MetaShift minus standard
-synthetic control is -0.00289 (95% CI [-0.01095, 0.00412]); for
-cross-validated MetaShift minus standard synthetic control is -0.00437
-(95% CI [-0.01138, 0.00208]).
+synthetic control is 0.00361 (95% CI [-0.00401, 0.01163]); for
+cross-validated MetaShift minus standard synthetic control is -0.00240
+(95% CI [-0.00772, 0.00347]).
 Both intervals include zero.
 
 The results vary by perturbation. Cross-validated MetaShift has lower MAE than
@@ -324,14 +325,14 @@ Table 2b. Reliability-prior and ridge ablations on the same synthetic inputs.
 
 | Variant | Local-effect MAE | Macro-F1 | Regional FPR |
 | --- | ---: | ---: | ---: |
-| Standard synthetic control | 0.10772 | 0.82788 | 0.053 |
-| MetaShift full prior, ridge=0.1 | 0.10483 | 0.78849 | 0.142 |
-| No graph-prior penalty | 0.10528 | 0.78575 | 0.145 |
-| No distance term | 0.10540 | 0.78712 | 0.139 |
-| No ridge penalty | 0.10462 | 0.78483 | 0.159 |
-| Ridge=0.01 | 0.10487 | 0.78790 | 0.148 |
-| Ridge=1.0 | 0.10567 | 0.78619 | 0.152 |
-| Direct reliability weights | 0.10632 | 0.79219 | 0.127 |
+| Standard synthetic control | 0.09983 | 0.81641 | 0.140 |
+| MetaShift full prior, ridge=0.1 | 0.10344 | 0.79515 | 0.150 |
+| No graph-prior penalty | 0.10350 | 0.80167 | 0.133 |
+| No distance term | 0.10370 | 0.80588 | 0.088 |
+| No ridge penalty | 0.10289 | 0.80127 | 0.138 |
+| Ridge=0.01 | 0.10304 | 0.80263 | 0.130 |
+| Ridge=1.0 | 0.10500 | 0.80285 | 0.097 |
+| Direct reliability weights | 0.10543 | 0.80574 | 0.105 |
 
 No ablation restores a confidence-supported aggregate improvement over
 standard synthetic control. The small effect-MAE differences among
@@ -344,39 +345,39 @@ Table 3. Full 88101 audit status.
 
 | Status | Anchors |
 | --- | ---: |
-| Complete common-method comparison | 261 |
-| Fewer than three geographic donors | 292 |
+| Complete common-method comparison | 228 |
+| Fewer than three geographic donors | 325 |
 | Estimator input-window failure | 10 |
 | Total | 563 |
 
-For the 261 complete comparisons, the median signed 60-day log residual effect
+For the 228 complete comparisons, the median signed 60-day log residual effect
 is -0.07093 for fixed-prior MetaShift, -0.06418 for standard synthetic
 control, and -0.06894 for nearest-neighbor DiD. These are observational
 estimates, not measured instrument-bias labels.
 
-Fixed-weight conditional block-bootstrap intervals exclude zero for 182/261
-MetaShift events, 166/261 standard synthetic-control events, and 154/261
-nearest-neighbor events. Selection-aware nested intervals complete all 261
+Fixed-weight conditional block-bootstrap intervals exclude zero for 159/228
+MetaShift events, 145/228 standard synthetic-control events, and 134/228
+nearest-neighbor events. Selection-aware nested intervals complete all 227
 real comparison events with 1,000 repetitions each. Selection-aware intervals
-exclude zero for 170/261 MetaShift events. The nested interval is modestly
+exclude zero for 153/227 MetaShift events. The nested interval is modestly
 wider on average than the fixed-weight interval because it reselects donors
 and refits weights inside each bootstrap repetition.
 
-Leave-one-donor-out refitting completes every removal for 260 events; 238/260
+Leave-one-donor-out refitting completes every removal for 227 events; 202/227
 complete leave-one-donor-out events retain direction under every donor removal.
 One donor removal is unavailable because it leaves an insufficient comparison
 window and remains in the result table.
 
-Evidence tiers contain 36 supported candidates, 113 not-supported events, and
-414 inconclusive events. The 36 are candidates for detailed qualitative review,
+Evidence tiers contain 34 supported candidates, 122 not-supported events, and
+407 inconclusive events. The 34 are candidates for detailed qualitative review,
 not confirmed method-caused biases.
 
 ### 6.3 Placebos, POC/QA, and parameter sensitivity
 
-Of 261 complete events, 149 complete events have at least 50 unique stable
+Of 228 complete events, 157 complete events have at least 50 unique stable
 post-transition time placebos. One hundred twenty of these have 100 unique
 placebos. Seventy events have raw within-event placebo probability at most
-0.10; 41 events pass exploratory Benjamini-Hochberg q<=0.10 screening. The
+0.10; 40 events pass exploratory Benjamini-Hochberg q<=0.10 screening. The
 200-resampling global comparison gives an upper-tail probability of 0.00498
 for the actual-anchor mean score against sampled stable post-transition dates.
 The donor-as-treated analysis contains 1,050 records, with median standardized
@@ -384,8 +385,8 @@ score 0.46802.
 
 Under strict (raw p<=0.05, donor-direction stability at least 95%), primary
 (raw p<=0.10, stability at least 90%), and lenient (raw p<=0.20, stability at
-least 80%) settings, the evidence-tier counts remain 36 supported, 113
-not-supported, and 414 inconclusive because the shared BH q<=0.10 condition is
+least 80%) settings, the evidence-tier counts remain 34 supported, 122
+not-supported, and 407 inconclusive because the shared BH q<=0.10 condition is
 the limiting rule. These q values are exploratory screening quantities, not
 causal p-values.
 
@@ -412,8 +413,8 @@ too small for strong generalization claims.
 For the real-event effect audit, changing the symmetric pre/post window from
 60 days to 45 or 90 days uses an additional method-regime stability check for
 the target's intended pre/post segments and every fixed donor. The 45-day
-window is complete for 258/261 events with 94.2% direction agreement to 60
-days; the 90-day window is complete for 225/261 events with 96.0% agreement.
+window is complete for 224/228 events with 93.3% direction agreement to 60
+days; the 90-day window is complete for 196/228 events with 93.9% agreement.
 The corresponding fixed-prior MetaShift median log effects are -0.07552,
 -0.07093, and -0.06908 for 45, 60, and 90 days. Three 45-day and 36 90-day
 events are unavailable because the full window is not method-stable or does
@@ -428,16 +429,16 @@ estimands.
 
 On synthetic data with known effects, a pre-fit RMSE quality gate exposes a
 risk-coverage tradeoff. For example, the standard synthetic-control gate
-chosen at the 90th calibration percentile retains 73/80 evaluation sites and
-has local-effect MAE 0.09152, versus 0.10772 at full 80-site coverage. Because
+chosen at the 90th calibration percentile retains 75/80 evaluation sites and
+has local-effect MAE 0.09274, versus 0.09983 at full 80-site coverage. Because
 real physical-bias labels are absent, real-event gate coverage is reported as
 evidence availability rather than selective classification accuracy.
 
 The one-factor screening grid confirms that donor geography is the dominant
 data-availability choice. With a minimum of three donors, the primary setting
-has 271 eligible anchors; a 50 km radius has 127 and a 200 km radius has 446.
-Across 70%, 75%, and 80% daily-coverage rules, the count is 275, 271, and 266;
-across 45, 60, and 90-day stable-window rules, it is 284, 271, and 250. Gap,
+has 238 eligible anchors; a 50 km radius has 102 and a 200 km radius has 426.
+Across 70%, 75%, and 80% daily-coverage rules, the count is 243, 238, and 232;
+across 45, 60, and 90-day stable-window rules, it is 252, 238, and 214. Gap,
 correlation, and required-donor settings are reported in the public
 sensitivity table rather than optimized post hoc.
 
@@ -446,17 +447,17 @@ geographic donors.
 
 | Setting | Eligible anchors before donor threshold | Anchors with >=3 donors |
 | --- | ---: | ---: |
-| Primary: 75%, 60 days, 7-day gap, 100 km, rho>=0.60 | 563 | 271 |
-| Coverage 70% | 563 | 275 |
-| Coverage 80% | 563 | 266 |
-| Stable window 45 days | 572 | 284 |
-| Stable window 90 days | 543 | 250 |
-| Transition gap 3 days | 512 | 238 |
-| Transition gap 14 days | 589 | 290 |
-| Donor radius 50 km | 563 | 127 |
-| Donor radius 200 km | 563 | 446 |
-| Correlation rho>=0.50 | 563 | 275 |
-| Correlation rho>=0.70 | 563 | 262 |
+| Primary: 75%, 60 days, 7-day gap, 100 km, rho>=0.60 | 563 | 238 |
+| Coverage 70% | 563 | 243 |
+| Coverage 80% | 563 | 232 |
+| Stable window 45 days | 572 | 252 |
+| Stable window 90 days | 543 | 214 |
+| Transition gap 3 days | 512 | 212 |
+| Transition gap 14 days | 589 | 254 |
+| Donor radius 50 km | 563 | 102 |
+| Donor radius 200 km | 563 | 426 |
+| Correlation rho>=0.50 | 563 | 241 |
+| Correlation rho>=0.70 | 563 | 230 |
 
 ## 7. Discussion
 

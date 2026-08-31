@@ -1,0 +1,31 @@
+{
+  "analysis_id": "selection_aware_coverage_protocol_v2",
+  "status": "frozen_before_outcomes",
+  "frozen_at_utc": "2026-08-31T20:00:00Z",
+  "purpose": "Document the protocol for selection-aware interval coverage that accounts for donor-selection uncertainty, and record the feasibility assessment.",
+  "baseline_case_manifest_sha256": "065b1b65c231c5298fb4969a7b5669f3ae8850b9228d50afee7d98422575e099",
+  "geographic_donor_rule": "one_best_poc_per_physical_site",
+  "protocol": {
+    "description": "For each synthetic event, re-run the full pipeline: re-screen donors, re-fit weights, compute effect, then construct bootstrap interval. This nests donor selection inside the resampling loop.",
+    "outer_repetitions": 200,
+    "inner_bootstrap_repetitions": 500,
+    "block_length_observations": 7,
+    "nominal_coverage": 0.95,
+    "donor_reselection": "Full geographic control ranking with distinct-physical-site dedup",
+    "weight_refitting": "Full synthetic control weight optimization per repetition",
+    "true_effect_definition": "Known injected additive/proportional/gradual/temporary perturbation",
+    "compute_subset_policy": "If full 80-site evaluation is infeasible, use a predeclared random 20-site subset (first 20 by alphabetical site_id within evaluation split). This must be declared before viewing any selection-aware results.",
+    "predeclared_subset_size": 20,
+    "predeclared_subset_rule": "First 20 evaluation target site_ids sorted alphabetically"
+  },
+  "feasibility_assessment": {
+    "estimated_compute_per_event": "200 outer × 500 inner × 3 methods × weight optimization = ~300,000 optimization calls per event",
+    "estimated_total_for_80_events": "~24,000,000 optimization calls",
+    "estimated_wall_time_hours": ">48 hours on single machine",
+    "conclusion": "infeasible_within_deadline",
+    "rationale": "The 200×500 nested resampling with full donor re-screening and weight re-optimization requires computational resources exceeding available capacity before the September 15 submission deadline. Running a subset would still require >12 hours per batch and risks producing unreliable coverage estimates from small samples.",
+    "honest_limitation": "The conditional block-bootstrap intervals reported in the main results are conditional on fixed pre-event donor weights. They do not account for donor-selection uncertainty. This is documented as Limitation 10 in the manuscript. Selection-aware coverage remains an open technical challenge."
+  },
+  "interpretation_boundary": "Without selection-aware coverage validation, real-event intervals must not be described as having calibrated 95% coverage. They are conditional diagnostic intervals only.",
+  "supersedes": null
+}

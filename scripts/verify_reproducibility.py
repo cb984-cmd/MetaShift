@@ -1,4 +1,4 @@
-"""Capture and compare deterministic hashes for MetaShift-Bench core results."""
+﻿"""Capture and compare deterministic hashes for MetaShift-Bench core results."""
 
 from __future__ import annotations
 
@@ -14,16 +14,16 @@ from pathlib import Path
 CORE_ARTIFACTS = (
     Path("artifacts/data_gate/data_manifest.csv"),
     Path("artifacts/screening_sensitivity_summary.csv"),
-    Path("artifacts/stable_synthetic_stable_full_v1_metrics.csv"),
+    Path("artifacts/stable_synthetic_stable_full_v2_metrics.csv"),
     Path("artifacts/stable_synthetic_case_split_audit.json"),
     Path("artifacts/synthetic_perturbation_illustration_case.json"),
-    Path("artifacts/stable_synthetic_stable_full_v1_thresholds.csv"),
-    Path("artifacts/stable_synthetic_stable_full_v1_bootstrap.csv"),
-    Path("artifacts/reliability_ablation_stable_full_v1_metrics.csv"),
-    Path("artifacts/reliability_ablation_stable_full_v1_bootstrap.csv"),
-    Path("artifacts/benchmark_ablation_alignment.json"),
-    Path("artifacts/synthetic_risk_coverage_curve.csv"),
-    Path("artifacts/real_event_coverage_summary.json"),
+    Path("artifacts/stable_synthetic_stable_full_v2_thresholds.csv"),
+    Path("artifacts/stable_synthetic_stable_full_v2_bootstrap.csv"),
+    Path("artifacts/reliability_ablation_stable_full_v2_metrics.csv"),
+    Path("artifacts/reliability_ablation_stable_full_v2_bootstrap.csv"),
+    Path("artifacts/benchmark_ablation_alignment_stable_full_v2.json"),
+    Path("artifacts/synthetic_risk_coverage_stable_full_v2.csv"),
+    Path("artifacts/real_event_coverage_stable_full_v2.json"),
     Path("artifacts/real_transition_88101_event_audit.csv"),
     Path("artifacts/real_transition_88101_method_results.csv"),
     Path("artifacts/real_transition_88101_event_intervals.csv"),
@@ -39,7 +39,7 @@ CORE_ARTIFACTS = (
     Path("artifacts/real_transition_88101_anchor_coordinates.csv"),
     Path("artifacts/real_transition_88101_case_selection.csv"),
     Path("artifacts/real_transition_88101_case_study_selection.csv"),
-    Path("artifacts/evidence_tier_sensitivity_summary.csv"),
+    Path("artifacts/evidence_tier_sensitivity_v2_summary.csv"),
     Path("artifacts/time_placebo_date_permutations.csv"),
     Path("artifacts/external_validation_evidence.csv"),
     Path("artifacts/external_document_review_summary.json"),

@@ -12,11 +12,11 @@ import numpy as np
 import pandas as pd
 
 
-EVENTS_PATH = Path("artifacts/auditability_representativeness_events.csv")
-COVERAGE_PATH = Path("artifacts/auditability_representativeness_coverage.csv")
-SMD_PATH = Path("artifacts/auditability_representativeness_standardized_differences.csv")
-MODEL_PATH = Path("artifacts/auditability_representativeness_model.csv")
-OUTPUT_PATH = Path("figures/figure_14_auditability_representativeness.png")
+EVENTS_PATH = Path("artifacts/auditability_representativeness_v2_events.csv")
+COVERAGE_PATH = Path("artifacts/auditability_representativeness_v2_coverage.csv")
+SMD_PATH = Path("artifacts/auditability_representativeness_v2_standardized_differences.csv")
+MODEL_PATH = Path("artifacts/auditability_representativeness_v2_model.csv")
+OUTPUT_PATH = Path("figures/figure_14_auditability_representativeness_v2.png")
 
 
 def main() -> None:

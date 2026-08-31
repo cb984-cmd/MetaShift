@@ -25,18 +25,18 @@ from metashift.auditability import (  # noqa: E402
 from run_feasibility_prototype import load_series  # noqa: E402
 
 
-CONFIG_PATH = Path("configs/auditability_representativeness_v1.json")
+CONFIG_PATH = Path("configs/auditability_representativeness_v2.json")
 ANCHORS_PATH = Path("artifacts/data_gate/anchor_inventory.csv")
 AUDIT_PATH = Path("artifacts/real_transition_88101_event_audit.csv")
 CONTROLS_PATH = Path("artifacts/data_gate/geographic_controls.csv")
 COORDINATES_PATH = Path("artifacts/real_transition_88101_anchor_coordinates.csv")
-EVENT_OUTPUT_PATH = Path("artifacts/auditability_representativeness_events.csv")
-COVERAGE_OUTPUT_PATH = Path("artifacts/auditability_representativeness_coverage.csv")
+EVENT_OUTPUT_PATH = Path("artifacts/auditability_representativeness_v2_events.csv")
+COVERAGE_OUTPUT_PATH = Path("artifacts/auditability_representativeness_v2_coverage.csv")
 SMD_OUTPUT_PATH = Path(
-    "artifacts/auditability_representativeness_standardized_differences.csv"
+    "artifacts/auditability_representativeness_v2_standardized_differences.csv"
 )
-MODEL_OUTPUT_PATH = Path("artifacts/auditability_representativeness_model.csv")
-MANIFEST_OUTPUT_PATH = Path("artifacts/auditability_representativeness_manifest.json")
+MODEL_OUTPUT_PATH = Path("artifacts/auditability_representativeness_v2_model.csv")
+MANIFEST_OUTPUT_PATH = Path("artifacts/auditability_representativeness_v2_manifest.json")
 SERIES_KEYS = ("State Code", "County Code", "Site Num", "POC")
 
 
@@ -122,19 +122,22 @@ def build_event_table() -> tuple[pd.DataFrame, pd.DataFrame]:
 
     series = load_series("88101")
     pocs_per_site = Counter(key[:3] for key in series)
-    pre_medians: list[float] = []
+    previous_run_medians: list[float] = []
     for _, event in events.iterrows():
         key = tuple(str(event[column]) for column in SERIES_KEYS)
         target = series.get(key)
         if target is None:
             raise KeyError(f"Anchor target series missing from canonical data: {key}")
-        date = pd.Timestamp(event["start_date"])
-        pre = target.loc[
-            date - pd.Timedelta(days=180) : date - pd.Timedelta(days=15)
+        previous_run = target.loc[
+            pd.Timestamp(event["previous_start_date"]) : pd.Timestamp(
+                event["previous_end_date"]
+            )
         ].dropna()
-        if len(pre) < 30:
-            raise ValueError(f"Anchor {event['anchor_id']} lacks 30 pre-event values.")
-        pre_medians.append(float(pre.median()))
+        if len(previous_run) < 45:
+            raise ValueError(
+                f"Anchor {event['anchor_id']} lacks 45 prior-method-run values."
+            )
+        previous_run_medians.append(float(previous_run.median()))
 
     events["start_date"] = pd.to_datetime(events["start_date"])
     events["anchor_year"] = events["start_date"].dt.year
@@ -151,7 +154,7 @@ def build_event_table() -> tuple[pd.DataFrame, pd.DataFrame]:
         ]
         for _, event in events.iterrows()
     ]
-    events["target_pre_median_ug_m3"] = pre_medians
+    events["target_previous_method_run_median_ug_m3"] = previous_run_medians
     events["urban_rural_status"] = "not_available_in_aqs_daily_slice"
     for column in (
         "pre_span_days",
@@ -162,7 +165,7 @@ def build_event_table() -> tuple[pd.DataFrame, pd.DataFrame]:
         "nearest_qualified_control_distance_km",
         "mean_qualified_control_correlation",
         "site_poc_count",
-        "target_pre_median_ug_m3",
+        "target_previous_method_run_median_ug_m3",
         "Latitude",
         "Longitude",
     ):

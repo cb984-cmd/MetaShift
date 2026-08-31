@@ -178,9 +178,12 @@ or tune against the already viewed 80-site stable-synthetic evaluation set.
   coverage result applies to fixed-weight conditional intervals. Any
   selection-aware coverage study requires a separately frozen, computationally
   feasible protocol and may not tune against the viewed 80-site split.
-- [!] **E3 — Analyze auditability and selection boundaries.** A frozen
-  metadata-only protocol specifies coverage maps, standardized differences, and
-  descriptive associations without assigning effects to unavailable events.
+- [!] **E3 — Analyze auditability and selection boundaries.** The initial
+  metadata-only protocol stopped before producing results because one eligible
+  anchor lacked 30 observations in an auxiliary fixed pre-window. v2 replaces
+  that feature with the complete prior Method Code run, whose 45-observation
+  minimum is guaranteed by anchor eligibility; it retains all 563 anchors and
+  still excludes effects and evidence tiers.
 - [ ] **E4 — Run taxonomy-stratified descriptive analysis.** Blocked until E1
   receives independent human review.
 - [ ] **E5 — Re-run evidence-tier sensitivity with varying q thresholds.**

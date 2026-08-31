@@ -45,7 +45,7 @@ jobs:
           python -c "
           import json, pathlib
           s = json.loads(pathlib.Path('configs/current_evidence_summary_v2.json').read_text())
-          assert s['schema_version'] == 2
+          assert s['schema_version'] == 3
           assert s['frozen_evidence']['tag'] == 'v0.3.2-evidence-final'
           assert s['frozen_evidence']['commit'] == '57d678ecabebff724d898abe626c9ef80538775b'
           assert s['frozen_evidence']['release_url'].endswith('/v0.3.2-evidence-final')

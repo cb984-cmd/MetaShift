@@ -54,6 +54,10 @@ def condition_flags(
     return {
         "audit_complete": event["audit_status"] == "complete",
         "quality_gate_passed": as_bool(event.get("quality_gate_passed")),
+        "selection_interval_available": pd.notna(
+            event.get("selection_ci95_lower")
+        )
+        and pd.notna(event.get("selection_ci95_upper")),
         "selection_interval_excludes_zero": as_bool(
             event.get("selection_ci_excludes_zero")
         ),
@@ -148,6 +152,7 @@ def main() -> None:
             tier, reasons = evidence_tier(
                 audit_complete=flags["audit_complete"],
                 quality_gate_passed=flags["quality_gate_passed"],
+                selection_interval_available=flags["selection_interval_available"],
                 ci_excludes_zero=flags["selection_interval_excludes_zero"],
                 placebo_available=flags["sufficient_time_placebos"],
                 placebo_count=int(event["placebo_count"])

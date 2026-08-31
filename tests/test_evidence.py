@@ -10,6 +10,7 @@ class EvidenceTierTests(unittest.TestCase):
         tier, reasons = evidence_tier(
             audit_complete=True,
             quality_gate_passed=True,
+            selection_interval_available=True,
             ci_excludes_zero=True,
             placebo_available=True,
             placebo_count=100,
@@ -25,6 +26,7 @@ class EvidenceTierTests(unittest.TestCase):
         tier, reasons = evidence_tier(
             audit_complete=True,
             quality_gate_passed=True,
+            selection_interval_available=True,
             ci_excludes_zero=True,
             placebo_available=False,
             placebo_count=0,
@@ -40,6 +42,7 @@ class EvidenceTierTests(unittest.TestCase):
         tier, reasons = evidence_tier(
             audit_complete=True,
             quality_gate_passed=False,
+            selection_interval_available=True,
             ci_excludes_zero=True,
             placebo_available=True,
             placebo_count=100,
@@ -62,6 +65,7 @@ class EvidenceTierTests(unittest.TestCase):
         common = {
             "audit_complete": True,
             "quality_gate_passed": True,
+            "selection_interval_available": True,
             "ci_excludes_zero": True,
             "placebo_available": True,
             "placebo_count": 100,
@@ -78,3 +82,19 @@ class EvidenceTierTests(unittest.TestCase):
         )
         self.assertEqual(strict, EvidenceTier.NOT_SUPPORTED)
         self.assertEqual(loose, EvidenceTier.SUPPORTED_CANDIDATE)
+
+    def test_missing_selection_aware_interval_is_inconclusive(self) -> None:
+        tier, reasons = evidence_tier(
+            audit_complete=True,
+            quality_gate_passed=True,
+            selection_interval_available=False,
+            ci_excludes_zero=False,
+            placebo_available=True,
+            placebo_count=100,
+            placebo_p_value=0.01,
+            placebo_q_value=0.01,
+            donor_sensitivity_available=True,
+            donor_direction_fraction=1.0,
+        )
+        self.assertEqual(tier, EvidenceTier.INCONCLUSIVE)
+        self.assertIn("selection_aware_interval_unavailable", reasons)

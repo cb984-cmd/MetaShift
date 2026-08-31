@@ -36,6 +36,7 @@ def evidence_tier(
     *,
     audit_complete: bool,
     quality_gate_passed: bool,
+    selection_interval_available: bool,
     ci_excludes_zero: bool,
     placebo_available: bool,
     placebo_count: int | None,
@@ -58,6 +59,8 @@ def evidence_tier(
     if not audit_complete:
         return EvidenceTier.INCONCLUSIVE, ["no_common_comparative_estimate"]
     missing = []
+    if not selection_interval_available:
+        missing.append("selection_aware_interval_unavailable")
     if not placebo_available or placebo_count is None or placebo_count < min_placebo_count:
         missing.append("time_placebo_insufficient")
     if placebo_q_value is None or not isfinite(placebo_q_value):

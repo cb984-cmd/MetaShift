@@ -26,6 +26,7 @@
   "funnel_order": [
     "audit_complete",
     "quality_gate_passed",
+    "selection_interval_available",
     "selection_interval_excludes_zero",
     "sufficient_time_placebos",
     "raw_placebo_p_passes",

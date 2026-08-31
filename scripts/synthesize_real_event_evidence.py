@@ -117,6 +117,10 @@ def main() -> None:
         tier, tier_reasons = evidence_tier(
             audit_complete=row["audit_status"] == "complete",
             quality_gate_passed=as_bool(row.get("quality_gate_passed")),
+            selection_interval_available=pd.notna(
+                row.get("selection_ci95_lower")
+            )
+            and pd.notna(row.get("selection_ci95_upper")),
             ci_excludes_zero=as_bool(row.get("selection_ci_excludes_zero")),
             placebo_available=str(row.get("placebo_status")).startswith("complete_"),
             placebo_count=int(row["placebo_count"])

@@ -15,6 +15,8 @@ class EvidenceTierSensitivityTests(unittest.TestCase):
             {
                 "audit_status": "complete",
                 "quality_gate_passed": True,
+                "selection_ci95_lower": -0.1,
+                "selection_ci95_upper": 0.2,
                 "selection_ci_excludes_zero": True,
                 "placebo_status": "complete_100",
                 "placebo_count": 100,

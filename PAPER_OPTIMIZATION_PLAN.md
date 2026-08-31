@@ -63,7 +63,7 @@ already viewed 80-site synthetic evaluation split.
 | Priority | Extension requirement | Status | Evidence / boundary |
 | --- | --- | --- | --- |
 | P0 | Freeze metadata-only Method Code taxonomy | In progress | `configs/method_transition_taxonomy_v1.csv` covers all 34 observed pairs and is validated without outcome data; student/teacher review remains required |
-| P0 | Test synthetic uncertainty calibration | Pending | Use a new predeclared protocol; report coverage and widths without selecting an interval after evaluation |
+| P0 | Test synthetic uncertainty calibration | In progress | `configs/synthetic_interval_coverage_v1.json` freezes conditional-bootstrap and target-cluster split-conformal rules before the complete 66/80 run |
 | P0 | Analyze auditability representativeness | Pending | Compare complete and unavailable anchors descriptively; never infer a missing event's physical effect |
 | P1 | Stratify observations by frozen taxonomy | Blocked on human taxonomy review | Descriptive only; no equipment-change or causal label |
 | P1 | Vary evidence-tier q thresholds | Pending | Strict/primary/lenient settings must vary raw p, q, and donor-stability cutoffs together |

@@ -167,8 +167,10 @@ or tune against the already viewed 80-site stable-synthetic evaluation set.
 - [!] **E1 — Freeze and review Method Code taxonomy.** A 34-pair,
   metadata-only table covers all 563 anchors and is validated without outcome
   data. Student/teacher row-level review is required before stratification.
-- [ ] **E2 — Calibrate synthetic uncertainty intervals.** Evaluate coverage
-  and width under a predeclared protocol without interval tuning on results.
+- [!] **E2 — Calibrate synthetic uncertainty intervals.** The fixed
+  conditional-bootstrap and target-cluster split-conformal protocol is
+  implemented and smoke-tested. Run it once on the complete 66/80 split
+  without interval tuning on results.
 - [ ] **E3 — Analyze auditability and selection boundaries.** Describe which
   network conditions permit common counterfactual comparisons without assigning
   effects to unavailable events.

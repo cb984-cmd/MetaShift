@@ -9,7 +9,7 @@
   "existing_synthetic_evaluation_policy": {
     "evaluated_target_sites": 80,
     "rule": "The evaluated 80-site split may not select, tune, or compare any new model, gate, threshold, taxonomy rule, or selective-decision mechanism.",
-    "allowed_use": "Read-only historical benchmark context with no new selection decisions."
+    "allowed_use": "One predeclared retrospective diagnostic of fixed conditional-bootstrap and calibration-only split-conformal interval coverage; no parameter may change after this evaluation."
   },
   "transition_taxonomy": {
     "path": "configs/method_transition_taxonomy_v1.csv",

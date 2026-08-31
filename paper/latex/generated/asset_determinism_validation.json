@@ -1,0 +1,12 @@
+{
+  "generated_at_utc": "2026-08-31T22:00:04.280812+00:00",
+  "generator": "paper/latex/scripts/generate_paper_assets.py",
+  "output_count": 20,
+  "manifest_hashes": {
+    "first": "64ff699e181abfe9c23e1aba4b0af9a406c8aa72e2e629c0ae3af83d15c5facc",
+    "second": "64ff699e181abfe9c23e1aba4b0af9a406c8aa72e2e629c0ae3af83d15c5facc",
+    "match": true
+  },
+  "all_hashes_match": true,
+  "changed_outputs": {}
+}

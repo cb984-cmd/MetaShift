@@ -1,0 +1,65 @@
+{
+  "generated_at_utc": "2026-08-31T22:00:10.734684+00:00",
+  "formal_report": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
+  "frozen_evidence": {
+    "tag": "v0.3.2-evidence-final",
+    "commit": "57d678ecabebff724d898abe626c9ef80538775b",
+    "release_url": "https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final",
+    "supersedes": [
+      "v0.3.0-distinct-donors",
+      "v0.3.1-evidence-final"
+    ]
+  },
+  "source_word_count_estimate": 3930,
+  "compiled_pdf": {
+    "bytes": 556809,
+    "sha256": "c0da1aaf799ac73a1c50970d8a08a30c9a301ee12f896cec72af3982b265f00d",
+    "rendered_page_count": 19
+  },
+  "human_completion_status": "required",
+  "taxonomy_status": "human_blocked",
+  "record_violations": [],
+  "checks": [
+    {
+      "name": "official_order_and_required_sections",
+      "passed": true,
+      "detail": "A4 title page, abstract, keywords, contents, main sections, references, and disclosures are present in order."
+    },
+    {
+      "name": "human_only_submission_fields_preserved",
+      "passed": true,
+      "detail": "Identity, contribution, advisor, AI-use, and attestation fields remain human-only."
+    },
+    {
+      "name": "frozen_evidence_binding",
+      "passed": true,
+      "detail": "The report and generated assets bind to the immutable v0.3.2 evidence release."
+    },
+    {
+      "name": "claim_ledger_validation",
+      "passed": true,
+      "detail": "Every quantitative formal-paper claim is mapped to hash-verified frozen evidence and an asset."
+    },
+    {
+      "name": "source_and_citation_validation",
+      "passed": true,
+      "detail": "All cited references are defined, used, and structurally complete."
+    },
+    {
+      "name": "generated_asset_determinism",
+      "passed": true,
+      "detail": "Two independent paper-asset generations have identical asset and manifest hashes."
+    },
+    {
+      "name": "scientific_and_human_boundaries",
+      "passed": true,
+      "detail": "The report preserves no-superiority, no-causal-instrument, and no-calibrated-real-interval boundaries."
+    },
+    {
+      "name": "compiled_pdf_and_rendered_page_integrity",
+      "passed": true,
+      "detail": "The final PDF is nonempty, hash-recorded, rendered, and free of overfull boxes."
+    }
+  ],
+  "all_checks_passed": true
+}

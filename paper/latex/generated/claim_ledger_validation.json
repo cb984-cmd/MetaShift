@@ -1,0 +1,57 @@
+{
+  "generated_at_utc": "2026-08-31T22:00:00.880704+00:00",
+  "ledger": "paper/latex/CLAIM_EVIDENCE_LEDGER.csv",
+  "frozen_evidence": {
+    "tag": "v0.3.2-evidence-final",
+    "commit": "57d678ecabebff724d898abe626c9ef80538775b",
+    "release_url": "https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final",
+    "supersedes": [
+      "v0.3.0-distinct-donors",
+      "v0.3.1-evidence-final"
+    ]
+  },
+  "input_summary_sha256": "7a4c7219af77cb80c7c3aa5a2175a1ffa29f6ac826f8ec95305185d66f05bc55",
+  "claim_count": 32,
+  "asset_reference_count": 51,
+  "verification_status_counts": {
+    "verified_frozen_evidence": 32
+  },
+  "all_checks_passed": true,
+  "checks": [
+    {
+      "name": "ledger_schema",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "ledger_required_fields",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "all_claims_marked_verified",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "manuscript_locations",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "claim_text_matches_recomputed_values",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "frozen_evidence_inputs",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "generated_asset_mapping",
+      "passed": true,
+      "violations": []
+    }
+  ]
+}

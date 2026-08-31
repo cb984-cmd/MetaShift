@@ -1,0 +1,20 @@
+{
+  "generated_at_utc": "2026-08-31T22:00:10.661447+00:00",
+  "source_git_commit": "ad5bb36ca3afe5716fd03bdac1e94824cc7a5513",
+  "pdf": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
+  "pdf_bytes": 556809,
+  "pdf_sha256": "c0da1aaf799ac73a1c50970d8a08a30c9a301ee12f896cec72af3982b265f00d",
+  "rendered_page_count": 19,
+  "overfull_hbox_warnings": 0,
+  "frozen_evidence_summary": "configs/current_evidence_summary_v2.json",
+  "build_commands": [
+    "generate_paper_assets --write",
+    "verify_claim_ledger --require-assets",
+    "verify_paper_source",
+    "verify_references",
+    "verify_paper_asset_determinism",
+    "pdflatex, bibtex, pdflatex, pdflatex",
+    "pdftoppm -png -r 144",
+    "verify_formal_report"
+  ]
+}

@@ -88,6 +88,13 @@ results/release_gate.json
      敏感性、主表/消融逐行对齐和消融 bootstrap 结果。
    - GitHub Actions 使用 requirements-lock.txt 运行单元测试并已通过。
 
+7. 公开证据包
+   - 已创建公开 GitHub Release：
+     https://github.com/cb984-cmd/MetaShift/releases/tag/v0.1.0-benchmark-evidence
+   - Release 包含结果表、图表、数据清单、配置、release gate 和复现哈希。
+   - Release 经安全扫描后发布，不含原始 EPA ZIP、AQS API 原始响应、环境变量
+     或任何凭据。
+
 主数据：EPA AQS 参数 88101
 --------------------------
 时间范围：2019-2025

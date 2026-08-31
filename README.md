@@ -69,6 +69,12 @@ The remediated benchmark was reconstructed in a default environment and a
 separate environment installed from `requirements-lock.txt`; all 16 selected
 core-result hashes matched. Public CI also passed on the remediation commit.
 
+The safe public evidence package is available from the
+[v0.1.0-benchmark-evidence release](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.1.0-benchmark-evidence).
+It includes generated result tables, figures, manifests, release-gate output,
+and reproducibility hashes, but excludes raw EPA archives, API responses, and
+credentials.
+
 ## Data gate
 
 The first reproducible gate scans EPA AQS daily PM2.5 archives:

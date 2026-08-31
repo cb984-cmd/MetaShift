@@ -113,11 +113,12 @@ replacement or measurement bias.
 - [x] Add `requirements-lock.txt` and public GitHub Actions unit-test CI.
 - [x] Rebuild under the remediated fixed configuration in default and
   lock-file environments; 16 core output hashes match exactly.
-- [ ] Publish the safe, versioned evidence bundle after a final sensitive-data
-  scan.
+- [x] Publish the safe, versioned evidence bundle after a final sensitive-data
+  scan: [v0.1.0-benchmark-evidence](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.1.0-benchmark-evidence).
 
-**Code and research stage:** remediated results and reproducibility checks
-pass; public evidence-bundle publication remains. The algorithm-superiority route remains closed:
+**Code and research stage:** complete. Remediated results, reproducibility
+checks, public CI, and the safe public evidence bundle all pass. The
+algorithm-superiority route remains closed:
 on the stable synthetic benchmark, MetaShift's lower effect-MAE point estimates
 versus standard synthetic control had bootstrap confidence intervals crossing
 zero, while Macro-F1/AUPRC did not meet the predeclared algorithm thresholds.

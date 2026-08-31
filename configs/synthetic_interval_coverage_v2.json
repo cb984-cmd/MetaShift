@@ -1,0 +1,51 @@
+{
+  "analysis_id": "synthetic_interval_coverage_v2",
+  "status": "frozen before interval-coverage outcomes",
+  "baseline_case_manifest_sha256": "065b1b65c231c5298fb4969a7b5669f3ae8850b9228d50afee7d98422575e099",
+  "case_partitions": {
+    "calibration_targets": 66,
+    "evaluation_targets": 80,
+    "evaluation_policy": "One retrospective diagnostic evaluation only. No interval, threshold, or model parameter may be changed after observing this split."
+  },
+  "methods": [
+    "nearest_neighbor_did",
+    "standard_synthetic_control",
+    "metashift_v1_fixed",
+    "metashift_v2_cv"
+  ],
+  "effect_identifiable_perturbation_families": [
+    "additive_step",
+    "proportional_step",
+    "gradual_drift",
+    "temporary_step"
+  ],
+  "magnitude_multipliers": [
+    0.5,
+    1.0,
+    1.5,
+    2.0,
+    3.0
+  ],
+  "conditional_bootstrap": {
+    "nominal_coverage": 0.95,
+    "repetitions": 1000,
+    "block_length_observations": 7,
+    "scope": "Conditional on fixed pre-anchor donor weights; does not include donor-selection uncertainty."
+  },
+  "split_conformal": {
+    "nominal_coverage": 0.9,
+    "nonconformity_score": "maximum absolute local-effect error across all fixed effect-identifiable perturbations and magnitudes within one physical target site",
+    "quantile_rule": "ceil((n_calibration_targets + 1) * nominal_coverage), capped at n_calibration_targets",
+    "scope": "Target-cluster score prevents repeated perturbations at a site from being treated as independent calibration units."
+  },
+  "strata": [
+    "perturbation_family",
+    "magnitude_multiplier",
+    "donor_count",
+    "pre_fit_rmse_calibration_quartile",
+    "target_pre_concentration_calibration_quartile"
+  ],
+  "interpretation_boundary": "Coverage is evaluated only against injected synthetic local effects. It does not validate physical-bias intervals for real Method Code transitions.",
+  "supersedes": "synthetic_interval_coverage_v1",
+  "geographic_donor_rule": "one_best_poc_per_physical_site"
+}

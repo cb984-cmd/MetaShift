@@ -1,11 +1,10 @@
 # MetaShift
 
-> **Integrity notice (2026-08-31):** The v0.2.0 archived evidence release is
-> superseded for scientific use. Its geographic control inventory can count
-> multiple POCs from a single physical donor site as separate donors. All
-> cross-site benchmark, real-event, and evidence-tier numbers are paused while
-> the data gate is repaired and the dependent pipeline is rebuilt. Raw data and
-> prior artifacts are retained for audit; no current claim should cite them.
+> **Integrity remediation complete (2026-08-31):** The v0.2.0 release was
+> superseded due to a geographic control inventory defect (multiple POCs per
+> physical donor site counted as separate donors). All cross-site results have
+> been rebuilt with physical-site-unique donors. The current v0.3.0 release
+> passes all 26/26 release gate checks with machine-verified manuscript numbers.
 
 MetaShift audits whether a discontinuity in an air-quality monitoring series is
 more consistent with a local measurement-regime change than with a regional
@@ -39,16 +38,16 @@ At the frozen release configuration:
 | Result | Value |
 | --- | ---: |
 | AQS 88101 eligible metadata anchors | 563 |
-| Complete common-method observational comparisons | 261 |
-| Explicit insufficient-donor exclusions | 292 |
+| Complete common-method observational comparisons | 228 |
+| Explicit insufficient-donor exclusions | 325 |
 | Stable synthetic evaluation samples per perturbation | 400 |
-| Time-placebo-calibrated real anchors | 149 / 261 |
-| Donor-as-treated placebo records | 1,050 |
+| Time-placebo-calibrated real anchors | 157 / 228 |
+| Donor-as-treated placebo records | 866 |
 | Independent 88502 anchors / complete comparisons | 34 / 3 |
 
 In the stable synthetic evaluation, standard synthetic control achieved
-macro-F1/AUPRC of **0.828 / 0.910**. Fixed-prior and pre-period
-cross-validated MetaShift achieved **0.788 / 0.888** and **0.798 / 0.895**.
+macro-F1/AUPRC of **0.816 / 0.915**. Fixed-prior and pre-period
+cross-validated MetaShift achieved **0.795 / 0.898** and **0.809 / 0.902**.
 Cross-validated MetaShift's lower local-effect MAE point estimate was not
 confidence-supported by paired event bootstrap, so the repository makes **no
 algorithm-superiority claim**.
@@ -70,9 +69,9 @@ uncertainty conditional on fixed pre-event donor weights; they do not turn
 observational anchors into confirmed physical-instrument events.
 
 An exploratory evidence synthesis combines the completed diagnostics without
-changing the estimators: 36 of 563 anchors meet the FDR-screened
-candidate-discontinuity rule, 113 are not supported by available evidence, and
-414 are inconclusive. These are evidence tiers for audit and case selection,
+changing the estimators: 34 of 563 anchors meet the FDR-screened
+candidate-discontinuity rule, 122 are not supported by available evidence, and
+407 are inconclusive. These are evidence tiers for audit and case selection,
 not confirmed instrument failures or causal labels.
 
 Use `requirements-lock.txt` for the frozen evidence environment. The public

@@ -110,7 +110,8 @@ included only as historical diagnostics; final claims remain limited to the
 passing release-gate evidence.
 
 The verified full archive and its SHA-256 manifest are attached to the public
-[v0.2.0-paper-evidence release](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.2.0-paper-evidence).
+[v0.3.0-distinct-donors release](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.0-distinct-donors).
+The earlier v0.2.0 release is superseded and should not be cited for current results.
 
 ## Cross-environment consistency
 

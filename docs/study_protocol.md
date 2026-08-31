@@ -139,10 +139,11 @@ availability are reported as graded evidence limitations.
 
 ## Paper-strengthening extension protocol
 
-The v0.2.0 evidence release remains an archived, reproducible benchmark
-baseline. The following extension is frozen before its new outcome analyses;
-it does not reopen the closed claim that MetaShift is superior to standard
-synthetic control.
+The v0.2.0 evidence release is a superseded archival baseline (its control
+inventory counted multiple POCs per physical site as separate donors; replaced
+by v0.3.0-distinct-donors). The following extension is frozen before its new
+outcome analyses; it does not reopen the closed claim that MetaShift is
+superior to standard synthetic control.
 
 The extension adds a Method Code transition taxonomy based only on the old and
 new AQS Method Codes, their reported Method Names, and predeclared official

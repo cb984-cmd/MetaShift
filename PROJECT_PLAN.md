@@ -64,14 +64,14 @@ replacement or measurement bias.
 - [x] **B3 — Audit all 563 real metadata anchors.** Report eligibility,
   pre-fit, effects, abstentions, and failure reasons without treating anchors
   as confirmed bias labels.
-- [x] **B4 — Quantify real-event uncertainty and donor dependence.** All 261
-  complete cross-site events have 1,000-repetition conditional block-bootstrap
-  intervals; leave-one-donor-out sensitivity completes all removals for 260
-  events and records the single unavailable removal.
-- [x] **B5 — Synthesize observational evidence tiers.** All 563 anchors are
-  transparently categorized as supported candidate (36), not supported (113),
-  or inconclusive (414) using fixed quality, selection-aware nested interval,
-  50--100 date placebo/FDR, and donor-sensitivity diagnostics; no tier is a
+- [x] **B4 — Quantify real-event uncertainty and donor dependence.** *(v0.2
+  counts superseded; see I0–I2 for v0.3 rebuild.)* All 228 complete cross-site
+  events have conditional intervals and leave-one-donor-out sensitivity.
+- [x] **B5 — Synthesize observational evidence tiers.** *(v0.2 counts
+  superseded; see I0–I2 for v0.3 rebuild.)* All 563 anchors are transparently
+  categorized as supported candidate (34), not supported (122), or inconclusive
+  (407) using fixed quality, selection-aware nested interval, 50--100 date
+  placebo/FDR, and donor-sensitivity diagnostics; no tier is a
   physical-causality label.
 
 ## Validation and analysis
@@ -124,8 +124,8 @@ replacement or measurement bias.
   retained two API failures as unavailable.
 - [x] Centralize synthetic random seeds and verify all 7,300 shared Standard
   SC rows match exactly between the primary benchmark and ablation experiment.
-- [x] Add conditional 1,000-repetition moving-block intervals for all 261
-  complete real events and three cross-site methods.
+- [x] Add conditional 1,000-repetition moving-block intervals *(v0.2: 261
+  events; v0.3 rebuild: 228 events with distinct physical donors).*
 - [x] Add leave-one-donor-out refits: 260 events completed every removal; one
   unavailable removal is retained with its reason.
 - [x] Revise the protocol to remove an unsupported labeled real
@@ -200,22 +200,16 @@ stable-synthetic evaluation set.
   coverage result applies to fixed-weight conditional intervals. Any
   selection-aware coverage study requires a separately frozen, computationally
   feasible protocol and may not tune against the viewed 80-site split.
-- [!] **E3 — Analyze auditability and selection boundaries.** v2 retains all
-  563 anchors, including one separate “Outside EPA mapped regions” record, and
-  excludes effect estimates, evidence tiers, and synthetic labels. It finds
-  261 complete comparisons and 302 unavailable comparisons; nearest qualified
-  donor distance is the largest descriptive difference (32.6 km vs 63.9 km;
-  pooled standardized difference −1.20). These are applicability boundaries,
-  not inferred measurement effects. Its control-availability quantities are
-  superseded pending the physical-donor rebuild.
+- [!] **E3 — Analyze auditability and selection boundaries.** *(v0.2 counts
+  superseded; see I0–I2 for v0.3 rebuild.)* v2 retains all 563 anchors; 228
+  complete comparisons and 335 unavailable comparisons with distinct physical
+  donors. These are applicability boundaries, not inferred measurement effects.
 - [ ] **E4 — Run taxonomy-stratified descriptive analysis.** Blocked until E1
   receives independent human review.
-- [!] **E5 — Re-run evidence-tier sensitivity with varying q thresholds.** v2
-  preserves all 563 primary labels exactly and yields 0/36/53 supported
-  candidates under strict/primary/lenient thresholds. Its funnel makes visible
-  that only 77 events reach the adequate-placebo stage and q≤0.05 eliminates
-  all 44 strict raw-p survivors; results remain exploratory evidence labels.
-  This result is superseded pending the physical-donor rebuild.
+- [!] **E5 — Re-run evidence-tier sensitivity with varying q thresholds.**
+  *(v0.2 counts superseded; see I0–I2.)* v2 preserves all 563 primary labels
+  exactly and yields 0/34/53 supported candidates under strict/primary/lenient
+  thresholds. Results remain exploratory evidence labels.
 - [!] **E6 — Strengthen same-site overlap and cross-family document evidence.**
   The same-site portion completes 11 qualified daily and 9 qualified hourly
   alternate-POC comparisons: daily/hourly direction agreement is 8/9 and each

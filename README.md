@@ -61,7 +61,7 @@ result artifacts. Figures are generated from saved CSV outputs only.
 The primary synthetic benchmark and reliability ablations now call the same
 centralized seed function. Their 7,300 shared Standard synthetic-control
 rows match exactly to an absolute tolerance of `1e-10`; the generated
-alignment report is `artifacts\benchmark_ablation_alignment.json`.
+alignment report is `artifacts\benchmark_ablation_alignment_stable_full_v2.json`.
 
 The real-event audit now includes conditional 1,000-repetition moving-block
 bootstrap intervals and leave-one-donor-out refits. These describe residual
@@ -84,18 +84,11 @@ separate environment installed from `requirements-lock.txt`; all selected
 core-result hashes matched. Public CI also passed on the remediation commit.
 
 The corrected safe public evidence package is available from the
-[v0.2.0-paper-evidence release](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.2.0-paper-evidence),
-which points to the verified evidence commit
-[`a738f03`](https://github.com/cb984-cmd/MetaShift/commit/a738f039915abadfce37c274f210578e9319310e).
-It includes generated result tables, figures, manifests, release-gate output,
-and reproducibility hashes, but excludes raw EPA archives, API responses, and
-credentials. The earlier v0.1.0 evidence release applies to the superseded
-synthetic split.
-
-The same release also contains a complete public-safe archive with all 269 safe
-local outputs, a source snapshot, Git history, and a per-file SHA-256 manifest.
-Legacy development artifacts are included for process transparency, not as
-support for the final benchmark claims.
+[v0.3.0-distinct-donors release](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.0-distinct-donors).
+The earlier v0.2.0 release is retained as an archived, superseded baseline
+(its control inventory could count multiple POCs from one physical site as
+separate donors). The v0.1.0 evidence release applies to the superseded
+synthetic split. Neither superseded release should be cited for current results.
 
 An evidence-backed English manuscript draft is at
 [`paper/MANUSCRIPT_DRAFT.md`](paper/MANUSCRIPT_DRAFT.md). It is deliberately
@@ -148,8 +141,8 @@ The one-command release reconstruction runs the commands below, then writes
 
 ```powershell
 python scripts\build_stable_synthetic_cases.py
-python scripts\run_stable_synthetic_benchmark.py --label stable_full_v1
-python scripts\run_reliability_ablations.py --label stable_full_v1
+python scripts\run_stable_synthetic_benchmark.py --label stable_full_v2
+python scripts\run_reliability_ablations.py --label stable_full_v2
 python scripts\run_real_transition_audit.py --parameter-code 88101 --label 88101
 python scripts\run_time_placebos.py
 python scripts\run_additional_placebos.py

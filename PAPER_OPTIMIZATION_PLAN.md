@@ -1,7 +1,7 @@
 # MetaShift-Bench paper optimization plan
 
-**Status:** blocked on physical-donor uniqueness remediation; v0.2.0 remains
-an archived but superseded baseline release.
+**Status:** Integrity remediation complete; v0.3.0-distinct-donors is the
+current evidence release. v0.2.0 is retained as a superseded archival baseline.
 **Principle:** the benchmark-and-audit claim remains primary; no new model
 superiority claim will be introduced unless a separately preregistered,
 independently evaluated result supports it.
@@ -15,8 +15,8 @@ independently evaluated result supports it.
 | P0 | Prevent stale hourly API-response reuse | Complete locally | The manifest is invalidated before refresh and accepts only response hashes read after atomic disk write; 9/11 current requests supplied paired evidence and 2 HTTP failures remain unavailable |
 | P0 | Verify manuscript numbers automatically | Complete | Updated verifier covers input-footprint isolation and method-stable 45/60/90-day sensitivity; it passed in both full reconstructions |
 | P0 | Unify main/ablation synthetic noise | Complete locally | 7,300 shared Standard SC rows align exactly under the corrected split |
-| P1 | Add selection-aware nested bootstrap | Complete; integrated | 261 events, 1,000 repetitions, no event failures |
-| P1 | Add 50--100 unique time placebos and BH q values | Complete; integrated | 149 events with at least 50 unique placebos; 41 pass q<=0.10 |
+| P1 | Add selection-aware nested bootstrap | Complete; integrated | 227 events with v2 distinct donors, 1,000 repetitions, 1 event failure (33-009-0010) |
+| P1 | Add 50--100 unique time placebos and BH q values | Complete; integrated | 157 events with at least 50 unique placebos; 40 pass q<=0.10 (v2 distinct donors) |
 | P1 | Test evidence-tier thresholds | Complete; integrated | Strict/primary/lenient summaries; shared FDR screen is limiting |
 | P1 | Expand independent stable test monitors and prevent same-site POC leakage | Complete | 66 calibration + 80 evaluation targets; no complete target-plus-donor physical input site crosses splits |
 | P1 | Add one-way parameter sensitivity grid | Complete | 11 predeclared settings and 1/3/5 donor thresholds |

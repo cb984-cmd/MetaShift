@@ -182,8 +182,9 @@ or tune against the already viewed 80-site stable-synthetic evaluation set.
   metadata-only protocol stopped before producing results because one eligible
   anchor lacked 30 observations in an auxiliary fixed pre-window. v2 replaces
   that feature with the complete prior Method Code run, whose 45-observation
-  minimum is guaranteed by anchor eligibility; it retains all 563 anchors and
-  still excludes effects and evidence tiers.
+  minimum is guaranteed by anchor eligibility. One AQS state-code-80 anchor is
+  retained as “Outside EPA mapped regions” rather than forced into an EPA
+  region; the analysis still excludes effects and evidence tiers.
 - [ ] **E4 — Run taxonomy-stratified descriptive analysis.** Blocked until E1
   receives independent human review.
 - [ ] **E5 — Re-run evidence-tier sensitivity with varying q thresholds.**

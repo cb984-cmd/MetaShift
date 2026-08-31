@@ -58,7 +58,7 @@
   "reporting": {
     "standardized_difference": "Complete minus unavailable anchors using pooled sample standard deviation.",
     "minimum_group_size_for_rate": 1,
-    "geographic_reporting": "EPA regions using fixed state-code mapping.",
+    "geographic_reporting": "EPA regions using fixed state-code mapping; AQS state code 80 is retained and separately reported as Outside EPA mapped regions.",
     "forbidden_outcome_inputs": [
       "real-event effect estimates",
       "evidence tiers",

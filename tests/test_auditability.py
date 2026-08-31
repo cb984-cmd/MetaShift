@@ -14,6 +14,7 @@ class AuditabilityTests(unittest.TestCase):
     def test_maps_epa_regions(self) -> None:
         self.assertEqual("EPA Region 5", epa_region("17"))
         self.assertEqual("EPA Region 9", epa_region("6"))
+        self.assertEqual("Outside EPA mapped regions", epa_region("80"))
         with self.assertRaisesRegex(ValueError, "No EPA-region"):
             epa_region("99")
 

@@ -67,6 +67,7 @@ EPA_REGION_BY_STATE_CODE = {
     "69": "EPA Region 9",
     "72": "EPA Region 2",
     "78": "EPA Region 2",
+    "80": "Outside EPA mapped regions",
 }
 
 

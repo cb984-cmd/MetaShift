@@ -29,3 +29,4 @@ class HourlyPocFreshnessTests(unittest.TestCase):
                     {"request_succeeded": True, "raw_sha256": "not-a-real-hash"},
                     raw_path,
                 )
+            )

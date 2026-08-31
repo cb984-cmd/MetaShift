@@ -1,0 +1,39 @@
+{
+  "analysis_id": "cross_family_document_review_v1",
+  "status": "frozen before public-document review",
+  "taxonomy_path": "configs/method_transition_taxonomy_v1.csv",
+  "eligible_transition_class": "cross_analyzer_family",
+  "sample_size": 30,
+  "selection_rule": "Round-robin across transition pairs ordered by descending available-anchor count then pair identifier; within each pair, SHA256(anchor_id) ascending.",
+  "selection_inputs": [
+    "anchor_id",
+    "State Code",
+    "County Code",
+    "Site Num",
+    "POC",
+    "anchor_date",
+    "old and new Method Code metadata"
+  ],
+  "forbidden_selection_inputs": [
+    "real-event effect estimates",
+    "standardized scores",
+    "evidence tiers",
+    "synthetic performance results",
+    "placebo results"
+  ],
+  "review_sources": [
+    "official state monitoring plans",
+    "official quality-assurance project plans",
+    "official maintenance or station-change notices",
+    "official EPA records"
+  ],
+  "search_terms": [
+    "site identifier",
+    "county",
+    "old and new analyzer family",
+    "method change",
+    "replacement",
+    "maintenance"
+  ],
+  "interpretation_boundary": "A located document can corroborate a public administrative record but does not automatically establish a causal measurement bias. A missing document is unavailable evidence, not evidence of no change."
+}

@@ -196,7 +196,8 @@ or tune against the already viewed 80-site stable-synthetic evaluation set.
   The same-site portion completes 11 qualified daily and 9 qualified hourly
   alternate-POC comparisons: daily/hourly direction agreement is 8/9 and each
   cross-site method agrees in 7/8 comparable cases. These are consistency
-  context only; effect-blind cross-family public-document review remains.
+  context only. E6b freezes an effect-blind, 30-anchor cross-family
+  public-document review before searching.
 - [ ] **E7 — Write the formal competition report.** Requires E1--E6 evidence
   and a new release; any new learned method additionally requires its own
   blind, input-disjoint test manifest.

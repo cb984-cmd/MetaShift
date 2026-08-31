@@ -14,6 +14,7 @@ import argparse
 from collections import defaultdict
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -34,9 +35,11 @@ from scan_data_gate import (  # noqa: E402
     DEFAULT_CONFIG,
     SERIES_KEYS,
     ensure_archives,
+    haversine_km,
     historical_pairing,
     load_canonical_signal,
     prepare_series_lookup,
+    rank_distinct_physical_controls,
     window_is_stable,
 )
 
@@ -97,6 +100,25 @@ def pseudo_dates(row: pd.Series) -> list[pd.Timestamp]:
         for fraction in fractions
     }
     return sorted(dates)
+
+
+def stable_regime_pseudo_dates(table: pd.DataFrame) -> list[pd.Timestamp]:
+    """Choose deterministic pseudo-anchors from any sufficiently long method run."""
+
+    methods = table["Method Code"].astype("string")
+    run_ids = methods.ne(methods.shift()).cumsum()
+    candidates: set[pd.Timestamp] = set()
+    for _, run in table.groupby(run_ids, sort=False):
+        earliest = run.index.min() + pd.Timedelta(days=180)
+        latest = run.index.max() - pd.Timedelta(days=60)
+        if earliest > latest:
+            continue
+        span_days = (latest - earliest).days
+        for fraction in (0.50, 0.25, 0.75, 0.10, 0.90):
+            candidates.add(
+                earliest + pd.Timedelta(days=round(span_days * fraction))
+            )
+    return sorted(candidates)
 
 
 def nearest_observed_date(
@@ -170,6 +192,70 @@ def selected_donors(
         ascending=[False, True],
         kind="stable",
     ).head(DONOR_COUNT)
+
+
+def nearby_stable_donors(
+    target_key: tuple[str, str, str, str],
+    target: pd.DataFrame,
+    pseudo_date: pd.Timestamp,
+    lookup: dict[tuple[str, str, str, str], pd.DataFrame],
+    coordinate_keys: list[tuple[str, str, str, str]],
+    coordinate_index: dict[tuple[str, str, str, str], int],
+    latitudes: np.ndarray,
+    longitudes: np.ndarray,
+) -> pd.DataFrame:
+    """Find distinct physical donor sites for a non-transition stable monitor."""
+
+    target_index = coordinate_index[target_key]
+    distances = haversine_km(
+        float(latitudes[target_index]),
+        float(longitudes[target_index]),
+        latitudes,
+        longitudes,
+    )
+    eligible: list[dict[str, object]] = []
+    for candidate_index in np.flatnonzero(
+        (distances > 0) & (distances <= DEFAULT_CONFIG.max_distance_km)
+    ):
+        control_key = coordinate_keys[candidate_index]
+        if control_key[:3] == target_key[:3]:
+            continue
+        control = lookup[control_key]
+        if not window_is_stable(control, pseudo_date, DEFAULT_CONFIG):
+            continue
+        pairing = historical_pairing(target, control, pseudo_date, DEFAULT_CONFIG)
+        if pairing is None:
+            continue
+        paired_days, correlation = pairing
+        if correlation < DEFAULT_CONFIG.min_correlation:
+            continue
+        eligible.append(
+            {
+                "control_state_code": control_key[0],
+                "control_county_code": control_key[1],
+                "control_site_num": control_key[2],
+                "control_poc": control_key[3],
+                "distance_km": float(distances[candidate_index]),
+                "pre_transition_paired_days": paired_days,
+                "pre_transition_log_correlation": correlation,
+            }
+        )
+    return pd.DataFrame(rank_distinct_physical_controls(eligible)).head(DONOR_COUNT)
+
+
+def donor_series(
+    metadata: pd.DataFrame,
+    lookup: dict[tuple[str, str, str, str], pd.DataFrame],
+) -> pd.DataFrame:
+    """Materialize recorded donor metadata as a deterministically ordered matrix."""
+
+    values = {
+        "-".join(key_from_control(donor)): lookup[key_from_control(donor)][
+            "Arithmetic Mean"
+        ]
+        for _, donor in metadata.iterrows()
+    }
+    return pd.DataFrame(values).sort_index()
 
 
 def is_complete_case(
@@ -315,7 +401,16 @@ def main() -> None:
         Path("data/raw"), DEFAULT_CONFIG.years, download=False
     )
     data = load_canonical_signal(raw_paths)
-    lookup, _, _ = prepare_series_lookup(data)
+    lookup, coordinates, _ = prepare_series_lookup(data)
+    coordinate_keys = [
+        tuple(str(value) for value in row)
+        for row in coordinates[SERIES_KEYS].itertuples(index=False, name=None)
+    ]
+    coordinate_index = {
+        key: index for index, key in enumerate(coordinate_keys)
+    }
+    latitudes = coordinates["Latitude"].to_numpy()
+    longitudes = coordinates["Longitude"].to_numpy()
 
     exclusions: list[dict[str, str]] = []
     candidates: list[dict[str, object]] = []
@@ -345,12 +440,7 @@ def main() -> None:
             )
             if len(metadata) < 3:
                 continue
-            donor_series: dict[str, pd.Series] = {}
-            for _, donor in metadata.iterrows():
-                control_key = key_from_control(donor)
-                donor_id = "-".join(control_key)
-                donor_series[donor_id] = lookup[control_key]["Arithmetic Mean"]
-            donors = pd.DataFrame(donor_series).sort_index()
+            donors = donor_series(metadata, lookup)
             try:
                 is_complete_case(target, donors, metadata, pseudo_date)
             except (RuntimeError, ValueError) as error:
@@ -367,6 +457,57 @@ def main() -> None:
                     "source_anchor_id": str(source["anchor_id"]),
                     "target_key": target_key,
                     "pseudo_date": pseudo_date,
+                    "donor_metadata": metadata,
+                    "case_source": "method_transition_stable_regime",
+                }
+            )
+            used_target_sites.add(site_key)
+            break
+
+    for target_key in sorted(lookup):
+        if len(candidates) == args.case_count:
+            break
+        site_key = target_key[:3]
+        if target_key[0] in V2_FINAL_TEST_STATES or site_key in used_target_sites:
+            continue
+        target = lookup[target_key]
+        for candidate_date in stable_regime_pseudo_dates(target):
+            pseudo_date = nearest_observed_date(target, candidate_date)
+            if pseudo_date is None:
+                continue
+            if not window_is_stable(target, pseudo_date, DEFAULT_CONFIG):
+                continue
+            metadata = nearby_stable_donors(
+                target_key,
+                target,
+                pseudo_date,
+                lookup,
+                coordinate_keys,
+                coordinate_index,
+                latitudes,
+                longitudes,
+            )
+            if len(metadata) < 3:
+                continue
+            donors = donor_series(metadata, lookup)
+            try:
+                is_complete_case(target, donors, metadata, pseudo_date)
+            except (RuntimeError, ValueError) as error:
+                exclusions.append(
+                    {
+                        "source_anchor_id": "",
+                        "candidate_date": pseudo_date.date().isoformat(),
+                        "reason": f"generic stable-monitor validation: {error}",
+                    }
+                )
+                continue
+            candidates.append(
+                {
+                    "source_anchor_id": None,
+                    "target_key": target_key,
+                    "pseudo_date": pseudo_date,
+                    "donor_metadata": metadata,
+                    "case_source": "all_monitor_stable_regime",
                 }
             )
             used_target_sites.add(site_key)
@@ -389,22 +530,12 @@ def main() -> None:
         if not isinstance(pseudo_date, pd.Timestamp):
             raise TypeError("Stable-case pseudo-anchor must be a pandas timestamp.")
         target = lookup[target_key]
-        metadata = selected_donors(
-            str(candidate["source_anchor_id"]),
-            target,
-            pseudo_date,
-            controls,
-            lookup,
-        )
+        metadata = candidate["donor_metadata"]
+        if not isinstance(metadata, pd.DataFrame):
+            raise TypeError("Stable-case donor metadata must be a pandas DataFrame.")
         if len(metadata) < 3:
             raise RuntimeError("A previously validated stable case lost its donors.")
-        donor_series = {
-            "-".join(key_from_control(donor)): lookup[key_from_control(donor)][
-                "Arithmetic Mean"
-            ]
-            for _, donor in metadata.iterrows()
-        }
-        donors = pd.DataFrame(donor_series).sort_index()
+        donors = donor_series(metadata, lookup)
         try:
             is_complete_case(target, donors, metadata, pseudo_date)
         except (RuntimeError, ValueError) as error:
@@ -416,6 +547,7 @@ def main() -> None:
             {
                 "case_id": case_id,
                 "source_anchor_id": candidate["source_anchor_id"],
+                "case_source": candidate["case_source"],
                 "State Code": target_key[0],
                 "County Code": target_key[1],
                 "Site Num": target_key[2],
@@ -459,6 +591,7 @@ def main() -> None:
         "unique_target_physical_sites": case_frame[
             ["State Code", "County Code", "Site Num"]
         ].drop_duplicates().shape[0],
+        "case_source_counts": case_frame["case_source"].value_counts().to_dict(),
         "excluded_target_states": sorted(V2_FINAL_TEST_STATES),
         "input_partition_rule": (
             "The full target-plus-donor overlap graph is decomposed into connected "

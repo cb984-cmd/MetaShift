@@ -46,6 +46,10 @@ def audit_split(cases: pd.DataFrame, donors: pd.DataFrame) -> dict[str, object]:
             strict=True,
         )
     )
+    duplicate_physical_donors = donor_splits.duplicated(
+        ["case_id", "control_state_code", "control_county_code", "control_site_num"],
+        keep=False,
+    )
     calibration_donors = set(
         donor_splits.loc[donor_splits["split"] == "calibration", "site_key"]
     )
@@ -71,9 +75,13 @@ def audit_split(cases: pd.DataFrame, donors: pd.DataFrame) -> dict[str, object]:
         "evaluation_input_physical_sites": len(evaluation_inputs),
         "all_input_physical_sites_shared_across_splits": len(shared_input_sites),
         "target_donor_cross_split_overlaps": len(target_donor_cross_overlap),
+        "duplicate_physical_donors_within_case": int(
+            duplicate_physical_donors.sum()
+        ),
         "all_input_physical_sites_disjoint": not duplicated_sites.any()
         and not shared_sites
-        and not shared_input_sites,
+        and not shared_input_sites
+        and not duplicate_physical_donors.any(),
     }
 
 

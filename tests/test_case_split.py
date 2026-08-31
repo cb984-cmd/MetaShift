@@ -59,6 +59,29 @@ class StableCaseSplitTests(unittest.TestCase):
         audit = verify_stable_case_split.audit_split(cases, donors)
         self.assertFalse(audit["all_input_physical_sites_disjoint"])
 
+    def test_duplicate_donor_physical_site_within_case_fails(self) -> None:
+        cases = pd.DataFrame(
+            {
+                "case_id": ["a", "b"],
+                "State Code": ["01", "02"],
+                "County Code": ["001", "002"],
+                "Site Num": ["0001", "0002"],
+                "POC": ["1", "1"],
+                "split": ["calibration", "evaluation"],
+            }
+        )
+        donors = pd.DataFrame(
+            {
+                "case_id": ["a", "a", "b"],
+                "control_state_code": ["01", "01", "02"],
+                "control_county_code": ["003", "003", "004"],
+                "control_site_num": ["0003", "0003", "0004"],
+            }
+        )
+        audit = verify_stable_case_split.audit_split(cases, donors)
+        self.assertEqual(2, audit["duplicate_physical_donors_within_case"])
+        self.assertFalse(audit["all_input_physical_sites_disjoint"])
+
     def test_component_allocator_preserves_full_input_isolation(self) -> None:
         cases = pd.DataFrame(
             {

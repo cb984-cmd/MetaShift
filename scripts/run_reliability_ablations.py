@@ -101,6 +101,8 @@ def build_weights(
         "ablation_add_coverage": constrained(coverage_prior),
         "ablation_no_graph_prior": constrained(full_prior, prior_penalty=0.0),
         "ablation_no_ridge": constrained(full_prior, ridge_penalty=0.0),
+        "ablation_ridge_0_01": constrained(full_prior, ridge_penalty=0.01),
+        "ablation_ridge_1_0": constrained(full_prior, ridge_penalty=1.0),
         "ablation_uniform_prior": constrained(uniform_prior),
         "ablation_direct_reliability": full_prior,
     }

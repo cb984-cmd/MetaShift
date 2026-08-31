@@ -1,0 +1,22 @@
+{
+  "minimum_unique_placebos": 50,
+  "bh_q_cutoff": 0.1,
+  "settings": [
+    {
+      "name": "strict",
+      "raw_placebo_p_cutoff": 0.05,
+      "donor_direction_fraction_cutoff": 0.95
+    },
+    {
+      "name": "primary",
+      "raw_placebo_p_cutoff": 0.1,
+      "donor_direction_fraction_cutoff": 0.9
+    },
+    {
+      "name": "lenient",
+      "raw_placebo_p_cutoff": 0.2,
+      "donor_direction_fraction_cutoff": 0.8
+    }
+  ],
+  "scope": "Exploratory evidence-tier sensitivity; all tiers remain non-causal."
+}

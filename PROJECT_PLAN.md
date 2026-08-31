@@ -1,7 +1,8 @@
 # MetaShift execution plan
 
 **Updated:** 2026-08-30  
-**Research status:** MetaShift-Bench execution; algorithm-superiority claim closed.
+**Research status:** MetaShift-Bench integrity remediation; algorithm-superiority
+claim closed.
 
 ## Evidence rule
 
@@ -41,24 +42,27 @@ replacement or measurement bias.
   improvement over standard synthetic control. The untouched Illinois and
   Massachusetts V2 test is not used to rescue the claim; see
   [`MODEL_DECISION.md`](MODEL_DECISION.md).
-- [x] Replace superseded anchor-injection smoke experiments with a stable-regime
-  benchmark: 80 distinct target monitors, 40 calibration / 40 evaluation,
-  five fixed strengths, and 200 evaluation samples per local or matched
-  regional perturbation family. The resulting algorithm metrics do not meet
-  the stated algorithm-route release criteria.
+- [!] Replace superseded anchor-injection smoke experiments with a stable-regime
+  benchmark: a local rerun now uses 146 distinct physical target sites, 66
+  calibration / 80 evaluation, five fixed strengths, and 400 evaluation
+  samples per local or matched regional perturbation variant. The current split
+  has disjoint complete target-plus-donor input footprints, but it still
+  requires a clean locked-environment reconstruction before it can be frozen.
 
 ## MetaShift-Bench execution
 
 - [x] **M0 — Close bounded MetaShift v2.** The V2 primitives and two
   development rounds are retained as comparative evidence; no further
   optimization is permitted.
-- [x] **B1 — Complete stable synthetic benchmark.** Six perturbation families
-  have 200 independent evaluation samples each, with fixed seeds, threshold
-  calibration separation, F1/AUPRC, effect error, coverage, and event-cluster
-  bootstrap intervals.
-- [x] **B2 — Freeze benchmark release configuration.** Configuration is
-  versioned; two complete reconstructions in independent Python environments
-  produced identical SHA256 hashes for 11 core result artifacts.
+- [!] **B1 — Complete stable synthetic benchmark.** The input-isolated local
+  rerun has six perturbation families with 400 independent evaluation samples
+  each, fixed seeds, threshold calibration separation, F1/AUPRC, effect error,
+  coverage, and event-cluster bootstrap intervals. Its result files are
+  awaiting clean reconstruction.
+- [!] **B2 — Freeze benchmark release configuration.** The prior frozen split
+  and release evidence are superseded after finding cross-split donor overlap.
+  The new manifest hash is `4e0f66af...1b1ca01b`; two fresh locked-environment
+  reconstructions remain required.
 - [x] **B3 — Audit all 563 real metadata anchors.** Report eligibility,
   pre-fit, effects, abstentions, and failure reasons without treating anchors
   as confirmed bias labels.
@@ -67,9 +71,10 @@ replacement or measurement bias.
   intervals; leave-one-donor-out sensitivity completes all removals for 260
   events and records the single unavailable removal.
 - [x] **B5 — Synthesize observational evidence tiers.** All 563 anchors are
-  transparently categorized as supported candidate (54), not supported (113),
-  or inconclusive (396) using fixed quality, conditional interval, time-placebo,
-  and donor-sensitivity diagnostics; no tier is a physical-causality label.
+  transparently categorized as supported candidate (36), not supported (113),
+  or inconclusive (414) using fixed quality, selection-aware nested interval,
+  50--100 date placebo/FDR, and donor-sensitivity diagnostics; no tier is a
+  physical-causality label.
 
 ## Validation and analysis
 
@@ -94,11 +99,12 @@ replacement or measurement bias.
 
 ## Deliverables
 
-- [x] Reproducible benchmark tables and six figures generated only from saved
-  CSVs.
-- [x] Frozen configuration, source manifests, run manifest, test-access log,
+- [!] Reproducible benchmark tables and six figures generated only from saved
+  CSVs. Recreate them after the corrected split is committed.
+- [!] Frozen configuration, source manifests, run manifest, test-access log,
   two-environment hash comparison, and machine-readable
-  `results/release_gate.json`.
+  `results/release_gate.json`. Prior release artifacts apply to the superseded
+  split only.
 - [x] Evidence-backed English research-report draft and claim-to-artifact map,
   with identity, contribution, and AI-disclosure verification placeholders.
 
@@ -106,7 +112,18 @@ replacement or measurement bias.
 
 ## Post-review remediation
 
-- [x] Centralize synthetic random seeds and verify all 4,000 shared Standard
+- [x] Detect and retire the prior synthetic split's target/selected-donor
+  overlap across calibration and evaluation.
+- [x] Rebuild deterministic connected components of the complete
+  target-plus-donor physical-site graph: 66 calibration targets and 80
+  evaluation targets now have zero shared input sites.
+- [x] Recompute the primary synthetic benchmark, reliability ablations,
+  main/ablation alignment, risk-coverage curve, and the 45/60/90-day
+  method-stability-aware window sensitivity locally.
+- [x] Make release-gate failure exit nonzero, block stale/failed evidence-bundle
+  export, and invalidate hourly API responses unless their fresh manifest hash
+  matches.
+- [x] Centralize synthetic random seeds and verify all 7,300 shared Standard
   SC rows match exactly between the primary benchmark and ablation experiment.
 - [x] Add conditional 1,000-repetition moving-block intervals for all 261
   complete real events and three cross-site methods.
@@ -116,17 +133,19 @@ replacement or measurement bias.
   exceptional-event claim while retaining synthetic regional, time, and donor
   negative controls.
 - [x] Add `requirements-lock.txt` and public GitHub Actions unit-test CI.
-- [x] Rebuild under the remediated fixed configuration in default and
-  lock-file environments; 16 core output hashes match exactly.
-- [x] Publish the safe, versioned evidence bundle after a final sensitive-data
-  scan: [v0.1.0-benchmark-evidence](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.1.0-benchmark-evidence).
+- [ ] Rebuild under the corrected fixed configuration in default and lock-file
+  environments; capture and compare fresh core-result hashes.
+- [ ] Publish a new safe, versioned evidence bundle after a final sensitive-data
+  scan. The prior
+  [v0.1.0-benchmark-evidence](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.1.0-benchmark-evidence)
+  release documents the superseded split and is not the paper-evidence release.
 
-**Code and research stage:** complete. Remediated results, reproducibility
-checks, public CI, and the safe public evidence bundle all pass. The
-algorithm-superiority route remains closed:
-on the stable synthetic benchmark, MetaShift's lower effect-MAE point estimates
-versus standard synthetic control had bootstrap confidence intervals crossing
-zero, while Macro-F1/AUPRC did not meet the predeclared algorithm thresholds.
-The publishable contribution is the reproducible benchmark, full
-metadata-anchor audit, graded evidence hierarchy, comparative results, and
-documented applicability boundary.
+**Code and research stage:** remediation remains active until the corrected
+split completes clean reconstruction, two-environment reproduction, public CI,
+and a new evidence release. The algorithm-superiority route remains closed: on
+the corrected local stable benchmark, MetaShift's lower effect-MAE point
+estimates versus standard synthetic control still have bootstrap confidence
+intervals crossing zero, while Macro-F1/AUPRC do not meet the predeclared
+algorithm thresholds. The publishable contribution remains the reproducible
+benchmark, full metadata-anchor audit, graded evidence hierarchy, comparative
+results, and documented applicability boundary.

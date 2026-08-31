@@ -7,6 +7,7 @@ Code transition; no pseudo-date's future observations are used to fit weights.
 
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -32,7 +33,33 @@ SCORES_PATH = Path("artifacts/time_placebo_scores.csv")
 SUMMARY_PATH = Path("artifacts/time_placebo_summary.csv")
 EXCLUSIONS_PATH = Path("artifacts/time_placebo_exclusions.csv")
 SERIES_KEYS = ["State Code", "County Code", "Site Num", "POC"]
-PLACEBO_COUNT = 10
+DEFAULT_MIN_PLACEBO_COUNT = 50
+DEFAULT_MAX_PLACEBO_COUNT = 100
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Calibrate real metadata anchors with unique stable time placebos."
+    )
+    parser.add_argument(
+        "--min-placebos",
+        type=int,
+        default=DEFAULT_MIN_PLACEBO_COUNT,
+        help="Minimum number of unique valid placebo dates required for screening.",
+    )
+    parser.add_argument(
+        "--max-placebos",
+        type=int,
+        default=DEFAULT_MAX_PLACEBO_COUNT,
+        help="Maximum number of evenly spaced unique valid placebo dates per event.",
+    )
+    parser.add_argument(
+        "--max-events",
+        type=int,
+        default=None,
+        help="Limit events for a smoke test.",
+    )
+    return parser.parse_args()
 
 
 def stable_run_lookup() -> dict[tuple[str, str, str, str], pd.DataFrame]:
@@ -66,19 +93,31 @@ def is_method_stable(
 
 
 def evenly_spaced_dates(
-    dates: pd.DatetimeIndex, count: int = PLACEBO_COUNT
+    dates: pd.DatetimeIndex, count: int
 ) -> list[pd.Timestamp]:
     if len(dates) < count:
         return []
     positions = np.linspace(0, len(dates) - 1, count, dtype=int)
-    return [pd.Timestamp(dates[position]) for position in positions]
+    selected = [pd.Timestamp(dates[position]) for position in positions]
+    if len(set(selected)) != len(selected):
+        raise ValueError("Time-placebo selection produced duplicate dates.")
+    return selected
 
 
 def main() -> None:
+    args = parse_args()
+    if args.min_placebos <= 0 or args.max_placebos < args.min_placebos:
+        raise ValueError(
+            "--min-placebos must be positive and no greater than --max-placebos."
+        )
     anchors, controls = load_inputs(GATE_DIR)
     audit = pd.read_csv(EVENT_AUDIT_PATH, dtype="string")
     complete_ids = set(audit.loc[audit["audit_status"] == "complete", "anchor_id"])
     events = anchors.loc[anchors["anchor_id"].isin(complete_ids)].copy()
+    if args.max_events is not None:
+        if args.max_events <= 0:
+            raise ValueError("--max-events must be positive.")
+        events = events.head(args.max_events)
     events["end_date"] = pd.to_datetime(events["end_date"])
     series = load_series("88101")
     runs = stable_run_lookup()
@@ -120,18 +159,30 @@ def main() -> None:
                     for row in metadata.itertuples(index=False)
                 )
             ]
-            dates = evenly_spaced_dates(pd.DatetimeIndex(stable_candidates))
-            if len(dates) < PLACEBO_COUNT:
-                raise ValueError("Fewer than ten stable post-transition placebo dates.")
+            if len(stable_candidates) < args.min_placebos:
+                raise ValueError(
+                    f"Only {len(stable_candidates)} unique stable candidate dates; "
+                    f"minimum is {args.min_placebos}."
+                )
+            maximum = min(args.max_placebos, len(stable_candidates))
+            dates = evenly_spaced_dates(
+                pd.DatetimeIndex(stable_candidates), maximum
+            )
 
             placebo_scores = []
+            event_score_rows: list[dict[str, object]] = []
             for placebo_date in dates:
-                estimate = estimate_metadata_anchor(
-                    target, donors, weights, placebo_date
-                )
+                try:
+                    estimate = estimate_metadata_anchor(
+                        target, donors, weights, placebo_date
+                    )
+                except ValueError:
+                    # A date can be method-stable but still lack enough retained
+                    # target/donor observations for the identical estimate.
+                    continue
                 score = abs(estimate.standardized_score)
                 placebo_scores.append(score)
-                score_rows.append(
+                event_score_rows.append(
                     {
                         "anchor_id": event_id,
                         "date_type": "post_transition_time_placebo",
@@ -139,7 +190,13 @@ def main() -> None:
                         "standardized_score": score,
                     }
                 )
+            if len(placebo_scores) < args.min_placebos:
+                raise ValueError(
+                    f"Only {len(placebo_scores)} unique valid stable post-transition "
+                    f"placebos; minimum is {args.min_placebos}."
+                )
             actual_score = abs(actual.standardized_score)
+            score_rows.extend(event_score_rows)
             score_rows.append(
                 {
                     "anchor_id": event_id,
@@ -153,9 +210,12 @@ def main() -> None:
                     "anchor_id": event_id,
                     "actual_standardized_score": actual_score,
                     "placebo_count": len(placebo_scores),
+                    "stable_candidate_date_count": len(stable_candidates),
                     "placebo_median_score": float(np.median(placebo_scores)),
                     "placebo_p_value": placebo_p_value(actual_score, placebo_scores),
-                    "status": "complete",
+                    "status": "complete_100"
+                    if len(placebo_scores) >= args.max_placebos
+                    else "complete_50_to_99",
                 }
             )
         except (KeyError, RuntimeError, ValueError) as error:
@@ -165,9 +225,11 @@ def main() -> None:
                     "anchor_id": event_id,
                     "actual_standardized_score": np.nan,
                     "placebo_count": 0,
+                    "stable_candidate_date_count": 0,
                     "placebo_median_score": np.nan,
                     "placebo_p_value": np.nan,
-                    "status": "insufficient_placebo_support",
+                    "status": "insufficient_unique_stable_placebos",
+                    "failure_reason": str(error),
                 }
             )
         if position % 50 == 0 or position == len(events):

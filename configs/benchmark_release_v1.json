@@ -9,12 +9,13 @@
     "excluded_event_type": "Excluded"
   },
   "stable_synthetic_cases": {
-    "case_count": 80,
-    "calibration_cases": 40,
-    "evaluation_cases": 40,
+    "case_count": 146,
+    "calibration_cases": 66,
+    "evaluation_cases": 80,
     "excluded_v2_algorithm_test_target_states": ["17", "25"],
     "minimum_transition_distance_days": 60,
-    "case_and_donor_sha256": "78eb9de4325a4c5c06f07c57a542f6188f38407a4d09e783f04025c97b3d9323"
+    "case_and_donor_sha256": "4e0f66af8c5c651c5258ae3d08049faa83bc07ea5562d58e30130d721b1ca01b",
+    "split_assignment": "Deterministic connected components of the complete target-plus-donor physical-site footprint; entire components are assigned to calibration or evaluation."
   },
   "synthetic_perturbations": {
     "magnitude_multipliers": [0.5, 1.0, 1.5, 2.0, 3.0],
@@ -37,11 +38,19 @@
     "fixed_ridge_penalty": 0.1,
     "fixed_graph_prior_penalty": 0.1
   },
-  "threshold_selection": "Optimize macro-F1 only on the 40 calibration cases; evaluate unchanged threshold on 40 disjoint cases.",
+  "threshold_selection": "Optimize macro-F1 only on the 66 calibration cases; evaluate the unchanged threshold on 80 complete-input-disjoint cases.",
   "bootstrap": {
     "cluster": "case_id",
     "repetitions": 1000,
     "seed": 20260830
+  },
+  "selection_aware_bootstrap": {
+    "repetitions": 1000,
+    "block_length_days": 7,
+    "minimum_pair_days": 60,
+    "minimum_correlation": 0.6,
+    "selected_donors": "3 to 5",
+    "scope": "Re-selects and refits within the fixed observed geographic, method-stability, and availability candidate pool."
   },
   "method_decision": "See MODEL_DECISION.md; retained as a benchmark comparison, not a superiority claim."
 }

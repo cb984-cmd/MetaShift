@@ -6,19 +6,21 @@ import json
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from metashift.evidence import evidence_tier  # noqa: E402
+from metashift.evidence import benjamini_hochberg, evidence_tier  # noqa: E402
 
 
 ARTIFACTS = Path("artifacts")
 OUTPUT_PATH = ARTIFACTS / "real_transition_88101_evidence_tiers.csv"
 SUMMARY_PATH = ARTIFACTS / "real_transition_88101_evidence_tier_summary.json"
 CASE_SELECTION_PATH = ARTIFACTS / "real_transition_88101_case_selection.csv"
+CONFIG_PATH = Path("configs/evidence_tier_primary_v1.json")
 
 
 def as_bool(value: object) -> bool:
@@ -29,6 +31,9 @@ def main() -> None:
     audit = pd.read_csv(ARTIFACTS / "real_transition_88101_event_audit.csv")
     methods = pd.read_csv(ARTIFACTS / "real_transition_88101_method_results.csv")
     intervals = pd.read_csv(ARTIFACTS / "real_transition_88101_event_intervals.csv")
+    nested_intervals = pd.read_csv(
+        ARTIFACTS / "real_transition_88101_nested_selection_intervals.csv"
+    )
     placebos = pd.read_csv(ARTIFACTS / "time_placebo_summary.csv")
     donor_sensitivity = pd.read_csv(ARTIFACTS / "leave_one_donor_out_summary.csv")
 
@@ -47,9 +52,21 @@ def main() -> None:
         intervals["method"] == "metashift_v1_fixed",
         ["anchor_id", "ci95_lower", "ci95_upper", "ci_excludes_zero"],
     ]
+    meta_nested_interval = nested_intervals[
+        [
+            "anchor_id",
+            "selection_ci95_lower",
+            "selection_ci95_upper",
+            "selection_ci_excludes_zero",
+            "valid_repetitions",
+            "invalid_reselection_or_refit_repetitions",
+            "invalid_effect_repetitions",
+        ]
+    ]
     combined = (
         audit.merge(meta, on="anchor_id", how="left")
         .merge(meta_interval, on="anchor_id", how="left")
+        .merge(meta_nested_interval, on="anchor_id", how="left")
         .merge(
             placebos[
                 ["anchor_id", "status", "placebo_count", "placebo_p_value"]
@@ -63,6 +80,9 @@ def main() -> None:
                     "anchor_id",
                     "summary_status",
                     "direction_stable_all_donors",
+                    "donor_count",
+                    "leave_one_out_runs",
+                    "leave_one_out_failed_runs",
                     "direction_flip_count",
                     "leave_one_out_max_abs_deviation",
                 ]
@@ -71,6 +91,21 @@ def main() -> None:
             how="left",
         )
     )
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    has_sufficient_placebos = (
+        combined["placebo_status"].astype("string").str.startswith("complete_")
+        & (combined["placebo_count"].fillna(0) >= config["minimum_unique_placebos"])
+    )
+    combined["placebo_q_value"] = np.nan
+    combined.loc[has_sufficient_placebos, "placebo_q_value"] = (
+        benjamini_hochberg(
+            combined.loc[has_sufficient_placebos, "placebo_p_value"].to_numpy()
+        )
+    )
+    combined["leave_one_donor_out_direction_fraction"] = (
+        combined["leave_one_out_runs"].fillna(0)
+        - combined["direction_flip_count"].fillna(0)
+    ) / combined["donor_count"].replace(0, np.nan)
 
     tiers = []
     reasons = []
@@ -82,27 +117,42 @@ def main() -> None:
         tier, tier_reasons = evidence_tier(
             audit_complete=row["audit_status"] == "complete",
             quality_gate_passed=as_bool(row.get("quality_gate_passed")),
-            ci_excludes_zero=as_bool(row.get("ci_excludes_zero")),
-            placebo_available=row.get("placebo_status") == "complete",
+            ci_excludes_zero=as_bool(row.get("selection_ci_excludes_zero")),
+            placebo_available=str(row.get("placebo_status")).startswith("complete_"),
+            placebo_count=int(row["placebo_count"])
+            if pd.notna(row.get("placebo_count"))
+            else None,
             placebo_p_value=placebo_p_value,
-            donor_sensitivity_available=row.get("summary_status")
-            in {"complete", "partial_after_donor_removal"},
-            donor_direction_stable=as_bool(row.get("direction_stable_all_donors")),
+            placebo_q_value=float(row["placebo_q_value"])
+            if pd.notna(row.get("placebo_q_value"))
+            else None,
+            donor_sensitivity_available=pd.notna(
+                row.get("leave_one_donor_out_direction_fraction")
+            ),
+            donor_direction_fraction=float(
+                row["leave_one_donor_out_direction_fraction"]
+            )
+            if pd.notna(row.get("leave_one_donor_out_direction_fraction"))
+            else None,
+            min_placebo_count=int(config["minimum_unique_placebos"]),
+            placebo_cutoff=float(config["raw_placebo_p_cutoff"]),
+            q_cutoff=float(config["bh_q_cutoff"]),
+            donor_stability_cutoff=float(config["donor_direction_fraction_cutoff"]),
         )
         tiers.append(tier.value)
         reasons.append(";".join(tier_reasons))
     combined["evidence_tier"] = tiers
     combined["evidence_reasons"] = reasons
     combined["classification_scope"] = (
-        "Exploratory evidence synthesis from predeclared quality, conditional "
-        "interval, time-placebo, and donor-sensitivity diagnostics; not a "
+        "Exploratory evidence synthesis from predeclared quality, selection-aware "
+        "nested interval, time-placebo, and donor-sensitivity diagnostics; not a "
         "physical-causality label."
     )
     combined.to_csv(OUTPUT_PATH, index=False)
 
     summary = {
         "classification_scope": combined["classification_scope"].iloc[0],
-        "placebo_cutoff": 0.10,
+        "primary_configuration": config,
         "counts": combined["evidence_tier"].value_counts().to_dict(),
         "reason_counts": (
             combined["evidence_reasons"]

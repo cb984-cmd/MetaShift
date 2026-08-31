@@ -1,4 +1,4 @@
-# MetaShift: A Metadata-Anchored Benchmark and Audit Protocol for PM2.5 Measurement-Regime Discontinuities in Regulatory Networks
+# MetaShift-Bench: A Metadata-Anchored Counterfactual Benchmark for Auditing Measurement-Method Transitions in Air-Quality Networks
 
 > **Draft for author verification, not a submission-ready report.** Replace all
 > bracketed identity fields, verify every citation and number against the
@@ -30,17 +30,18 @@ From 2019--2025 daily AQS parameter 88101 PM2.5 records, the pipeline
 reconstructs 563 persistent Method Code transitions. Of these, 261 have a
 common comparison set with at least three geographic donors; 292 are retained
 as insufficient-donor cases and 10 as input-window failures. A stable-regime
-synthetic benchmark uses 80 distinct target monitors, with 40 for threshold
-calibration and 40 for independent evaluation. Each local and matched regional
-perturbation family has 200 evaluation samples. Standard synthetic control
-obtains macro-F1/AUPRC of 0.829/0.906, while fixed-prior and pre-period
-cross-validated MetaShift obtain 0.798/0.884 and 0.794/0.885. Although
-MetaShift has lower local-effect MAE point estimates, paired bootstrap
-intervals for its MAE advantage over standard synthetic control include zero.
-We therefore do not claim algorithmic superiority. Instead, the contribution is
-a transparent benchmark, complete event audit, graded observational evidence
-hierarchy, and reproducible documentation of where cross-site attribution is
-supported, unsupported, or inconclusive.
+synthetic benchmark uses 146 distinct physical target sites, with 66 for
+threshold calibration and 80 for independent evaluation. Each local and
+matched regional perturbation variant has 400 evaluation samples. Standard
+synthetic control obtains macro-F1/AUPRC of 0.828/0.910, while fixed-prior and
+pre-period cross-validated MetaShift obtain 0.788/0.888 and 0.798/0.895.
+Cross-validated MetaShift has a lower local-effect MAE point estimate
+(0.10335 versus 0.10772), but its paired bootstrap difference against standard
+synthetic control is -0.00437 (95% CI [-0.01138, 0.00208]). We therefore do
+not claim algorithmic superiority. Instead, the contribution is a transparent
+benchmark, complete event audit, graded observational evidence hierarchy, and
+reproducible documentation of where cross-site attribution is supported,
+unsupported, or inconclusive.
 
 **Keywords:** Air-quality monitoring; measurement-method transition;
 counterfactual estimation; change-point attribution; data quality; PM2.5.
@@ -80,6 +81,8 @@ synthetic control.
 
 ## 2. Background and related work
 
+### 2.1 Monitoring comparability and homogenization
+
 EPA AQS defines a monitor by site, pollutant parameter, and Parameter
 Occurrence Code (POC); POC is not a universal physical-instrument identifier
 [1, 2]. The AQS daily data files include reported Method Code and Method Name,
@@ -92,12 +95,49 @@ that measurement configurations can differ under real monitoring conditions
 [4]. These sources motivate auditing measurement-regime metadata, but they do
 not supply causal labels for every historical AQS transition.
 
-This work uses synthetic control as a transparent counterfactual baseline [5]
-and PELT as an offline change-point baseline [6]. It differs from forecasting,
-imputation, generic anomaly detection, and low-cost sensor calibration: the
-event dates are defined by reported method metadata, and the central objective
-is an auditable comparison between station-local residual behavior and regional
-shared behavior.
+Low-cost sensor calibration work provides additional comparability context
+[8--10]. Climate-record homogenization offers a closer methodological analogy:
+pairwise reference series and station-history context can identify or adjust
+inhomogeneities, but such work does not establish causal effects of reported
+AQS Method Code changes [11].
+
+### 2.2 Change-point and counterfactual methods
+
+PELT provides an efficient offline multiple-change-point baseline [6], and
+environmental studies have applied change-point testing to meteorologically
+normalized pollutant trends [12]. These methods identify structure in a time
+series but do not by themselves distinguish a station-local measurement
+discontinuity from a shared regional change.
+
+Synthetic control provides transparent donor-weighted counterfactuals and
+placebo diagnostics [5]. Difference-in-differences methods formalize
+counterfactual assumptions for treatment effects [13]. This study borrows
+reference-series and placebo ideas as diagnostic tools, but does not claim that
+a reported measurement metadata transition satisfies the causal assumptions of
+a policy intervention.
+
+### 2.3 Public data, metadata, and contribution boundary
+
+EPA documents the Method Code field, AQS API, and AirData bulk files
+[1, 7, 14, 15]. AirNow and OpenAQ provide additional public-data provenance
+contexts, but are not substitutes for certified historical AQS records in this
+audit [16, 17]. Table 1b summarizes the source-grounded design distinction.
+
+Table 1b. Related-work contribution comparison.
+
+| Design element | Source-supported antecedent | MetaShift-Bench scope |
+| --- | --- | --- |
+| Reported-method anchor | EPA exposes Method Code [14, 15]. | Uses reported AQS Method Code as a reproducible event anchor. |
+| Network controls | Pairwise homogenization uses reference stations [11]. | Uses cross-site references as diagnostics, not causal identification. |
+| Synthetic truth | PELT and homogenization use simulations [6, 11]. | Injects known effects only in stable target/donor windows. |
+| Placebos | Synthetic control uses falsification [5]. | Uses time and donor-as-treated placebos. |
+| Audit trail | Public AQS files and API [7, 15]. | Publishes source, eligibility, exclusion, and event-disposition records. |
+
+We are not aware of a prior benchmark that jointly uses reported AQS
+measurement-method transitions as reproducible metadata anchors, cross-site
+diagnostic controls, stable-window synthetic perturbations, and complete
+eligible-event accounting. This is a scoped literature statement rather than a
+claim that this work is the first in any broader field.
 
 ## 3. Data and event construction
 
@@ -180,8 +220,10 @@ Real anchors have no physical-bias ground truth. We therefore use the following
 observational evidence synthesis only for audit and case selection:
 
 - **Supported candidate discontinuity:** pre-event quality gate passes; the
-  conditional residual interval excludes zero; time-placebo probability is at
-  most 0.10; and leave-one-donor-out direction is stable.
+  selection-aware residual interval excludes zero; at least 50 unique stable
+  time placebos are available; raw placebo probability and BH-adjusted q value
+  are each at most 0.10; and at least 90% of leave-one-donor-out refits retain
+  the effect direction.
 - **Not supported by available evidence:** all relevant diagnostics are
   available, but at least one fails.
 - **Inconclusive:** no common comparative estimate, time placebo, or
@@ -189,41 +231,59 @@ observational evidence synthesis only for audit and case selection:
 
 These tiers are not causal or physical-instrument labels.
 
+The primary interval is a 1,000-repetition selection-aware nested circular
+block bootstrap. Each repetition jointly resamples time blocks in the
+pre-transition calibration window, recomputes candidate donor correlation,
+selects 3--5 donors from the fixed observed geographic/method-stability pool,
+refits weights, and resamples pre/post windows. This design includes
+correlation-threshold, donor-selection, and weight-fitting variation within the
+observed pool, but does not include uncertainty in source metadata, station
+geography, or candidate-pool construction. Fixed-weight conditional intervals
+are reported as a secondary comparison.
+
 ## 5. Experimental design
 
 ### 5.1 Stable-regime synthetic benchmark
 
 Early synthetic smoke experiments that injected effects at real Method Code
 anchors were excluded from reported results because a real unknown
-discontinuity could underlie the injection. The final benchmark instead chooses
-80 pseudo-anchors at least 60 days away from any target or selected donor
-Method Code transition. Forty cases calibrate decision thresholds; forty
-disjoint target monitors evaluate them.
+discontinuity could underlie the injection. The final benchmark instead chooses 146 pseudo-anchors at least 60 days away
+from any target or selected donor Method Code transition. The 66 calibration
+sites and 80 evaluation sites have disjoint complete target-plus-donor physical
+input footprints, so a station cannot influence both threshold selection and
+held-out evaluation.
 
 The benchmark injects target-only additive steps, proportional steps, gradual
 drifts, temporary steps, and variance increases, as well as matched
-target-and-donor regional variants. Each perturbation variant has 200
+target-and-donor regional variants. Each perturbation variant has 400
 evaluation samples. The primary outcomes are local-effect MAE, AUPRC, macro-F1,
 and regional false-attribution rate. Thresholds are selected only on the
 calibration partition. Main and ablation experiments use the same centralized
-deterministic seed function; all 4,000 shared standard-synthetic-control rows
+deterministic seed function; all 7,300 shared standard-synthetic-control rows
 match exactly to tolerance \(10^{-10}\).
 
 ### 5.2 Real-anchor diagnostics
 
 All 563 anchors are retained in the event audit. For complete comparisons, the
-study reports pre-fit diagnostics, 1,000-repetition circular moving-block
-bootstrap intervals conditional on fixed pre-event weights, post-transition
-time placebos, donor-as-treated placebos, 200 date-resampling permutations,
-and leave-one-donor-out refits. The bootstrap intervals do not include
-uncertainty from donor selection or model specification.
+study reports pre-fit diagnostics, fixed-weight conditional intervals, and
+1,000-repetition selection-aware nested circular moving-block intervals.
+It also reports 50--100 unique stable post-transition time placebos,
+Benjamini--Hochberg adjusted exploratory q values, donor-as-treated placebos,
+200 date-resampling permutations, and leave-one-donor-out refits. The nested
+intervals model selection within a fixed observed candidate pool but do not
+include all source-metadata or candidate-pool uncertainty.
 
 ### 5.3 External evidence and sensitivity analysis
 
 Eleven same-site alternate-POC candidates provide spatially controlled but
 non-definitive evidence. QA collocation responses are analyzed only when the
-target POC and adequate matched pre/post records are present. Parameter 88502
-is processed in a fully separate pipeline and is not combined with 88101.
+target POC and adequate matched pre/post records are present. A targeted review
+of 20 preselected public monitoring-document cases found no dated,
+site-specific confirmation, so it is reported as a negative external-validation
+result. EPA's T640/T640X Network Data Alignment documentation supplies general
+method context but not a dated local site-change record [18]. Parameter 88502
+is processed in a fully separate pipeline and is not
+combined with 88101.
 
 ## 6. Results
 
@@ -233,28 +293,48 @@ Table 2. Aggregate independent synthetic-evaluation performance.
 
 | Method | Local-effect MAE | AUPRC | Macro-F1 | Regional FPR |
 | --- | ---: | ---: | ---: | ---: |
-| Standard synthetic control | 0.11687 | 0.90559 | 0.82854 | 0.026 |
-| MetaShift fixed-prior | 0.10950 | 0.88418 | 0.79825 | 0.094 |
-| MetaShift cross-validated | 0.10779 | 0.88486 | 0.79416 | 0.141 |
-| Nearest-neighbor DiD | 0.12644 | 0.87082 | 0.77779 | 0.109 |
-| Bayesian mean shift | 0.22414 | 0.50254 | 0.49782 | 0.483 |
-| Before-after median | 0.24075 | 0.50253 | 0.49741 | 0.455 |
-| CUSUM | N/A | 0.50235 | 0.49072 | 0.635 |
-| PELT | N/A | 0.50234 | 0.49812 | 0.529 |
-| Rolling-MAD | N/A | 0.50237 | 0.50252 | 0.528 |
+| Standard synthetic control | 0.10772 | 0.90956 | 0.82788 | 0.053 |
+| MetaShift fixed-prior | 0.10483 | 0.88837 | 0.78849 | 0.142 |
+| MetaShift cross-validated | 0.10335 | 0.89484 | 0.79757 | 0.144 |
+| Nearest-neighbor DiD | 0.11536 | 0.87035 | 0.76987 | 0.168 |
+| Bayesian mean shift | 0.23148 | 0.50118 | 0.49965 | 0.465 |
+| Before-after median | 0.24169 | 0.50132 | 0.50096 | 0.447 |
+| CUSUM | N/A | 0.50154 | 0.50124 | 0.503 |
+| PELT | N/A | 0.50203 | 0.50122 | 0.475 |
+| Rolling-MAD | N/A | 0.49983 | 0.49580 | 0.432 |
 
-MetaShift has lower point-estimate MAE than standard synthetic control, but
-standard synthetic control has better attribution ranking, macro-F1, and
-regional false-attribution rate. The paired event-cluster bootstrap difference
-for fixed-prior MetaShift minus standard synthetic control is -0.00737
-(95% CI [-0.01845, 0.00346]); for cross-validated MetaShift it is -0.00908
-(95% CI [-0.01983, 0.00193]). Both intervals include zero.
+Cross-validated MetaShift has a lower point-estimate MAE than standard
+synthetic control, but standard synthetic control has better attribution
+ranking, macro-F1, and regional false-attribution rate. The paired
+event-cluster bootstrap difference for fixed-prior MetaShift minus standard
+synthetic control is -0.00289 (95% CI [-0.01095, 0.00412]); for
+cross-validated MetaShift minus standard synthetic control is -0.00437
+(95% CI [-0.01138, 0.00208]).
+Both intervals include zero.
 
-The results vary by perturbation. MetaShift's effect MAE is lower for
-additive, proportional, gradual-drift, and temporary shifts, but standard
-synthetic control has stronger attribution metrics in most aggregate
-comparisons. All methods perform poorly on pure variance changes. These
-results rule out a general algorithm-superiority claim.
+The results vary by perturbation. Cross-validated MetaShift has lower MAE than
+standard synthetic control for additive, proportional, gradual-drift, and
+temporary local shifts in this benchmark, while standard synthetic control has
+stronger aggregate attribution metrics. All methods perform poorly on pure
+variance changes. These results rule out a general algorithm-superiority claim.
+
+Table 2b. Reliability-prior and ridge ablations on the same synthetic inputs.
+
+| Variant | Local-effect MAE | Macro-F1 | Regional FPR |
+| --- | ---: | ---: | ---: |
+| Standard synthetic control | 0.10772 | 0.82788 | 0.053 |
+| MetaShift full prior, ridge=0.1 | 0.10483 | 0.78849 | 0.142 |
+| No graph-prior penalty | 0.10528 | 0.78575 | 0.145 |
+| No distance term | 0.10540 | 0.78712 | 0.139 |
+| No ridge penalty | 0.10462 | 0.78483 | 0.159 |
+| Ridge=0.01 | 0.10487 | 0.78790 | 0.148 |
+| Ridge=1.0 | 0.10567 | 0.78619 | 0.152 |
+| Direct reliability weights | 0.10632 | 0.79219 | 0.127 |
+
+No ablation restores a confidence-supported aggregate improvement over
+standard synthetic control. The small effect-MAE differences among
+reliability-prior variants demonstrate sensitivity to weight construction but
+not a stable independent algorithm contribution.
 
 ### 6.2 Real transition audit
 
@@ -272,35 +352,109 @@ is -0.07093 for fixed-prior MetaShift, -0.06418 for standard synthetic
 control, and -0.06894 for nearest-neighbor DiD. These are observational
 estimates, not measured instrument-bias labels.
 
-Conditional block-bootstrap intervals exclude zero for 182/261 MetaShift
-events, 166/261 standard synthetic-control events, and 154/261
-nearest-neighbor events. Leave-one-donor-out refitting completes every removal
-for 260 events; 238/260 of those retain the full-estimate direction after every
-single donor removal. One donor removal is unavailable because it leaves an
-insufficient comparison window and remains in the result table.
+Fixed-weight conditional block-bootstrap intervals exclude zero for 182/261
+MetaShift events, 166/261 standard synthetic-control events, and 154/261
+nearest-neighbor events. Selection-aware nested intervals complete all 261
+real comparison events with 1,000 repetitions each. Selection-aware intervals
+exclude zero for 170/261 MetaShift events. The nested interval is modestly
+wider on average than the fixed-weight interval because it reselects donors
+and refits weights inside each bootstrap repetition.
 
-The evidence synthesis assigns 54 anchors to supported candidate
-discontinuities, 113 to not-supported-by-available-evidence, and 396 to
-inconclusive. The 54 are candidates for detailed qualitative review, not
-confirmed method-caused biases.
+Leave-one-donor-out refitting completes every removal for 260 events; 238/260
+complete leave-one-donor-out events retain direction under every donor removal.
+One donor removal is unavailable because it leaves an insufficient comparison
+window and remains in the result table.
+
+Evidence tiers contain 36 supported candidates, 113 not-supported events, and
+414 inconclusive events. The 36 are candidates for detailed qualitative review,
+not confirmed method-caused biases.
 
 ### 6.3 Placebos, POC/QA, and parameter sensitivity
 
-Of 261 complete events, 167 have ten stable post-transition time placebos.
-Among them, 61 have a within-event placebo probability at most 0.10. The
+Of 261 complete events, 149 complete events have at least 50 unique stable
+post-transition time placebos. One hundred twenty of these have 100 unique
+placebos. Seventy events have raw within-event placebo probability at most
+0.10; 41 events pass exploratory Benjamini-Hochberg q<=0.10 screening. The
 200-resampling global comparison gives an upper-tail probability of 0.00498
 for the actual-anchor mean score against sampled stable post-transition dates.
 The donor-as-treated analysis contains 1,050 records, with median standardized
 score 0.46802.
 
+Under strict (raw p<=0.05, donor-direction stability at least 95%), primary
+(raw p<=0.10, stability at least 90%), and lenient (raw p<=0.20, stability at
+least 80%) settings, the evidence-tier counts remain 36 supported, 113
+not-supported, and 414 inconclusive because the shared BH q<=0.10 condition is
+the limiting rule. These q values are exploratory screening quantities, not
+causal p-values.
+
 Eleven same-site alternate-POC candidates have paired pre/post data. However,
 the retrieved QA collocation responses yield no case that simultaneously has
 the target POC in a QA pair and at least three matched pre- and post-transition
-records. QA evidence is thus an explicitly limited supplement.
+records. A targeted review of 20 preselected official documentation cases also
+found 0 dated, site-specific confirmations; all 20 only corroborate the
+reported AQS metadata context or general method context. QA and document
+evidence are thus explicitly limited supplements, not external causal truth.
 
-The independent 88502 pipeline has 34 eligible metadata anchors, but only
-three complete common-method comparisons. It demonstrates separate-pipeline
-feasibility but is too small for strong generalization claims.
+For the same 11 POC candidates, narrow AQS API hourly windows provide nine
+matched pre/post one-hour POC comparisons; eight of nine hourly difference
+changes have the same sign as their daily counterpart. Qualifier fractions are
+reported for target and reference POCs and are high for some records, so this
+is consistency context rather than a validation label.
+
+The independent 88502 pipeline has 34 eligible metadata anchors and 3 complete
+common-method comparisons. It demonstrates separate-pipeline feasibility but is
+too small for strong generalization claims.
+
+### 6.4 Sensitivity and coverage
+
+For the real-event effect audit, changing the symmetric pre/post window from
+60 days to 45 or 90 days uses an additional method-regime stability check for
+the target's intended pre/post segments and every fixed donor. The 45-day
+window is complete for 258/261 events with 94.2% direction agreement to 60
+days; the 90-day window is complete for 225/261 events with 96.0% agreement.
+The corresponding fixed-prior MetaShift median log effects are -0.07552,
+-0.07093, and -0.06908 for 45, 60, and 90 days. Three 45-day and 36 90-day
+events are unavailable because the full window is not method-stable or does
+not meet its specified observation requirement.
+
+At the 60-day primary window, log-effect and raw-unit effect signs agree for
+94.3% of MetaShift events, 92.3% of standard synthetic-control events, and
+91.2% of nearest-neighbor events. Absolute log effects also have Spearman
+correlations of 0.807, 0.833, and 0.848 with absolute raw effects,
+respectively. This is reporting-scale concordance, not equivalence of causal
+estimands.
+
+On synthetic data with known effects, a pre-fit RMSE quality gate exposes a
+risk-coverage tradeoff. For example, the standard synthetic-control gate
+chosen at the 90th calibration percentile retains 73/80 evaluation sites and
+has local-effect MAE 0.09152, versus 0.10772 at full 80-site coverage. Because
+real physical-bias labels are absent, real-event gate coverage is reported as
+evidence availability rather than selective classification accuracy.
+
+The one-factor screening grid confirms that donor geography is the dominant
+data-availability choice. With a minimum of three donors, the primary setting
+has 271 eligible anchors; a 50 km radius has 127 and a 200 km radius has 446.
+Across 70%, 75%, and 80% daily-coverage rules, the count is 275, 271, and 266;
+across 45, 60, and 90-day stable-window rules, it is 284, 271, and 250. Gap,
+correlation, and required-donor settings are reported in the public
+sensitivity table rather than optimized post hoc.
+
+Table 4. One-factor real-anchor screening sensitivity with at least three
+geographic donors.
+
+| Setting | Eligible anchors before donor threshold | Anchors with >=3 donors |
+| --- | ---: | ---: |
+| Primary: 75%, 60 days, 7-day gap, 100 km, rho>=0.60 | 563 | 271 |
+| Coverage 70% | 563 | 275 |
+| Coverage 80% | 563 | 266 |
+| Stable window 45 days | 572 | 284 |
+| Stable window 90 days | 543 | 250 |
+| Transition gap 3 days | 512 | 238 |
+| Transition gap 14 days | 589 | 290 |
+| Donor radius 50 km | 563 | 127 |
+| Donor radius 200 km | 563 | 446 |
+| Correlation rho>=0.50 | 563 | 275 |
+| Correlation rho>=0.70 | 563 | 262 |
 
 ## 7. Discussion
 
@@ -325,8 +479,10 @@ additional constraints do not yet justify a general method claim.
    land-use changes, smoke, or unobserved operational factors.
 3. Geographic donors are selected using observed historical agreement and may
    not remain valid after a transition.
-4. Conditional block-bootstrap intervals do not capture all uncertainty from
-   donor selection and model specification.
+4. Selection-aware bootstrap intervals include resampled correlation
+   eligibility, donor selection, and weight fitting only within the observed
+   candidate pool; they do not capture all source-metadata, geography, or model
+   specification uncertainty.
 5. Same-site POC and QA evidence are sparse and do not establish instrument
    ground truth in this corpus.
 6. The daily data do not supply a validated real exceptional-event label for
@@ -334,6 +490,9 @@ additional constraints do not yet justify a general method claim.
 7. The 88502 sensitivity sample is small and cannot support broad generalization.
 8. Results apply to the specified AQS PM2.5 data slice and are not evidence for
    all pollutants, networks, or years.
+9. The external-document review found no dated, site-specific confirmation for
+   its 20 selected records. Failure to locate a public notice is not evidence
+   that no physical change occurred.
 
 ## 9. Conclusion
 
@@ -378,6 +537,51 @@ Statistical Association*, vol. 107, no. 500, pp. 1590--1598, 2012, doi:
 
 [7] U.S. Environmental Protection Agency, “Obtaining AQS Data,” [Online].
 Available: https://www.epa.gov/aqs/obtaining-aqs-data. [Accessed: 2026-08-30].
+
+[8] A. L. Clements et al., “Low-Cost Air Quality Monitoring Tools: From Research
+to Practice (A Workshop Summary),” *Sensors*, vol. 17, no. 11, Art. 2478, 2017,
+doi: 10.3390/s17112478.
+
+[9] K. K. Barkjohn, B. Gantt, and A. L. Clements, “Development and Application
+of a United States Wide Correction for PM2.5 Data Collected with the PurpleAir
+Sensor,” *Atmospheric Measurement Techniques*, vol. 14, pp. 4617--4630, 2021,
+doi: 10.5194/amt-14-4617-2021.
+
+[10] H.-J. Chu, M. Z. Ali, and Y.-C. He, “Spatial Calibration and PM2.5 Mapping
+of Low-Cost Air Quality Sensors,” *Scientific Reports*, vol. 10, Art. 22079,
+2020, doi: 10.1038/s41598-020-79064-w.
+
+[11] M. J. Menne and C. N. Williams, Jr., “Homogenization of Temperature Series
+via Pairwise Comparisons,” *Journal of Climate*, vol. 22, no. 7, pp. 1700--1717,
+2009, doi: 10.1175/2008JCLI2263.1.
+
+[12] R. V. Gagliardi and C. Andenna, “Change Points Detection and Trend Analysis
+to Characterize Changes in Meteorologically Normalized Air Pollutant
+Concentrations,” *Atmosphere*, vol. 13, no. 1, Art. 64, 2022, doi:
+10.3390/atmos13010064.
+
+[13] B. Callaway and P. H. C. Sant'Anna, “Difference-in-Differences With Multiple
+Time Periods,” *Journal of Econometrics*, vol. 225, no. 2, pp. 200--230, 2021,
+doi: 10.1016/j.jeconom.2020.12.001.
+
+[14] U.S. Environmental Protection Agency, “Method Code,” *AQS Help File*.
+[Online]. Available: https://aqs.epa.gov/aqsweb/helpfiles/method_code.htm.
+[Accessed: 2026-08-30].
+
+[15] U.S. Environmental Protection Agency, “AQS API Version 2,” [Online].
+Available: https://aqs.epa.gov/aqsweb/documents/data_api.html. [Accessed:
+2026-08-30].
+
+[16] AirNow, “About the Data,” [Online]. Available:
+https://www.airnow.gov/about-the-data/. [Accessed: 2026-08-30].
+
+[17] OpenAQ, “API Documentation,” [Online]. Available:
+https://docs.openaq.org/. [Accessed: 2026-08-30].
+
+[18] U.S. Environmental Protection Agency, “Supplemental Information on the
+EPA's Update of PM2.5 Data From T640/T640X PM Mass Monitors,” May 13, 2024.
+[Online]. Available:
+https://www.epa.gov/system/files/documents/2024-05/2_supplemental-info_t640-data-update_final-05-13-2024.pdf.
 
 ## Acknowledgements and contributions
 

@@ -29,8 +29,30 @@ def git_commit() -> str:
     ).strip()
 
 
+def clean_worktree() -> bool:
+    status = subprocess.check_output(
+        ["git", "status", "--porcelain"], text=True, encoding="utf-8"
+    )
+    return not status.strip()
+
+
+def csv_row_count(path: Path) -> int:
+    """Treat a header-only CSV as zero rows without masking malformed nonempty CSV."""
+
+    if path.stat().st_size == 0:
+        return 0
+    return len(pd.read_csv(path))
+
+
 def main() -> None:
     checks = []
+    checks.append(
+        check(
+            "clean_source_worktree",
+            clean_worktree(),
+            "Release artifacts must be generated from a clean source worktree.",
+        )
+    )
     manifest_path = ARTIFACTS / "data_gate/data_manifest.csv"
     if exists(manifest_path):
         manifest = pd.read_csv(manifest_path)
@@ -46,7 +68,43 @@ def main() -> None:
     else:
         checks.append(check("88101_data_manifest", False, "Missing data manifest"))
 
+    screening_sensitivity_path = ARTIFACTS / "screening_sensitivity_summary.csv"
+    if exists(screening_sensitivity_path):
+        screening = pd.read_csv(screening_sensitivity_path)
+        expected_settings = {
+            "primary",
+            "coverage_70",
+            "coverage_80",
+            "window_45",
+            "window_90",
+            "gap_3",
+            "gap_14",
+            "distance_50",
+            "distance_200",
+            "correlation_050",
+            "correlation_070",
+        }
+        checks.append(
+            check(
+                "screening_parameter_sensitivity",
+                set(screening["setting"]) == expected_settings
+                and set(screening["minimum_donors_required"]) == {1, 3, 5}
+                and len(screening) == len(expected_settings) * 3,
+                "One-factor coverage, window, gap, distance, correlation, and "
+                "minimum-donor screening sensitivity grid.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "screening_parameter_sensitivity",
+                False,
+                "Missing screening-parameter sensitivity summary.",
+            )
+        )
+
     stable_manifest_path = ARTIFACTS / "stable_synthetic_case_manifest.json"
+    frozen_config: dict[str, object] | None = None
     if exists(stable_manifest_path) and exists(CONFIG_PATH):
         stable_manifest = json.loads(stable_manifest_path.read_text(encoding="utf-8"))
         frozen_config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
@@ -64,6 +122,142 @@ def main() -> None:
                 "frozen_stable_case_manifest",
                 False,
                 "Missing stable-case manifest or frozen benchmark configuration.",
+            )
+        )
+
+    run_manifest_path = ARTIFACTS / "run_manifest.json"
+    if exists(run_manifest_path) and frozen_config is not None:
+        run_manifest = json.loads(run_manifest_path.read_text(encoding="utf-8"))
+        checks.append(
+            check(
+                "current_run_provenance",
+                run_manifest.get("git_commit") == git_commit()
+                and run_manifest.get("config") == frozen_config,
+                "Run manifest must record this commit and the current frozen configuration.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "current_run_provenance",
+                False,
+                "Missing run manifest or frozen benchmark configuration.",
+            )
+        )
+
+    coordinates_path = ARTIFACTS / "real_transition_88101_anchor_coordinates.csv"
+    if exists(coordinates_path):
+        coordinates = pd.read_csv(coordinates_path)
+        checks.append(
+            check(
+                "anchor_coordinate_map_data",
+                len(coordinates) == 563
+                and coordinates[["Latitude", "Longitude"]].notna().all().all(),
+                "All 563 metadata anchors have saved coordinates for map generation.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "anchor_coordinate_map_data",
+                False,
+                "Missing saved metadata-anchor coordinate table.",
+            )
+        )
+
+    external_document_review_path = (
+        ARTIFACTS / "external_document_review_summary.json"
+    )
+    if exists(external_document_review_path):
+        external_document_review = json.loads(
+            external_document_review_path.read_text(encoding="utf-8")
+        )
+        checks.append(
+            check(
+                "external_document_review_boundary",
+                external_document_review.get("reviewed_events") == 20
+                and external_document_review.get("site_specific_dated_confirmations")
+                == 0,
+                "Twenty preselected document-review records with zero unsupported "
+                "site-specific dated confirmations.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "external_document_review_boundary",
+                False,
+                "Missing external-document review summary.",
+            )
+        )
+
+    case_study_manifest_path = Path("figures/case_studies/case_study_manifest.json")
+    if exists(case_study_manifest_path):
+        case_manifest = json.loads(case_study_manifest_path.read_text(encoding="utf-8"))
+        expected_groups = {"supported_candidate", "not_supported", "inconclusive"}
+        case_groups = {item["case_group"] for item in case_manifest}
+        case_files_exist = all((Path(item["file"])).is_file() for item in case_manifest)
+        checks.append(
+            check(
+                "representative_case_studies",
+                len(case_manifest) == 9
+                and case_groups == expected_groups
+                and case_files_exist,
+                "Three deterministic supported, not-supported, and inconclusive "
+                "case-study figures.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "representative_case_studies",
+                False,
+                "Missing case-study figure manifest.",
+            )
+        )
+
+    manuscript_verification_path = RESULTS / "manuscript_number_verification.json"
+    if exists(manuscript_verification_path):
+        manuscript_verification = json.loads(
+            manuscript_verification_path.read_text(encoding="utf-8")
+        )
+        checks.append(
+            check(
+                "manuscript_number_consistency",
+                bool(manuscript_verification.get("all_numbers_match"))
+                and manuscript_verification.get("git_commit") == git_commit(),
+                "All required manuscript numeric fragments match generated result artifacts.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "manuscript_number_consistency",
+                False,
+                "Missing manuscript-number verification output.",
+            )
+        )
+
+    stable_split_audit_path = ARTIFACTS / "stable_synthetic_case_split_audit.json"
+    if exists(stable_split_audit_path):
+        stable_split_audit = json.loads(
+            stable_split_audit_path.read_text(encoding="utf-8")
+        )
+        checks.append(
+            check(
+                "stable_synthetic_physical_site_split",
+                bool(stable_split_audit.get("all_input_physical_sites_disjoint"))
+                and stable_split_audit.get("evaluation_physical_sites", 0) >= 80,
+                "Calibration and evaluation use disjoint complete physical input "
+                "footprints with at least 80 evaluation target sites.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "stable_synthetic_physical_site_split",
+                False,
+                "Missing stable synthetic physical-site split audit.",
             )
         )
 
@@ -123,6 +317,84 @@ def main() -> None:
                 "event_intervals_and_donor_sensitivity",
                 False,
                 "Missing event-level interval or donor-sensitivity artifacts.",
+            )
+        )
+
+    effect_window_path = ARTIFACTS / "effect_window_sensitivity_summary.csv"
+    if exists(effect_window_path):
+        effect_windows = pd.read_csv(effect_window_path)
+        complete_windows = effect_windows.loc[
+            effect_windows["status"] == "complete"
+        ]
+        checks.append(
+            check(
+                "effect_window_sensitivity",
+                set(complete_windows["comparison_window_days"]) == {45, 60, 90}
+                and complete_windows["method"].nunique() == 3,
+                "45, 60, and 90-day observational effect windows for all three "
+                "cross-site methods.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "effect_window_sensitivity",
+                False,
+                "Missing effect-window sensitivity summary.",
+            )
+        )
+
+    reporting_scale_path = ARTIFACTS / "reporting_scale_sensitivity_summary.csv"
+    if exists(reporting_scale_path):
+        reporting_scales = pd.read_csv(reporting_scale_path)
+        checks.append(
+            check(
+                "reporting_scale_sensitivity",
+                set(reporting_scales["method"])
+                == {
+                    "nearest_neighbor_did",
+                    "standard_synthetic_control",
+                    "metashift_v1_fixed",
+                }
+                and reporting_scales["log_raw_direction_agreement"].between(0, 1).all(),
+                "Raw, log, and robust-score concordance reported for all cross-site methods.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "reporting_scale_sensitivity",
+                False,
+                "Missing reporting-scale sensitivity summary.",
+            )
+        )
+
+    nested_interval_path = (
+        ARTIFACTS / "real_transition_88101_nested_selection_intervals.csv"
+    )
+    nested_failure_path = (
+        ARTIFACTS / "real_transition_88101_nested_selection_failures.csv"
+    )
+    if exists(nested_interval_path) and exists(nested_failure_path):
+        nested = pd.read_csv(nested_interval_path)
+        nested_failure_count = csv_row_count(nested_failure_path)
+        checks.append(
+            check(
+                "selection_aware_nested_intervals",
+                len(nested) == 261
+                and nested_failure_count == 0
+                and nested["valid_repetitions"].ge(500).all()
+                and nested["nested_point_minus_fixed_effect"].abs().le(1e-7).all(),
+                f"{len(nested)} nested intervals, {nested_failure_count} event "
+                "failures, and at least 500 valid repetitions per interval",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "selection_aware_nested_intervals",
+                False,
+                "Missing selection-aware nested interval artifacts.",
             )
         )
 
@@ -195,6 +467,30 @@ def main() -> None:
             )
         )
 
+    risk_coverage_path = ARTIFACTS / "synthetic_risk_coverage_curve.csv"
+    real_coverage_path = ARTIFACTS / "real_event_coverage_summary.json"
+    if exists(risk_coverage_path) and exists(real_coverage_path):
+        risk_coverage = pd.read_csv(risk_coverage_path)
+        real_coverage = json.loads(real_coverage_path.read_text(encoding="utf-8"))
+        checks.append(
+            check(
+                "synthetic_risk_coverage",
+                risk_coverage["method"].nunique() == 4
+                and risk_coverage["evaluation_case_coverage"].between(0, 1).all()
+                and real_coverage.get("common_comparative_estimates") == 261,
+                "Pre-fit risk-coverage curves use independent synthetic labels; "
+                "real coverage is reported separately.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "synthetic_risk_coverage",
+                False,
+                "Missing synthetic risk-coverage or real-event coverage artifacts.",
+            )
+        )
+
     time_path = ARTIFACTS / "time_placebo_summary.csv"
     donor_path = ARTIFACTS / "donor_as_treated_placebos.csv"
     permutation_path = ARTIFACTS / "time_placebo_date_permutations.csv"
@@ -206,7 +502,10 @@ def main() -> None:
         checks.append(
             check(
                 "placebo_suite",
-                (time_summary["status"] == "complete").any()
+                time_summary["status"]
+                .astype("string")
+                .str.startswith("complete_")
+                .any()
                 and len(donor) > 0
                 and len(permutations) >= 200
                 and regional_available,
@@ -240,6 +539,27 @@ def main() -> None:
             )
         )
 
+    tier_sensitivity_path = ARTIFACTS / "evidence_tier_sensitivity_summary.csv"
+    if exists(tier_sensitivity_path):
+        tier_sensitivity = pd.read_csv(tier_sensitivity_path)
+        expected_settings = {"strict", "primary", "lenient"}
+        checks.append(
+            check(
+                "evidence_tier_threshold_sensitivity",
+                set(tier_sensitivity["setting"]) == expected_settings
+                and tier_sensitivity.groupby("setting")["anchor_count"].sum().eq(563).all(),
+                "Strict, primary, and lenient evidence-tier counts cover all 563 anchors.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "evidence_tier_threshold_sensitivity",
+                False,
+                "Missing evidence-tier sensitivity summary.",
+            )
+        )
+
     external_path = ARTIFACTS / "external_validation_evidence.csv"
     if exists(external_path):
         external = pd.read_csv(external_path)
@@ -256,6 +576,38 @@ def main() -> None:
     else:
         checks.append(
             check("graded_external_validation", False, "Missing POC/QA evidence summary")
+        )
+
+    hourly_poc_path = ARTIFACTS / "hourly_poc_validation_summary.csv"
+    if exists(hourly_poc_path):
+        hourly_poc = pd.read_csv(hourly_poc_path)
+        paired_hourly = hourly_poc.loc[
+            hourly_poc["status"] == "paired_hourly_pre_post_available"
+        ]
+        checks.append(
+            check(
+                "hourly_poc_external_consistency",
+                len(hourly_poc) == 11
+                and len(paired_hourly) >= 9
+                and int(
+                    paired_hourly["hourly_daily_direction_agreement"]
+                    .astype("string")
+                    .str.lower()
+                    .eq("true")
+                    .sum()
+                )
+                >= 8,
+                f"{len(paired_hourly)}/{len(hourly_poc)} hourly same-site POC "
+                "comparisons with reported daily-direction concordance.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "hourly_poc_external_consistency",
+                False,
+                "Missing hourly same-site POC validation summary.",
+            )
         )
 
     sensitivity_manifest = ARTIFACTS / "data_gate_88502/data_manifest.csv"
@@ -293,8 +645,12 @@ def main() -> None:
         checks.append(
             check(
                 "two_environment_reproduction",
-                bool(comparison.get("all_core_artifacts_match")),
-                "Two independently captured core-result hash sets must match.",
+                bool(comparison.get("all_core_artifacts_match"))
+                and bool(comparison.get("source_commits_match"))
+                and comparison.get("first_git_commit") == git_commit()
+                and comparison.get("second_git_commit") == git_commit(),
+                "Two independently captured core-result hash sets must match the "
+                "current source commit.",
             )
         )
     else:
@@ -322,6 +678,11 @@ def main() -> None:
     output_path = RESULTS / "release_gate.json"
     output_path.write_text(json.dumps(output, indent=2), encoding="utf-8")
     print(json.dumps(output, indent=2))
+    if not output["all_checks_passed"]:
+        raise SystemExit(
+            "Release gate failed; refusing to export an evidence bundle from "
+            "incomplete or inconsistent artifacts."
+        )
 
 
 if __name__ == "__main__":

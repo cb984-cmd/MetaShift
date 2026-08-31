@@ -104,7 +104,8 @@ perturbation experiments:
 5. Report AUPRC/F1 for local-versus-shared change, detection localization
    error, and effect MAE by perturbation type and magnitude.
 
-For real anchors, report the residual effect, uncertainty interval,
+For real anchors, report the residual effect, both fixed-weight conditional and
+selection-aware uncertainty intervals,
 pre-transition fit, donor composition, missingness, pseudo-date placebo
 distribution, donor-as-treated placebo distribution, and leave-one-donor-out
 sensitivity. A real event is classified only as supported, unsupported, or
@@ -112,12 +113,20 @@ inconclusive as a candidate method-associated discontinuity.
 
 The exploratory evidence-synthesis rule labels a candidate as
 `supported_candidate_discontinuity` only when its pre-event quality gate
-passes, its conditional residual interval excludes zero, its stable
+passes, its selection-aware residual interval excludes zero, its stable
 post-transition time-placebo probability is at most 0.10, and its
 leave-one-donor-out effect direction remains stable. Missing comparative,
 placebo, or donor-sensitivity evidence yields `inconclusive`; failed available
 diagnostics yield `not_supported`. These tiers organize evidence and case
 selection; they do not identify a physical causal mechanism.
+
+The selection-aware interval jointly block-resamples target and candidate-donor
+observations in the pre-event calibration window, recomputes donor correlation
+eligibility, selects up to five donors, refits reliability-constrained weights,
+and then block-resamples pre/post comparison windows. It conditions on the
+observed geographic, method-stability, and availability candidate pool; it does
+not model uncertainty in source metadata, station geography, or that initial
+candidate-pool construction.
 
 The primary daily AQS files do not supply a validated real-world
 exceptional-event label suitable for causal attribution, and the retrieved QA

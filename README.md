@@ -18,11 +18,12 @@ superiority. [`MODEL_DECISION.md`](MODEL_DECISION.md) records the protected
 test policy, the superseded early anchor-injection diagnostics, and the
 evidence for this decision.
 
-The replacement stable-regime benchmark uses 80 distinct monitors: 40 cases
-for score-threshold calibration and 40 disjoint evaluation cases. Its
-pseudo-anchors lie at least 60 days from a target or selected donor Method
-Code transition. Each local and matched regional perturbation family has 200
-evaluation samples.
+The replacement stable-regime benchmark uses 146 distinct physical monitoring
+sites: 66 cases for score-threshold calibration and 80 disjoint evaluation
+sites. The two splits have disjoint complete target-plus-donor physical input
+footprints. Its pseudo-anchors lie at least 60 days from a target or selected
+donor Method Code transition. Each local and matched regional perturbation
+variant has 400 evaluation samples.
 
 ## Benchmark snapshot
 
@@ -33,16 +34,17 @@ At the frozen release configuration:
 | AQS 88101 eligible metadata anchors | 563 |
 | Complete common-method observational comparisons | 261 |
 | Explicit insufficient-donor exclusions | 292 |
-| Stable synthetic evaluation samples per perturbation | 200 |
-| Time-placebo-calibrated real anchors | 167 / 261 |
+| Stable synthetic evaluation samples per perturbation | 400 |
+| Time-placebo-calibrated real anchors | 149 / 261 |
 | Donor-as-treated placebo records | 1,050 |
 | Independent 88502 anchors / complete comparisons | 34 / 3 |
 
 In the stable synthetic evaluation, standard synthetic control achieved
-macro-F1/AUPRC of **0.829 / 0.906**. Fixed-prior and pre-period
-cross-validated MetaShift achieved **0.798 / 0.884** and **0.794 / 0.885**.
-Their lower local-effect MAE was not confidence-supported by paired event
-bootstrap, so the repository makes **no algorithm-superiority claim**.
+macro-F1/AUPRC of **0.828 / 0.910**. Fixed-prior and pre-period
+cross-validated MetaShift achieved **0.788 / 0.888** and **0.798 / 0.895**.
+Cross-validated MetaShift's lower local-effect MAE point estimate was not
+confidence-supported by paired event bootstrap, so the repository makes **no
+algorithm-superiority claim**.
 
 The `results\release_gate.json` checklist passes after two full builds in
 independent Python environments produced identical hashes for all core
@@ -51,7 +53,7 @@ result artifacts. Figures are generated from saved CSV outputs only.
 ## Review remediation
 
 The primary synthetic benchmark and reliability ablations now call the same
-centralized seed function. Their 4,000 shared Standard synthetic-control
+centralized seed function. Their 7,300 shared Standard synthetic-control
 rows match exactly to an absolute tolerance of `1e-10`; the generated
 alignment report is `artifacts\benchmark_ablation_alignment.json`.
 
@@ -61,10 +63,10 @@ uncertainty conditional on fixed pre-event donor weights; they do not turn
 observational anchors into confirmed physical-instrument events.
 
 An exploratory evidence synthesis combines the completed diagnostics without
-changing the estimators: 54 of 563 anchors meet all candidate-discontinuity
-criteria, 113 are not supported by available evidence, and 396 are
-inconclusive. These are evidence tiers for audit and case selection, not
-confirmed instrument failures or causal labels.
+changing the estimators: 36 of 563 anchors meet the FDR-screened
+candidate-discontinuity rule, 113 are not supported by available evidence, and
+414 are inconclusive. These are evidence tiers for audit and case selection,
+not confirmed instrument failures or causal labels.
 
 Use `requirements-lock.txt` for the frozen evidence environment. The public
 CI workflow in `.github\workflows\tests.yml` installs it and runs unit tests.
@@ -72,7 +74,7 @@ The AI-use and contribution templates in `docs\` must be completed accurately
 by students and the supervising teacher before any competition submission.
 
 The remediated benchmark was reconstructed in a default environment and a
-separate environment installed from `requirements-lock.txt`; all 16 selected
+separate environment installed from `requirements-lock.txt`; all selected
 core-result hashes matched. Public CI also passed on the remediation commit.
 
 The safe public evidence package is available from the
@@ -85,6 +87,12 @@ An evidence-backed English manuscript draft is at
 [`paper/MANUSCRIPT_DRAFT.md`](paper/MANUSCRIPT_DRAFT.md). It is deliberately
 marked as a draft: student identities, author contributions, teacher approval,
 AI-use disclosure, and all submitted claims require human verification.
+
+The targeted public-document review is intentionally conservative:
+[`docs/EXTERNAL_DOCUMENT_REVIEW.md`](docs/EXTERNAL_DOCUMENT_REVIEW.md) records
+20 preselected AQS metadata boundaries, but identifies **zero** dated,
+site-specific public confirmations. It is context verification and a negative
+external-validation result, not proof that no field change occurred.
 
 ## Data gate
 

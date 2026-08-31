@@ -97,6 +97,7 @@ def main() -> None:
 
     run([python, "-m", "unittest", "discover", "-s", "tests", "-v"])
     run([python, "scripts/scan_data_gate.py", "--download"])
+    run([python, "scripts/run_screening_sensitivity.py"])
     run(
         [
             python,
@@ -107,6 +108,7 @@ def main() -> None:
             str(config["stable_synthetic_cases"]["calibration_cases"]),
         ]
     )
+    run([python, "scripts/verify_stable_case_split.py"])
     run(
         [
             python,
@@ -138,8 +140,13 @@ def main() -> None:
             "88101",
         ]
     )
+    run([python, "scripts/build_nested_bootstrap_candidate_pool.py"])
     run([python, "scripts/run_event_intervals.py"])
+    run([python, "scripts/run_nested_selection_bootstrap.py"])
     run([python, "scripts/run_leave_one_donor_out.py"])
+    run([python, "scripts/run_effect_window_sensitivity.py"])
+    run([python, "scripts/run_reporting_scale_sensitivity.py"])
+    run([python, "scripts/run_risk_coverage_analysis.py"])
     run([python, "scripts/run_colocated_validation.py"])
     if args.with_aqs_api:
         load_windows_user_environment()
@@ -151,6 +158,8 @@ def main() -> None:
             )
         run([python, "scripts/download_qa_collocation.py"])
         run([python, "scripts/analyze_external_validation.py"])
+        run([python, "scripts/download_hourly_poc_validation.py"])
+        run([python, "scripts/analyze_hourly_poc_validation.py"])
     else:
         print(
             "Skipping API-backed QA refresh; existing local QA responses may still "
@@ -159,6 +168,12 @@ def main() -> None:
     run([python, "scripts/run_time_placebos.py"])
     run([python, "scripts/run_additional_placebos.py"])
     run([python, "scripts/synthesize_real_event_evidence.py"])
+    run([python, "scripts/run_evidence_tier_sensitivity.py"])
+    run([python, "scripts/build_anchor_coordinates.py"])
+    run([python, "scripts/verify_external_document_review.py"])
+    run([python, "scripts/select_case_studies.py"])
+    run([python, "scripts/make_case_study_figures.py"])
+    run([python, "scripts/make_synthetic_perturbation_figure.py"])
     run(
         [
             python,
@@ -180,6 +195,7 @@ def main() -> None:
             "88502",
         ]
     )
+    run([python, "scripts/verify_manuscript_numbers.py"])
     run([python, "-m", "unittest", "discover", "-s", "tests", "-v"])
     write_run_manifest(config)
     run([python, "scripts/make_figures.py"])

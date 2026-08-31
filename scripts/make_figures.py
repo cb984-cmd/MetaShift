@@ -58,6 +58,57 @@ def anchor_flow(manifest: list[dict[str, str]]) -> None:
     )
 
 
+def anchor_map(manifest: list[dict[str, str]]) -> None:
+    anchors = pd.read_csv(ARTIFACTS / "real_transition_88101_anchor_coordinates.csv")
+    colors = {
+        "supported_candidate_discontinuity": "#2563eb",
+        "not_supported_by_available_evidence": "#f59e0b",
+        "inconclusive_insufficient_evidence": "#94a3b8",
+    }
+    labels = {
+        "supported_candidate_discontinuity": "Supported candidate",
+        "not_supported_by_available_evidence": "Not supported",
+        "inconclusive_insufficient_evidence": "Inconclusive",
+    }
+    figure, axis = plt.subplots(figsize=(10, 5))
+    for tier, group in anchors.groupby("evidence_tier", dropna=False):
+        axis.scatter(
+            group["Longitude"],
+            group["Latitude"],
+            s=10,
+            alpha=0.7,
+            color=colors.get(tier, "#111827"),
+            label=labels.get(tier, "Missing tier"),
+        )
+    axis.set_xlabel("Longitude")
+    axis.set_ylabel("Latitude")
+    axis.set_title("Geographic distribution of 563 AQS 88101 metadata anchors")
+    axis.legend(markerscale=1.8, fontsize=8)
+    axis.grid(alpha=0.2)
+    save_figure(
+        figure,
+        "figure_2_anchor_map.png",
+        "Geographic distribution of audited metadata anchors",
+        "artifacts/real_transition_88101_anchor_coordinates.csv",
+        manifest,
+    )
+
+
+def synthetic_perturbation_illustration(manifest: list[dict[str, str]]) -> None:
+    path = OUTPUT_DIR / "figure_3_synthetic_perturbations.png"
+    if not path.is_file():
+        raise FileNotFoundError(
+            "Synthetic perturbation illustration must be generated before figure manifest."
+        )
+    manifest.append(
+        {
+            "figure": path.name,
+            "title": "Stable-window synthetic perturbation illustrations",
+            "source_artifact": "artifacts/synthetic_perturbation_illustration_case.json",
+        }
+    )
+
+
 def synthetic_summary(manifest: list[dict[str, str]]) -> None:
     metrics = pd.read_csv(
         ARTIFACTS / "stable_synthetic_stable_full_v1_metrics.csv"
@@ -97,7 +148,7 @@ def synthetic_summary(manifest: list[dict[str, str]]) -> None:
         axis.grid(axis="y", alpha=0.25)
     save_figure(
         figure,
-        "figure_2_stable_synthetic_summary.png",
+        "figure_4_stable_synthetic_summary.png",
         "Threshold-isolated stable synthetic benchmark",
         "artifacts/stable_synthetic_stable_full_v1_metrics.csv",
         manifest,
@@ -154,7 +205,7 @@ def synthetic_by_family(manifest: list[dict[str, str]]) -> None:
         axis.legend(fontsize=8)
     save_figure(
         figure,
-        "figure_3_synthetic_by_family.png",
+        "figure_5_synthetic_by_family.png",
         "Stable synthetic benchmark by perturbation family",
         "artifacts/stable_synthetic_stable_full_v1_metrics.csv",
         manifest,
@@ -177,7 +228,7 @@ def reliability_ablation(manifest: list[dict[str, str]]) -> None:
     axis.grid(axis="x", alpha=0.25)
     save_figure(
         figure,
-        "figure_4_reliability_ablations.png",
+        "figure_6_reliability_ablations.png",
         "Reliability ablation effect error",
         "artifacts/reliability_ablation_stable_full_v1_metrics.csv",
         manifest,
@@ -203,7 +254,7 @@ def placebo_distribution(manifest: list[dict[str, str]]) -> None:
     axis.legend()
     save_figure(
         figure,
-        "figure_5_time_placebo_distribution.png",
+        "figure_7_time_placebo_distribution.png",
         "Real anchor and time-placebo score distribution",
         "artifacts/time_placebo_scores.csv",
         manifest,
@@ -221,7 +272,7 @@ def real_effect_distribution(manifest: list[dict[str, str]]) -> None:
     axis.set_title("Observational MetaShift estimates across complete anchors")
     save_figure(
         figure,
-        "figure_6_real_effect_distribution.png",
+        "figure_8_real_effect_distribution.png",
         "Real metadata-anchor effect distribution",
         "artifacts/real_transition_88101_method_results.csv",
         manifest,
@@ -230,20 +281,33 @@ def real_effect_distribution(manifest: list[dict[str, str]]) -> None:
 
 def interval_and_donor_sensitivity(manifest: list[dict[str, str]]) -> None:
     intervals = pd.read_csv(ARTIFACTS / "real_transition_88101_event_intervals.csv")
+    nested = pd.read_csv(
+        ARTIFACTS / "real_transition_88101_nested_selection_intervals.csv"
+    )
     leave_one_out = pd.read_csv(ARTIFACTS / "leave_one_donor_out_summary.csv")
     figure, axes = plt.subplots(1, 2, figsize=(10, 3.5))
 
-    interval_summary = (
-        intervals.groupby("method")["ci_excludes_zero"].mean().sort_values()
-    )
+    interval_summary = intervals.groupby("method")["ci_excludes_zero"].mean()
+    labels = interval_summary.index.str.replace("_", " ")
+    positions = np.arange(len(labels))
     axes[0].barh(
-        interval_summary.index.str.replace("_", " "),
+        positions,
         interval_summary.to_numpy(),
-        color="#2563eb",
+        color="#94a3b8",
+        label="Fixed-weight conditional CI",
     )
+    meta_position = list(interval_summary.index).index("metashift_v1_fixed")
+    axes[0].barh(
+        meta_position,
+        nested["selection_ci_excludes_zero"].mean(),
+        color="#2563eb",
+        label="MetaShift selection-aware CI",
+    )
+    axes[0].set_yticks(positions, labels)
     axes[0].set_xlim(0, 1)
-    axes[0].set_xlabel("Fraction of conditional 95% CIs excluding zero")
-    axes[0].set_title("Event-level conditional block-bootstrap intervals")
+    axes[0].set_xlabel("Fraction of 95% CIs excluding zero")
+    axes[0].set_title("Fixed-weight and selection-aware event intervals")
+    axes[0].legend(fontsize=7)
 
     complete = leave_one_out.loc[
         leave_one_out["summary_status"].isin(
@@ -261,9 +325,10 @@ def interval_and_donor_sensitivity(manifest: list[dict[str, str]]) -> None:
     axes[1].set_title("Sensitivity to removing one donor")
     save_figure(
         figure,
-        "figure_7_interval_and_donor_sensitivity.png",
+        "figure_9_interval_and_donor_sensitivity.png",
         "Event uncertainty and leave-one-donor-out sensitivity",
         "artifacts/real_transition_88101_event_intervals.csv; "
+        "artifacts/real_transition_88101_nested_selection_intervals.csv; "
         "artifacts/leave_one_donor_out_summary.csv",
         manifest,
     )
@@ -289,9 +354,236 @@ def evidence_tier_distribution(manifest: list[dict[str, str]]) -> None:
     axis.tick_params(axis="x", rotation=15)
     save_figure(
         figure,
-        "figure_8_real_event_evidence_tiers.png",
+        "figure_10_real_event_evidence_tiers.png",
         "Observational real-event evidence tiers",
         "artifacts/real_transition_88101_evidence_tiers.csv",
+        manifest,
+    )
+
+
+def evidence_tier_sensitivity(manifest: list[dict[str, str]]) -> None:
+    summary = pd.read_csv(ARTIFACTS / "evidence_tier_sensitivity_summary.csv")
+    labels = {
+        "supported_candidate_discontinuity": "Supported",
+        "not_supported_by_available_evidence": "Not supported",
+        "inconclusive_insufficient_evidence": "Inconclusive",
+    }
+    pivot = (
+        summary.assign(label=summary["evidence_tier"].map(labels))
+        .pivot(index="setting", columns="label", values="anchor_count")
+        .reindex(index=["strict", "primary", "lenient"])
+        .fillna(0)
+    )
+    figure, axis = plt.subplots(figsize=(7, 3.5))
+    bottom = np.zeros(len(pivot))
+    colors = {
+        "Supported": "#2563eb",
+        "Not supported": "#f59e0b",
+        "Inconclusive": "#94a3b8",
+    }
+    for label in ("Supported", "Not supported", "Inconclusive"):
+        values = pivot[label].to_numpy() if label in pivot else np.zeros(len(pivot))
+        axis.bar(pivot.index, values, bottom=bottom, label=label, color=colors[label])
+        bottom += values
+    axis.set_ylabel("Metadata anchors")
+    axis.set_title("Evidence-tier threshold sensitivity")
+    axis.legend(fontsize=8)
+    save_figure(
+        figure,
+        "figure_11_evidence_tier_sensitivity.png",
+        "Strict, primary, and lenient evidence-tier sensitivity",
+        "artifacts/evidence_tier_sensitivity_summary.csv",
+        manifest,
+    )
+
+
+def risk_coverage_curve(manifest: list[dict[str, str]]) -> None:
+    curve = pd.read_csv(ARTIFACTS / "synthetic_risk_coverage_curve.csv")
+    labels = {
+        "nearest_neighbor_did": "Nearest-neighbor DiD",
+        "standard_synthetic_control": "Standard SC",
+        "metashift_v1_fixed": "MetaShift fixed",
+        "metashift_v2_cv": "MetaShift CV",
+    }
+    colors = {
+        "nearest_neighbor_did": "#94a3b8",
+        "standard_synthetic_control": "#475569",
+        "metashift_v1_fixed": "#2563eb",
+        "metashift_v2_cv": "#7c3aed",
+    }
+    figure, axis = plt.subplots(figsize=(7, 3.5))
+    for method, group in curve.groupby("method", sort=True):
+        group = group.sort_values("evaluation_case_coverage")
+        axis.plot(
+            group["evaluation_case_coverage"],
+            group["local_effect_mae_log"],
+            marker="o",
+            label=labels[method],
+            color=colors[method],
+        )
+    axis.set_xlabel("Evaluation-case coverage after pre-fit quality gate")
+    axis.set_ylabel("Local-effect MAE on log(1 + PM2.5)")
+    axis.set_title("Synthetic risk-coverage curves")
+    axis.grid(alpha=0.25)
+    axis.legend(fontsize=8)
+    save_figure(
+        figure,
+        "figure_12_synthetic_risk_coverage.png",
+        "Pre-fit quality risk-coverage on independent synthetic cases",
+        "artifacts/synthetic_risk_coverage_curve.csv",
+        manifest,
+    )
+
+
+def effect_window_sensitivity(manifest: list[dict[str, str]]) -> None:
+    summary = pd.read_csv(ARTIFACTS / "effect_window_sensitivity_summary.csv")
+    complete = summary.loc[summary["status"] == "complete"]
+    labels = {
+        "nearest_neighbor_did": "Nearest-neighbor DiD",
+        "standard_synthetic_control": "Standard SC",
+        "metashift_v1_fixed": "MetaShift fixed",
+    }
+    colors = {
+        "nearest_neighbor_did": "#94a3b8",
+        "standard_synthetic_control": "#475569",
+        "metashift_v1_fixed": "#2563eb",
+    }
+    figure, axes = plt.subplots(1, 2, figsize=(10, 3.5))
+    for method, group in complete.groupby("method", sort=True):
+        group = group.sort_values("comparison_window_days")
+        axes[0].plot(
+            group["comparison_window_days"],
+            group["median_log_effect"],
+            marker="o",
+            label=labels[method],
+            color=colors[method],
+        )
+        axes[1].plot(
+            group["comparison_window_days"],
+            group["sign_agreement_with_60_day"],
+            marker="o",
+            label=labels[method],
+            color=colors[method],
+        )
+    axes[0].axhline(0, color="#111827", linewidth=0.8)
+    axes[0].set_title("Median real-anchor effect by window")
+    axes[0].set_xlabel("Pre/post window days")
+    axes[0].set_ylabel("Median log residual effect")
+    axes[1].set_title("Direction agreement with 60-day effect")
+    axes[1].set_xlabel("Pre/post window days")
+    axes[1].set_ylim(0, 1)
+    axes[1].set_ylabel("Fraction of complete events")
+    for axis in axes:
+        axis.grid(alpha=0.25)
+        axis.legend(fontsize=8)
+    save_figure(
+        figure,
+        "figure_13_effect_window_sensitivity.png",
+        "Observational effect-window sensitivity",
+        "artifacts/effect_window_sensitivity_summary.csv",
+        manifest,
+    )
+
+
+def screening_sensitivity(manifest: list[dict[str, str]]) -> None:
+    summary = pd.read_csv(ARTIFACTS / "screening_sensitivity_summary.csv")
+    complete = summary.loc[summary["minimum_donors_required"] == 3].copy()
+    figure, axis = plt.subplots(figsize=(10, 3.5))
+    axis.bar(
+        complete["setting"],
+        complete["eligible_anchors_after_donor_threshold"],
+        color="#2563eb",
+    )
+    axis.axhline(
+        complete.loc[complete["setting"] == "primary", "eligible_anchors_after_donor_threshold"].iloc[0],
+        color="#111827",
+        linestyle="--",
+        linewidth=1,
+        label="Primary setting",
+    )
+    axis.set_ylabel("Anchors with at least 3 geographic donors")
+    axis.set_title("One-factor data-screening sensitivity")
+    axis.tick_params(axis="x", rotation=35)
+    axis.legend(fontsize=8)
+    save_figure(
+        figure,
+        "figure_14_screening_sensitivity.png",
+        "One-factor screening sensitivity with three required donors",
+        "artifacts/screening_sensitivity_summary.csv",
+        manifest,
+    )
+
+
+def reporting_scale_sensitivity(manifest: list[dict[str, str]]) -> None:
+    summary = pd.read_csv(ARTIFACTS / "reporting_scale_sensitivity_summary.csv")
+    labels = summary["method"].str.replace("_", " ")
+    figure, axis = plt.subplots(figsize=(7, 3.5))
+    bars = axis.bar(
+        labels,
+        summary["log_raw_direction_agreement"],
+        color=["#2563eb", "#475569", "#94a3b8"],
+    )
+    axis.bar_label(bars, fmt="%.3f", padding=3)
+    axis.set_ylim(0, 1)
+    axis.set_ylabel("Direction agreement")
+    axis.set_title("Log-effect versus raw-effect direction agreement")
+    axis.tick_params(axis="x", rotation=25)
+    axis.grid(axis="y", alpha=0.25)
+    save_figure(
+        figure,
+        "figure_15_reporting_scale_sensitivity.png",
+        "Reporting-scale direction concordance",
+        "artifacts/reporting_scale_sensitivity_summary.csv",
+        manifest,
+    )
+
+
+def hourly_poc_validation(manifest: list[dict[str, str]]) -> None:
+    summary = pd.read_csv(ARTIFACTS / "hourly_poc_validation_summary.csv")
+    paired = summary.loc[
+        summary["status"] == "paired_hourly_pre_post_available"
+    ].copy()
+    figure, axes = plt.subplots(1, 2, figsize=(10, 3.5))
+    axes[0].scatter(
+        paired["daily_difference_change_ug_m3"],
+        paired["hourly_difference_change_ug_m3"],
+        color="#2563eb",
+    )
+    limits = [
+        min(
+            paired["daily_difference_change_ug_m3"].min(),
+            paired["hourly_difference_change_ug_m3"].min(),
+        ),
+        max(
+            paired["daily_difference_change_ug_m3"].max(),
+            paired["hourly_difference_change_ug_m3"].max(),
+        ),
+    ]
+    axes[0].plot(limits, limits, color="#6b7280", linestyle="--")
+    axes[0].set_xlabel("Daily POC difference change (ug/m3)")
+    axes[0].set_ylabel("Hourly POC difference change (ug/m3)")
+    axes[0].set_title("Same-site POC daily/hourly direction context")
+    axes[0].grid(alpha=0.25)
+
+    qualifier_columns = [
+        "target_pre_qualifier_fraction",
+        "target_post_qualifier_fraction",
+        "reference_pre_qualifier_fraction",
+        "reference_post_qualifier_fraction",
+    ]
+    axes[1].boxplot(
+        [paired[column].dropna() for column in qualifier_columns],
+        tick_labels=["T pre", "T post", "R pre", "R post"],
+    )
+    axes[1].set_ylim(0, 1)
+    axes[1].set_ylabel("Rows with nonempty Qualifier")
+    axes[1].set_title("Hourly QA qualifier availability")
+    axes[1].grid(axis="y", alpha=0.25)
+    save_figure(
+        figure,
+        "figure_16_hourly_poc_validation.png",
+        "Same-site hourly POC external consistency and qualifier context",
+        "artifacts/hourly_poc_validation_summary.csv",
         manifest,
     )
 
@@ -300,6 +592,8 @@ def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     manifest: list[dict[str, str]] = []
     anchor_flow(manifest)
+    anchor_map(manifest)
+    synthetic_perturbation_illustration(manifest)
     synthetic_summary(manifest)
     synthetic_by_family(manifest)
     reliability_ablation(manifest)
@@ -307,6 +601,12 @@ def main() -> None:
     real_effect_distribution(manifest)
     interval_and_donor_sensitivity(manifest)
     evidence_tier_distribution(manifest)
+    evidence_tier_sensitivity(manifest)
+    risk_coverage_curve(manifest)
+    effect_window_sensitivity(manifest)
+    screening_sensitivity(manifest)
+    reporting_scale_sensitivity(manifest)
+    hourly_poc_validation(manifest)
     with (OUTPUT_DIR / "figure_manifest.csv").open("w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=["figure", "title", "source_artifact"])
         writer.writeheader()

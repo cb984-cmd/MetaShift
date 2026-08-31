@@ -53,18 +53,21 @@ the injected signal. Those numerical results are retained as implementation
 diagnostics only and are excluded from all benchmark claims.
 
 The replacement benchmark draws pseudo-anchors only from stable target and
-donor method regimes. It contains 80 distinct target monitors: 40 threshold
-calibration cases and 40 independent evaluation cases, with five fixed effect
-strengths per case. Each local and matched regional perturbation family has
-200 evaluation samples.
+donor method regimes. It contains 146 distinct physical target sites: 66
+threshold-calibration sites and 80 evaluation sites, with five fixed effect
+strengths per case. Calibration and evaluation have disjoint complete
+target-plus-donor physical input footprints. Each local and matched regional
+perturbation variant has 400 evaluation samples.
 
-On this replacement benchmark, standard synthetic control had macro-F1
-0.829 and AUPRC 0.906; MetaShift fixed-prior and cross-validated variants had
-macro-F1 0.798/0.794 and AUPRC 0.884/0.885. Their local-effect MAE values were
-0.1095/0.1078 versus 0.1169 for standard synthetic control, but the paired
-95% bootstrap intervals for their MAE differences both crossed zero. These
-results fail the algorithm-route release thresholds for MAE improvement,
-absolute MAE, F1/AUPRC, and stable confidence-supported improvement.
+On this replacement benchmark, standard synthetic control had macro-F1 0.828
+and AUPRC 0.910; MetaShift fixed-prior and cross-validated variants had
+macro-F1 0.788/0.798 and AUPRC 0.888/0.895. Their local-effect MAE values were
+0.10483/0.10335 versus 0.10772 for standard synthetic control. The paired 95%
+bootstrap interval for fixed-prior MetaShift minus standard synthetic control
+was [-0.01095, 0.00412]; the cross-validated interval was
+[-0.01138, 0.00208]. Both cross zero. These results fail the algorithm-route
+release thresholds for confidence-supported MAE improvement, F1/AUPRC, and
+regional false-attribution control.
 
 ## MetaShift-Bench scope
 

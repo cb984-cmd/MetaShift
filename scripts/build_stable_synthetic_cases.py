@@ -11,6 +11,7 @@ import hashlib
 import json
 import sys
 import argparse
+from collections import defaultdict
 from pathlib import Path
 
 import pandas as pd
@@ -46,8 +47,8 @@ CASES_PATH = Path("artifacts/stable_synthetic_cases.csv")
 DONORS_PATH = Path("artifacts/stable_synthetic_case_donors.csv")
 EXCLUSIONS_PATH = Path("artifacts/stable_synthetic_case_exclusions.csv")
 MANIFEST_PATH = Path("artifacts/stable_synthetic_case_manifest.json")
-CASE_COUNT = 80
-CALIBRATION_CASE_COUNT = 40
+CASE_COUNT = 146
+CALIBRATION_CASE_COUNT = 66
 DONOR_COUNT = 5
 
 
@@ -130,13 +131,17 @@ def selected_donors(
     pseudo_date: pd.Timestamp,
     controls: pd.DataFrame,
     lookup: dict[tuple[str, str, str, str], pd.DataFrame],
+    excluded_sites: set[tuple[str, str, str]] | None = None,
 ) -> pd.DataFrame:
     """Revalidate each donor at the pseudo-anchor using pre-date data only."""
 
     candidates = controls.loc[controls["anchor_id"] == source_anchor_id]
+    excluded_sites = excluded_sites or set()
     eligible: list[dict[str, object]] = []
     for _, candidate in candidates.iterrows():
         key = key_from_control(candidate)
+        if key[:3] in excluded_sites:
+            continue
         control = lookup.get(key)
         if control is None or not window_is_stable(control, pseudo_date, DEFAULT_CONFIG):
             continue
@@ -208,6 +213,88 @@ def manifest_sha256(cases: pd.DataFrame, donors: pd.DataFrame) -> str:
     return hashlib.sha256((case_data + donor_data).encode("utf-8")).hexdigest()
 
 
+def assign_input_disjoint_splits(
+    cases: pd.DataFrame, donors: pd.DataFrame, calibration_case_count: int
+) -> pd.DataFrame:
+    """Assign whole shared-input components to calibration or evaluation."""
+
+    case_ids = [str(case_id) for case_id in cases["case_id"]]
+    if len(case_ids) != len(set(case_ids)):
+        raise ValueError("Stable synthetic case IDs must be unique.")
+    if not 0 < calibration_case_count < len(case_ids):
+        raise ValueError("Calibration case count must be within the case set.")
+    parent = {case_id: case_id for case_id in case_ids}
+
+    def find(case_id: str) -> str:
+        while parent[case_id] != case_id:
+            parent[case_id] = parent[parent[case_id]]
+            case_id = parent[case_id]
+        return case_id
+
+    def union(left: str, right: str) -> None:
+        left_root, right_root = find(left), find(right)
+        if left_root != right_root:
+            parent[right_root] = left_root
+
+    sites_to_cases: dict[tuple[str, str, str], list[str]] = defaultdict(list)
+    for _, row in cases.iterrows():
+        sites_to_cases[
+            (str(row["State Code"]), str(row["County Code"]), str(row["Site Num"]))
+        ].append(str(row["case_id"]))
+    for _, row in donors.iterrows():
+        case_id = str(row["case_id"])
+        if case_id not in parent:
+            raise ValueError(f"Donor row references unknown case ID: {case_id}")
+        sites_to_cases[
+            (
+                str(row["control_state_code"]),
+                str(row["control_county_code"]),
+                str(row["control_site_num"]),
+            )
+        ].append(case_id)
+    for linked_cases in sites_to_cases.values():
+        for case_id in linked_cases[1:]:
+            union(linked_cases[0], case_id)
+
+    components: dict[str, list[str]] = defaultdict(list)
+    for case_id in case_ids:
+        components[find(case_id)].append(case_id)
+    ordered_components = sorted(
+        (sorted(component) for component in components.values()),
+        key=lambda component: (len(component), component),
+    )
+    reachable: dict[int, tuple[int, ...]] = {0: ()}
+    for component_index, component in enumerate(ordered_components):
+        component_size = len(component)
+        for total in sorted(list(reachable), reverse=True):
+            candidate_total = total + component_size
+            if (
+                candidate_total <= calibration_case_count
+                and candidate_total not in reachable
+            ):
+                reachable[candidate_total] = reachable[total] + (component_index,)
+    if calibration_case_count not in reachable:
+        component_sizes = [len(component) for component in ordered_components]
+        raise RuntimeError(
+            "Unable to form an input-disjoint calibration split with "
+            f"{calibration_case_count} cases from component sizes {component_sizes}."
+        )
+
+    calibration_components = set(reachable[calibration_case_count])
+    split_by_case = {
+        case_id: (
+            "calibration"
+            if component_index in calibration_components
+            else "evaluation"
+        )
+        for component_index, component in enumerate(ordered_components)
+        for case_id in component
+    }
+    result = cases.copy()
+    result["split"] = result["case_id"].map(split_by_case)
+    return result
+
+
 def main() -> None:
     args = parse_args()
     if args.case_count <= 0:
@@ -222,22 +309,25 @@ def main() -> None:
         & (anchors["pre_span_days"] >= 300)
         & (anchors["geographic_control_count"] >= 3)
     ].sort_values("anchor_id", kind="stable")
+    calibration_quota = args.calibration_case_count
+    evaluation_quota = args.case_count - calibration_quota
     raw_paths = ensure_archives(
         Path("data/raw"), DEFAULT_CONFIG.years, download=False
     )
     data = load_canonical_signal(raw_paths)
     lookup, _, _ = prepare_series_lookup(data)
 
-    cases: list[dict[str, object]] = []
-    donor_rows: list[dict[str, object]] = []
     exclusions: list[dict[str, str]] = []
-    used_targets: set[tuple[str, str, str, str]] = set()
-
+    candidates: list[dict[str, object]] = []
+    # A physical station may have several POCs. Keeping the target site identifier
+    # unique prevents POC variants from leaking between calibration and evaluation.
+    used_target_sites: set[tuple[str, str, str]] = set()
     for _, source in source_events.iterrows():
-        if len(cases) == args.case_count:
+        if len(candidates) == args.case_count:
             break
         target_key = tuple(str(source[column]) for column in SERIES_KEYS)
-        if target_key in used_targets:
+        site_key = target_key[:3]
+        if site_key in used_target_sites:
             continue
         target = lookup[target_key]
         for candidate_date in pseudo_dates(source):
@@ -247,7 +337,11 @@ def main() -> None:
             if not window_is_stable(target, pseudo_date, DEFAULT_CONFIG):
                 continue
             metadata = selected_donors(
-                str(source["anchor_id"]), target, pseudo_date, controls, lookup
+                str(source["anchor_id"]),
+                target,
+                pseudo_date,
+                controls,
+                lookup,
             )
             if len(metadata) < 3:
                 continue
@@ -264,62 +358,114 @@ def main() -> None:
                     {
                         "source_anchor_id": str(source["anchor_id"]),
                         "candidate_date": pseudo_date.date().isoformat(),
-                        "reason": str(error),
+                        "reason": f"candidate validation: {error}",
                     }
                 )
                 continue
-
-            case_id = stable_case_id(target_key, pseudo_date)
-            cases.append(
+            candidates.append(
                 {
-                    "case_id": case_id,
-                    "source_anchor_id": source["anchor_id"],
-                    "State Code": target_key[0],
-                    "County Code": target_key[1],
-                    "Site Num": target_key[2],
-                    "POC": target_key[3],
-                    "pseudo_anchor_date": pseudo_date.date().isoformat(),
-                    "target_method_code": target.loc[pseudo_date, "Method Code"],
-                    "donor_count": len(metadata),
+                    "source_anchor_id": str(source["anchor_id"]),
+                    "target_key": target_key,
+                    "pseudo_date": pseudo_date,
                 }
             )
-            for rank, (_, donor) in enumerate(metadata.iterrows(), start=1):
-                donor_rows.append(
-                    {
-                        "case_id": case_id,
-                        "rank": rank,
-                        **donor.to_dict(),
-                    }
-                )
-            used_targets.add(target_key)
-            print(f"Built stable case {len(cases)}/{args.case_count}: {case_id}")
+            used_target_sites.add(site_key)
             break
+
+    if len(candidates) < args.case_count:
+        pd.DataFrame(exclusions).to_csv(EXCLUSIONS_PATH, index=False)
+        raise RuntimeError(
+            f"Only identified {len(candidates)} stable complete target cases; expected "
+            f"{args.case_count}. See {EXCLUSIONS_PATH}."
+        )
+
+    cases: list[dict[str, object]] = []
+    donor_rows: list[dict[str, object]] = []
+    for candidate in candidates:
+        target_key = candidate["target_key"]
+        if not isinstance(target_key, tuple):
+            raise TypeError("Stable-case target key must be a tuple.")
+        pseudo_date = candidate["pseudo_date"]
+        if not isinstance(pseudo_date, pd.Timestamp):
+            raise TypeError("Stable-case pseudo-anchor must be a pandas timestamp.")
+        target = lookup[target_key]
+        metadata = selected_donors(
+            str(candidate["source_anchor_id"]),
+            target,
+            pseudo_date,
+            controls,
+            lookup,
+        )
+        if len(metadata) < 3:
+            raise RuntimeError("A previously validated stable case lost its donors.")
+        donor_series = {
+            "-".join(key_from_control(donor)): lookup[key_from_control(donor)][
+                "Arithmetic Mean"
+            ]
+            for _, donor in metadata.iterrows()
+        }
+        donors = pd.DataFrame(donor_series).sort_index()
+        try:
+            is_complete_case(target, donors, metadata, pseudo_date)
+        except (RuntimeError, ValueError) as error:
+            raise RuntimeError(
+                "A previously validated stable case no longer has complete inputs."
+            ) from error
+        case_id = stable_case_id(target_key, pseudo_date)
+        cases.append(
+            {
+                "case_id": case_id,
+                "source_anchor_id": candidate["source_anchor_id"],
+                "State Code": target_key[0],
+                "County Code": target_key[1],
+                "Site Num": target_key[2],
+                "POC": target_key[3],
+                "pseudo_anchor_date": pseudo_date.date().isoformat(),
+                "target_method_code": target.loc[pseudo_date, "Method Code"],
+                "donor_count": len(metadata),
+            }
+        )
+        donor_rows.extend(
+            {
+                "case_id": case_id,
+                "rank": rank,
+                **donor.to_dict(),
+            }
+            for rank, (_, donor) in enumerate(metadata.iterrows(), start=1)
+        )
 
     case_frame = pd.DataFrame(cases)
     donor_frame = pd.DataFrame(donor_rows)
+    case_frame = assign_input_disjoint_splits(
+        case_frame, donor_frame, calibration_quota
+    )
     pd.DataFrame(exclusions).to_csv(EXCLUSIONS_PATH, index=False)
-    if len(case_frame) < args.case_count:
+    if len(case_frame) != args.case_count:
         raise RuntimeError(
-            f"Only constructed {len(case_frame)} stable complete cases; expected "
-            f"{args.case_count}. See {EXCLUSIONS_PATH}."
+            f"Built {len(case_frame)} cases; expected {args.case_count}."
         )
-    case_frame["split"] = [
-        "calibration"
-        if index < args.calibration_case_count
-        else "evaluation"
-        for index in range(len(case_frame))
-    ]
+    if int((case_frame["split"] == "evaluation").sum()) != evaluation_quota:
+        raise RuntimeError("Input-disjoint split did not preserve the evaluation quota.")
     case_frame.to_csv(CASES_PATH, index=False)
     donor_frame.to_csv(DONORS_PATH, index=False)
     manifest = {
         "purpose": "Stable method-regime synthetic benchmark cases",
         "case_count": len(case_frame),
         "calibration_case_count": args.calibration_case_count,
-        "evaluation_case_count": len(case_frame) - args.calibration_case_count,
+        "evaluation_case_count": evaluation_quota,
         "unique_target_monitors": case_frame[
             ["State Code", "County Code", "Site Num", "POC"]
         ].drop_duplicates().shape[0],
+        "unique_target_physical_sites": case_frame[
+            ["State Code", "County Code", "Site Num"]
+        ].drop_duplicates().shape[0],
         "excluded_target_states": sorted(V2_FINAL_TEST_STATES),
+        "input_partition_rule": (
+            "The full target-plus-donor overlap graph is decomposed into connected "
+            "components. Whole components are deterministically assigned to the "
+            "calibration subset through an exact subset-sum allocation; remaining "
+            "components form evaluation, so no physical input site crosses splits."
+        ),
         "minimum_distance_from_target_or_donor_method_transition_days": 60,
         "calibration_window_days": 180,
         "calibration_buffer_days": 15,

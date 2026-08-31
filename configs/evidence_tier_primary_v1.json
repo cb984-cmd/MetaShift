@@ -1,0 +1,9 @@
+{
+  "minimum_unique_placebos": 50,
+  "maximum_unique_placebos": 100,
+  "raw_placebo_p_cutoff": 0.1,
+  "bh_q_cutoff": 0.1,
+  "conditional_interval_must_exclude_zero": true,
+  "donor_direction_fraction_cutoff": 0.9,
+  "scope": "Exploratory observational evidence tiers only; not physical-causality labels."
+}

@@ -1,0 +1,10 @@
+{
+  "comparison_window_days": [45, 60, 90],
+  "minimum_observation_fraction_per_window": 0.5,
+  "methods": [
+    "nearest_neighbor_did",
+    "standard_synthetic_control",
+    "metashift_v1_fixed"
+  ],
+  "scope": "Observational effect-window and reporting-scale sensitivity using pre-fitted primary donor weights."
+}

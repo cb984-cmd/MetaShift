@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import sys
 import zipfile
 from dataclasses import dataclass
@@ -117,6 +118,44 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_PARAMETER_CODE,
         help="AQS parameter code, kept separate for each analysis pipeline.",
     )
+    parser.add_argument(
+        "--minimum-observation-percent",
+        type=float,
+        default=75.0,
+        help="Minimum daily observation percentage retained in canonical data.",
+    )
+    parser.add_argument(
+        "--minimum-window-days",
+        type=int,
+        default=DEFAULT_CONFIG.min_window_days,
+        help="Calendar-day span required on each side of a method transition.",
+    )
+    parser.add_argument(
+        "--minimum-window-observations",
+        type=int,
+        default=None,
+        help="Optional retained observations per side; default derives from window days and coverage.",
+    )
+    parser.add_argument(
+        "--maximum-transition-gap-days",
+        type=int,
+        default=DEFAULT_CONFIG.max_transition_gap_days,
+    )
+    parser.add_argument(
+        "--minimum-paired-days",
+        type=int,
+        default=DEFAULT_CONFIG.min_paired_days,
+    )
+    parser.add_argument(
+        "--minimum-correlation",
+        type=float,
+        default=DEFAULT_CONFIG.min_correlation,
+    )
+    parser.add_argument(
+        "--maximum-control-distance-km",
+        type=float,
+        default=DEFAULT_CONFIG.max_distance_km,
+    )
     return parser.parse_args()
 
 
@@ -189,7 +228,9 @@ def write_source_manifest(
 
 
 def load_canonical_signal(
-    paths: list[Path], parameter_code: str = DEFAULT_PARAMETER_CODE
+    paths: list[Path],
+    parameter_code: str = DEFAULT_PARAMETER_CODE,
+    minimum_observation_percent: float = 75.0,
 ) -> pd.DataFrame:
     frames: list[pd.DataFrame] = []
     for path in paths:
@@ -209,7 +250,7 @@ def load_canonical_signal(
             & (event_type != "Excluded")
             & frame["Arithmetic Mean"].notna()
             & np.isfinite(frame["Arithmetic Mean"])
-            & (frame["Observation Percent"] >= 75)
+            & (frame["Observation Percent"] >= minimum_observation_percent)
             & frame["Method Code"].notna()
             & (frame["Method Code"] != "")
         )
@@ -494,6 +535,7 @@ def write_outputs(
     output_dir: Path,
     config: GateConfig,
     parameter_code: str = DEFAULT_PARAMETER_CODE,
+    minimum_observation_percent: float = 75.0,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     runs.to_csv(output_dir / "method_runs.csv", index=False)
@@ -541,6 +583,7 @@ def write_outputs(
             "signal_duration": SIGNAL_DURATION,
             "minimum_window_days": config.min_window_days,
             "minimum_window_observations": config.min_window_observations,
+            "minimum_observation_percent": minimum_observation_percent,
             "maximum_transition_gap_days": config.max_transition_gap_days,
             "calibration_days": config.calibration_days,
             "calibration_buffer_days": config.calibration_buffer_days,
@@ -558,22 +601,37 @@ def write_outputs(
 def main() -> int:
     args = parse_args()
     years = tuple(sorted(set(args.years)))
+    if not 0 < args.minimum_observation_percent <= 100:
+        raise ValueError("--minimum-observation-percent must be in (0, 100].")
+    if args.minimum_window_days <= 0:
+        raise ValueError("--minimum-window-days must be positive.")
+    minimum_window_observations = (
+        args.minimum_window_observations
+        if args.minimum_window_observations is not None
+        else math.ceil(
+            args.minimum_window_days * args.minimum_observation_percent / 100
+        )
+    )
+    if minimum_window_observations <= 0:
+        raise ValueError("--minimum-window-observations must be positive.")
     config = GateConfig(
         years=years,
-        min_window_days=DEFAULT_CONFIG.min_window_days,
-        min_window_observations=DEFAULT_CONFIG.min_window_observations,
-        max_transition_gap_days=DEFAULT_CONFIG.max_transition_gap_days,
+        min_window_days=args.minimum_window_days,
+        min_window_observations=minimum_window_observations,
+        max_transition_gap_days=args.maximum_transition_gap_days,
         calibration_days=DEFAULT_CONFIG.calibration_days,
         calibration_buffer_days=DEFAULT_CONFIG.calibration_buffer_days,
-        min_paired_days=DEFAULT_CONFIG.min_paired_days,
-        min_correlation=DEFAULT_CONFIG.min_correlation,
-        max_distance_km=DEFAULT_CONFIG.max_distance_km,
+        min_paired_days=args.minimum_paired_days,
+        min_correlation=args.minimum_correlation,
+        max_distance_km=args.maximum_control_distance_km,
     )
     parameter_code = str(args.parameter_code)
     paths = ensure_archives(args.raw_dir, years, args.download, parameter_code)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     write_source_manifest(paths, args.output_dir, parameter_code)
-    data = load_canonical_signal(paths, parameter_code)
+    data = load_canonical_signal(
+        paths, parameter_code, args.minimum_observation_percent
+    )
     runs = build_runs(data)
     anchors = select_anchors(runs, config)
     anchor_inventory, controls, colocated_controls = match_controls(
@@ -588,6 +646,7 @@ def main() -> int:
         args.output_dir,
         config,
         parameter_code,
+        args.minimum_observation_percent,
     )
     return 0
 

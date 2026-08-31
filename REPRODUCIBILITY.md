@@ -39,11 +39,17 @@ This command:
 3. constructs stable synthetic pseudo-anchor cases and runs the synthetic
    benchmark and reliability ablations;
 4. runs the 563-anchor observational audit and its time, donor-as-treated,
-   date-resampling, POC, and QA-collocation evidence analyses;
+   date-resampling, POC, QA-collocation, external-document, and case-study
+   evidence analyses;
 5. independently scans and audits parameter code 88502; and
 6. writes `results/release_gate.json`, which lists every release requirement
    and whether the generated artifacts satisfy it, after generating all
-   figures from saved result tables.
+   figures from saved result tables. A failed gate exits nonzero and prevents
+   evidence-bundle export.
+
+The pipeline also runs `scripts/verify_manuscript_numbers.py`, which compares
+the manuscript's required numeric fragments with generated result artifacts and
+fails if a displayed number is stale or inconsistent.
 
 `--with-aqs-api` requires the local `AQS_API_EMAIL` and `AQS_API_KEY`
 environment variables. They are read only at runtime, never printed or written
@@ -60,6 +66,7 @@ Important outputs include:
 | --- | --- |
 | `artifacts/data_gate/data_manifest.csv` | Public 88101 source provenance |
 | `artifacts/stable_synthetic_case_manifest.json` | Stable synthetic case hash and split |
+| `artifacts/stable_synthetic_case_split_audit.json` | Complete target-plus-donor physical-input split audit |
 | `artifacts/stable_synthetic_stable_full_v1_metrics.csv` | Threshold-isolated synthetic metrics |
 | `artifacts/reliability_ablation_stable_full_v1_metrics.csv` | Reliability-component ablation metrics |
 | `artifacts/real_transition_88101_event_audit.csv` | All 563 anchors and explicit audit status |
@@ -81,9 +88,10 @@ After the full reconstruction, create a safe evidence bundle for review:
 python scripts\export_evidence_bundle.py
 ```
 
-The export contains summary results, hashes, manifests, figures, configuration,
-and audit tables. It rejects raw AirData archives and AQS API responses, and it
-does not include credentials.
+The export requires a passing release gate for the current Git commit and a
+clean source worktree. It contains summary results, hashes, manifests, figures,
+configuration, and audit tables. It rejects raw AirData archives and AQS API
+responses, and it does not include credentials.
 
 ## Cross-environment consistency
 
@@ -101,4 +109,6 @@ python scripts\verify_reproducibility.py compare `
 The comparison hashes core CSV and JSON result artifacts, including
 event-level intervals, donor sensitivity, and main/ablation alignment. It
 also includes real-event evidence tiers. It excludes files with run timestamps
-or API request timestamps.
+or API request timestamps. Each capture records its exact Git commit. The
+release gate accepts a cross-environment comparison only when both captures
+and the release source are the same commit.

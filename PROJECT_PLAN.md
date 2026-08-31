@@ -1,8 +1,8 @@
 # MetaShift execution plan
 
 **Updated:** 2026-08-31
-**Research status:** MetaShift-Bench paper-strengthening extension active;
-algorithm-superiority claim closed.
+**Research status:** physical-donor uniqueness integrity remediation active;
+all cross-site benchmark and audit conclusions are paused pending rebuild.
 
 ## Evidence rule
 
@@ -146,20 +146,34 @@ replacement or measurement bias.
   records every file hash and explicitly excludes raw EPA archives, raw AQS API
   responses, credentials, and virtual environments.
 
-**Baseline code and research stage:** complete for the MetaShift-Bench route.
-The algorithm-superiority route remains closed: on the corrected stable
-benchmark, MetaShift's lower effect-MAE point estimates versus standard
-synthetic control still have bootstrap confidence intervals crossing zero,
-while Macro-F1/AUPRC do not meet the predeclared algorithm thresholds. The
-publishable contribution is the reproducible benchmark, full metadata-anchor
-audit, graded evidence hierarchy, comparative results, and documented
-applicability boundary.
+**Baseline code and research stage:** superseded pending integrity remediation.
+The v0.2.0 control inventory can count multiple POCs from one physical donor
+site as different geographic donors. Therefore its cross-site benchmark,
+observational audit, evidence tiers, and derived interval/coverage results
+must not be used for current scientific claims. The algorithm-superiority
+route remains closed; it cannot be reopened using this defect.
+
+## Physical-donor uniqueness remediation
+
+- [!] **I0 — Enforce distinct physical geographic donors.** The data gate must
+  select at most one POC per donor physical site before ranking controls and
+  counting eligibility. The selection-aware candidate pool must apply the same
+  rule. Current impact: 222/394 anchors with at least one control contain
+  duplicated physical donor sites; 31 of 261 formerly complete comparisons
+  have fewer than three distinct physical donors.
+- [ ] **I1 — Rebuild all dependent artifacts.** Recompute 88101/88502 gates,
+  stable synthetic cases, all benchmark methods, intervals, placebos,
+  evidence tiers, figures, and extension analyses with the repaired controls.
+- [ ] **I2 — Revalidate and release.** Run two clean environments, validate
+  all regenerated claims, update the manuscript, and publish a new evidence
+  release. v0.2.0 remains an archival superseded release with a public warning.
 
 ## Paper-strengthening extension
 
-The v0.2.0 release is retained as an immutable archived baseline. New analyses
-are governed by `configs/paper_extension_protocol_v1.json`; they cannot select
-or tune against the already viewed 80-site stable-synthetic evaluation set.
+The v0.2.0 release is retained as an immutable but superseded archival
+baseline. New analyses are governed by `configs/paper_extension_protocol_v1.json`;
+they cannot select or tune against the already viewed 80-site
+stable-synthetic evaluation set.
 
 - [x] **E0 — Freeze extension protocol.** Define taxonomy, observational
   stratification, uncertainty-calibration, representativeness, and new-model
@@ -173,30 +187,33 @@ or tune against the already viewed 80-site stable-synthetic evaluation set.
   by method), while target-cluster nominal-90% split-conformal intervals
   overcovered (98.22%--99.56%). No post-evaluation tuning is permitted; fixed
   intervals are conditional diagnostics, not coverage-calibrated confidence
-  intervals.
+  intervals. This result is superseded pending the physical-donor rebuild.
 - [ ] **E2b — Test selection-aware interval coverage.** The current synthetic
   coverage result applies to fixed-weight conditional intervals. Any
   selection-aware coverage study requires a separately frozen, computationally
   feasible protocol and may not tune against the viewed 80-site split.
-- [x] **E3 — Analyze auditability and selection boundaries.** v2 retains all
+- [!] **E3 — Analyze auditability and selection boundaries.** v2 retains all
   563 anchors, including one separate “Outside EPA mapped regions” record, and
   excludes effect estimates, evidence tiers, and synthetic labels. It finds
   261 complete comparisons and 302 unavailable comparisons; nearest qualified
   donor distance is the largest descriptive difference (32.6 km vs 63.9 km;
   pooled standardized difference −1.20). These are applicability boundaries,
-  not inferred measurement effects.
+  not inferred measurement effects. Its control-availability quantities are
+  superseded pending the physical-donor rebuild.
 - [ ] **E4 — Run taxonomy-stratified descriptive analysis.** Blocked until E1
   receives independent human review.
-- [x] **E5 — Re-run evidence-tier sensitivity with varying q thresholds.** v2
+- [!] **E5 — Re-run evidence-tier sensitivity with varying q thresholds.** v2
   preserves all 563 primary labels exactly and yields 0/36/53 supported
   candidates under strict/primary/lenient thresholds. Its funnel makes visible
   that only 77 events reach the adequate-placebo stage and q≤0.05 eliminates
   all 44 strict raw-p survivors; results remain exploratory evidence labels.
+  This result is superseded pending the physical-donor rebuild.
 - [!] **E6 — Strengthen same-site overlap and cross-family document evidence.**
   The same-site portion completes 11 qualified daily and 9 qualified hourly
   alternate-POC comparisons: daily/hourly direction agreement is 8/9 and each
   cross-site method agrees in 7/8 comparable cases. These are consistency
-  context only. E6b freezes an effect-blind, 30-anchor cross-family
+  context only; its cross-site comparisons are superseded pending rebuild.
+  E6b freezes an effect-blind, 30-anchor cross-family
   public-document review before searching.
 - [ ] **E7 — Write the formal competition report.** Requires E1--E6 evidence
   and a new release; any new learned method additionally requires its own
@@ -204,10 +221,11 @@ or tune against the already viewed 80-site stable-synthetic evaluation set.
 
 ## Human submission handoff
 
-The verified baseline evidence release remains pinned to
+The superseded baseline evidence release remains pinned to
 [`a738f03`](https://github.com/cb984-cmd/MetaShift/commit/a738f039915abadfce37c274f210578e9319310e);
 no new model tuning or selective-decision development may reuse its viewed
-80-site evaluation inputs.
+80-site evaluation inputs. Its numerical cross-site results await the I0--I2
+remediation above.
 
 - [ ] Students and supervising teacher independently reproduce and explain the
   submitted methods, code, data rules, results, and limitations.

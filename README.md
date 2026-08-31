@@ -1,5 +1,12 @@
 # MetaShift
 
+> **Integrity notice (2026-08-31):** The v0.2.0 archived evidence release is
+> superseded for scientific use. Its geographic control inventory can count
+> multiple POCs from a single physical donor site as separate donors. All
+> cross-site benchmark, real-event, and evidence-tier numbers are paused while
+> the data gate is repaired and the dependent pipeline is rebuilt. Raw data and
+> prior artifacts are retained for audit; no current claim should cite them.
+
 MetaShift audits whether a discontinuity in an air-quality monitoring series is
 more consistent with a local measurement-regime change than with a regional
 environmental change. It does not treat an AQS `Method Code` change as proof of

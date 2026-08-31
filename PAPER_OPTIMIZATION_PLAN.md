@@ -1,7 +1,7 @@
 # MetaShift-Bench paper optimization plan
 
-**Status:** active paper-strengthening extension; v0.2.0 remains an archived
-baseline release.
+**Status:** blocked on physical-donor uniqueness remediation; v0.2.0 remains
+an archived but superseded baseline release.
 **Principle:** the benchmark-and-audit claim remains primary; no new model
 superiority claim will be introduced unless a separately preregistered,
 independently evaluated result supports it.
@@ -11,6 +11,7 @@ independently evaluated result supports it.
 | Priority | Review requirement | Decision | Evidence / next artifact |
 | --- | --- | --- | --- |
 | P0 | Align release, manuscript, code, CI, and results | Complete | [`v0.2.0-paper-evidence`](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.2.0-paper-evidence) points to verified commit `a738f03` |
+| P0 | Enforce physical-donor uniqueness | In progress | v0.2.0 geographic controls can contain multiple POCs from one physical site; all dependent cross-site artifacts require rebuild |
 | P0 | Prevent stale hourly API-response reuse | Complete locally | The manifest is invalidated before refresh and accepts only response hashes read after atomic disk write; 9/11 current requests supplied paired evidence and 2 HTTP failures remain unavailable |
 | P0 | Verify manuscript numbers automatically | Complete | Updated verifier covers input-footprint isolation and method-stable 45/60/90-day sensitivity; it passed in both full reconstructions |
 | P0 | Unify main/ablation synthetic noise | Complete locally | 7,300 shared Standard SC rows align exactly under the corrected split |
@@ -63,10 +64,10 @@ already viewed 80-site synthetic evaluation split.
 | Priority | Extension requirement | Status | Evidence / boundary |
 | --- | --- | --- | --- |
 | P0 | Freeze metadata-only Method Code taxonomy | In progress | `configs/method_transition_taxonomy_v1.csv` covers all 34 observed pairs and is validated without outcome data; student/teacher review remains required |
-| P0 | Test synthetic uncertainty calibration | Complete with evidence shortfall | Conditional nominal-95% intervals cover only 62.47%--67.56% on evaluation; target-cluster nominal-90% conformal intervals cover 98.22%--99.56%. Neither is presented as a calibrated real-event confidence interval, and no post-evaluation tuning occurred |
+| P0 | Test synthetic uncertainty calibration | Superseded pending remediation | Conditional nominal-95% intervals cover only 62.47%--67.56% on evaluation; target-cluster nominal-90% conformal intervals cover 98.22%--99.56%. These donor-dependent results require rebuild |
 | P0 | Test selection-aware interval coverage | Pending | The existing nested selection bootstrap still needs a separately frozen synthetic-coverage protocol; it must not tune against the viewed 80-site split |
-| P0 | Analyze auditability representativeness | Complete | v1 stopped before output because an auxiliary fixed pre-window was incomplete for one eligible anchor. v2 retains all 563 anchors, excludes effects/evidence tiers, and finds nearest qualified donor distance is the main descriptive coverage boundary (32.6 km complete vs 63.9 km unavailable-with-donor) |
+| P0 | Analyze auditability representativeness | Superseded pending remediation | v2 retains all 563 anchors and excludes effects/evidence tiers, but its qualified-control availability quantities depend on the defective POC-level donor count |
 | P1 | Stratify observations by frozen taxonomy | Blocked on human taxonomy review | Descriptive only; no equipment-change or causal label |
-| P1 | Vary evidence-tier q thresholds | Complete | v2 preserves all 563 primary labels exactly; supported candidates are 0/36/53 under strict/primary/lenient thresholds, and the funnel exposes q≤0.05 as the strict setting's terminal limitation |
-| P1 | Enhance same-site overlap evidence | In progress | Paired POC analysis is complete; v1 cross-family document review freezes 30 anchors using only Method Code metadata before public-source search |
+| P1 | Vary evidence-tier q thresholds | Superseded pending remediation | v2 preserved prior labels but all tier inputs must be regenerated after physical donor de-duplication |
+| P1 | Enhance same-site overlap evidence | In progress | Paired same-site POC measurements and effect-blind cross-family document selection remain valid; cross-site consistency comparisons require rebuild |
 | P2 | New selective model or gate | Deferred | Requires a new blind 60-plus-target input-disjoint manifest; existing 66/80 split is ineligible |

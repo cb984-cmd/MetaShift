@@ -1,5 +1,10 @@
 # MetaShift model decision
 
+> **Integrity notice (2026-08-31):** The numerical benchmark and cross-site
+> audit evidence below is superseded pending physical-donor de-duplication and
+> a full rebuild. The decision not to claim MetaShift superiority remains in
+> force; no superseded result may be used to reopen that route.
+
 **Decision date:** 2026-08-30  
 **Decision:** Stop algorithm-optimization iterations and proceed on the
 **MetaShift-Bench** route.

@@ -419,6 +419,35 @@ def prepare_series_lookup(
     return lookup, coordinates, site_to_series
 
 
+def rank_distinct_physical_controls(
+    eligible_controls: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    """Keep one pre-event-best POC from each physical geographic donor site."""
+
+    ordered = sorted(
+        eligible_controls,
+        key=lambda value: (
+            -float(value["pre_transition_log_correlation"]),
+            float(value["distance_km"]),
+            -int(value["pre_transition_paired_days"]),
+            str(value["control_poc"]),
+        ),
+    )
+    selected: list[dict[str, object]] = []
+    selected_sites: set[tuple[str, str, str]] = set()
+    for control in ordered:
+        site = (
+            str(control["control_state_code"]),
+            str(control["control_county_code"]),
+            str(control["control_site_num"]),
+        )
+        if site in selected_sites:
+            continue
+        selected.append(control)
+        selected_sites.add(site)
+    return selected
+
+
 def match_controls(
     anchors: pd.DataFrame, data: pd.DataFrame, config: GateConfig
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
@@ -476,12 +505,8 @@ def match_controls(
                 }
             )
 
-        eligible_controls.sort(
-            key=lambda value: (
-                -float(value["pre_transition_log_correlation"]),
-                float(value["distance_km"]),
-            )
-        )
+        eligible_poc_candidates = len(eligible_controls)
+        eligible_controls = rank_distinct_physical_controls(eligible_controls)
         for rank, control in enumerate(eligible_controls, start=1):
             control["rank"] = rank
             geographic_rows.append(control)
@@ -513,6 +538,9 @@ def match_controls(
         anchor_row = row.to_dict()
         anchor_row["anchor_id"] = event_id
         anchor_row["geographic_control_count"] = len(eligible_controls)
+        anchor_row["geographic_control_poc_candidate_count"] = (
+            eligible_poc_candidates
+        )
         anchor_row["colocated_control_count"] = colocated_count
         anchor_rows.append(anchor_row)
 

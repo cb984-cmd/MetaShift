@@ -97,6 +97,7 @@ def main() -> None:
 
     run([python, "-m", "unittest", "discover", "-s", "tests", "-v"])
     run([python, "scripts/scan_data_gate.py", "--download"])
+    run([python, "scripts/verify_geographic_control_uniqueness.py"])
     run([python, "scripts/run_screening_sensitivity.py"])
     run(
         [
@@ -183,6 +184,14 @@ def main() -> None:
             "--output-dir",
             "artifacts/data_gate_88502",
             "--download",
+        ]
+    )
+    run(
+        [
+            python,
+            "scripts/verify_geographic_control_uniqueness.py",
+            "--gate-dir",
+            "artifacts/data_gate_88502",
         ]
     )
     run(

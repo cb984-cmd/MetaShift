@@ -1,9 +1,11 @@
 # MetaShift-Bench: A Metadata-Anchored Counterfactual Benchmark for Auditing Measurement-Method Transitions in Air-Quality Networks
 
-> **Draft for author verification, not a submission-ready report.** Replace all
-> bracketed identity fields, verify every citation and number against the
-> published evidence release, and complete the AI-use and contribution records
-> before submission.
+> **Superseded internal draft, not a submission-ready report.** Its cross-site
+> numerical results use a donor inventory that can count multiple POCs from one
+> physical donor site. Rebuild and revalidate all dependent values before
+> citing this text. Replace all bracketed identity fields, verify every citation
+> and number against the final evidence release, and complete the AI-use and
+> contribution records before submission.
 
 **Student author(s):** [Name(s)]  
 **School, province/state, country:** [Fill in]  

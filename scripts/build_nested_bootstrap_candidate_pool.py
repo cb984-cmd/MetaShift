@@ -29,6 +29,7 @@ from scan_data_gate import (  # noqa: E402
     historical_pairing,
     load_canonical_signal,
     prepare_series_lookup,
+    rank_distinct_physical_controls,
     window_is_stable,
 )
 from run_real_transition_audit import load_inputs  # noqa: E402
@@ -84,6 +85,7 @@ def main() -> None:
             latitudes,
             longitudes,
         )
+        event_candidates: list[dict[str, object]] = []
         for candidate_index in np.flatnonzero(
             (distances > 0) & (distances <= DEFAULT_CONFIG.max_distance_km)
         ):
@@ -97,7 +99,7 @@ def main() -> None:
             if pairing is None:
                 continue
             paired_days, correlation = pairing
-            rows.append(
+            event_candidates.append(
                 {
                     "anchor_id": event["anchor_id"],
                     "control_state_code": candidate_key[0],
@@ -111,6 +113,7 @@ def main() -> None:
                     >= DEFAULT_CONFIG.min_correlation,
                 }
             )
+        rows.extend(rank_distinct_physical_controls(event_candidates))
         if position % 50 == 0 or position == len(events):
             print(f"Built candidate pool for {position}/{len(events)} events")
 

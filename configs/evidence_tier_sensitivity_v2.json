@@ -1,0 +1,36 @@
+{
+  "analysis_id": "evidence_tier_sensitivity_v2",
+  "status": "frozen before q-threshold sensitivity outcomes",
+  "minimum_unique_placebos": 50,
+  "conditional_interval_must_exclude_zero": true,
+  "settings": [
+    {
+      "name": "strict",
+      "raw_placebo_p_cutoff": 0.05,
+      "bh_q_cutoff": 0.05,
+      "donor_direction_fraction_cutoff": 0.95
+    },
+    {
+      "name": "primary",
+      "raw_placebo_p_cutoff": 0.1,
+      "bh_q_cutoff": 0.1,
+      "donor_direction_fraction_cutoff": 0.9
+    },
+    {
+      "name": "lenient",
+      "raw_placebo_p_cutoff": 0.2,
+      "bh_q_cutoff": 0.2,
+      "donor_direction_fraction_cutoff": 0.8
+    }
+  ],
+  "funnel_order": [
+    "audit_complete",
+    "quality_gate_passed",
+    "selection_interval_excludes_zero",
+    "sufficient_time_placebos",
+    "raw_placebo_p_passes",
+    "bh_q_passes",
+    "donor_direction_passes"
+  ],
+  "scope": "Exploratory observational evidence-tier sensitivity; all tiers remain non-causal and do not identify physical instrument changes."
+}

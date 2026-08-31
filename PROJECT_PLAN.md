@@ -187,7 +187,9 @@ or tune against the already viewed 80-site stable-synthetic evaluation set.
   not inferred measurement effects.
 - [ ] **E4 — Run taxonomy-stratified descriptive analysis.** Blocked until E1
   receives independent human review.
-- [ ] **E5 — Re-run evidence-tier sensitivity with varying q thresholds.**
+- [!] **E5 — Re-run evidence-tier sensitivity with varying q thresholds.** v2
+  freezes simultaneous strict/primary/lenient raw-p, BH-q, and donor-stability
+  cutoffs plus an event-attrition funnel.
 - [ ] **E6 — Strengthen same-site overlap and cross-family document evidence.**
 - [ ] **E7 — Write the formal competition report.** Requires E1--E6 evidence
   and a new release; any new learned method additionally requires its own

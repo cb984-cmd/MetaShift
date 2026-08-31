@@ -19,3 +19,43 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -r requirements-lock.txt
       - run: python -m unittest discover -s tests -v
+
+  document-consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -r requirements-lock.txt
+      - name: Document consistency checks
+        run: python scripts/verify_public_document_consistency.py
+      - name: Frozen config integrity
+        run: |
+          python -c "
+          import json, hashlib, pathlib
+          cfg = pathlib.Path('configs/benchmark_release_v2.json')
+          data = json.loads(cfg.read_text())
+          assert data['result_label'] == 'stable_full_v2', 'label mismatch'
+          assert data['case_and_donor_sha256'].startswith('065b1b65'), 'case hash mismatch'
+          print('Frozen config OK:', data['result_label'], data['case_and_donor_sha256'][:16])
+          "
+      - name: Claim-Evidence Map v2 paths
+        run: |
+          python -c "
+          import csv, pathlib
+          rows = list(csv.DictReader(open('paper/CLAIM_EVIDENCE_MAP.csv')))
+          stale = [r for r in rows if 'stable_full_v1' in r.get('evidence_artifact','')]
+          assert not stale, f'Stale v1 paths in CLAIM_EVIDENCE_MAP: {stale}'
+          print(f'CLAIM_EVIDENCE_MAP: {len(rows)} claims, all v2 paths')
+          "
+      - name: Manuscript number verification (structure only)
+        run: |
+          python -c "
+          import pathlib
+          ms = pathlib.Path('paper/MANUSCRIPT_DRAFT.md').read_text(encoding='utf-8')
+          for n in ['563', '238', '228', '325', '34 supported', '122 not']:
+            assert n in ms, f'Missing number {n!r} in manuscript'
+          print('Core manuscript numbers present')
+          "

@@ -100,4 +100,5 @@ python scripts\verify_reproducibility.py compare `
 
 The comparison hashes core CSV and JSON result artifacts, including
 event-level intervals, donor sensitivity, and main/ablation alignment. It
-excludes files with run timestamps or API request timestamps.
+also includes real-event evidence tiers. It excludes files with run timestamps
+or API request timestamps.

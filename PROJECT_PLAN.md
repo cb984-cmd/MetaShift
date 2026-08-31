@@ -66,6 +66,10 @@ replacement or measurement bias.
   complete cross-site events have 1,000-repetition conditional block-bootstrap
   intervals; leave-one-donor-out sensitivity completes all removals for 260
   events and records the single unavailable removal.
+- [x] **B5 — Synthesize observational evidence tiers.** All 563 anchors are
+  transparently categorized as supported candidate (54), not supported (113),
+  or inconclusive (396) using fixed quality, conditional interval, time-placebo,
+  and donor-sensitivity diagnostics; no tier is a physical-causality label.
 
 ## Validation and analysis
 
@@ -95,7 +99,8 @@ replacement or measurement bias.
 - [x] Frozen configuration, source manifests, run manifest, test-access log,
   two-environment hash comparison, and machine-readable
   `results/release_gate.json`.
-- [ ] Research report with limitations, null results, and contribution records.
+- [x] Evidence-backed English research-report draft and claim-to-artifact map,
+  with identity, contribution, and AI-disclosure verification placeholders.
 
 ## Final code-stage result
 

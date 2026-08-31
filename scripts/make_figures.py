@@ -269,6 +269,33 @@ def interval_and_donor_sensitivity(manifest: list[dict[str, str]]) -> None:
     )
 
 
+def evidence_tier_distribution(manifest: list[dict[str, str]]) -> None:
+    tiers = pd.read_csv(ARTIFACTS / "real_transition_88101_evidence_tiers.csv")
+    counts = tiers["evidence_tier"].value_counts()
+    labels = {
+        "supported_candidate_discontinuity": "Supported candidate",
+        "not_supported_by_available_evidence": "Not supported",
+        "inconclusive_insufficient_evidence": "Inconclusive",
+    }
+    figure, axis = plt.subplots(figsize=(7, 3.5))
+    bars = axis.bar(
+        [labels.get(name, name) for name in counts.index],
+        counts.to_numpy(),
+        color=["#2563eb", "#f59e0b", "#94a3b8"],
+    )
+    axis.bar_label(bars, padding=3)
+    axis.set_ylabel("Metadata anchors")
+    axis.set_title("Observational evidence tiers for real Method Code anchors")
+    axis.tick_params(axis="x", rotation=15)
+    save_figure(
+        figure,
+        "figure_8_real_event_evidence_tiers.png",
+        "Observational real-event evidence tiers",
+        "artifacts/real_transition_88101_evidence_tiers.csv",
+        manifest,
+    )
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     manifest: list[dict[str, str]] = []
@@ -279,6 +306,7 @@ def main() -> None:
     placebo_distribution(manifest)
     real_effect_distribution(manifest)
     interval_and_donor_sensitivity(manifest)
+    evidence_tier_distribution(manifest)
     with (OUTPUT_DIR / "figure_manifest.csv").open("w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=["figure", "title", "source_artifact"])
         writer.writeheader()

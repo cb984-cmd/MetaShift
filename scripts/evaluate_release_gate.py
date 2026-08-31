@@ -216,6 +216,30 @@ def main() -> None:
     else:
         checks.append(check("placebo_suite", False, "Missing one or more placebo artifacts"))
 
+    evidence_tier_path = ARTIFACTS / "real_transition_88101_evidence_tiers.csv"
+    evidence_tier_summary_path = (
+        ARTIFACTS / "real_transition_88101_evidence_tier_summary.json"
+    )
+    if exists(evidence_tier_path) and exists(evidence_tier_summary_path):
+        evidence_tiers = pd.read_csv(evidence_tier_path)
+        tier_summary = json.loads(evidence_tier_summary_path.read_text(encoding="utf-8"))
+        checks.append(
+            check(
+                "real_event_evidence_synthesis",
+                len(evidence_tiers) == 563
+                and sum(tier_summary.get("counts", {}).values()) == 563,
+                f"{len(evidence_tiers)} anchors assigned observational evidence tiers.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "real_event_evidence_synthesis",
+                False,
+                "Missing real-event evidence-tier artifacts.",
+            )
+        )
+
     external_path = ARTIFACTS / "external_validation_evidence.csv"
     if exists(external_path):
         external = pd.read_csv(external_path)

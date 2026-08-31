@@ -60,6 +60,12 @@ bootstrap intervals and leave-one-donor-out refits. These describe residual
 uncertainty conditional on fixed pre-event donor weights; they do not turn
 observational anchors into confirmed physical-instrument events.
 
+An exploratory evidence synthesis combines the completed diagnostics without
+changing the estimators: 54 of 563 anchors meet all candidate-discontinuity
+criteria, 113 are not supported by available evidence, and 396 are
+inconclusive. These are evidence tiers for audit and case selection, not
+confirmed instrument failures or causal labels.
+
 Use `requirements-lock.txt` for the frozen evidence environment. The public
 CI workflow in `.github\workflows\tests.yml` installs it and runs unit tests.
 The AI-use and contribution templates in `docs\` must be completed accurately
@@ -74,6 +80,11 @@ The safe public evidence package is available from the
 It includes generated result tables, figures, manifests, release-gate output,
 and reproducibility hashes, but excludes raw EPA archives, API responses, and
 credentials.
+
+An evidence-backed English manuscript draft is at
+[`paper/MANUSCRIPT_DRAFT.md`](paper/MANUSCRIPT_DRAFT.md). It is deliberately
+marked as a draft: student identities, author contributions, teacher approval,
+AI-use disclosure, and all submitted claims require human verification.
 
 ## Data gate
 

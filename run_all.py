@@ -158,6 +158,7 @@ def main() -> None:
         )
     run([python, "scripts/run_time_placebos.py"])
     run([python, "scripts/run_additional_placebos.py"])
+    run([python, "scripts/synthesize_real_event_evidence.py"])
     run(
         [
             python,

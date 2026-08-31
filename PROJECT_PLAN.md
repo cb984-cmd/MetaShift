@@ -122,7 +122,8 @@ replacement or measurement bias.
   method-stability-aware window sensitivity locally.
 - [x] Make release-gate failure exit nonzero, block stale/failed evidence-bundle
   export, and invalidate hourly API responses unless their fresh manifest hash
-  matches.
+  matches. A direct refresh accepted 9/11 current hourly POC responses and
+  retained two API failures as unavailable.
 - [x] Centralize synthetic random seeds and verify all 7,300 shared Standard
   SC rows match exactly between the primary benchmark and ablation experiment.
 - [x] Add conditional 1,000-repetition moving-block intervals for all 261

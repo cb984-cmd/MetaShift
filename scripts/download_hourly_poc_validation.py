@@ -114,9 +114,7 @@ def main() -> None:
                     "request_succeeded": True,
                     "record_count": len(payload.get("Data", [])),
                     "raw_path": str(raw_path),
-                    "raw_sha256": hashlib.sha256(
-                        serialized_payload.encode("utf-8")
-                    ).hexdigest(),
+                    "raw_sha256": hashlib.sha256(raw_path.read_bytes()).hexdigest(),
                 }
             )
             print(f"Downloaded hourly POC window for {anchor_id}")

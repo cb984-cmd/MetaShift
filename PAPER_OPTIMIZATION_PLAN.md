@@ -10,6 +10,7 @@ independently evaluated result supports it.
 | Priority | Review requirement | Decision | Evidence / next artifact |
 | --- | --- | --- | --- |
 | P0 | Align release, manuscript, code, CI, and results | In progress | Freeze a new paper-evidence release after final reconstruction |
+| P0 | Prevent stale hourly API-response reuse | Complete locally | The manifest is invalidated before refresh and accepts only response hashes read after atomic disk write; 9/11 current requests supplied paired evidence and 2 HTTP failures remain unavailable |
 | P0 | Verify manuscript numbers automatically | In progress | Updated verifier now covers input-footprint isolation and method-stable 45/60/90-day sensitivity; rerun after clean reconstruction |
 | P0 | Unify main/ablation synthetic noise | Complete locally | 7,300 shared Standard SC rows align exactly under the corrected split |
 | P1 | Add selection-aware nested bootstrap | Complete; integrated | 261 events, 1,000 repetitions, no event failures |

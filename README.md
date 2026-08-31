@@ -65,6 +65,10 @@ CI workflow in `.github\workflows\tests.yml` installs it and runs unit tests.
 The AI-use and contribution templates in `docs\` must be completed accurately
 by students and the supervising teacher before any competition submission.
 
+The remediated benchmark was reconstructed in a default environment and a
+separate environment installed from `requirements-lock.txt`; all 16 selected
+core-result hashes matched. Public CI also passed on the remediation commit.
+
 ## Data gate
 
 The first reproducible gate scans EPA AQS daily PM2.5 archives:

@@ -69,7 +69,7 @@ replacement or measurement bias.
 
 ## Validation and analysis
 
-- [ ] **V1 — Run real transition audit.** Report every eligible event's
+- [x] **V1 — Run real transition audit.** Report every eligible event's
   pre-fit, effect, uncertainty, and failure reason; do not select only strong
   examples.
 - [x] **V2 — Analyze QA and same-site POC evidence.** Eleven same-site
@@ -111,11 +111,13 @@ replacement or measurement bias.
   exceptional-event claim while retaining synthetic regional, time, and donor
   negative controls.
 - [x] Add `requirements-lock.txt` and public GitHub Actions unit-test CI.
-- [ ] Export and publish the safe, versioned evidence bundle after the
-  remediated release rerun.
+- [x] Rebuild under the remediated fixed configuration in default and
+  lock-file environments; 16 core output hashes match exactly.
+- [ ] Publish the safe, versioned evidence bundle after a final sensitive-data
+  scan.
 
-**Code and research stage:** pending the remediated release rerun and public
-evidence-bundle publication. The algorithm-superiority route remains closed:
+**Code and research stage:** remediated results and reproducibility checks
+pass; public evidence-bundle publication remains. The algorithm-superiority route remains closed:
 on the stable synthetic benchmark, MetaShift's lower effect-MAE point estimates
 versus standard synthetic control had bootstrap confidence intervals crossing
 zero, while Macro-F1/AUPRC did not meet the predeclared algorithm thresholds.

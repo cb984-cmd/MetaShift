@@ -169,11 +169,11 @@ route remains closed; it cannot be reopened using this defect.
   (34 supported, 122 not-supported, 407 inconclusive), tier sensitivity,
   case studies, figures (16), and all downstream scripts migrated to v2 paths.
   Committed 495c3c9.
-- [!] **I2 — Revalidate and release.** Manuscript updated to v2 numbers (all
-  56 verifier checks pass). Release gate: 25/26 pass; only
-  `two_environment_reproduction` remains (requires separate clean-env run).
-  Commits: 95477c9, 5d83826, c071fdb. Awaiting second environment run and
-  final evidence release tag.
+- [x] **I2 — Revalidate and release.** Manuscript updated to v2 numbers (all
+  56 verifier checks pass). Release gate: **26/26 pass** including
+  two-environment reproduction. All evidence-tier, auditability, and
+  same-site analyses rebuilt with v2 distinct-donor data.
+  Ready for evidence release tag.
 
 ## Paper-strengthening extension
 

@@ -167,6 +167,17 @@ blind stable-synthetic manifest with at least 60 targets and completely
 disjoint target-plus-donor physical input footprints from both the existing
 66 calibration and 80 evaluation target sets.
 
+The frozen fixed-weight interval coverage study completed 23,360
+effect-identifiable synthetic instances. Its nominal-95% conditional
+moving-block intervals covered only 62.47%--67.56% of held-out truths across
+the four cross-site methods. Target-cluster split-conformal nominal-90%
+intervals covered 98.22%--99.56% and were therefore substantially
+conservative. These results are retained as a negative calibration finding:
+fixed-weight intervals may be reported only as conditional resampling
+diagnostics, not as coverage-calibrated real-event confidence intervals. No
+bootstrap block length, conformal score, threshold, or model parameter may be
+changed using this 80-site evaluation result.
+
 ## Claims and limitations
 
 The final report must not claim that Method Code proves hardware replacement,

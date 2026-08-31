@@ -167,10 +167,17 @@ or tune against the already viewed 80-site stable-synthetic evaluation set.
 - [!] **E1 — Freeze and review Method Code taxonomy.** A 34-pair,
   metadata-only table covers all 563 anchors and is validated without outcome
   data. Student/teacher row-level review is required before stratification.
-- [!] **E2 — Calibrate synthetic uncertainty intervals.** The fixed
-  conditional-bootstrap and target-cluster split-conformal protocol is
-  implemented and smoke-tested. Run it once on the complete 66/80 split
-  without interval tuning on results.
+- [!] **E2 — Calibrate synthetic uncertainty intervals.** The frozen 66/80
+  run completed 23,360 known-effect instances with 1,000 repetitions each.
+  Conditional nominal-95% intervals undercovered on evaluation (62.47%--67.56%
+  by method), while target-cluster nominal-90% split-conformal intervals
+  overcovered (98.22%--99.56%). No post-evaluation tuning is permitted; fixed
+  intervals are conditional diagnostics, not coverage-calibrated confidence
+  intervals.
+- [ ] **E2b — Test selection-aware interval coverage.** The current synthetic
+  coverage result applies to fixed-weight conditional intervals. Any
+  selection-aware coverage study requires a separately frozen, computationally
+  feasible protocol and may not tune against the viewed 80-site split.
 - [ ] **E3 — Analyze auditability and selection boundaries.** Describe which
   network conditions permit common counterfactual comparisons without assigning
   effects to unavailable events.

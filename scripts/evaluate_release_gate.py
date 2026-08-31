@@ -1,4 +1,4 @@
-"""Write the machine-readable MetaShift-Bench release checklist."""
+﻿"""Write the machine-readable MetaShift-Bench release checklist."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ import pandas as pd
 
 ARTIFACTS = Path("artifacts")
 RESULTS = Path("results")
-CONFIG_PATH = Path("configs/benchmark_release_v1.json")
+CONFIG_PATH = Path("configs/benchmark_release_v2.json")
 
 
 def exists(path: Path) -> bool:
@@ -304,8 +304,8 @@ def main() -> None:
         checks.append(
             check(
                 "event_intervals_and_donor_sensitivity",
-                len(intervals) == 261 * 3
-                and len(leave_one_out) == 261
+                len(intervals) == 228 * 3
+                and len(leave_one_out) == 228
                 and {"ci95_lower", "ci95_upper"}.issubset(intervals.columns),
                 f"{len(intervals)} conditional intervals and {len(leave_one_out)} "
                 "leave-one-donor-out event summaries",
@@ -398,9 +398,9 @@ def main() -> None:
             )
         )
 
-    synthetic_path = ARTIFACTS / "stable_synthetic_stable_full_v1_event_results.csv"
-    metric_path = ARTIFACTS / "stable_synthetic_stable_full_v1_metrics.csv"
-    bootstrap_path = ARTIFACTS / "stable_synthetic_stable_full_v1_bootstrap.csv"
+    synthetic_path = ARTIFACTS / "stable_synthetic_stable_full_v2_event_results.csv"
+    metric_path = ARTIFACTS / "stable_synthetic_stable_full_v2_metrics.csv"
+    bootstrap_path = ARTIFACTS / "stable_synthetic_stable_full_v2_bootstrap.csv"
     if exists(synthetic_path) and exists(metric_path) and exists(bootstrap_path):
         synthetic = pd.read_csv(synthetic_path)
         evaluation = synthetic.loc[synthetic["split"] == "evaluation"]
@@ -437,7 +437,7 @@ def main() -> None:
             )
         )
 
-    ablation_path = ARTIFACTS / "reliability_ablation_stable_full_v1_metrics.csv"
+    ablation_path = ARTIFACTS / "reliability_ablation_stable_full_v2_metrics.csv"
     checks.append(
         check(
             "key_reliability_ablations",
@@ -447,7 +447,7 @@ def main() -> None:
         )
     )
 
-    alignment_path = ARTIFACTS / "benchmark_ablation_alignment.json"
+    alignment_path = ARTIFACTS / "benchmark_ablation_alignment_stable_full_v2.json"
     if exists(alignment_path):
         alignment = json.loads(alignment_path.read_text(encoding="utf-8"))
         checks.append(
@@ -467,7 +467,7 @@ def main() -> None:
             )
         )
 
-    risk_coverage_path = ARTIFACTS / "synthetic_risk_coverage_curve.csv"
+    risk_coverage_path = ARTIFACTS / "synthetic_risk_coverage_stable_full_v2.csv"
     real_coverage_path = ARTIFACTS / "real_event_coverage_summary.json"
     if exists(risk_coverage_path) and exists(real_coverage_path):
         risk_coverage = pd.read_csv(risk_coverage_path)
@@ -539,7 +539,7 @@ def main() -> None:
             )
         )
 
-    tier_sensitivity_path = ARTIFACTS / "evidence_tier_sensitivity_summary.csv"
+    tier_sensitivity_path = ARTIFACTS / "evidence_tier_sensitivity_v2_summary.csv"
     if exists(tier_sensitivity_path):
         tier_sensitivity = pd.read_csv(tier_sensitivity_path)
         expected_settings = {"strict", "primary", "lenient"}
@@ -629,7 +629,7 @@ def main() -> None:
     reproducibility_files = [
         Path("REPRODUCIBILITY.md"),
         Path("MODEL_DECISION.md"),
-        Path("configs/benchmark_release_v1.json"),
+        Path("configs/benchmark_release_v2.json"),
     ]
     checks.append(
         check(

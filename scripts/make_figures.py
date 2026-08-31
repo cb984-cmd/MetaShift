@@ -1,4 +1,4 @@
-"""Generate MetaShift-Bench figures only from saved result artifacts."""
+﻿"""Generate MetaShift-Bench figures only from saved result artifacts."""
 
 from __future__ import annotations
 
@@ -111,7 +111,7 @@ def synthetic_perturbation_illustration(manifest: list[dict[str, str]]) -> None:
 
 def synthetic_summary(manifest: list[dict[str, str]]) -> None:
     metrics = pd.read_csv(
-        ARTIFACTS / "stable_synthetic_stable_full_v1_metrics.csv"
+        ARTIFACTS / "stable_synthetic_stable_full_v2_metrics.csv"
     )
     metrics = metrics.loc[
         metrics["perturbation_family"].isna()
@@ -150,14 +150,14 @@ def synthetic_summary(manifest: list[dict[str, str]]) -> None:
         figure,
         "figure_4_stable_synthetic_summary.png",
         "Threshold-isolated stable synthetic benchmark",
-        "artifacts/stable_synthetic_stable_full_v1_metrics.csv",
+        "artifacts/stable_synthetic_stable_full_v2_metrics.csv",
         manifest,
     )
 
 
 def synthetic_by_family(manifest: list[dict[str, str]]) -> None:
     metrics = pd.read_csv(
-        ARTIFACTS / "stable_synthetic_stable_full_v1_metrics.csv"
+        ARTIFACTS / "stable_synthetic_stable_full_v2_metrics.csv"
     )
     metrics = metrics.loc[
         metrics["perturbation_family"].notna()
@@ -207,14 +207,14 @@ def synthetic_by_family(manifest: list[dict[str, str]]) -> None:
         figure,
         "figure_5_synthetic_by_family.png",
         "Stable synthetic benchmark by perturbation family",
-        "artifacts/stable_synthetic_stable_full_v1_metrics.csv",
+        "artifacts/stable_synthetic_stable_full_v2_metrics.csv",
         manifest,
     )
 
 
 def reliability_ablation(manifest: list[dict[str, str]]) -> None:
     metrics = pd.read_csv(
-        ARTIFACTS / "reliability_ablation_stable_full_v1_metrics.csv"
+        ARTIFACTS / "reliability_ablation_stable_full_v2_metrics.csv"
     ).sort_values("local_effect_mae_log")
     figure, axis = plt.subplots(figsize=(9, 4))
     colors = [
@@ -230,7 +230,7 @@ def reliability_ablation(manifest: list[dict[str, str]]) -> None:
         figure,
         "figure_6_reliability_ablations.png",
         "Reliability ablation effect error",
-        "artifacts/reliability_ablation_stable_full_v1_metrics.csv",
+        "artifacts/reliability_ablation_stable_full_v2_metrics.csv",
         manifest,
     )
 
@@ -398,7 +398,7 @@ def evidence_tier_sensitivity(manifest: list[dict[str, str]]) -> None:
 
 
 def risk_coverage_curve(manifest: list[dict[str, str]]) -> None:
-    curve = pd.read_csv(ARTIFACTS / "synthetic_risk_coverage_curve.csv")
+    curve = pd.read_csv(ARTIFACTS / "synthetic_risk_coverage_stable_full_v2.csv")
     labels = {
         "nearest_neighbor_did": "Nearest-neighbor DiD",
         "standard_synthetic_control": "Standard SC",
@@ -430,7 +430,7 @@ def risk_coverage_curve(manifest: list[dict[str, str]]) -> None:
         figure,
         "figure_12_synthetic_risk_coverage.png",
         "Pre-fit quality risk-coverage on independent synthetic cases",
-        "artifacts/synthetic_risk_coverage_curve.csv",
+        "artifacts/synthetic_risk_coverage_stable_full_v2.csv",
         manifest,
     )
 

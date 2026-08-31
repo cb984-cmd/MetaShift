@@ -43,14 +43,14 @@ def collect_expectations() -> dict[str, str]:
         (ARTIFACTS / "data_gate/summary.json").read_text(encoding="utf-8")
     )
     metrics = pd.read_csv(
-        ARTIFACTS / "stable_synthetic_stable_full_v1_metrics.csv"
+        ARTIFACTS / "stable_synthetic_stable_full_v2_metrics.csv"
     )
     aggregate = metrics.loc[metrics["perturbation_family"].isna()].set_index("method")
     bootstrap = pd.read_csv(
-        ARTIFACTS / "stable_synthetic_stable_full_v1_bootstrap.csv"
+        ARTIFACTS / "stable_synthetic_stable_full_v2_bootstrap.csv"
     ).set_index("comparison")
     ablation = pd.read_csv(
-        ARTIFACTS / "reliability_ablation_stable_full_v1_metrics.csv"
+        ARTIFACTS / "reliability_ablation_stable_full_v2_metrics.csv"
     ).set_index("method")
     audit = pd.read_csv(ARTIFACTS / "real_transition_88101_event_audit.csv")
     intervals = pd.read_csv(
@@ -75,7 +75,7 @@ def collect_expectations() -> dict[str, str]:
             encoding="utf-8"
         )
     )
-    risk_coverage = pd.read_csv(ARTIFACTS / "synthetic_risk_coverage_curve.csv")
+    risk_coverage = pd.read_csv(ARTIFACTS / "synthetic_risk_coverage_stable_full_v2.csv")
     effect_windows = pd.read_csv(
         ARTIFACTS / "effect_window_sensitivity_summary.csv"
     )

@@ -36,8 +36,9 @@ jobs:
           cfg = pathlib.Path('configs/benchmark_release_v2.json')
           data = json.loads(cfg.read_text())
           assert data['result_label'] == 'stable_full_v2', 'label mismatch'
-          assert data['case_and_donor_sha256'].startswith('065b1b65'), 'case hash mismatch'
-          print('Frozen config OK:', data['result_label'], data['case_and_donor_sha256'][:16])
+          sha = data['stable_synthetic_cases']['case_and_donor_sha256']
+          assert sha.startswith('065b1b65'), 'case hash mismatch'
+          print('Frozen config OK:', data['result_label'], sha[:16])
           "
       - name: Tracked evidence summary integrity
         run: |
@@ -47,7 +48,7 @@ jobs:
           assert s['data_gate']['eligible_anchors'] == 563
           assert s['real_event_audit']['complete_comparisons'] == 228
           assert s['evidence_tiers']['supported_candidate_discontinuity'] == 34
-          assert s['release_gate_target_checks'] == 34
+          assert s['release_gate_target_checks'] == 35
           assert s['algorithm_superiority_claim'] is False
           print('Evidence summary OK:', s['evidence_version'])
           "

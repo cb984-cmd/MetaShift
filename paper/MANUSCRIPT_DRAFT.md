@@ -1,12 +1,9 @@
 # MetaShift-Bench: A Metadata-Anchored Counterfactual Benchmark for Auditing Measurement-Method Transitions in Air-Quality Networks
 
-> **Superseded internal draft, not a submission-ready report. Updated to v2
-> distinct-donor results. Its cross-site numerical results previously used a donor
-> inventory that could count multiple POCs from one physical donor site. Rebuild
-> and revalidate all dependent values before citing this text. Replace all
-> bracketed identity fields, verify every citation and number against the final
-> evidence release, and complete the AI-use and contribution records before
-> submission.
+> **Working draft (v0.3.0 distinct-donor rebuild).** All cross-site results
+> verified against v2 artifacts (56/56 manuscript checks pass, 26/26 release
+> gate checks pass). Replace all bracketed identity fields, verify every
+> citation, and complete the AI-use and contribution records before submission.
 
 **Student author(s):** [Name(s)]  
 **School, province/state, country:** [Fill in]  

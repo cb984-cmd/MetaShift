@@ -1,6 +1,7 @@
 # MetaShift-Bench paper optimization plan
 
-**Status:** complete for the MetaShift-Bench paper-evidence release.
+**Status:** active paper-strengthening extension; v0.2.0 remains an archived
+baseline release.
 **Principle:** the benchmark-and-audit claim remains primary; no new model
 superiority claim will be introduced unless a separately preregistered,
 independently evaluated result supports it.
@@ -51,3 +52,20 @@ independently evaluated result supports it.
   reconstructions.
 - [x] A versioned public evidence release points exactly to the manuscript
   commit and excludes raw data, API responses, and credentials.
+
+## Paper-strengthening extension
+
+All additions below are governed by
+[`configs/paper_extension_protocol_v1.json`](configs/paper_extension_protocol_v1.json).
+They must preserve the v0.2.0 result archive and cannot tune against its
+already viewed 80-site synthetic evaluation split.
+
+| Priority | Extension requirement | Status | Evidence / boundary |
+| --- | --- | --- | --- |
+| P0 | Freeze metadata-only Method Code taxonomy | In progress | `configs/method_transition_taxonomy_v1.csv` covers all 34 observed pairs and is validated without outcome data; student/teacher review remains required |
+| P0 | Test synthetic uncertainty calibration | Pending | Use a new predeclared protocol; report coverage and widths without selecting an interval after evaluation |
+| P0 | Analyze auditability representativeness | Pending | Compare complete and unavailable anchors descriptively; never infer a missing event's physical effect |
+| P1 | Stratify observations by frozen taxonomy | Blocked on human taxonomy review | Descriptive only; no equipment-change or causal label |
+| P1 | Vary evidence-tier q thresholds | Pending | Strict/primary/lenient settings must vary raw p, q, and donor-stability cutoffs together |
+| P1 | Enhance same-site overlap evidence | Pending | Use AQS paired POC overlap only as independent consistency context |
+| P2 | New selective model or gate | Deferred | Requires a new blind 60-plus-target input-disjoint manifest; existing 66/80 split is ineligible |

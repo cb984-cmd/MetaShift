@@ -137,6 +137,36 @@ controls are instead the matched regional synthetic perturbations, stable
 post-transition time placebos, and donor-as-treated placebos. QA and qualifier
 availability are reported as graded evidence limitations.
 
+## Paper-strengthening extension protocol
+
+The v0.2.0 evidence release remains an archived, reproducible benchmark
+baseline. The following extension is frozen before its new outcome analyses;
+it does not reopen the closed claim that MetaShift is superior to standard
+synthetic control.
+
+The extension adds a Method Code transition taxonomy based only on the old and
+new AQS Method Codes, their reported Method Names, and predeclared official
+source links. `configs/method_transition_taxonomy_v1.csv` must cover every
+observed transition pair exactly. It may not use real-event effects, evidence
+tiers, synthetic evaluation outcomes, or post-transition rankings to assign
+classes. The initial machine-readable table is explicitly pending independent
+student and teacher review; it is not a human-verified equipment-history
+record.
+
+Stratified real-event results will be descriptive distributions of residual
+diagnostics by frozen class. They cannot establish a physical instrument
+replacement or causal measurement bias. Groups with fewer than 20 complete
+comparisons will be reported descriptively only. Predeclared between-class
+tests use bootstrap median-difference intervals and appropriately
+Benjamini--Hochberg-adjusted exploratory comparisons.
+
+The existing 80 stable-synthetic evaluation targets have already been viewed.
+They may not select or tune any new model, threshold, gate, taxonomy rule, or
+selective-decision mechanism. Any new learned model or gate requires a new
+blind stable-synthetic manifest with at least 60 targets and completely
+disjoint target-plus-donor physical input footprints from both the existing
+66 calibration and 80 evaluation target sets.
+
 ## Claims and limitations
 
 The final report must not claim that Method Code proves hardware replacement,

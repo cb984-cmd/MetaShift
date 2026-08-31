@@ -1,0 +1,51 @@
+{
+  "protocol_id": "metashift_paper_extension_v1",
+  "status": "frozen before extension outcome analyses",
+  "baseline_evidence_release": {
+    "tag": "v0.2.0-paper-evidence",
+    "verified_commit": "a738f039915abadfce37c274f210578e9319310e",
+    "role": "Archived baseline evidence; not the final competition-paper release."
+  },
+  "existing_synthetic_evaluation_policy": {
+    "evaluated_target_sites": 80,
+    "rule": "The evaluated 80-site split may not select, tune, or compare any new model, gate, threshold, taxonomy rule, or selective-decision mechanism.",
+    "allowed_use": "Read-only historical benchmark context with no new selection decisions."
+  },
+  "transition_taxonomy": {
+    "path": "configs/method_transition_taxonomy_v1.csv",
+    "construction_inputs": [
+      "AQS Method Code",
+      "AQS Method Name",
+      "predeclared official source links"
+    ],
+    "forbidden_inputs": [
+      "real-event effects",
+      "real-event evidence tiers",
+      "synthetic evaluation outcomes",
+      "post-transition outcome ranking"
+    ],
+    "human_review_requirement": "Every row must be independently reviewed by students and the supervising teacher before any human-verified or causal wording.",
+    "classes": [
+      "administrative_data_processing",
+      "same_analyzer_configuration",
+      "cross_analyzer_family",
+      "unresolved"
+    ]
+  },
+  "observational_stratification": {
+    "estimand": "Descriptive differences in residual-diagnostic distributions by frozen Method Code transition class.",
+    "not_an_estimand": "Confirmed physical instrument replacement or causal measurement bias.",
+    "small_group_policy": "Groups with fewer than 20 complete comparisons are descriptive only.",
+    "multiple_testing": "Use prespecified Mann-Whitney or permutation comparisons, bootstrap median-difference intervals, and Benjamini-Hochberg adjustment."
+  },
+  "selective_decision_extension": {
+    "new_model_policy": "Any new learned gate or model must use only a newly constructed blind stable-synthetic test set with fully disjoint target-plus-donor input footprints.",
+    "minimum_blind_targets": 60,
+    "forbidden_reuse": "No newly evaluated model may use the existing 66 calibration or 80 evaluated target sites or their input footprints."
+  },
+  "reporting_boundaries": [
+    "Method Code remains a metadata anchor, not a confirmed instrument change.",
+    "Real events have no physical-bias ground truth.",
+    "Legacy v0.2 results remain reproducible historical evidence and may not be silently replaced."
+  ]
+}

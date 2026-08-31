@@ -1,8 +1,8 @@
 # MetaShift execution plan
 
 **Updated:** 2026-08-31
-**Research status:** MetaShift-Bench evidence release complete; algorithm-superiority
-claim closed.
+**Research status:** MetaShift-Bench paper-strengthening extension active;
+algorithm-superiority claim closed.
 
 ## Evidence rule
 
@@ -146,19 +146,46 @@ replacement or measurement bias.
   records every file hash and explicitly excludes raw EPA archives, raw AQS API
   responses, credentials, and virtual environments.
 
-**Code and research stage:** complete for the MetaShift-Bench route. The
-algorithm-superiority route remains closed: on the corrected stable benchmark,
-MetaShift's lower effect-MAE point estimates versus standard synthetic control
-still have bootstrap confidence intervals crossing zero, while Macro-F1/AUPRC
-do not meet the predeclared algorithm thresholds. The publishable contribution
-is the reproducible benchmark, full metadata-anchor audit, graded evidence
-hierarchy, comparative results, and documented applicability boundary.
+**Baseline code and research stage:** complete for the MetaShift-Bench route.
+The algorithm-superiority route remains closed: on the corrected stable
+benchmark, MetaShift's lower effect-MAE point estimates versus standard
+synthetic control still have bootstrap confidence intervals crossing zero,
+while Macro-F1/AUPRC do not meet the predeclared algorithm thresholds. The
+publishable contribution is the reproducible benchmark, full metadata-anchor
+audit, graded evidence hierarchy, comparative results, and documented
+applicability boundary.
+
+## Paper-strengthening extension
+
+The v0.2.0 release is retained as an immutable archived baseline. New analyses
+are governed by `configs/paper_extension_protocol_v1.json`; they cannot select
+or tune against the already viewed 80-site stable-synthetic evaluation set.
+
+- [x] **E0 — Freeze extension protocol.** Define taxonomy, observational
+  stratification, uncertainty-calibration, representativeness, and new-model
+  boundaries before reading extension outcomes.
+- [!] **E1 — Freeze and review Method Code taxonomy.** A 34-pair,
+  metadata-only table covers all 563 anchors and is validated without outcome
+  data. Student/teacher row-level review is required before stratification.
+- [ ] **E2 — Calibrate synthetic uncertainty intervals.** Evaluate coverage
+  and width under a predeclared protocol without interval tuning on results.
+- [ ] **E3 — Analyze auditability and selection boundaries.** Describe which
+  network conditions permit common counterfactual comparisons without assigning
+  effects to unavailable events.
+- [ ] **E4 — Run taxonomy-stratified descriptive analysis.** Blocked until E1
+  receives independent human review.
+- [ ] **E5 — Re-run evidence-tier sensitivity with varying q thresholds.**
+- [ ] **E6 — Strengthen same-site overlap and cross-family document evidence.**
+- [ ] **E7 — Write the formal competition report.** Requires E1--E6 evidence
+  and a new release; any new learned method additionally requires its own
+  blind, input-disjoint test manifest.
 
 ## Human submission handoff
 
-The verified evidence release remains pinned to
+The verified baseline evidence release remains pinned to
 [`a738f03`](https://github.com/cb984-cmd/MetaShift/commit/a738f039915abadfce37c274f210578e9319310e);
-no further automated model tuning or result regeneration is authorized.
+no new model tuning or selective-decision development may reuse its viewed
+80-site evaluation inputs.
 
 - [ ] Students and supervising teacher independently reproduce and explain the
   submitted methods, code, data rules, results, and limitations.

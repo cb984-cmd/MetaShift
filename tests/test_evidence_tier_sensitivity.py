@@ -2,7 +2,11 @@ import unittest
 
 import pandas as pd
 
-from scripts.run_evidence_tier_sensitivity import condition_flags, funnel_summary
+from scripts.run_evidence_tier_sensitivity import (
+    complete_tier_summary,
+    condition_flags,
+    funnel_summary,
+)
 
 
 class EvidenceTierSensitivityTests(unittest.TestCase):
@@ -53,3 +57,14 @@ class EvidenceTierSensitivityTests(unittest.TestCase):
         )
         self.assertEqual([2, 2, 1], funnel["anchor_count"].tolist())
         self.assertEqual([0, 0, 1], funnel["excluded_at_stage"].tolist())
+
+    def test_summary_keeps_zero_count_tiers(self) -> None:
+        details = pd.DataFrame(
+            {
+                "setting": ["strict"],
+                "evidence_tier": ["not_supported_by_available_evidence"],
+            }
+        )
+        summary = complete_tier_summary(details, ["strict"])
+        self.assertEqual(3, len(summary))
+        self.assertEqual(0, int(summary["anchor_count"].min()))

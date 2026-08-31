@@ -12,7 +12,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from metashift.evidence import evidence_tier  # noqa: E402
+from metashift.evidence import EvidenceTier, evidence_tier  # noqa: E402
 
 
 INPUT_PATH = Path("artifacts/real_transition_88101_evidence_tiers.csv")
@@ -103,6 +103,24 @@ def funnel_summary(
     return pd.DataFrame(rows)
 
 
+def complete_tier_summary(
+    details: pd.DataFrame, setting_names: list[str]
+) -> pd.DataFrame:
+    """Keep zero-count tiers visible in every prespecified setting."""
+
+    index = pd.MultiIndex.from_product(
+        [setting_names, [tier.value for tier in EvidenceTier]],
+        names=["setting", "evidence_tier"],
+    )
+    return (
+        details.groupby(["setting", "evidence_tier"], sort=True)
+        .size()
+        .reindex(index, fill_value=0)
+        .rename("anchor_count")
+        .reset_index()
+    )
+
+
 def main() -> None:
     data = pd.read_csv(INPUT_PATH)
     config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
@@ -157,12 +175,8 @@ def main() -> None:
             )
 
     details = pd.DataFrame(rows)
-    summary = (
-        details.groupby(["setting", "evidence_tier"])
-        .size()
-        .rename("anchor_count")
-        .reset_index()
-        .sort_values(["setting", "evidence_tier"])
+    summary = complete_tier_summary(
+        details, [str(setting["name"]) for setting in config["settings"]]
     )
     funnel = funnel_summary(details, list(config["funnel_order"]))
     if not summary.groupby("setting")["anchor_count"].sum().eq(len(data)).all():

@@ -1,6 +1,6 @@
 # MetaShift-Bench paper optimization plan
 
-**Status:** active evidence-strengthening phase.
+**Status:** complete for the MetaShift-Bench paper-evidence release.
 **Principle:** the benchmark-and-audit claim remains primary; no new model
 superiority claim will be introduced unless a separately preregistered,
 independently evaluated result supports it.
@@ -9,14 +9,14 @@ independently evaluated result supports it.
 
 | Priority | Review requirement | Decision | Evidence / next artifact |
 | --- | --- | --- | --- |
-| P0 | Align release, manuscript, code, CI, and results | In progress | Freeze a new paper-evidence release after final reconstruction |
+| P0 | Align release, manuscript, code, CI, and results | Complete | [`v0.2.0-paper-evidence`](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.2.0-paper-evidence) points to verified commit `a738f03` |
 | P0 | Prevent stale hourly API-response reuse | Complete locally | The manifest is invalidated before refresh and accepts only response hashes read after atomic disk write; 9/11 current requests supplied paired evidence and 2 HTTP failures remain unavailable |
-| P0 | Verify manuscript numbers automatically | In progress | Updated verifier now covers input-footprint isolation and method-stable 45/60/90-day sensitivity; rerun after clean reconstruction |
+| P0 | Verify manuscript numbers automatically | Complete | Updated verifier covers input-footprint isolation and method-stable 45/60/90-day sensitivity; it passed in both full reconstructions |
 | P0 | Unify main/ablation synthetic noise | Complete locally | 7,300 shared Standard SC rows align exactly under the corrected split |
 | P1 | Add selection-aware nested bootstrap | Complete; integrated | 261 events, 1,000 repetitions, no event failures |
 | P1 | Add 50--100 unique time placebos and BH q values | Complete; integrated | 149 events with at least 50 unique placebos; 41 pass q<=0.10 |
 | P1 | Test evidence-tier thresholds | Complete; integrated | Strict/primary/lenient summaries; shared FDR screen is limiting |
-| P1 | Expand independent stable test monitors and prevent same-site POC leakage | Complete locally; pending clean rerun | 66 calibration + 80 evaluation targets; no complete target-plus-donor physical input site crosses splits |
+| P1 | Expand independent stable test monitors and prevent same-site POC leakage | Complete | 66 calibration + 80 evaluation targets; no complete target-plus-donor physical input site crosses splits |
 | P1 | Add one-way parameter sensitivity grid | Complete | 11 predeclared settings and 1/3/5 donor thresholds |
 | P2 | Public document validation | Complete as a negative-result audit | 20 preselected events; 0 dated site-level confirmations located |
 | P2 | Generate reproducible representative cases | Complete | Three supported, three not-supported, and three inconclusive cases |
@@ -38,7 +38,7 @@ independently evaluated result supports it.
 
 ## Freeze criteria for the paper-evidence release
 
-- [ ] All manuscript numbers automatically match artifacts from the corrected,
+- [x] All manuscript numbers automatically match artifacts from the corrected,
   clean reconstruction.
 - [x] Main and ablation shared rows align exactly in the corrected local rerun.
 - [x] Stable benchmark uses disjoint complete target-plus-donor physical input
@@ -47,6 +47,7 @@ independently evaluated result supports it.
   threshold sensitivity are included in the manuscript and evidence bundle.
 - [x] External-document audit, case-study outputs, and related-work matrix are
   complete.
-- [ ] Latest commit passes public CI and two locked-environment reproductions.
-- [ ] A versioned public evidence release points exactly to the manuscript
+- [x] The evidence commit passes public CI and two locked-environment
+  reconstructions.
+- [x] A versioned public evidence release points exactly to the manuscript
   commit and excludes raw data, API responses, and credentials.

@@ -77,11 +77,14 @@ The remediated benchmark was reconstructed in a default environment and a
 separate environment installed from `requirements-lock.txt`; all selected
 core-result hashes matched. Public CI also passed on the remediation commit.
 
-The safe public evidence package is available from the
-[v0.1.0-benchmark-evidence release](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.1.0-benchmark-evidence).
+The corrected safe public evidence package is available from the
+[v0.2.0-paper-evidence release](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.2.0-paper-evidence),
+which points to the verified evidence commit
+[`a738f03`](https://github.com/cb984-cmd/MetaShift/commit/a738f039915abadfce37c274f210578e9319310e).
 It includes generated result tables, figures, manifests, release-gate output,
 and reproducibility hashes, but excludes raw EPA archives, API responses, and
-credentials.
+credentials. The earlier v0.1.0 evidence release applies to the superseded
+synthetic split.
 
 An evidence-backed English manuscript draft is at
 [`paper/MANUSCRIPT_DRAFT.md`](paper/MANUSCRIPT_DRAFT.md). It is deliberately

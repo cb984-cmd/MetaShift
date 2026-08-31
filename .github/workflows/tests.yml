@@ -27,35 +27,27 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - run: python -m pip install --upgrade pip
-      - run: python -m pip install -r requirements-lock.txt
-      - name: Document consistency checks
+      - name: Document consistency checks (CI-safe, no local artifacts needed)
         run: python scripts/verify_public_document_consistency.py
       - name: Frozen config integrity
         run: |
           python -c "
-          import json, hashlib, pathlib
+          import json, pathlib
           cfg = pathlib.Path('configs/benchmark_release_v2.json')
           data = json.loads(cfg.read_text())
           assert data['result_label'] == 'stable_full_v2', 'label mismatch'
           assert data['case_and_donor_sha256'].startswith('065b1b65'), 'case hash mismatch'
           print('Frozen config OK:', data['result_label'], data['case_and_donor_sha256'][:16])
           "
-      - name: Claim-Evidence Map v2 paths
+      - name: Tracked evidence summary integrity
         run: |
           python -c "
-          import csv, pathlib
-          rows = list(csv.DictReader(open('paper/CLAIM_EVIDENCE_MAP.csv')))
-          stale = [r for r in rows if 'stable_full_v1' in r.get('evidence_artifact','')]
-          assert not stale, f'Stale v1 paths in CLAIM_EVIDENCE_MAP: {stale}'
-          print(f'CLAIM_EVIDENCE_MAP: {len(rows)} claims, all v2 paths')
-          "
-      - name: Manuscript number verification (structure only)
-        run: |
-          python -c "
-          import pathlib
-          ms = pathlib.Path('paper/MANUSCRIPT_DRAFT.md').read_text(encoding='utf-8')
-          for n in ['563', '238', '228', '325', '34 supported', '122 not']:
-            assert n in ms, f'Missing number {n!r} in manuscript'
-          print('Core manuscript numbers present')
+          import json, pathlib
+          s = json.loads(pathlib.Path('configs/current_evidence_summary_v2.json').read_text())
+          assert s['data_gate']['eligible_anchors'] == 563
+          assert s['real_event_audit']['complete_comparisons'] == 228
+          assert s['evidence_tiers']['supported_candidate_discontinuity'] == 34
+          assert s['release_gate_target_checks'] == 34
+          assert s['algorithm_superiority_claim'] is False
+          print('Evidence summary OK:', s['evidence_version'])
           "

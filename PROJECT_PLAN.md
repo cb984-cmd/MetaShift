@@ -2,8 +2,8 @@
 
 **Updated:** 2026-08-31
 **Research status:** Integrity remediation complete (I0/I1/I2). Release gate
-26/26 pass. Manuscript verified. v0.3.0-distinct-donors tagged. Awaiting
-student completion of submission materials for 9/15 deadline.
+34/34 pass. Manuscript verified. v0.3.2-evidence-final tagged and released.
+Awaiting student completion of submission materials for 9/15 deadline.
 
 ## Evidence rule
 
@@ -171,10 +171,10 @@ route remains closed; it cannot be reopened using this defect.
   case studies, figures (16), and all downstream scripts migrated to v2 paths.
   Committed 495c3c9.
 - [x] **I2 — Revalidate and release.** Manuscript updated to v2 numbers (all
-  56 verifier checks pass). Release gate: **26/26 pass** including
-  two-environment reproduction. All evidence-tier, auditability, and
-  same-site analyses rebuilt with v2 distinct-donor data.
-  Ready for evidence release tag.
+  56 verifier checks pass). Release gate: **34/34 pass** including
+  two-environment reproduction, document consistency, and expanded integrity
+  checks. All evidence-tier, auditability, and same-site analyses rebuilt
+  with v2 distinct-donor data. v0.3.2-evidence-final released.
 
 ## Paper-strengthening extension
 

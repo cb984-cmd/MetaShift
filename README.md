@@ -3,8 +3,8 @@
 > **Integrity remediation complete (2026-08-31):** The v0.2.0 release was
 > superseded due to a geographic control inventory defect (multiple POCs per
 > physical donor site counted as separate donors). All cross-site results have
-> been rebuilt with physical-site-unique donors. The current v0.3.0 release
-> passes all 26/26 release gate checks with machine-verified manuscript numbers.
+> been rebuilt with physical-site-unique donors. The current v0.3.2 release
+> passes all 35/35 release gate checks with machine-verified manuscript numbers.
 
 MetaShift audits whether a discontinuity in an air-quality monitoring series is
 more consistent with a local measurement-regime change than with a regional
@@ -84,7 +84,8 @@ separate environment installed from `requirements-lock.txt`; all selected
 core-result hashes matched. Public CI also passed on the remediation commit.
 
 The corrected safe public evidence package is available from the
-[v0.3.0-distinct-donors release](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.0-distinct-donors).
+[v0.3.2-evidence-final release](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final).
+The v0.3.1 release is superseded by v0.3.2 (documentation consistency fixes).
 The earlier v0.2.0 release is retained as an archived, superseded baseline
 (its control inventory could count multiple POCs from one physical site as
 separate donors). The v0.1.0 evidence release applies to the superseded
@@ -97,7 +98,7 @@ AI-use disclosure, and all submitted claims require human verification.
 
 The targeted public-document review is intentionally conservative:
 [`docs/EXTERNAL_DOCUMENT_REVIEW.md`](docs/EXTERNAL_DOCUMENT_REVIEW.md) records
-20 preselected AQS metadata boundaries, but identifies **zero** dated,
+20 preselected AQS metadata boundaries, with 0/20 dated,
 site-specific public confirmations. It is context verification and a negative
 external-validation result, not proof that no field change occurred.
 

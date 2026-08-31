@@ -490,7 +490,7 @@ additional constraints do not yet justify a general method claim.
 7. The 88502 sensitivity sample is small and cannot support broad generalization.
 8. Results apply to the specified AQS PM2.5 data slice and are not evidence for
    all pollutants, networks, or years.
-9. The external-document review found no dated, site-specific confirmation for
+9. The external-document review found 0/20 dated, site-specific confirmations for
    its 20 selected records. Failure to locate a public notice is not evidence
    that no physical change occurred.
 10. The conditional block-bootstrap intervals show 64--67% empirical coverage at

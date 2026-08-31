@@ -775,6 +775,36 @@ def main() -> None:
         )
     )
 
+    # Verify tracked evidence summary matches actual artifacts (Layer 2)
+    summary_path = Path("configs/current_evidence_summary_v2.json")
+    if exists(summary_path) and exists(real_audit_path):
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        audit = pd.read_csv(real_audit_path)
+        summary_ok = (
+            summary["data_gate"]["eligible_anchors"] == 563
+            and summary["real_event_audit"]["complete_comparisons"]
+            == int((audit["audit_status"] == "complete").sum())
+            and summary["real_event_audit"]["insufficient_geographic_donors"]
+            == int((audit["audit_status"] == "insufficient_geographic_donors").sum())
+            and summary["real_event_audit"]["estimator_input_failure"]
+            == int((audit["audit_status"] == "estimator_input_failure").sum())
+        )
+        checks.append(
+            check(
+                "tracked_summary_matches_artifacts",
+                summary_ok,
+                "configs/current_evidence_summary_v2.json must match actual generated artifacts.",
+            )
+        )
+    else:
+        checks.append(
+            check(
+                "tracked_summary_matches_artifacts",
+                False,
+                "Missing tracked evidence summary or real audit artifacts.",
+            )
+        )
+
     output = {
         "generated_at_utc": datetime.now(UTC).isoformat(),
         "git_commit": git_commit(),

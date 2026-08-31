@@ -1,0 +1,40 @@
+{
+  "generated_at_utc": "2026-08-31T20:33:15.165980+00:00",
+  "source_git_commit": "a73540462fff5522b3c6cf2461a29036b2095d76",
+  "evidence_version": "v0.3.2",
+  "supersedes": "v0.3.1",
+  "case_manifest_sha256": "065b1b65c231c5298fb4969a7b5669f3ae8850b9228d50afee7d98422575e099",
+  "result_label": "stable_full_v2",
+  "geographic_donor_rule": "one_best_poc_per_physical_site",
+  "data_gate": {
+    "canonical_records": 2424793,
+    "monitor_series": 1689,
+    "eligible_anchors": 563,
+    "anchors_with_three_distinct_physical_donors": 238
+  },
+  "real_event_audit": {
+    "total_anchors": 563,
+    "complete_comparisons": 228,
+    "insufficient_geographic_donors": 325,
+    "estimator_input_failure": 10
+  },
+  "evidence_tiers": {
+    "supported_candidate_discontinuity": 34,
+    "not_supported_by_available_evidence": 122,
+    "inconclusive_insufficient_evidence": 407
+  },
+  "external_document_review": {
+    "reviewed_events": 20,
+    "site_specific_dated_confirmations": 0
+  },
+  "interval_coverage": {
+    "fixed_weight_status": "complete",
+    "conditional_bootstrap_95_eval_coverage_range": "0.63-0.67",
+    "split_conformal_90_eval_coverage_range": "0.987-0.996",
+    "selection_aware_status": "infeasible_within_deadline",
+    "selection_aware_protocol": "configs/selection_aware_coverage_protocol_v2.json"
+  },
+  "release_gate_target_checks": 35,
+  "algorithm_superiority_claim": false,
+  "interpretation_boundary": "A Method Code transition is a metadata anchor, not a confirmed instrument fault or causal measurement bias."
+}

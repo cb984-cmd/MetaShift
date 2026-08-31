@@ -13,7 +13,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent
-CONFIG_PATH = ROOT / "configs/benchmark_release_v1.json"
+CONFIG_PATH = ROOT / "configs/benchmark_release_v2.json"
 
 
 def parse_args() -> argparse.Namespace:
@@ -94,6 +94,7 @@ def main() -> None:
     multipliers = [
         str(value) for value in config["synthetic_perturbations"]["magnitude_multipliers"]
     ]
+    result_label = str(config["result_label"])
 
     run([python, "-m", "unittest", "discover", "-s", "tests", "-v"])
     run([python, "scripts/scan_data_gate.py", "--download"])
@@ -115,7 +116,7 @@ def main() -> None:
             python,
             "scripts/run_stable_synthetic_benchmark.py",
             "--label",
-            "stable_full_v1",
+            result_label,
             "--magnitude-multipliers",
             *multipliers,
         ]
@@ -125,12 +126,14 @@ def main() -> None:
             python,
             "scripts/run_reliability_ablations.py",
             "--label",
-            "stable_full_v1",
+            result_label,
             "--magnitude-multipliers",
             *multipliers,
         ]
     )
-    run([python, "scripts/verify_benchmark_ablation_alignment.py"])
+    run(
+        [python, "scripts/verify_benchmark_ablation_alignment.py", "--label", result_label]
+    )
     run(
         [
             python,
@@ -147,7 +150,7 @@ def main() -> None:
     run([python, "scripts/run_leave_one_donor_out.py"])
     run([python, "scripts/run_effect_window_sensitivity.py"])
     run([python, "scripts/run_reporting_scale_sensitivity.py"])
-    run([python, "scripts/run_risk_coverage_analysis.py"])
+    run([python, "scripts/run_risk_coverage_analysis.py", "--label", result_label])
     run([python, "scripts/run_colocated_validation.py"])
     if args.with_aqs_api:
         load_windows_user_environment()

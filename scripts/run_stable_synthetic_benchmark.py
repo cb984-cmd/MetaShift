@@ -1,8 +1,8 @@
 """Run the reproducible MetaShift-Bench synthetic evaluation on stable regimes.
 
 Synthetic effects are injected only at pseudo-anchors constructed in stable
-target and donor method regimes. The first 40 cases calibrate thresholds; the
-disjoint 40-case evaluation partition supplies all reported primary metrics.
+target and donor method regimes. The configured calibration partition selects
+thresholds; the disjoint evaluation partition supplies reported metrics.
 """
 
 from __future__ import annotations
@@ -340,6 +340,7 @@ def evaluate_variant(
 
     common = {
         "case_id": case["case_id"],
+        "case_source": case.get("case_source", "unspecified"),
         "split": case["split"],
         "target_state": case["State Code"],
         "pseudo_anchor_date": date.date().isoformat(),

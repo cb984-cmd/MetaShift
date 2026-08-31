@@ -1,0 +1,66 @@
+{
+  "benchmark_id": "metashift_bench_v2_distinct_physical_donors",
+  "status": "Frozen after physical-donor uniqueness remediation; no algorithm-superiority claim.",
+  "supersedes": {
+    "config": "configs/benchmark_release_v1.json",
+    "reason": "The prior control inventory could count multiple POCs from one physical donor site."
+  },
+  "result_label": "stable_full_v2",
+  "primary_parameter_code": "88101",
+  "years": [2019, 2020, 2021, 2022, 2023, 2024, 2025],
+  "signal": {
+    "sample_duration": "24-HR BLK AVG",
+    "minimum_observation_percent": 75,
+    "excluded_event_type": "Excluded"
+  },
+  "stable_synthetic_cases": {
+    "case_count": 146,
+    "calibration_cases": 66,
+    "evaluation_cases": 80,
+    "excluded_v2_algorithm_test_target_states": ["17", "25"],
+    "minimum_transition_distance_days": 60,
+    "case_and_donor_sha256": "065b1b65c231c5298fb4969a7b5669f3ae8850b9228d50afee7d98422575e099",
+    "split_assignment": "Deterministic connected components of the complete target-plus-donor physical-site footprint; entire components are assigned to calibration or evaluation.",
+    "case_sources": {
+      "method_transition_stable_regime": 124,
+      "all_monitor_stable_regime": 22
+    }
+  },
+  "synthetic_perturbations": {
+    "magnitude_multipliers": [0.5, 1.0, 1.5, 2.0, 3.0],
+    "base_local_shapes": [
+      "additive_step",
+      "proportional_step",
+      "gradual_drift",
+      "temporary_step",
+      "variance_increase"
+    ],
+    "matched_regional_controls": true,
+    "seed_derivation": "20260830 plus deterministic case, multiplier, and variant offsets"
+  },
+  "counterfactual": {
+    "calibration_days": 180,
+    "calibration_buffer_days": 15,
+    "comparison_days": 60,
+    "minimum_window_observations": 30,
+    "minimum_available_donors": 2,
+    "fixed_ridge_penalty": 0.1,
+    "fixed_graph_prior_penalty": 0.1,
+    "geographic_donor_rule": "At most one POC per donor physical site, selected by pre-event correlation, distance, paired days, and POC tie-breaker."
+  },
+  "threshold_selection": "Optimize macro-F1 only on the 66 calibration cases; evaluate the unchanged threshold on 80 complete-input-disjoint cases.",
+  "bootstrap": {
+    "cluster": "case_id",
+    "repetitions": 1000,
+    "seed": 20260830
+  },
+  "selection_aware_bootstrap": {
+    "repetitions": 1000,
+    "block_length_days": 7,
+    "minimum_pair_days": 60,
+    "minimum_correlation": 0.6,
+    "selected_donors": "3 to 5 distinct physical donor sites",
+    "scope": "Re-selects and refits within a fixed observed geographic, method-stability, availability, and physical-site-unique candidate pool."
+  },
+  "method_decision": "See MODEL_DECISION.md; retained as a benchmark comparison, not a superiority claim."
+}

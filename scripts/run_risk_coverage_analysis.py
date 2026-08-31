@@ -2,15 +2,13 @@
 
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 
-INPUT_PATH = Path("artifacts/stable_synthetic_stable_full_v1_event_results.csv")
-OUTPUT_PATH = Path("artifacts/synthetic_risk_coverage_curve.csv")
-SUMMARY_PATH = Path("artifacts/real_event_coverage_summary.json")
 METHODS = (
     "nearest_neighbor_did",
     "standard_synthetic_control",
@@ -20,8 +18,20 @@ METHODS = (
 TARGET_COVERAGES = tuple(np.arange(0.1, 1.01, 0.1))
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Evaluate pre-fit quality gating for one synthetic result label."
+    )
+    parser.add_argument("--label", default="stable_full_v2")
+    return parser.parse_args()
+
+
 def main() -> None:
-    data = pd.read_csv(INPUT_PATH)
+    args = parse_args()
+    input_path = Path(f"artifacts/stable_synthetic_{args.label}_event_results.csv")
+    output_path = Path(f"artifacts/synthetic_risk_coverage_{args.label}.csv")
+    summary_path = Path(f"artifacts/real_event_coverage_{args.label}.json")
+    data = pd.read_csv(input_path)
     eligible = data.loc[
         data["method"].isin(METHODS)
         & (data["is_local"] == 1)
@@ -58,7 +68,7 @@ def main() -> None:
                 }
             )
     output = pd.DataFrame(rows)
-    output.to_csv(OUTPUT_PATH, index=False)
+    output.to_csv(output_path, index=False)
 
     audit = pd.read_csv("artifacts/real_transition_88101_event_audit.csv")
     complete = audit.loc[audit["audit_status"] == "complete"]
@@ -85,7 +95,7 @@ def main() -> None:
     }
     import json
 
-    SUMMARY_PATH.write_text(json.dumps(coverage, indent=2), encoding="utf-8")
+    summary_path.write_text(json.dumps(coverage, indent=2), encoding="utf-8")
     print(output.to_string(index=False))
     print(coverage)
 

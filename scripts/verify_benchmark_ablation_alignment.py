@@ -3,24 +3,35 @@
 from __future__ import annotations
 
 import json
+import argparse
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 
-MAIN_PATH = Path("artifacts/stable_synthetic_stable_full_v1_event_results.csv")
-ABLATION_PATH = Path("artifacts/reliability_ablation_stable_full_v1_event_results.csv")
-OUTPUT_PATH = Path("artifacts/benchmark_ablation_alignment.json")
 KEYS = ["case_id", "split", "perturbation", "magnitude", "random_seed"]
 COLUMNS = ["estimated_log_effect", "absolute_effect_error", "ranking_score"]
 SHARED_METHOD = "standard_synthetic_control"
 TOLERANCE = 1e-10
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Check main/ablation shared synthetic rows for one result label."
+    )
+    parser.add_argument("--label", default="stable_full_v2")
+    return parser.parse_args()
+
+
 def main() -> None:
-    main = pd.read_csv(MAIN_PATH)
-    ablation = pd.read_csv(ABLATION_PATH)
+    args = parse_args()
+    label = args.label
+    main_path = Path(f"artifacts/stable_synthetic_{label}_event_results.csv")
+    ablation_path = Path(f"artifacts/reliability_ablation_{label}_event_results.csv")
+    output_path = Path(f"artifacts/benchmark_ablation_alignment_{label}.json")
+    main = pd.read_csv(main_path)
+    ablation = pd.read_csv(ablation_path)
     left = main.loc[main["method"] == SHARED_METHOD, KEYS + COLUMNS].copy()
     right = ablation.loc[
         ablation["method"] == SHARED_METHOD, KEYS + COLUMNS
@@ -47,7 +58,7 @@ def main() -> None:
         "maximum_absolute_differences": maximum_differences,
         "all_rows_aligned": missing_rows == 0,
     }
-    OUTPUT_PATH.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    output_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     print(json.dumps(payload, indent=2))
     if not payload["all_rows_aligned"]:
         raise SystemExit(1)

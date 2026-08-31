@@ -11,7 +11,7 @@ independently evaluated result supports it.
 | Priority | Review requirement | Decision | Evidence / next artifact |
 | --- | --- | --- | --- |
 | P0 | Align release, manuscript, code, CI, and results | Complete | [`v0.2.0-paper-evidence`](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.2.0-paper-evidence) points to verified commit `a738f03` |
-| P0 | Enforce physical-donor uniqueness | In progress | v0.2.0 geographic controls can contain multiple POCs from one physical site; all dependent cross-site artifacts require rebuild |
+| P0 | Enforce physical-donor uniqueness | Upstream repair complete | The rebuilt 88101 control inventory has zero duplicate physical donors; 238 anchors retain at least three distinct physical donors and the rebuilt stable set retains a 66/80 zero-overlap split. All dependent artifacts still require rebuild |
 | P0 | Prevent stale hourly API-response reuse | Complete locally | The manifest is invalidated before refresh and accepts only response hashes read after atomic disk write; 9/11 current requests supplied paired evidence and 2 HTTP failures remain unavailable |
 | P0 | Verify manuscript numbers automatically | Complete | Updated verifier covers input-footprint isolation and method-stable 45/60/90-day sensitivity; it passed in both full reconstructions |
 | P0 | Unify main/ablation synthetic noise | Complete locally | 7,300 shared Standard SC rows align exactly under the corrected split |

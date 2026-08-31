@@ -135,6 +135,7 @@ def evaluate(
                 rows.append(
                     {
                         "case_id": case["case_id"],
+                        "case_source": case.get("case_source", "unspecified"),
                         "split": case["split"],
                         "target_state": case["State Code"],
                         "method": method,

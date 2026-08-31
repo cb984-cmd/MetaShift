@@ -155,13 +155,14 @@ route remains closed; it cannot be reopened using this defect.
 
 ## Physical-donor uniqueness remediation
 
-- [!] **I0 — Enforce distinct physical geographic donors.** The data gate must
-  select at most one POC per donor physical site before ranking controls and
-  counting eligibility. The selection-aware candidate pool must apply the same
-  rule. Current impact: 222/394 anchors with at least one control contain
-  duplicated physical donor sites; 31 of 261 formerly complete comparisons
-  have fewer than three distinct physical donors.
-- [ ] **I1 — Rebuild all dependent artifacts.** Recompute 88101/88502 gates,
+- [x] **I0 — Enforce distinct physical geographic donors.** The rebuilt 88101
+  data gate has zero duplicate physical donor rows, zero target/donor physical
+  overlaps, and exact inventory counts. It yields 238 anchors with at least
+  three distinct physical donors. The rebuilt stable benchmark has 146 target
+  sites (124 transition-regime and 22 general stable-monitor cases), a 66/80
+  split, zero duplicate donors within a case, and zero cross-split input
+  overlap.
+- [!] **I1 — Rebuild all dependent artifacts.** Recompute 88101/88502 gates,
   stable synthetic cases, all benchmark methods, intervals, placebos,
   evidence tiers, figures, and extension analyses with the repaired controls.
 - [ ] **I2 — Revalidate and release.** Run two clean environments, validate

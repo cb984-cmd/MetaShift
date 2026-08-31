@@ -688,7 +688,7 @@ def main() -> None:
     # Physical donor uniqueness in real audit
     if exists(real_audit_path):
         audit = pd.read_csv(real_audit_path)
-        complete = audit.loc[audit["status"] == "complete"]
+        complete = audit.loc[audit["audit_status"] == "complete"]
         if "donor_sites" in complete.columns:
             # Check no duplicate physical sites within any event's donor list
             dup_count = 0
@@ -718,9 +718,9 @@ def main() -> None:
     # All 563 events have machine-readable failure reasons for non-complete
     if exists(real_audit_path):
         audit = pd.read_csv(real_audit_path)
-        non_complete = audit.loc[audit["status"] != "complete"]
+        non_complete = audit.loc[audit["audit_status"] != "complete"]
         missing_reason = non_complete.loc[
-            non_complete["status"].isna() | (non_complete["status"].str.strip() == "")
+            non_complete["audit_status"].isna() | (non_complete["audit_status"].str.strip() == "")
         ]
         checks.append(
             check(

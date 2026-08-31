@@ -162,10 +162,14 @@ route remains closed; it cannot be reopened using this defect.
   sites (124 transition-regime and 22 general stable-monitor cases), a 66/80
   split, zero duplicate donors within a case, and zero cross-split input
   overlap.
-- [!] **I1 — Rebuild all dependent artifacts.** Recompute 88101/88502 gates,
-  stable synthetic cases, all benchmark methods, intervals, placebos,
-  evidence tiers, figures, and extension analyses with the repaired controls.
-- [ ] **I2 — Revalidate and release.** Run two clean environments, validate
+- [x] **I1 — Rebuild all dependent artifacts.** All donor-dependent artifacts
+  rebuilt with distinct physical donors: 88101/88502 gates, stable synthetic
+  benchmark, ablations, alignment, real audit (228 complete), nested bootstrap
+  (227/228), LOO, time placebos (128 full + 29 partial), evidence tiers
+  (34 supported, 122 not-supported, 407 inconclusive), tier sensitivity,
+  case studies, figures (16), and all downstream scripts migrated to v2 paths.
+  Committed 495c3c9.
+- [!] **I2 — Revalidate and release.** Run two clean environments, validate
   all regenerated claims, update the manuscript, and publish a new evidence
   release. v0.2.0 remains an archival superseded release with a public warning.
 

@@ -95,3 +95,19 @@ Gate 1 does not establish the task's technical validity. The novelty framing is
 pending Gate A, and must be narrowed or rejected if Phase 2 finds an invalid
 proposition, an implementation mismatch, or a closer work that resolves the
 same joint problem.
+
+## v0.5 scope-answerability extension
+
+The original v0.4 audit remains an immutable account of its endpoint study.
+The separate v0.5 audit is documented in
+[`V05_LITERATURE_AUDIT.md`](V05_LITERATURE_AUDIT.md),
+[`V05_CLOSEST_WORK_MATRIX.csv`](V05_CLOSEST_WORK_MATRIX.csv), and the appended
+search log. It adds Blackwell comparison-of-experiments, classical and
+hierarchical rejection, optimal risk--coverage strategies, fault residual
+signatures, and sensor diagnosability as explicit limiting literature.
+
+The prospective v0.5 contribution is therefore bounded to a synthetic,
+target-fixed donor-participation construction with predeclared
+channel-specific finite-policy answerability measurement. It does **not**
+claim a new generic risk--coverage functional, information-ordering theorem,
+common/idiosyncratic change-point method, fault-diagnosis method, or priority.

@@ -128,6 +128,37 @@ replacement or measurement bias.
   does not support an algorithm-superiority, causal, instrument-fault, AQS, or
   external-validity claim, and it does not lift the human block on taxonomy.
 
+## v0.5 answerability-frontier reconstruction
+
+- [x] **V5-A -- Literature, theory, and adversarial audit.** The project now
+  separates detection, scope, and mechanism; defines target-only,
+  comparative, and conceptual external channels; scopes a finite-policy
+  answerability frontier and Scope Answerability Gain; proves only the
+  balanced matched-target limit, nested-channel monotonicity, analysis-scale
+  partial-scope identity, and a bounded interval-separation sufficient
+  condition. The original nominal-midpoint certificate is rejected. See
+  [`paper/upgrade/V05_SCOPE_ANSWERABILITY_THEORY.md`](paper/upgrade/V05_SCOPE_ANSWERABILITY_THEORY.md)
+  and [`paper/upgrade/V05_LITERATURE_AUDIT.md`](paper/upgrade/V05_LITERATURE_AUDIT.md).
+- [x] **V5-B -- Independent preregistered protocol and implementation.** A
+  tracked 640-cell, target-fixed synthetic design has 120 component-disjoint
+  calibration and 360 evaluation components, bounded noise, q=0/q=1 endpoints,
+  partial donor participation, availability loss, mismatch, contamination, and
+  raw-scale leakage. The code defines all policies, schemas, source boundaries,
+  component bootstrap, verifier, and receipt-bound figure generator before
+  outcome execution. See
+  [`configs/v05_answerability_protocol.json`](configs/v05_answerability_protocol.json),
+  [`paper/upgrade/V05_PRE_OUTCOME_PROTOCOL.md`](paper/upgrade/V05_PRE_OUTCOME_PROTOCOL.md),
+  and [`paper/upgrade/V05_EXECUTION_FREEZE_CHECKLIST.md`](paper/upgrade/V05_EXECUTION_FREEZE_CHECKLIST.md).
+- [ ] **V5-C -- Execution-freeze gate.** No v0.5 output, attempt record, or
+  execution tag exists. Complete full tests, CI, source-hash manifest, and a
+  tagged clean pre-outcome commit before the one permitted execution.
+- [ ] **V5-D -- One-time execution and frozen audit.** Preserve every outcome
+  and failure mode; do not tune, rerun, or erase a negative result.
+- [ ] **V5-E -- Evidence integration.** Only after V5-D, generate source-bound
+  figures, verify manuscript numbers, and revise the claim hierarchy. v0.4
+  remains endpoint evidence; v0.3.2 remains deployment/abstention context; the
+  taxonomy remains a human-only mechanism gate.
+
 ## Current checkpoint
 
 - [x] Build 2019--2025 AQS 88101 canonical daily dataset and provenance manifest.

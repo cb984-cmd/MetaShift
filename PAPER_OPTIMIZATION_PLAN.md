@@ -74,3 +74,13 @@ tune against the already viewed 80-site synthetic evaluation split.
 | P1 | Vary evidence-tier q thresholds | Complete | v2 strict/primary/lenient settings yield 0/34/55 supported candidates; labels remain exploratory |
 | P1 | Enhance same-site overlap evidence | Complete with limitation | Eleven daily and nine hourly paired alternate-POC comparisons are retained; daily/hourly direction agreement is 8/9, and evidence is contextual only |
 | P2 | New selective model or gate | Deferred | Requires a new blind 60-plus-target input-disjoint manifest; existing 66/80 split is ineligible |
+
+## v0.5 scope-answerability reconstruction
+
+The active reconstruction no longer seeks a MetaShift-versus-standard synthetic
+control advantage. Its pre-outcome protocol measures synthetic scope
+answerability under target-only and comparative information channels, while
+holding the target observation fixed across local/shared paired states. The
+new theory, literature limits, power analysis, protocol, claim ledger, and
+execution checklist are in `paper/upgrade/V05_*`. Taxonomy review remains
+blocked and is not an input to this scope-level work.

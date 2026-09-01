@@ -1,0 +1,24 @@
+{
+  "bound_input_sha256": {
+    "configs/v05_answerability_protocol.json": "96db3c6daaa174b2f5e853c44dd0ad89b8d58076994826f73975012dc95f1b95",
+    "metashift/answerability.py": "a340dfb72c9a43691fb110eaec2417a9197e5f968fed9a8a276b5c4565f9db84",
+    "metashift/counterfactual.py": "d95df9426e1627a3b879ea468fb7239b6fd5a747d7d57d79210cc9e89d7e0ab0",
+    "metashift/identifiability.py": "3668248a401b891fdfdc059fd64c2dae04bb09d56511604455851a78acf1b0a1",
+    "metashift/metrics.py": "ad62b2af389fad5e097a4556a3757d947181cbb6089b37a5a712e3f224c6d2c9",
+    "requirements-lock.txt": "179c78cfb9a7a666bf60f78a99b80a1ffa763ac51431da7ca3cc5f5c1d6c6818",
+    "scripts/generate_v05_answerability_figures.py": "ec5443cbda70117dcb9a81b05f8d4c188bd511f2880e4675800a3e82d6d8cd23",
+    "scripts/run_v05_answerability_frontier.py": "d79f286025791c188100520a756d55ec1091c7bf1158df35ca0310dc18049066",
+    "scripts/verify_v05_answerability_results.py": "fa120c40667bf89c604e2879deb3b77f91b084390ec1c95e38078d144a228e4f",
+    "scripts/verify_v05_protocol_freeze.py": "adf6019d779a6e56a31d91b7de7033dd22fa12954510e1349b5cb70a48bcca15"
+  },
+  "execution_claim_tag": "v0.5.0-answerability-execution-claim",
+  "execution_freeze_tag": "v0.5.0-answerability-freeze",
+  "execution_rule": "Create and push the annotated execution-freeze tag only after this manifest, all pre-outcome sources, tests, and CI pass. Execute exactly once from the clean tagged commit after atomically acquiring the separately annotated remote execution-claim tag; preserve a claim or attempt record after failure and never rerun.",
+  "execution_state": "ready_for_execution_freeze",
+  "hash_semantics": "SHA-256 of UTF-8 tracked text after CRLF line endings are normalized to LF, matching Git blob content.",
+  "manifest_id": "v0.5-answerability-execution-manifest",
+  "outcome_access_status": "No v0.5 output directory, result file, or durable attempt record existed when this manifest was created.",
+  "protocol_id": "v0.5-answerability-frontier",
+  "protocol_sha256": "96db3c6daaa174b2f5e853c44dd0ad89b8d58076994826f73975012dc95f1b95",
+  "schema_version": 1
+}

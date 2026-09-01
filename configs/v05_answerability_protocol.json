@@ -1,0 +1,550 @@
+{
+  "schema_version": 1,
+  "protocol_id": "v0.5-answerability-frontier",
+  "protocol_state": "execution_freeze_candidate",
+  "purpose": "Measure a protocol-restricted synthetic scope-answerability envelope under target-only and comparative observation channels. This is not an estimator-superiority, causal, physical-fault, real-AQS mechanism, or external-validity study.",
+  "immutable_predecessors": {
+    "v032_evidence_tag": "v0.3.2-evidence-final",
+    "v032_evidence_commit": "57d678ecabebff724d898abe626c9ef80538775b",
+    "v041_execution_tag": "v0.4.1-execution-freeze",
+    "v041_execution_commit": "b286221f13b5da8c18dc30226114400d071421d1",
+    "rule": "No v0.3.2 or v0.4 artifact, source, configuration, result, threshold, seed, or outcome is an input to v0.5 generation, calibration, model choice, threshold choice, or interpretation."
+  },
+  "data_access": {
+    "primary_source": "New independently generated bounded synthetic panels only.",
+    "forbidden_sources": [
+      "AQS data and metadata",
+      "v0.3.2 stable-benchmark inputs or outputs",
+      "v0.4 synthetic inputs or outputs",
+      "taxonomy review packet or decisions",
+      "any CSV, parquet, JSON, database, API, or external path supplied at execution"
+    ],
+    "physical_footprint": "Synthetic component, target, donor, and date identifiers have no physical-site identity and no relation to AQS records.",
+    "input_access_enforcement": "The execution entrypoint has no input-data path argument. It may read only its tracked configuration and frozen allowlisted source files for provenance; panels are constructed in memory and no loader, API client, result reader, or external-data reader may be called.",
+    "execution_input_allowlist": [
+      "configs/v05_answerability_execution_manifest.json",
+      "configs/v05_answerability_protocol.json",
+      "requirements-lock.txt",
+      "metashift/answerability.py",
+      "metashift/counterfactual.py",
+      "metashift/identifiability.py",
+      "metashift/metrics.py",
+      "scripts/run_v05_answerability_frontier.py",
+      "scripts/verify_v05_protocol_freeze.py",
+      "scripts/verify_v05_answerability_results.py",
+      "scripts/generate_v05_answerability_figures.py"
+    ]
+  },
+  "runtime_environment": {
+    "python_implementation": "CPython",
+    "python_major": 3,
+    "python_minor": 13,
+    "requirements_lock": "requirements-lock.txt",
+    "required_distribution_versions": {
+      "contourpy": "1.3.3",
+      "cycler": "0.12.1",
+      "fonttools": "4.63.0",
+      "kiwisolver": "1.5.1",
+      "matplotlib": "3.11.1",
+      "numpy": "2.5.2",
+      "packaging": "26.3",
+      "pandas": "3.0.5",
+      "pillow": "12.3.0",
+      "pyparsing": "3.3.2",
+      "python-dateutil": "2.9.0.post0",
+      "ruptures": "1.1.10",
+      "scipy": "1.18.1",
+      "six": "1.17.0",
+      "tzdata": "2026.3"
+    },
+    "validation_rule": "The executor and result verifier record and require the configured CPython major/minor version, every requirements-lock distribution version, and the LF-normalized requirements-lock hash. A mismatch fails closed before execution or replay."
+  },
+  "synthetic_panel": {
+    "random_generator": "numpy.random.default_rng (PCG64)",
+    "base_seed": 20260902,
+    "split_seed_offsets": {
+      "calibration": 0,
+      "evaluation": 1000000
+    },
+    "component_seed_rule": "base_seed + split_seed_offsets[split] + zero_based_component_index; no scope arm, grid factor, or outcome is part of the seed.",
+    "component_counts": {
+      "calibration": 120,
+      "evaluation": 360
+    },
+    "component_id_template": "v05-{split}-component-{index:03d}",
+    "start_date": "2031-01-01",
+    "days": 300,
+    "anchor_day_index": 180,
+    "donor_count": 4,
+    "analysis_scale_generator": {
+      "mean": 2.4,
+      "minimum_analysis_scale": 0.5,
+      "common_ar1_coefficient": 0.7,
+      "common_innovation_half_width": 0.01,
+      "noise_distribution": "Each component draws fixed Uniform(-1,1) target and donor innovation arrays in chronological row-major order. The applicable pre/post bounded amplitude scales those same arrays by the prespecified noise factor.",
+      "draw_order": [
+        "draw bounded common initial state",
+        "draw 299 bounded common innovations",
+        "draw 300 target unit innovations",
+        "draw 300 by 4 donor unit innovations"
+      ],
+      "raw_conversion": "raw = exp(analysis_scale) - 1"
+    }
+  },
+  "estimator": {
+    "analysis_transform": "log1p(max(raw, 0))",
+    "donor_weights": [0.25, 0.25, 0.25, 0.25],
+    "availability_normalization": "Use the same date-specific normalized fixed donor weights as metashift.counterfactual.weighted_donor_series.",
+    "calibration_days": 120,
+    "calibration_buffer_days": 15,
+    "comparison_days": 60,
+    "minimum_window_observations": 40,
+    "minimum_available_donors": 3,
+    "scope_score": "signed mean(log_residual post window) - signed mean(log_residual pre window); the fixed pre-anchor calibration offset cancels algebraically and is still cross-checked against anchor_residual_windows.",
+    "numerical_identity_tolerance": 1e-12
+  },
+  "full_cartesian_grid": {
+    "factor_order": [
+      "nominal_donor_participation",
+      "signal_h",
+      "donor_mismatch",
+      "availability",
+      "donor_contamination",
+      "raw_scale_field",
+      "bounded_noise"
+    ],
+    "nominal_donor_participation": [
+      {
+        "name": "q0.00",
+        "value": 0.0,
+        "donor_participation": [0.0, 0.0, 0.0, 0.0]
+      },
+      {
+        "name": "q0.25",
+        "value": 0.25,
+        "donor_participation": [0.13, 0.21, 0.29, 0.37]
+      },
+      {
+        "name": "q0.50",
+        "value": 0.5,
+        "donor_participation": [0.38, 0.46, 0.54, 0.62]
+      },
+      {
+        "name": "q0.75",
+        "value": 0.75,
+        "donor_participation": [0.63, 0.71, 0.79, 0.87]
+      },
+      {
+        "name": "q1.00",
+        "value": 1.0,
+        "donor_participation": [1.0, 1.0, 1.0, 1.0]
+      }
+    ],
+    "signal_h": [
+      {
+        "name": "h0.04",
+        "value": 0.04
+      },
+      {
+        "name": "h0.08",
+        "value": 0.08
+      },
+      {
+        "name": "h0.12",
+        "value": 0.12
+      },
+      {
+        "name": "h0.20",
+        "value": 0.2
+      }
+    ],
+    "donor_mismatch": [
+      {
+        "name": "matched",
+        "maximum_absolute_offset": 0.0,
+        "offset_multipliers": [0.0, 0.0, 0.0, 0.0]
+      },
+      {
+        "name": "bounded_offset",
+        "maximum_absolute_offset": 0.002,
+        "offset_multipliers": [-1.0, -0.3333333333333333, 0.3333333333333333, 1.0]
+      }
+    ],
+    "availability": [
+      {
+        "name": "complete",
+        "rule": "All four donors are observed on every date."
+      },
+      {
+        "name": "rotating_one_missing",
+        "rule": "On each date t, donor (zero_based_component_index + t) mod 4 is missing. The same mask is used in both scope arms and every factor combination. Exactly three donors remain observed."
+      }
+    ],
+    "donor_contamination": [
+      {
+        "name": "none",
+        "maximum_log_scale_shift": 0.0
+      },
+      {
+        "name": "one_donor_bounded",
+        "maximum_log_scale_shift": 0.01,
+        "rule": "After the optional raw field and only on post-anchor dates, alter donor (zero_based_component_index + 1) mod 4 by z <- z + sign*0.01, where sign is a SHA-256-derived deterministic bit from the component identifier and does not use scope arm or label. Convert that altered z back to raw before scoring."
+      }
+    ],
+    "raw_scale_field": [
+      {
+        "name": "none",
+        "post_anchor_raw_additive_magnitude": 0.0
+      },
+      {
+        "name": "common_additive_2",
+        "post_anchor_raw_additive_magnitude": 2.0,
+        "rule": "After analysis-scale scope injection and before donor contamination, add 2.0 raw units to every finite target and donor observation in both arms on every post-anchor date."
+      }
+    ],
+    "bounded_noise": [
+      {
+        "name": "homoscedastic_low",
+        "pre_half_width": 0.002,
+        "post_half_width": 0.002
+      },
+      {
+        "name": "heteroskedastic_high",
+        "pre_half_width": 0.004,
+        "post_half_width": 0.008
+      }
+    ],
+    "cells_per_component": 640,
+    "rule": "Execute every factor combination exactly once for every component in each split. No cell may be removed, duplicated, reweighted, or selected after results are known."
+  },
+  "matched_scope_construction": {
+    "local_label": "local",
+    "comparison_label": "shared",
+    "target_rule": "For every pair, add the same positive constant H to the target analysis-scale path on all post-anchor dates in both arms. The stored target raw arrays must have identical IEEE bytes.",
+    "local_donor_rule": "Do not add the target schedule to any donor.",
+    "shared_donor_rule": "Add lambda_j*H to available donor j on every post-anchor date, using the selected nominal participation vector. Donor mismatch, availability, raw field, and contamination are applied identically to both arms after this scope distinction.",
+    "q0_negative_control": "At nominal q=0, both target and donor observations are exactly identical between arms. This is a required comparative-channel impossibility stratum, not a success case.",
+    "target_group_rule": "target_group_id omits q, donor mismatch, availability, and contamination. Every row sharing target_group_id must have exactly the same target digest.",
+    "forbidden_side_channels": [
+      "scope label",
+      "pair identifier",
+      "row order",
+      "component identifier",
+      "target digest",
+      "schedule or participation values",
+      "donor availability summary",
+      "grid factor names",
+      "certificate values",
+      "raw truth centers",
+      "oracle fields"
+    ]
+  },
+  "answerability_definition": {
+    "error_tolerances": [0.01, 0.05, 0.1, 0.2],
+    "channels": {
+      "target_only": "A target-only forced policy is supplied only the signed target change score and always predicts local. It may not access a confidence score or any donor-derived, pair-derived, or generator-derived field.",
+      "comparative": "A comparative policy is supplied only the signed residual scope score and a calibration-fixed threshold or confidence cutoff.",
+      "external": "O_E=(X,D,E) is formalized in the theory document but has no v0.5 empirical frontier because no admissible external evidence channel or mechanism label exists."
+    },
+    "policies": [
+      {
+        "name": "target_only_forced",
+        "channel": "target_only",
+        "answer_rule": "Always answer local.",
+        "selection": "None"
+      },
+      {
+        "name": "comparative_forced",
+        "channel": "comparative",
+        "answer_rule": "Predict local iff signed residual score is at least the calibration-selected macro-F1 threshold.",
+        "selection": "Always answer."
+      },
+      {
+        "name": "confidence_selective",
+        "channel": "comparative",
+        "answer_rule": "Use the comparative forced prediction when answered.",
+        "selection": "For each alpha separately, select from 101 equally spaced calibration-confidence quantiles plus always-abstain the maximal calibration coverage candidate with positive coverage and observed calibration error at most alpha; tie-break by the higher numeric cutoff. Apply it unchanged to evaluation."
+      },
+      {
+        "name": "certificate_selective",
+        "channel": "comparative_plus_synthetic_design_information",
+        "answer_rule": "Answer only when the structural margin is strictly positive, then use the robust interval threshold. This policy is explicitly oracle-assisted and synthetic-only.",
+        "selection": "No fitted cutoff."
+      }
+    ],
+    "empirical_frontier": "For each reporting alpha and channel, report the maximum held-out coverage among every predeclared frozen policy whose held-out answered-case error is at most the reporting alpha; this includes all four confidence policies calibrated at 0.01, 0.05, 0.10, and 0.20, not just the same-named alpha. Report zero when none has positive coverage. The envelope is descriptive and cannot be used to select or retune a policy.",
+    "policy_metric_alpha_semantics": "The alpha field in v05_policy_metrics.csv identifies a confidence policy's calibration target; alpha in v05_answerability_frontier.csv is the reporting tolerance. Bootstrap metric names identify which role applies.",
+    "scope_answerability_gain": "For every alpha, empirical comparative gain equals the comparative-channel finite-policy envelope minus the target-only finite-policy envelope.",
+    "ambiguous_partial_region": "The binary shared label includes all 0<q<1 arms. q=0 is observationally identical and must be reported separately. Any q>0 pair with nonpositive certificate margin is structurally ambiguous for the certificate and must abstain. The certificate does not estimate q, establish a physical mechanism, or imply that every partial scope is objectively ambiguous."
+  },
+  "structural_certificate": {
+    "status": "simulation_design_information_assisted_only",
+    "score_center_local": "H",
+    "score_center_shared": "H - realized_gap",
+    "realized_gap": "mean over retained post-score dates of q_t*H",
+    "lower_gap": "q_effective_min*H_min",
+    "base_error_bound": "2*maximum_absolute_donor_offset + 2*(pre_noise_half_width + post_noise_half_width)",
+    "raw_error_bound": "mean over retained post-score dates of L_c,t * sum_j(normalized_weight_jt * abs(target_raw_before_field - donor_raw_before_field_j)), using the sharp nonnegative raw-additive log-increment Lipschitz constant.",
+    "contamination_error_bound": "maximum_log_scale_shift",
+    "arm_error_bound": "base_error_bound + arm_raw_error_bound + contamination_error_bound",
+    "structural_margin": "lower_gap - (local_error_bound + shared_error_bound)",
+    "answer_rule": "Answer iff structural_margin > 0. Use threshold H - lower_gap/2 + (shared_error_bound - local_error_bound)/2; predict local iff score > threshold, otherwise shared.",
+    "oracle_diagnostic": "The simulation-information oracle replaces lower_gap by realized_gap in the same interval-separation rule. It is predeclared only to measure certificate efficiency and has no deployment meaning.",
+    "invalidity_rule": "Any nonfinite score, nonpositive H_min, q outside [0,1], changed retained-date set, fewer than three donors, target-identity failure, raw bound domain failure, or observed envelope violation is a certificate-contract failure and is never silently converted to a favorable abstention."
+  },
+  "calibration_and_evaluation": {
+    "component_split": "Calibration and evaluation component identifiers and seed streams are disjoint. A component, not an arm, date, or row, is the split unit.",
+    "threshold_selection": "Use metashift.metrics.select_macro_f1_threshold only on all finite calibration scope-arm scores and their binary labels. Scores at least the selected threshold predict local.",
+    "confidence": "absolute(signed residual score - calibration threshold)",
+    "cutoff_quantiles": {
+      "count": 101,
+      "start": 0.0,
+      "stop": 1.0,
+      "method": "linear"
+    },
+    "outcome_blindness": "The runner must construct all configuration, source bindings, threshold algorithms, policies, output schemas, metrics, and verification logic before an evaluation output exists. Calibration logic rejects any frame whose split is not exclusively calibration; evaluation logic receives precomputed thresholds and rejects a calibration frame.",
+    "no_retuning_rule": "Evaluation outcomes, empirical frontiers, certificate results, bootstrap intervals, figures, and subgroup results may not alter any generator value, threshold, policy, group, tolerance, or execution. Negative or unfavorable results remain in the result bundle."
+  },
+  "reporting": {
+    "primary_metrics": [
+      "finite-policy empirical answerability frontier at every prespecified alpha",
+      "Scope Answerability Gain",
+      "each policy's conditional error and coverage",
+      "q=0 negative-control coverage and error",
+      "partial-scope certificate abstention behavior",
+      "certificate prediction error and envelope violation rate",
+      "certificate efficiency relative to the predeclared simulation-information oracle region",
+      "full grid-cell and factor-family results",
+      "component-cluster percentile bootstrap uncertainty for overall frontier and policy metrics"
+    ],
+    "cluster_bootstrap": {
+      "cluster": "evaluation component_id",
+      "repetitions": 1000,
+      "seed": 20260902,
+      "interval": "Percentile 95% using numpy.quantile(method='linear')",
+      "scope": "Overall held-out frontier, Scope Answerability Gain, and all-policy coverage/error metrics. Grid cells are not treated as independent replicates."
+    },
+    "required_figures": [
+      "answerability frontier by channel",
+      "normalized structural-margin phase diagram",
+      "risk--coverage comparison",
+      "certificate-validity table",
+      "failure-mode map"
+    ],
+    "prohibited_summaries": [
+      "single favorable score replacing the full policy list",
+      "zero observed error described as zero population risk",
+      "confidence described as proof of identifiability",
+      "synthetic scope labels described as real measurement mechanisms",
+      "raw-scale stress described as an exact analysis-scale theorem"
+    ]
+  },
+  "expected_accounting": {
+    "grid_cells_per_component": 640,
+    "pair_rows": {
+      "calibration": 76800,
+      "evaluation": 230400,
+      "total": 307200
+    },
+    "scope_arm_events": {
+      "calibration": 153600,
+      "evaluation": 460800,
+      "total": 614400
+    },
+    "q0_pair_rows": {
+      "calibration": 15360,
+      "evaluation": 46080,
+      "total": 61440
+    },
+    "failure_rule": "Any source-boundary violation, missing or duplicate grid cell, target digest mismatch, q=0 comparative observation mismatch, mismatched local/shared availability, invalid score-window semantics, nonfinite value, stale source hash, calibration/evaluation mixing, undeclared policy, incomplete schema, failed result verifier, or outcome-dependent configuration change invalidates the run."
+  },
+  "output_contract": {
+    "directory": "artifacts/v05_answerability_frontier",
+    "attempt_record": "artifacts/.v05_answerability_frontier_attempt.json",
+    "execution_manifest": "configs/v05_answerability_execution_manifest.json",
+    "execution_freeze_tag": "v0.5.0-answerability-freeze",
+    "execution_claim_tag": "v0.5.0-answerability-execution-claim",
+    "source_hash_semantics": "SHA-256 of UTF-8 tracked text after CRLF line endings are normalized to LF, matching Git blob content.",
+    "post_execution_verifier": "scripts/verify_v05_answerability_results.py",
+    "figure_generator": "scripts/generate_v05_answerability_figures.py",
+    "overwrite_rule": "Before creating any local output, the runner must atomically push a new annotated remote execution-claim tag. It then creates the local attempt record with exclusive creation before allocating the result directory or writing any result. It refuses execution if the claim tag, attempt record, output directory, or any declared result exists; a post-claim allocation failure is durably recorded as claim_acquired_setup_failed, and all later paths record failed or completed state without overwriting prior evidence.",
+    "execution_preconditions": [
+      "git status --porcelain is empty",
+      "the configured execution-freeze tag is a local annotated tag resolving to HEAD",
+      "origin exposes the peeled annotated execution-freeze tag resolving to HEAD",
+      "all allowlisted input files are tracked, current, and bound by the matching execution manifest",
+      "the configured remote execution-claim tag does not already exist",
+      "no attempt record, output directory, or declared output exists",
+      "the tracked-only pre-outcome verifier passes"
+    ],
+    "files": [
+      "v05_scope_pair_results.csv",
+      "v05_calibration_policy.json",
+      "v05_policy_metrics.csv",
+      "v05_answerability_frontier.csv",
+      "v05_certificate_validity.csv",
+      "v05_failure_mode_map.csv",
+      "v05_component_bootstrap.csv",
+      "v05_execution_receipt.json"
+    ],
+    "schemas": {
+      "v05_scope_pair_results.csv": [
+        "protocol_id",
+        "execution_tag",
+        "split",
+        "component_id",
+        "component_index",
+        "grid_id",
+        "pair_id",
+        "target_group_id",
+        "nominal_q_name",
+        "nominal_q",
+        "signal_h_name",
+        "signal_h",
+        "donor_mismatch_name",
+        "donor_mismatch_bound",
+        "availability_name",
+        "contamination_name",
+        "contamination_bound",
+        "raw_field_name",
+        "raw_field_magnitude",
+        "noise_name",
+        "pre_noise_bound",
+        "post_noise_bound",
+        "local_target_sha256",
+        "shared_target_sha256",
+        "target_identity",
+        "comparative_observation_identity",
+        "local_score",
+        "shared_score",
+        "q_effective_mean",
+        "q_effective_min",
+        "h_min",
+        "realized_gap",
+        "base_error_bound",
+        "local_raw_error_bound",
+        "shared_raw_error_bound",
+        "local_error_bound",
+        "shared_error_bound",
+        "structural_margin",
+        "certificate_threshold",
+        "oracle_structural_margin",
+        "oracle_threshold",
+        "certificate_answered",
+        "certificate_abstention_reason",
+        "certificate_local_prediction",
+        "certificate_shared_prediction",
+        "oracle_answerable",
+        "local_envelope_satisfied",
+        "shared_envelope_satisfied",
+        "target_only_local_prediction",
+        "target_only_shared_prediction",
+        "comparative_local_prediction",
+        "comparative_shared_prediction",
+        "confidence_alpha_0_01_local_answered",
+        "confidence_alpha_0_01_shared_answered",
+        "confidence_alpha_0_01_local_prediction",
+        "confidence_alpha_0_01_shared_prediction",
+        "confidence_alpha_0_05_local_answered",
+        "confidence_alpha_0_05_shared_answered",
+        "confidence_alpha_0_05_local_prediction",
+        "confidence_alpha_0_05_shared_prediction",
+        "confidence_alpha_0_10_local_answered",
+        "confidence_alpha_0_10_shared_answered",
+        "confidence_alpha_0_10_local_prediction",
+        "confidence_alpha_0_10_shared_prediction",
+        "confidence_alpha_0_20_local_answered",
+        "confidence_alpha_0_20_shared_answered",
+        "confidence_alpha_0_20_local_prediction",
+        "confidence_alpha_0_20_shared_prediction"
+      ],
+      "v05_policy_metrics.csv": [
+        "split",
+        "group_type",
+        "group_value",
+        "policy",
+        "alpha",
+        "total_events",
+        "answered_events",
+        "coverage",
+        "error_events",
+        "conditional_error",
+        "status"
+      ],
+      "v05_answerability_frontier.csv": [
+        "split",
+        "group_type",
+        "group_value",
+        "alpha",
+        "channel",
+        "frontier_coverage",
+        "frontier_conditional_error",
+        "qualifying_policies",
+        "candidate_policy_count",
+        "status"
+      ],
+      "v05_certificate_validity.csv": [
+        "split",
+        "group_type",
+        "group_value",
+        "total_pair_rows",
+        "certificate_answered_pair_rows",
+        "certificate_pair_coverage",
+        "certificate_error_events",
+        "certificate_answered_events",
+        "certificate_conditional_error",
+        "envelope_violating_events",
+        "envelope_violation_rate",
+        "oracle_answerable_pair_rows",
+        "certificate_efficiency",
+        "q0_certificate_answered_pair_rows",
+        "status"
+      ],
+      "v05_failure_mode_map.csv": [
+        "split",
+        "grid_id",
+        "nominal_q_name",
+        "signal_h_name",
+        "donor_mismatch_name",
+        "availability_name",
+        "contamination_name",
+        "raw_field_name",
+        "noise_name",
+        "total_pair_rows",
+        "q0_observational_identity_pair_rows",
+        "nonpositive_structural_margin_pair_rows",
+        "certificate_answered_pair_rows",
+        "envelope_violation_pair_rows",
+        "certificate_error_events",
+        "comparative_forced_error_events",
+        "confidence_alpha_0_05_answered_events",
+        "confidence_alpha_0_05_error_events"
+      ],
+      "v05_component_bootstrap.csv": [
+        "metric",
+        "alpha",
+        "point_estimate",
+        "lower_95",
+        "upper_95",
+        "valid_repetitions",
+        "repetitions",
+        "cluster_unit",
+        "status"
+      ]
+    },
+    "receipt_requirements": [
+      "protocol SHA-256",
+      "execution Git commit",
+      "execution tag and remote peeled tag commit",
+      "execution-claim annotated tag object and remote peeled claim commit",
+      "claim-bound allowlisted-input bundle and runtime hashes",
+      "execution manifest SHA-256",
+      "allowlisted input hashes",
+      "expected and observed accounting",
+      "all preceding payload hashes and byte counts",
+      "failure count",
+      "implementation semantics cross-check"
+    ],
+    "receipt_hash_rule": "The final receipt contains SHA-256 values for every preceding non-self payload. The durable attempt record stores the final receipt hash, avoiding a self-referential hash."
+  }
+}

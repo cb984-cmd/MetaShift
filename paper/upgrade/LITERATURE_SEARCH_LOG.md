@@ -57,3 +57,28 @@ was rate-limited. Those limitations are recorded above rather than silently
 filled from search snippets. The comparison matrix uses bounded claims tied to
 the verified source record. Absence from this focused search is not evidence
 that no other related work exists.
+
+## Phase 2: v0.5 scope-answerability extension
+
+**Search date:** 2026-09-01
+**Scope:** primary or canonical records for the proposed target-fixed
+answerability frontier, partial-scope continuum, and structural abstention
+condition. No v0.5 evaluation array, result, threshold, figure, or outcome
+artifact was read for this literature search.
+
+| Query | Source channels | Disposition |
+| --- | --- | --- |
+| `Blackwell comparison experiments 1951 1953 decision theory` | Project Euclid DOI records | Included as established information-refinement theory. The 1953 landing page was access-limited. |
+| `selective classification risk coverage reject option JMLR` | Official JMLR and NeurIPS records | Included EYW10, FPA23, GE17, and the classical Chow boundary. |
+| `hierarchical selective classification risk coverage` | arXiv canonical record | Included HSC24 only as a limitation on any structured-selective novelty claim. |
+| `common idiosyncratic change point factor analysis` | DOI and author record | Rechecked BCF18; common/idiosyncratic attribution remains established. |
+| `weak supervision prediction inference labels` | Official JMLR | Rechecked CGAD24; synthetic truth and weak metadata must remain distinct. |
+| `synthetic control feasibility data requirements` | Official AEA | Rechecked A21; donor comparison and feasibility are established. |
+| `fault distinguishability residual signatures sensor placement diagnosis` | Crossref and DOI records | Included CW84 and KF08. IEEE full text was access-limited, so only bounded metadata/scope claims are used. |
+| `sensor fault system fault distinguishability redundant sensors` | DOI and prior canonical record | Rechecked TS17's physical-model boundary. |
+
+The resulting source table is
+[`V05_LITERATURE_AUDIT.md`](V05_LITERATURE_AUDIT.md) and the compact matrix is
+[`V05_CLOSEST_WORK_MATRIX.csv`](V05_CLOSEST_WORK_MATRIX.csv). The extension
+uses a bounded joint contribution statement only. It does not assert that this
+focused audit proves the absence of prior work.

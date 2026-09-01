@@ -51,11 +51,14 @@ evidence channel or a deployable policy. \\
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\linewidth]{fig_applicability_map.pdf}
-\caption{Applicability and failure-mode map for the frozen audit. The diagram
-is not a classifier: an available cross-site diagnostic result and an
-inconclusive availability failure both leave physical mechanism unresolved.
-Station histories, technical records, and human review remain necessary for
-any equipment-level hypothesis.}
+\caption{Claim-boundary matrix for the frozen audit. Its rows partition all
+\TotalAnchors{} primary anchors into \InsufficientDonorAnchors{}
+donor-insufficient, \InputFailureAnchors{} input-window-failure, and
+\CompleteComparisons{} complete-comparison states; the complete row separately
+reports the three observational audit tiers. Every row limits the permitted
+output and excludes a physical-mechanism conclusion. Station histories,
+technical records, and human review remain required for any equipment-level
+hypothesis.}
 \label{fig:applicability-map}
 \end{figure}
 

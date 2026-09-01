@@ -30,9 +30,9 @@
       "sha256": "a63b9bee081ff2ea898c436020d17a243141c879f2e7c7acbedf1d2676b29668"
     },
     {
-      "bytes": 699,
+      "bytes": 854,
       "path": "generated/tables/table_v05_certificate.tex",
-      "sha256": "019498f2c9ec8b292e96f2e246826656b8d5011195b7e7741bea49a69bfa10d1"
+      "sha256": "33e0aa3f838a538158122a6ed4ea43170a08d58f607950cbaf8b2ee763bbc87a"
     },
     {
       "bytes": 830,
@@ -40,19 +40,19 @@
       "sha256": "ef97276d4061756a8caf23c9a46d35755d2a3b45a5dbb21571c385789c517343"
     },
     {
-      "bytes": 823,
+      "bytes": 912,
       "path": "generated/tables/table_v05_frontier.tex",
-      "sha256": "16041f8604f4fa49f52a6e6e4ed9499301ef2616889121b1578f3367557612a0"
+      "sha256": "f6abbaa7e2a7f4d3404fdcd60c2e0ccc18abf0a2c50c1a92aeb1f722d934ff6a"
     },
     {
-      "bytes": 1625,
+      "bytes": 2305,
       "path": "generated/v05_answerability_macros.tex",
-      "sha256": "822e3a79f129dfbf78349e54655733274913617ca9f9cfda82ce1f3cb2a94b91"
+      "sha256": "95f8aef33ad67cdc6f35bfedca4d9d2c135d92701b6303c7b1a77d3338851112"
     },
     {
-      "bytes": 1973,
+      "bytes": 2053,
       "path": "generated/v05_claim_value_manifest.json",
-      "sha256": "d29551a6abb1a621cc11979fe05c8b417ac1ed54666246471d33f4abcce912ae"
+      "sha256": "4dadb6af4a3991972573080daecb6b05490ffba38634514a21372911188fa48c"
     },
     {
       "bytes": 3081,

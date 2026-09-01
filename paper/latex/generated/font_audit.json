@@ -1,13 +1,13 @@
 {
-  "generated_at_utc": "2026-09-01T16:32:09.943846+00:00",
+  "generated_at_utc": "2026-09-01T19:39:50.651902+00:00",
   "tool": "pdffonts",
   "pdf_count": 18,
-  "font_count": 127,
+  "font_count": 125,
   "all_checks_passed": true,
   "audits": [
     {
       "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\build\\MetaShift_Bench_Yau_2026.pdf",
-      "font_count": 76,
+      "font_count": 75,
       "type3_fonts": [],
       "unembedded_fonts": []
     },
@@ -43,7 +43,7 @@
     },
     {
       "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_donor_construction.pdf",
-      "font_count": 3,
+      "font_count": 2,
       "type3_fonts": [],
       "unembedded_fonts": []
     },

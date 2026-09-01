@@ -1,11 +1,14 @@
 import copy
 import importlib.util
+import json
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
+from matplotlib import pyplot as plt
 from matplotlib.transforms import Bbox
+import pandas as pd
 
 
 SCRIPT_PATH = (
@@ -46,6 +49,125 @@ BUILD_SPEC.loader.exec_module(paper_builder)
 
 
 class FormalFigureValidationTests(unittest.TestCase):
+    def test_frozen_redesigned_figure_partitions_reconcile(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        summary = json.loads(
+            (root / "configs" / "current_evidence_summary_v2.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        audit = pd.read_csv(
+            root / "artifacts" / "real_transition_88101_event_audit.csv"
+        )
+        tiers = pd.read_csv(
+            root / "artifacts" / "real_transition_88101_evidence_tiers.csv"
+        )
+        placebo = pd.read_csv(root / "artifacts" / "time_placebo_summary.csv")
+        split = json.loads(
+            (root / "artifacts" / "stable_synthetic_case_split_audit.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        counts = figure_verifier.figure_partition_counts(audit, tiers, placebo, split)
+
+        self.assertEqual(
+            {
+                "total_anchors": 563,
+                "zero_sites": 169,
+                "one_site": 99,
+                "two_sites": 57,
+                "at_least_three_sites": 238,
+                "at_least_one_site": 394,
+            },
+            counts["donor_construction"],
+        )
+        self.assertEqual(
+            {
+                "total_anchors": 563,
+                "donor_insufficient": 325,
+                "input_failure": 10,
+                "complete_comparisons": 228,
+                "supported_candidates": 34,
+                "not_supported": 122,
+                "complete_inconclusive": 72,
+                "overall_inconclusive": 407,
+            },
+            counts["event_accounting"],
+        )
+        self.assertEqual(
+            {
+                "complete_comparisons": 228,
+                "all_placebo_rows": 228,
+                "eligible_placebo_rows": 157,
+                "fewer_than_50": 71,
+                "from_50_to_99": 29,
+                "at_least_50": 157,
+                "at_least_100": 128,
+                "finite_probability_rows": 157,
+            },
+            counts["placebos"],
+        )
+        self.assertEqual(
+            [],
+            figure_verifier.figure_partition_violations(summary, counts),
+        )
+
+    def test_figure_partition_validation_rejects_missing_placebo_probability(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        summary = json.loads(
+            (root / "configs" / "current_evidence_summary_v2.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        audit = pd.read_csv(
+            root / "artifacts" / "real_transition_88101_event_audit.csv"
+        )
+        tiers = pd.read_csv(
+            root / "artifacts" / "real_transition_88101_evidence_tiers.csv"
+        )
+        placebo = pd.read_csv(root / "artifacts" / "time_placebo_summary.csv")
+        split = json.loads(
+            (root / "artifacts" / "stable_synthetic_case_split_audit.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        counts = figure_verifier.figure_partition_counts(audit, tiers, placebo, split)
+        invalid = copy.deepcopy(counts)
+        invalid["placebos"]["finite_probability_rows"] -= 1
+
+        violations = figure_verifier.figure_partition_violations(summary, invalid)
+
+        self.assertIn(
+            "placebo_histogram_has_missing_eligible_probabilities",
+            {violation["issue"] for violation in violations},
+        )
+
+    def test_strict_schematic_geometry_rejects_node_outside_canvas(self) -> None:
+        figure, axis = plt.subplots(figsize=(6.3, 2.0))
+        axis.axis("off")
+        figure_factory._box(
+            axis,
+            -0.20,
+            0.50,
+            0.20,
+            0.10,
+            "Boundary node",
+            facecolor=figure_factory.FIGURE_COLORS["audit"],
+            identifier="boundary_node",
+        )
+
+        layout = figure_factory.inspect_figure_layout(
+            figure, "fig_donor_construction.pdf"
+        )
+
+        self.assertFalse(layout["strict_node_geometry_passed"])
+        self.assertIn(
+            "node_outside_figure_canvas",
+            {violation["issue"] for violation in layout["violations"]},
+        )
+        plt.close(figure)
+
     def test_window_contract_requires_inclusive_bounds_and_overlap(self) -> None:
         config = {
             "windows": {
@@ -142,11 +264,47 @@ class FormalFigureValidationTests(unittest.TestCase):
 
         with (
             patch.object(paper_builder, "FIGURE_CAPTION_MARKERS", markers),
+            patch.object(
+                paper_builder.subprocess, "check_output", return_value=bbox_xml
+            ),
+        ):
+            locations = paper_builder.extract_caption_locations(
+                "pdftotext", Path("paper.pdf")
+            )
+
+        self.assertEqual(1, locations["fig_v05_failure_mode_map.png"]["page"])
+
+    def test_placebo_caption_lookup_accepts_hyphenated_probability(self) -> None:
+        words = (
+            "Figure",
+            "15:",
+            "Time-placebo",
+            "availability",
+            "partition",
+            "and",
+            "raw",
+            "within-event",
+            "placebo-probability",
+            "distribution.",
+        )
+        xml_words = "".join(
+            f'<word xMin="0" yMin="{index}" xMax="10" yMax="{index + 1}">{word}</word>'
+            for index, word in enumerate(words)
+        )
+        bbox_xml = f'<doc><page width="595" height="842">{xml_words}</page></doc>'
+        markers = {
+            "fig_placebos.pdf": paper_builder.FIGURE_CAPTION_MARKERS[
+                "fig_placebos.pdf"
+            ]
+        }
+
+        with (
+            patch.object(paper_builder, "FIGURE_CAPTION_MARKERS", markers),
             patch.object(paper_builder.subprocess, "check_output", return_value=bbox_xml),
         ):
             locations = paper_builder.extract_caption_locations("pdftotext", Path("paper.pdf"))
 
-        self.assertEqual(1, locations["fig_v05_failure_mode_map.png"]["page"])
+        self.assertEqual(1, locations["fig_placebos.pdf"]["page"])
 
     def test_final_build_cannot_skip_compliance(self) -> None:
         final_args = paper_builder.argparse.Namespace(

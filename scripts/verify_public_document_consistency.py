@@ -36,16 +36,23 @@ PUBLIC_DOCUMENTS = [
     ROOT / "MetaShift_项目结果汇总.txt",
 ]
 
-V2_PATH_FILES = PUBLIC_DOCUMENTS
+HISTORICAL_DOCUMENTS = {
+    ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
+}
 
-STALE_COUNT_FILES = PUBLIC_DOCUMENTS
+ACTIVE_PUBLIC_DOCUMENTS = [
+    path for path in PUBLIC_DOCUMENTS if path not in HISTORICAL_DOCUMENTS
+]
+
+V2_PATH_FILES = ACTIVE_PUBLIC_DOCUMENTS
+
+STALE_COUNT_FILES = ACTIVE_PUBLIC_DOCUMENTS
 
 CURRENT_RELEASE_DOCUMENTS = [
     ROOT / "README.md",
     ROOT / "PROJECT_PLAN.md",
     ROOT / "PAPER_OPTIMIZATION_PLAN.md",
     ROOT / "REPRODUCIBILITY.md",
-    ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
     ROOT / "paper" / "SUBMISSION_CHECKLIST.md",
     ROOT / "MetaShift_项目结果汇总.txt",
 ]
@@ -53,7 +60,6 @@ CURRENT_RELEASE_DOCUMENTS = [
 EXTERNAL_REVIEW_DOCUMENTS = [
     ROOT / "README.md",
     ROOT / "PAPER_OPTIMIZATION_PLAN.md",
-    ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
     ROOT / "paper" / "CLAIM_EVIDENCE_MAP.csv",
     ROOT / "MetaShift_项目结果汇总.txt",
 ]
@@ -72,13 +78,6 @@ STALE_LANGUAGE_FILES = {
         "paused while",
         "awaiting rebuild",
         "results are paused",
-    ],
-    ROOT / "paper" / "MANUSCRIPT_DRAFT.md": [
-        "paused pending rebuild",
-        "paused while",
-        "awaiting rebuild",
-        "results are paused",
-        "not a submission-ready report",
     ],
     ROOT / "PROJECT_PLAN.md": [
         "ready for evidence release tag",
@@ -255,7 +254,7 @@ def check_stale_count_consistency() -> dict[str, object]:
 
 
 def check_current_numbers_from_summary() -> dict[str, object]:
-    """Verify core numbers from the tracked summary appear in both report summaries."""
+    """Verify core numbers from the tracked summary appear in the active report summary."""
     summary = load_summary()
     required = {
         "canonical_records": summary["data_gate"]["canonical_records"],
@@ -274,7 +273,6 @@ def check_current_numbers_from_summary() -> dict[str, object]:
     }
     violations: list[dict[str, object]] = []
     for path in (
-        ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
         ROOT / "MetaShift_项目结果汇总.txt",
     ):
         normalized = re.sub(r"\s+", " ", path.read_text(encoding="utf-8"))
@@ -292,7 +290,7 @@ def check_current_numbers_from_summary() -> dict[str, object]:
     return make_check(
         "current_numbers_in_manuscript",
         not violations,
-        f"All {len(required)} core numbers from tracked summary must appear in both report summaries.",
+        f"All {len(required)} core numbers from tracked summary must appear in the active report summary.",
         violations,
     )
 
@@ -382,7 +380,6 @@ def check_interval_coverage_status() -> dict[str, object]:
         ROOT / "PROJECT_PLAN.md",
         ROOT / "PAPER_OPTIMIZATION_PLAN.md",
         ROOT / "docs" / "study_protocol.md",
-        ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
         ROOT / "MetaShift_项目结果汇总.txt",
     ]
     violations: list[dict[str, object]] = []
@@ -445,7 +442,7 @@ def check_stale_status_language() -> dict[str, object]:
 
 def check_v02_not_presented_as_current() -> dict[str, object]:
     violations: list[dict[str, object]] = []
-    for path in PUBLIC_DOCUMENTS:
+    for path in ACTIVE_PUBLIC_DOCUMENTS:
         lines = path.read_text(encoding="utf-8").splitlines()
         for line_number, line in enumerate(lines, start=1):
             if not any(version in line.lower() for version in ("v0.2", "v0.3.0", "v0.3.1")):

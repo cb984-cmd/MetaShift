@@ -27,17 +27,20 @@ strength, mismatch, availability, contamination, nonlinear raw-scale leakage,
 and bounded noise. For the finite predeclared policy set, the target-only
 answerability envelope is zero at all four reported tolerances
 ($\alpha\in\{.01,.05,.10,.20\}$), while the comparative envelope is also zero
-through $\alpha=.10$ and reaches \VFiveComparativeFrontierTwenty{} at
-$\alpha=.20$ with observed conditional error \VFiveComparativeRiskTwenty{}.
-A structural interval-separation certificate answers
-\VFiveCertificateCoverage{} of matched pairs with
-\VFiveCertificateObservedError{} observed conditional error and
-\VFiveCertificateEfficiency{} efficiency relative to a predeclared
-simulation-information oracle region. It abstains on
-\VFiveNonpositiveMarginPairs{} pairs with nonpositive structural margin,
-including all \VFiveQZeroPairs{} observationally identical $q=0$ negative
-controls. Zero observed error is not a population-risk guarantee, and the
-certificate uses synthetic design information unavailable in deployment.
+through $\alpha=.10$ and reaches \VFiveComparativeFrontierTwentyPercent{}
+at $\alpha=.20$ with observed conditional error
+\VFiveComparativeRiskTwentyPercent{}. A structural interval-separation
+certificate answered \VFiveCertificateAnsweredPairs{} of
+\VFiveEvaluationPairs{} matched pairs (\VFiveCertificateCoveragePercent{}),
+with \VFiveCertificateObservedErrorDisplay{} among
+\VFiveCertificateAnsweredArms{} answered scope arms. It recovered
+\VFiveCertificateEfficiencyPercent{} of the pairs deemed answerable by the
+predeclared simulation-information oracle and abstained on the remaining
+\VFiveNonpositiveMarginPairs{} pairs (\VFiveCertificateAbstentionPercent{}),
+including all \VFiveQZeroPairs{} observationally indistinguishable $q=0$
+negative controls. These finite-grid results hold only under the bounded
+synthetic generator and do not constitute a population-risk guarantee or a
+deployable real-network certificate.
 
 \noindent The report proves the target-only impossibility statement under
 matched balanced target laws, specializes information-refinement monotonicity,

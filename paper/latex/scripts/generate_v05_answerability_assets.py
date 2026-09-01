@@ -145,6 +145,25 @@ def _format_probability(value: object, digits: int = 6) -> str:
     return f"{float(value):.{digits}f}"
 
 
+def _format_percent(value: object) -> str:
+    """Render a report-facing probability without implying excess precision."""
+
+    if pd.isna(value):
+        return "--"
+    rendered = f"{100.0 * float(value):.1f}".rstrip("0").rstrip(".")
+    return rendered + r"\%"
+
+
+def _format_observed_error(value: object) -> str:
+    """Distinguish zero observed errors from a population-risk assertion."""
+
+    if pd.isna(value):
+        return "--"
+    if abs(float(value)) < 1e-12:
+        return "0 observed errors"
+    return _format_percent(value)
+
+
 def _format_count(value: object) -> str:
     return f"{int(value):,}"
 
@@ -258,14 +277,26 @@ def render_macros(
             r"\newcommand{\VFiveTargetForcedCoverage}{"
             + _format_probability(target_forced["coverage"])
             + "}",
+            r"\newcommand{\VFiveTargetForcedCoveragePercent}{"
+            + _format_percent(target_forced["coverage"])
+            + "}",
             r"\newcommand{\VFiveTargetForcedRisk}{"
             + _format_probability(target_forced["conditional_error"])
+            + "}",
+            r"\newcommand{\VFiveTargetForcedRiskPercent}{"
+            + _format_percent(target_forced["conditional_error"])
             + "}",
             r"\newcommand{\VFiveComparativeForcedCoverage}{"
             + _format_probability(comparative_forced["coverage"])
             + "}",
+            r"\newcommand{\VFiveComparativeForcedCoveragePercent}{"
+            + _format_percent(comparative_forced["coverage"])
+            + "}",
             r"\newcommand{\VFiveComparativeForcedRisk}{"
             + _format_probability(comparative_forced["conditional_error"])
+            + "}",
+            r"\newcommand{\VFiveComparativeForcedRiskPercent}{"
+            + _format_percent(comparative_forced["conditional_error"])
             + "}",
             r"\newcommand{\VFiveComparativeForcedErrors}{"
             + _format_count(comparative_forced["error_events"])
@@ -279,15 +310,31 @@ def render_macros(
                 + "}"
             ),
             (
+                r"\newcommand{\VFiveComparativeFrontierTwentyPercent}{"
+                + _format_percent(comparative_twenty["frontier_coverage"])
+                + "}"
+            ),
+            (
                 r"\newcommand{\VFiveComparativeRiskTwenty}{"
                 + _format_probability(comparative_twenty["frontier_conditional_error"])
+                + "}"
+            ),
+            (
+                r"\newcommand{\VFiveComparativeRiskTwentyPercent}{"
+                + _format_percent(comparative_twenty["frontier_conditional_error"])
                 + "}"
             ),
             r"\newcommand{\VFiveComparativeGainLower}{"
             + _format_probability(gain_bootstrap["lower_95"])
             + "}",
+            r"\newcommand{\VFiveComparativeGainLowerPercent}{"
+            + _format_percent(gain_bootstrap["lower_95"])
+            + "}",
             r"\newcommand{\VFiveComparativeGainUpper}{"
             + _format_probability(gain_bootstrap["upper_95"])
+            + "}",
+            r"\newcommand{\VFiveComparativeGainUpperPercent}{"
+            + _format_percent(gain_bootstrap["upper_95"])
             + "}",
             (
                 r"\newcommand{\VFiveCertificateCoverage}{"
@@ -295,8 +342,18 @@ def render_macros(
                 + "}"
             ),
             (
+                r"\newcommand{\VFiveCertificateCoveragePercent}{"
+                + _format_percent(overall_certificate["certificate_pair_coverage"])
+                + "}"
+            ),
+            (
                 r"\newcommand{\VFiveCertificateEfficiency}{"
                 + _format_probability(overall_certificate["certificate_efficiency"])
+                + "}"
+            ),
+            (
+                r"\newcommand{\VFiveCertificateEfficiencyPercent}{"
+                + _format_percent(overall_certificate["certificate_efficiency"])
                 + "}"
             ),
             (
@@ -312,10 +369,21 @@ def render_macros(
             r"\newcommand{\VFiveCertificateObservedError}{"
             + _format_probability(overall_certificate["certificate_conditional_error"])
             + "}",
+            r"\newcommand{\VFiveCertificateObservedErrorDisplay}{"
+            + _format_observed_error(overall_certificate["certificate_conditional_error"])
+            + "}",
             (
                 r"\newcommand{\VFiveNonpositiveMarginPairs}{"
                 + _format_count(
                     evaluation_failure["nonpositive_structural_margin_pair_rows"].sum()
+                )
+                + "}"
+            ),
+            (
+                r"\newcommand{\VFiveCertificateAbstentionPercent}{"
+                + _format_percent(
+                    evaluation_failure["nonpositive_structural_margin_pair_rows"].sum()
+                    / receipt["observed_accounting"]["expected_pair_rows"]["evaluation"]
                 )
                 + "}"
             ),
@@ -346,8 +414,12 @@ def render_macros(
     )
 
 
-def render_frontier_table(frontier: pd.DataFrame) -> str:
+def render_frontier_table(frontier: pd.DataFrame, certificate: pd.DataFrame) -> str:
     selected = _overall(frontier)
+    overall_certificate = _overall(certificate).iloc[0]
+    certificate_answered_arms = _format_count(
+        overall_certificate["certificate_answered_events"]
+    )
     channels = {
         "target_only": "Target-only",
         "comparative": "Comparative",
@@ -366,11 +438,11 @@ def render_frontier_table(frontier: pd.DataFrame) -> str:
         rows.append(
             "{} & {} & {} ({}) & {} ({}) \\\\".format(
                 f"{alpha:.2f}",
-                _format_probability(target["frontier_coverage"]),
-                _format_probability(comparative["frontier_coverage"]),
-                _format_probability(comparative["frontier_conditional_error"]),
-                _format_probability(certificate["frontier_coverage"]),
-                _format_probability(certificate["frontier_conditional_error"]),
+                _format_percent(target["frontier_coverage"]),
+                _format_percent(comparative["frontier_coverage"]),
+                _format_observed_error(comparative["frontier_conditional_error"]),
+                _format_percent(certificate["frontier_coverage"]),
+                _format_observed_error(certificate["frontier_conditional_error"]),
             )
         )
     del channels
@@ -383,7 +455,9 @@ def render_frontier_table(frontier: pd.DataFrame) -> str:
             r"conditional scope error for the policy attaining the displayed coverage;",
             r"\texttt{--} means no positive-coverage candidate qualified. The",
             r"certificate-assisted channel uses synthetic design information and is not",
-            r"an operational deployment channel.}",
+            rf"an operational deployment channel. Its 0 observed errors are counted",
+            rf"among {certificate_answered_arms} answered scope arms, not estimated",
+            r"population risk.}",
             r"\label{tab:v05-frontier}",
             r"\small",
             r"\begin{tabular}{lrrr}",
@@ -409,9 +483,9 @@ def render_certificate_table(certificate: pd.DataFrame) -> str:
     rows = [
         "{} & {} & {} & {} \\\\".format(
             f"$q={float(value[1:]):.2f}$",
-            _format_probability(row["certificate_pair_coverage"]),
-            _format_probability(row["certificate_conditional_error"]),
-            _format_probability(row["certificate_efficiency"]),
+            _format_percent(row["certificate_pair_coverage"]),
+            _format_observed_error(row["certificate_conditional_error"]),
+            _format_percent(row["certificate_efficiency"]),
         )
         for value, row in selected.iterrows()
     ]
@@ -420,14 +494,16 @@ def render_certificate_table(certificate: pd.DataFrame) -> str:
             r"\begin{table}[tbp]",
             r"\centering",
             r"\caption{Certificate behavior by nominal donor participation on held-out",
-            r"v0.5 pairs. Efficiency is coverage relative to the predeclared",
-            r"simulation-information oracle region; it is undefined at $q=0$ because",
-            r"that negative-control stratum has no oracle-answerable pairs.}",
+            r"v0.5 pairs. Oracle-region recovery is the share of predeclared",
+            r"simulation-information-oracle answerable pairs recovered by the",
+            r"certificate; it is undefined at $q=0$ because that negative-control",
+            r"stratum has no oracle-answerable pairs. Across these strata, 0 observed",
+            r"errors means 0 of 179,994 answered scope arms, not population risk.}",
             r"\label{tab:v05-certificate}",
             r"\small",
             r"\begin{tabular}{lrrr}",
             r"\toprule",
-            r"Participation & Pair coverage & Conditional error & Oracle efficiency \\",
+            r"Participation & Pair coverage & Observed error & Oracle-region recovery \\",
             r"\midrule",
             *rows,
             r"\bottomrule",
@@ -658,6 +734,12 @@ def build_claim_value_manifest(
                 certificate_by_q.loc[group, "certificate_pair_coverage"]
             )
             for group in expected_q_groups
+        ]
+        + [
+            _format_probability(
+                certificate_by_q.loc[group, "certificate_efficiency"]
+            )
+            for group in expected_q_groups[1:]
         ],
         "V05-12": [
             str(receipt["execution_tag"]),
@@ -770,7 +852,7 @@ def build_assets() -> dict[str, Any]:
             results["receipt"],
         ),
         TABLE_DIRECTORY / "table_v05_frontier.tex": render_frontier_table(
-            results["frontier"]
+            results["frontier"], results["certificate"]
         ),
         TABLE_DIRECTORY / "table_v05_certificate.tex": render_certificate_table(
             results["certificate"]

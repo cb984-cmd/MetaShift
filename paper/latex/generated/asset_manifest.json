@@ -428,6 +428,8 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
+        "strict_node_geometry_checked": false,
+        "strict_node_geometry_passed": true,
         "grayscale_luminance_contrast": 217.39,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
@@ -584,7 +586,7 @@
         "figure": "fig_donor_construction.pdf",
         "final_print_width_pt": 453.54,
         "source_width_in": 6.3,
-        "source_height_in": 3.35,
+        "source_height_in": 4.85,
         "print_scale": 0.9999,
         "smallest_font_size_print_pt": 9.0,
         "text_inside_nodes_passed": true,
@@ -593,209 +595,280 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
-        "grayscale_luminance_contrast": 220.09,
+        "strict_node_geometry_checked": true,
+        "strict_node_geometry_passed": true,
+        "grayscale_luminance_contrast": 191.06,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
           "final_page_crop_review": "pending_final_build"
         },
         "node_records": [
           {
-            "identifier": "donor_target_site",
+            "identifier": "donor_target_identity",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 68.56,
-              "y0_px": 330.08,
-              "x1_px": 181.92,
-              "y1_px": 380.75
+              "x0_px": 172.61,
+              "y0_px": 646.27,
+              "x1_px": 434.61,
+              "y1_px": 696.95
             },
             "node_bounds": {
-              "x0_px": 43.2,
-              "y0_px": 315.02,
-              "x1_px": 207.27,
-              "y1_px": 395.81
+              "x0_px": 137.01,
+              "y0_px": 632.09,
+              "x1_px": 470.21,
+              "y1_px": 711.13
             }
           },
           {
-            "identifier": "donor_same_site_poc",
+            "identifier": "donor_target_poc",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 46.24,
-              "y0_px": 171.68,
-              "x1_px": 204.24,
-              "y1_px": 222.35
+              "x0_px": 227.61,
+              "y0_px": 553.29,
+              "x1_px": 379.61,
+              "y1_px": 603.96
             },
             "node_bounds": {
-              "x0_px": 18.8,
-              "y0_px": 157.04,
-              "x1_px": 231.67,
-              "y1_px": 236.99
+              "x0_px": 187.61,
+              "y0_px": 539.11,
+              "x1_px": 419.61,
+              "y1_px": 618.15
             }
           },
           {
-            "identifier": "donor_a",
+            "identifier": "donor_same_site_excluded",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 218.15,
-              "y0_px": 344.86,
-              "x1_px": 307.15,
-              "y1_px": 365.97
+              "x0_px": 136.61,
+              "y0_px": 460.31,
+              "x1_px": 470.61,
+              "y1_px": 510.98
             },
             "node_bounds": {
-              "x0_px": 193.94,
-              "y0_px": 322.94,
-              "x1_px": 331.37,
-              "y1_px": 387.89
+              "x0_px": 97.99,
+              "y0_px": 446.13,
+              "x1_px": 509.23,
+              "y1_px": 525.16
             }
           },
           {
-            "identifier": "donor_b",
+            "identifier": "donor_site_header",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 323.51,
-              "y0_px": 344.86,
-              "x1_px": 412.51,
-              "y1_px": 365.97
+              "x0_px": 676.87,
+              "y0_px": 646.27,
+              "x1_px": 827.87,
+              "y1_px": 696.95
             },
             "node_bounds": {
-              "x0_px": 299.29,
-              "y0_px": 322.94,
-              "x1_px": 436.73,
-              "y1_px": 387.89
+              "x0_px": 640.6,
+              "y0_px": 632.09,
+              "x1_px": 864.14,
+              "y1_px": 711.13
             }
           },
           {
-            "identifier": "donor_cplus",
+            "identifier": "donor_physical_site_1",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 419.36,
-              "y0_px": 344.86,
-              "x1_px": 527.36,
-              "y1_px": 365.97
+              "x0_px": 626.37,
+              "y0_px": 568.07,
+              "x1_px": 878.37,
+              "y1_px": 589.18
             },
             "node_bounds": {
-              "x0_px": 394.26,
-              "y0_px": 322.94,
-              "x1_px": 552.47,
-              "y1_px": 387.89
+              "x0_px": 591.19,
+              "y0_px": 553.89,
+              "x1_px": 913.55,
+              "y1_px": 603.36
+            }
+          },
+          {
+            "identifier": "donor_physical_site_2",
+            "text_inside_node": true,
+            "node_inside_canvas": true,
+            "text_bounds": {
+              "x0_px": 626.37,
+              "y0_px": 496.55,
+              "x1_px": 878.37,
+              "y1_px": 517.66
+            },
+            "node_bounds": {
+              "x0_px": 591.19,
+              "y0_px": 482.37,
+              "x1_px": 913.55,
+              "y1_px": 531.84
+            }
+          },
+          {
+            "identifier": "donor_physical_site_3",
+            "text_inside_node": true,
+            "node_inside_canvas": true,
+            "text_bounds": {
+              "x0_px": 625.87,
+              "y0_px": 425.02,
+              "x1_px": 878.87,
+              "y1_px": 446.13
+            },
+            "node_bounds": {
+              "x0_px": 590.65,
+              "y0_px": 410.84,
+              "x1_px": 914.09,
+              "y1_px": 460.31
+            }
+          },
+          {
+            "identifier": "donor_three_site_threshold",
+            "text_inside_node": true,
+            "node_inside_canvas": true,
+            "text_bounds": {
+              "x0_px": 157.07,
+              "y0_px": 367.8,
+              "x1_px": 568.69,
+              "y1_px": 388.91
+            },
+            "node_bounds": {
+              "x0_px": 115.19,
+              "y0_px": 353.62,
+              "x1_px": 610.57,
+              "y1_px": 403.09
             }
           }
         ],
         "elements": [
           {
-            "identifier": "panel_title:distinct_physical_donor_construction:1",
+            "identifier": "panel_title:a__physical_site_deduplication:1",
             "category": "panel_title",
-            "font_size_source_pt": 10.5,
-            "font_size_print_pt": 10.5,
+            "font_size_source_pt": 10.0,
+            "font_size_print_pt": 10.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 56.72,
-              "y0_px": 489.87,
-              "x1_px": 532.72,
-              "y1_px": 513.2
+              "x0_px": 151.2,
+              "y0_px": 729.67,
+              "x1_px": 522.2,
+              "y1_px": 752.01
             }
           },
           {
-            "identifier": "donor_target_site:1",
+            "identifier": "donor_target_identity:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 68.56,
-              "y0_px": 330.08,
-              "x1_px": 181.92,
-              "y1_px": 380.75
+              "x0_px": 172.61,
+              "y0_px": 646.27,
+              "x1_px": 434.61,
+              "y1_px": 696.95
             }
           },
           {
-            "identifier": "donor_same_site_poc:1",
+            "identifier": "donor_target_poc:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 46.24,
-              "y0_px": 171.68,
-              "x1_px": 204.24,
-              "y1_px": 222.35
+              "x0_px": 227.61,
+              "y0_px": 553.29,
+              "x1_px": 379.61,
+              "y1_px": 603.96
             }
           },
           {
-            "identifier": "donor_a:1",
+            "identifier": "donor_same_site_excluded:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 218.15,
-              "y0_px": 344.86,
-              "x1_px": 307.15,
-              "y1_px": 365.97
+              "x0_px": 136.61,
+              "y0_px": 460.31,
+              "x1_px": 470.61,
+              "y1_px": 510.98
             }
           },
           {
-            "identifier": "donor_b:1",
+            "identifier": "donor_site_header:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 323.51,
-              "y0_px": 344.86,
-              "x1_px": 412.51,
-              "y1_px": 365.97
+              "x0_px": 676.87,
+              "y0_px": 646.27,
+              "x1_px": 827.87,
+              "y1_px": 696.95
             }
           },
           {
-            "identifier": "donor_cplus:1",
+            "identifier": "donor_physical_site_1:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 419.36,
-              "y0_px": 344.86,
-              "x1_px": 527.36,
-              "y1_px": 365.97
+              "x0_px": 626.37,
+              "y0_px": 568.07,
+              "x1_px": 878.37,
+              "y1_px": 589.18
             }
           },
           {
-            "identifier": "annotation:physical_identity__state___county___site__each_d:1",
-            "category": "annotation",
-            "font_size_source_pt": 9.0,
-            "font_size_print_pt": 9.0,
+            "identifier": "donor_physical_site_2:1",
+            "category": "node_label",
+            "font_size_source_pt": 9.5,
+            "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 80.4,
-              "y0_px": 91.83,
-              "x1_px": 545.68,
-              "y1_px": 139.84
+              "x0_px": 626.37,
+              "y0_px": 496.55,
+              "x1_px": 878.37,
+              "y1_px": 517.66
             }
           },
           {
-            "identifier": "panel_title:donor_availability:1",
+            "identifier": "donor_physical_site_3:1",
+            "category": "node_label",
+            "font_size_source_pt": 9.5,
+            "font_size_print_pt": 9.5,
+            "inside_canvas": true,
+            "bounds": {
+              "x0_px": 625.87,
+              "y0_px": 425.02,
+              "x1_px": 878.87,
+              "y1_px": 446.13
+            }
+          },
+          {
+            "identifier": "donor_three_site_threshold:1",
+            "category": "node_label",
+            "font_size_source_pt": 9.5,
+            "font_size_print_pt": 9.5,
+            "inside_canvas": true,
+            "bounds": {
+              "x0_px": 157.07,
+              "y0_px": 367.8,
+              "x1_px": 568.69,
+              "y1_px": 388.91
+            }
+          },
+          {
+            "identifier": "panel_title:b__pre_input_donor_site_availability:1",
             "category": "panel_title",
-            "font_size_source_pt": 10.5,
-            "font_size_print_pt": 10.5,
+            "font_size_source_pt": 10.0,
+            "font_size_print_pt": 10.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 711.04,
-              "y0_px": 489.87,
-              "x1_px": 941.04,
-              "y1_px": 513.2
-            }
-          },
-          {
-            "identifier": "axis_label:prequalified_distinct_donors:1",
-            "category": "axis_label",
-            "font_size_source_pt": 9.0,
-            "font_size_print_pt": 9.0,
-            "inside_canvas": true,
-            "bounds": {
-              "x0_px": 686.04,
-              "y0_px": 22.8,
-              "x1_px": 966.04,
-              "y1_px": 42.8
+              "x0_px": 151.2,
+              "y0_px": 265.65,
+              "x1_px": 586.2,
+              "y1_px": 287.99
             }
           },
           {
@@ -805,62 +878,62 @@
             "font_size_print_pt": 9.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 586.44,
-              "y0_px": 192.14,
-              "x1_px": 606.44,
-              "y1_px": 376.14
+              "x0_px": 482.56,
+              "y0_px": 45.31,
+              "x1_px": 666.56,
+              "y1_px": 65.31
             }
           },
           {
-            "identifier": "annotation:169:1",
+            "identifier": "annotation:169__30_0:1",
             "category": "annotation",
             "font_size_source_pt": 9.0,
             "font_size_print_pt": 9.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 692.32,
-              "y0_px": 320.46,
-              "x1_px": 731.32,
-              "y1_px": 340.46
+              "x0_px": 608.36,
+              "y0_px": 226.62,
+              "x1_px": 733.36,
+              "y1_px": 246.62
             }
           },
           {
-            "identifier": "annotation:99:1",
+            "identifier": "annotation:99__17_6:1",
             "category": "annotation",
             "font_size_source_pt": 9.0,
             "font_size_print_pt": 9.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 774.97,
-              "y0_px": 223.4,
-              "x1_px": 800.97,
-              "y1_px": 243.4
+              "x0_px": 427.9,
+              "y0_px": 190.97,
+              "x1_px": 539.9,
+              "y1_px": 210.97
             }
           },
           {
-            "identifier": "annotation:57:1",
+            "identifier": "annotation:57__10_1:1",
             "category": "annotation",
             "font_size_source_pt": 9.0,
             "font_size_print_pt": 9.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 851.12,
-              "y0_px": 165.17,
-              "x1_px": 877.12,
-              "y1_px": 185.17
+              "x0_px": 319.62,
+              "y0_px": 155.32,
+              "x1_px": 431.62,
+              "y1_px": 175.32
             }
           },
           {
-            "identifier": "annotation:238:1",
+            "identifier": "annotation:238__42_3:1",
             "category": "annotation",
             "font_size_source_pt": 9.0,
             "font_size_print_pt": 9.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 920.77,
-              "y0_px": 416.14,
-              "x1_px": 959.77,
-              "y1_px": 436.14
+              "x0_px": 395.48,
+              "y0_px": 119.67,
+              "x1_px": 520.48,
+              "y1_px": 139.67
             }
           }
         ],
@@ -868,8 +941,8 @@
         "violations": [],
         "all_checks_passed": true
       },
-      "bytes": 25706,
-      "sha256": "26f411f012d1e702b4a4c485c541e99b3733b763ac03c274a4b21a567880680d"
+      "bytes": 24833,
+      "sha256": "cebe5ee7a6426555fa3939f542f3349e3f99e5135790defa9ff25180d994090a"
     },
     {
       "path": "generated/figures/fig_window_protocol.pdf",
@@ -893,6 +966,8 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
+        "strict_node_geometry_checked": false,
+        "strict_node_geometry_passed": true,
         "grayscale_luminance_contrast": 234.52,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
@@ -1006,13 +1081,13 @@
         "configs/benchmark_release_v2.json",
         "configs/evidence_tier_primary_v1.json",
         "artifacts/real_transition_88101_event_audit.csv",
-        "artifacts/real_transition_88101_evidence_tier_summary.json"
+        "artifacts/stable_synthetic_case_split_audit.json"
       ],
       "layout_qa": {
         "figure": "fig_audit_pipeline.pdf",
         "final_print_width_pt": 453.54,
         "source_width_in": 6.3,
-        "source_height_in": 5.85,
+        "source_height_in": 4.25,
         "print_scale": 0.9999,
         "smallest_font_size_print_pt": 9.0,
         "text_inside_nodes_passed": true,
@@ -1021,7 +1096,9 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
-        "grayscale_luminance_contrast": 180.97,
+        "strict_node_geometry_checked": true,
+        "strict_node_geometry_passed": true,
+        "grayscale_luminance_contrast": 176.08,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
           "final_page_crop_review": "pending_final_build"
@@ -1030,145 +1107,154 @@
           {
             "identifier": "workflow_archives",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 437.6,
-              "y0_px": 740.68,
-              "x1_px": 595.6,
-              "y1_px": 791.36
+              "x0_px": 435.08,
+              "y0_px": 564.05,
+              "x1_px": 593.08,
+              "y1_px": 614.73
             },
             "node_bounds": {
-              "x0_px": 397.86,
-              "y0_px": 721.34,
-              "x1_px": 635.34,
-              "y1_px": 810.71
+              "x0_px": 358.95,
+              "y0_px": 540.73,
+              "x1_px": 669.21,
+              "y1_px": 638.05
             }
           },
           {
-            "identifier": "workflow_anchors",
+            "identifier": "workflow_canonical_series",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 397.6,
-              "y0_px": 632.58,
-              "x1_px": 635.6,
-              "y1_px": 683.25
+              "x0_px": 326.58,
+              "y0_px": 463.41,
+              "x1_px": 701.58,
+              "y1_px": 514.09
             },
             "node_bounds": {
-              "x0_px": 358.8,
-              "y0_px": 609.63,
-              "x1_px": 674.4,
-              "y1_px": 706.2
+              "x0_px": 205.73,
+              "y0_px": 440.09,
+              "x1_px": 822.43,
+              "y1_px": 537.41
             }
           },
           {
-            "identifier": "workflow_stable_regimes",
+            "identifier": "workflow_synthetic_heading",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 202.3,
-              "y0_px": 495.64,
-              "x1_px": 440.3,
-              "y1_px": 546.32
+              "x0_px": 154.18,
+              "y0_px": 350.19,
+              "x1_px": 395.18,
+              "y1_px": 400.87
             },
             "node_bounds": {
-              "x0_px": 178.59,
-              "y0_px": 465.48,
-              "x1_px": 464.01,
-              "y1_px": 576.47
+              "x0_px": 99.14,
+              "y0_px": 326.87,
+              "x1_px": 450.22,
+              "y1_px": 424.19
             }
           },
           {
-            "identifier": "workflow_real_anchors",
+            "identifier": "workflow_audit_heading",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 597.9,
-              "y0_px": 495.64,
-              "x1_px": 825.9,
-              "y1_px": 546.32
+              "x0_px": 629.98,
+              "y0_px": 350.19,
+              "x1_px": 876.98,
+              "y1_px": 400.87
             },
             "node_bounds": {
-              "x0_px": 573.63,
-              "y0_px": 465.48,
-              "x1_px": 850.17,
-              "y1_px": 576.47
+              "x0_px": 574.26,
+              "y0_px": 326.87,
+              "x1_px": 932.7,
+              "y1_px": 424.19
             }
           },
           {
-            "identifier": "workflow_calibration",
+            "identifier": "workflow_synthetic_partition",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 205.3,
-              "y0_px": 344.29,
-              "x1_px": 437.3,
-              "y1_px": 394.96
+              "x0_px": 117.18,
+              "y0_px": 236.97,
+              "x1_px": 432.18,
+              "y1_px": 287.65
             },
             "node_bounds": {
-              "x0_px": 181.59,
-              "y0_px": 317.73,
-              "x1_px": 461.01,
-              "y1_px": 421.52
+              "x0_px": 53.78,
+              "y0_px": 213.65,
+              "x1_px": 495.58,
+              "y1_px": 310.97
             }
           },
           {
-            "identifier": "workflow_evaluation",
+            "identifier": "workflow_synthetic_outputs",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 219.8,
-              "y0_px": 192.94,
-              "x1_px": 422.8,
-              "y1_px": 243.61
+              "x0_px": 96.18,
+              "y0_px": 138.53,
+              "x1_px": 453.18,
+              "y1_px": 159.65
             },
             "node_bounds": {
-              "x0_px": 190.84,
-              "y0_px": 166.38,
-              "x1_px": 451.76,
-              "y1_px": 270.17
+              "x0_px": 28.04,
+              "y0_px": 116.38,
+              "x1_px": 521.32,
+              "y1_px": 181.8
             }
           },
           {
-            "identifier": "workflow_comparisons",
+            "identifier": "workflow_audit_partition",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 589.4,
-              "y0_px": 344.29,
-              "x1_px": 834.4,
-              "y1_px": 394.96
+              "x0_px": 589.98,
+              "y0_px": 236.97,
+              "x1_px": 916.98,
+              "y1_px": 287.65
             },
             "node_bounds": {
-              "x0_px": 565.69,
-              "y0_px": 314.13,
-              "x1_px": 858.11,
-              "y1_px": 425.12
+              "x0_px": 525.23,
+              "y0_px": 213.65,
+              "x1_px": 981.73,
+              "y1_px": 310.97
             }
           },
           {
-            "identifier": "workflow_diagnostics",
+            "identifier": "workflow_audit_outputs",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 462.72,
-              "y0_px": 192.94,
-              "x1_px": 726.72,
-              "y1_px": 243.61
+              "x0_px": 598.48,
+              "y0_px": 138.53,
+              "x1_px": 908.48,
+              "y1_px": 159.65
             },
             "node_bounds": {
-              "x0_px": 439.01,
-              "y0_px": 166.38,
-              "x1_px": 750.43,
-              "y1_px": 270.17
+              "x0_px": 535.64,
+              "y0_px": 116.38,
+              "x1_px": 971.32,
+              "y1_px": 181.8
             }
           },
           {
-            "identifier": "workflow_tiers",
+            "identifier": "workflow_label_boundary",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 740.46,
-              "y0_px": 192.94,
-              "x1_px": 886.46,
-              "y1_px": 243.61
+              "x0_px": 208.58,
+              "y0_px": 27.59,
+              "x1_px": 819.58,
+              "y1_px": 75.6
             },
             "node_bounds": {
-              "x0_px": 716.75,
-              "y0_px": 166.38,
-              "x1_px": 910.16,
-              "y1_px": 270.17
+              "x0_px": 100.4,
+              "y0_px": 4.53,
+              "x1_px": 927.76,
+              "y1_px": 98.66
             }
           }
         ],
@@ -1180,127 +1266,114 @@
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 437.6,
-              "y0_px": 740.68,
-              "x1_px": 595.6,
-              "y1_px": 791.36
+              "x0_px": 435.08,
+              "y0_px": 564.05,
+              "x1_px": 593.08,
+              "y1_px": 614.73
             }
           },
           {
-            "identifier": "workflow_anchors:1",
+            "identifier": "workflow_canonical_series:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 397.6,
-              "y0_px": 632.58,
-              "x1_px": 635.6,
-              "y1_px": 683.25
+              "x0_px": 326.58,
+              "y0_px": 463.41,
+              "x1_px": 701.58,
+              "y1_px": 514.09
             }
           },
           {
-            "identifier": "workflow_stable_regimes:1",
+            "identifier": "workflow_synthetic_heading:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 202.3,
-              "y0_px": 495.64,
-              "x1_px": 440.3,
-              "y1_px": 546.32
+              "x0_px": 154.18,
+              "y0_px": 350.19,
+              "x1_px": 395.18,
+              "y1_px": 400.87
             }
           },
           {
-            "identifier": "workflow_real_anchors:1",
+            "identifier": "workflow_audit_heading:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 597.9,
-              "y0_px": 495.64,
-              "x1_px": 825.9,
-              "y1_px": 546.32
+              "x0_px": 629.98,
+              "y0_px": 350.19,
+              "x1_px": 876.98,
+              "y1_px": 400.87
             }
           },
           {
-            "identifier": "workflow_calibration:1",
+            "identifier": "workflow_synthetic_partition:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 205.3,
-              "y0_px": 344.29,
-              "x1_px": 437.3,
-              "y1_px": 394.96
+              "x0_px": 117.18,
+              "y0_px": 236.97,
+              "x1_px": 432.18,
+              "y1_px": 287.65
             }
           },
           {
-            "identifier": "workflow_evaluation:1",
+            "identifier": "workflow_synthetic_outputs:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 219.8,
-              "y0_px": 192.94,
-              "x1_px": 422.8,
-              "y1_px": 243.61
+              "x0_px": 96.18,
+              "y0_px": 138.53,
+              "x1_px": 453.18,
+              "y1_px": 159.65
             }
           },
           {
-            "identifier": "workflow_comparisons:1",
+            "identifier": "workflow_audit_partition:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 589.4,
-              "y0_px": 344.29,
-              "x1_px": 834.4,
-              "y1_px": 394.96
+              "x0_px": 589.98,
+              "y0_px": 236.97,
+              "x1_px": 916.98,
+              "y1_px": 287.65
             }
           },
           {
-            "identifier": "workflow_diagnostics:1",
+            "identifier": "workflow_audit_outputs:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 462.72,
-              "y0_px": 192.94,
-              "x1_px": 726.72,
-              "y1_px": 243.61
+              "x0_px": 598.48,
+              "y0_px": 138.53,
+              "x1_px": 908.48,
+              "y1_px": 159.65
             }
           },
           {
-            "identifier": "workflow_tiers:1",
+            "identifier": "workflow_label_boundary:1",
             "category": "node_label",
-            "font_size_source_pt": 9.5,
-            "font_size_print_pt": 9.5,
-            "inside_canvas": true,
-            "bounds": {
-              "x0_px": 740.46,
-              "y0_px": 192.94,
-              "x1_px": 886.46,
-              "y1_px": 243.61
-            }
-          },
-          {
-            "identifier": "annotation:separate_branches__known_truth_evaluation_versus:1",
-            "category": "annotation",
             "font_size_source_pt": 9.0,
             "font_size_print_pt": 9.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 106.1,
-              "y0_px": 120.98,
-              "x1_px": 927.1,
-              "y1_px": 140.98
+              "x0_px": 208.58,
+              "y0_px": 27.59,
+              "x1_px": 819.58,
+              "y1_px": 75.6
             }
           }
         ],
@@ -1308,8 +1381,8 @@
         "violations": [],
         "all_checks_passed": true
       },
-      "bytes": 26260,
-      "sha256": "0b1a809e4746a258818202a57206d9b29651449934c2046878bd102fbd0cd500"
+      "bytes": 26658,
+      "sha256": "7de7380fb69fc16a0f8a29590fbe4260f7b35156780bc39916d10928db16b6fb"
     },
     {
       "path": "generated/figures/fig_split_integrity.pdf",
@@ -1331,7 +1404,9 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
-        "grayscale_luminance_contrast": 188.37,
+        "strict_node_geometry_checked": false,
+        "strict_node_geometry_passed": true,
+        "grayscale_luminance_contrast": 183.37,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
           "final_page_crop_review": "pending_final_build"
@@ -1340,6 +1415,7 @@
           {
             "identifier": "split_calibration_partition",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
               "x0_px": 185.8,
               "y0_px": 393.42,
@@ -1356,6 +1432,7 @@
           {
             "identifier": "split_held-out_evaluation_partition",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
               "x0_px": 538.9,
               "y0_px": 393.42,
@@ -1467,8 +1544,8 @@
         "violations": [],
         "all_checks_passed": true
       },
-      "bytes": 21328,
-      "sha256": "578b7fc4fb61b46aa133170495a54c5cb4242d8b663b9433d1b8e92b5abaf553"
+      "bytes": 21329,
+      "sha256": "63be949d0d9f1eff99631f3611661643e22d3f38d47ceea7496a16e4d9adf758"
     },
     {
       "path": "generated/figures/fig_synthetic_metrics.pdf",
@@ -1489,6 +1566,8 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
+        "strict_node_geometry_checked": false,
+        "strict_node_geometry_passed": true,
         "grayscale_luminance_contrast": 230.44,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
@@ -1770,6 +1849,8 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
+        "strict_node_geometry_checked": false,
+        "strict_node_geometry_passed": true,
         "grayscale_luminance_contrast": 235.0,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
@@ -2025,6 +2106,8 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
+        "strict_node_geometry_checked": false,
+        "strict_node_geometry_passed": true,
         "grayscale_luminance_contrast": 231.72,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
@@ -2130,266 +2213,139 @@
         "figure": "fig_event_accounting.pdf",
         "final_print_width_pt": 453.54,
         "source_width_in": 6.3,
-        "source_height_in": 5.45,
+        "source_height_in": 3.2,
         "print_scale": 0.9999,
-        "smallest_font_size_print_pt": 9.0,
+        "smallest_font_size_print_pt": 8.5,
         "text_inside_nodes_passed": true,
         "annotation_overlap_passed": true,
         "canvas_boundary_passed": true,
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
-        "grayscale_luminance_contrast": 175.57,
+        "strict_node_geometry_checked": false,
+        "strict_node_geometry_passed": true,
+        "grayscale_luminance_contrast": 197.94,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
           "final_page_crop_review": "pending_final_build"
         },
-        "node_records": [
-          {
-            "identifier": "accounting_all_anchors",
-            "text_inside_node": true,
-            "text_bounds": {
-              "x0_px": 360.1,
-              "y0_px": 661.45,
-              "x1_px": 673.1,
-              "y1_px": 712.12
-            },
-            "node_bounds": {
-              "x0_px": 336.39,
-              "y0_px": 641.8,
-              "x1_px": 696.81,
-              "y1_px": 731.77
-            }
-          },
-          {
-            "identifier": "accounting_donor_insufficient",
-            "text_inside_node": true,
-            "text_bounds": {
-              "x0_px": 210.18,
-              "y0_px": 493.59,
-              "x1_px": 401.18,
-              "y1_px": 544.26
-            },
-            "node_bounds": {
-              "x0_px": 186.47,
-              "y0_px": 463.87,
-              "x1_px": 424.88,
-              "y1_px": 573.99
-            }
-          },
-          {
-            "identifier": "accounting_donor_eligible",
-            "text_inside_node": true,
-            "text_bounds": {
-              "x0_px": 523.72,
-              "y0_px": 493.59,
-              "x1_px": 790.72,
-              "y1_px": 544.26
-            },
-            "node_bounds": {
-              "x0_px": 500.01,
-              "y0_px": 463.87,
-              "x1_px": 814.42,
-              "y1_px": 573.99
-            }
-          },
-          {
-            "identifier": "accounting_input_failure",
-            "text_inside_node": true,
-            "text_bounds": {
-              "x0_px": 318.67,
-              "y0_px": 325.73,
-              "x1_px": 542.67,
-              "y1_px": 376.4
-            },
-            "node_bounds": {
-              "x0_px": 294.96,
-              "y0_px": 296.01,
-              "x1_px": 566.38,
-              "y1_px": 406.13
-            }
-          },
-          {
-            "identifier": "accounting_complete",
-            "text_inside_node": true,
-            "text_bounds": {
-              "x0_px": 586.46,
-              "y0_px": 325.73,
-              "x1_px": 915.46,
-              "y1_px": 376.4
-            },
-            "node_bounds": {
-              "x0_px": 562.75,
-              "y0_px": 292.65,
-              "x1_px": 939.17,
-              "y1_px": 409.48
-            }
-          },
-          {
-            "identifier": "accounting_leaf_28",
-            "text_inside_node": true,
-            "text_bounds": {
-              "x0_px": 235.24,
-              "y0_px": 164.58,
-              "x1_px": 454.24,
-              "y1_px": 215.26
-            },
-            "node_bounds": {
-              "x0_px": 211.53,
-              "y0_px": 134.86,
-              "x1_px": 477.94,
-              "y1_px": 244.98
-            }
-          },
-          {
-            "identifier": "accounting_leaf_60",
-            "text_inside_node": true,
-            "text_bounds": {
-              "x0_px": 520.22,
-              "y0_px": 164.58,
-              "x1_px": 669.22,
-              "y1_px": 215.26
-            },
-            "node_bounds": {
-              "x0_px": 495.51,
-              "y0_px": 134.86,
-              "x1_px": 693.93,
-              "y1_px": 244.98
-            }
-          },
-          {
-            "identifier": "accounting_leaf_88",
-            "text_inside_node": true,
-            "text_bounds": {
-              "x0_px": 743.96,
-              "y0_px": 151.92,
-              "x1_px": 882.96,
-              "y1_px": 227.93
-            },
-            "node_bounds": {
-              "x0_px": 714.24,
-              "y0_px": 133.97,
-              "x1_px": 912.67,
-              "y1_px": 245.87
-            }
-          }
-        ],
+        "node_records": [],
         "elements": [
           {
-            "identifier": "accounting_all_anchors:1",
-            "category": "node_label",
-            "font_size_source_pt": 9.5,
-            "font_size_print_pt": 9.5,
+            "identifier": "panel_title:a__availability_partition_____all_563_anchors:1",
+            "category": "panel_title",
+            "font_size_source_pt": 10.0,
+            "font_size_print_pt": 10.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 360.1,
-              "y0_px": 661.45,
-              "x1_px": 673.1,
-              "y1_px": 712.12
+              "x0_px": 45.36,
+              "y0_px": 458.55,
+              "x1_px": 570.45,
+              "y1_px": 480.89
             }
           },
           {
-            "identifier": "accounting_donor_insufficient:1",
-            "category": "node_label",
-            "font_size_source_pt": 9.5,
-            "font_size_print_pt": 9.5,
-            "inside_canvas": true,
-            "bounds": {
-              "x0_px": 210.18,
-              "y0_px": 493.59,
-              "x1_px": 401.18,
-              "y1_px": 544.26
-            }
-          },
-          {
-            "identifier": "accounting_donor_eligible:1",
-            "category": "node_label",
-            "font_size_source_pt": 9.5,
-            "font_size_print_pt": 9.5,
-            "inside_canvas": true,
-            "bounds": {
-              "x0_px": 523.72,
-              "y0_px": 493.59,
-              "x1_px": 790.72,
-              "y1_px": 544.26
-            }
-          },
-          {
-            "identifier": "accounting_input_failure:1",
-            "category": "node_label",
-            "font_size_source_pt": 9.5,
-            "font_size_print_pt": 9.5,
-            "inside_canvas": true,
-            "bounds": {
-              "x0_px": 318.67,
-              "y0_px": 325.73,
-              "x1_px": 542.67,
-              "y1_px": 376.4
-            }
-          },
-          {
-            "identifier": "accounting_complete:1",
-            "category": "node_label",
-            "font_size_source_pt": 9.5,
-            "font_size_print_pt": 9.5,
-            "inside_canvas": true,
-            "bounds": {
-              "x0_px": 586.46,
-              "y0_px": 325.73,
-              "x1_px": 915.46,
-              "y1_px": 376.4
-            }
-          },
-          {
-            "identifier": "accounting_leaf_28:1",
-            "category": "node_label",
-            "font_size_source_pt": 9.5,
-            "font_size_print_pt": 9.5,
-            "inside_canvas": true,
-            "bounds": {
-              "x0_px": 235.24,
-              "y0_px": 164.58,
-              "x1_px": 454.24,
-              "y1_px": 215.26
-            }
-          },
-          {
-            "identifier": "accounting_leaf_60:1",
-            "category": "node_label",
-            "font_size_source_pt": 9.5,
-            "font_size_print_pt": 9.5,
-            "inside_canvas": true,
-            "bounds": {
-              "x0_px": 520.22,
-              "y0_px": 164.58,
-              "x1_px": 669.22,
-              "y1_px": 215.26
-            }
-          },
-          {
-            "identifier": "accounting_leaf_88:1",
-            "category": "node_label",
-            "font_size_source_pt": 9.5,
-            "font_size_print_pt": 9.5,
-            "inside_canvas": true,
-            "bounds": {
-              "x0_px": 743.96,
-              "y0_px": 151.92,
-              "x1_px": 882.96,
-              "y1_px": 227.93
-            }
-          },
-          {
-            "identifier": "annotation:reconciliation__325___10___228___563__34___122__:1",
+            "identifier": "annotation:donor_insufficient_325__57_7:1",
             "category": "annotation",
             "font_size_source_pt": 9.0,
             "font_size_print_pt": 9.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 205.6,
-              "y0_px": 102.71,
-              "x1_px": 827.6,
-              "y1_px": 122.71
+              "x0_px": 229.3,
+              "y0_px": 343.59,
+              "x1_px": 411.3,
+              "y1_px": 391.6
+            }
+          },
+          {
+            "identifier": "annotation:complete_comparison_228__40_5:1",
+            "category": "annotation",
+            "font_size_source_pt": 9.0,
+            "font_size_print_pt": 9.0,
+            "inside_canvas": true,
+            "bounds": {
+              "x0_px": 694.54,
+              "y0_px": 343.59,
+              "x1_px": 915.54,
+              "y1_px": 391.6
+            }
+          },
+          {
+            "identifier": "annotation:input_window_failure_10__1_8:1",
+            "category": "annotation",
+            "font_size_source_pt": 8.5,
+            "font_size_print_pt": 8.5,
+            "inside_canvas": true,
+            "bounds": {
+              "x0_px": 538.2,
+              "y0_px": 308.5,
+              "x1_px": 669.2,
+              "y1_px": 387.22
+            }
+          },
+          {
+            "identifier": "panel_title:b__evidence_tier_partition_____228_complete_comp:1",
+            "category": "panel_title",
+            "font_size_source_pt": 10.0,
+            "font_size_print_pt": 10.0,
+            "inside_canvas": true,
+            "bounds": {
+              "x0_px": 45.36,
+              "y0_px": 259.11,
+              "x1_px": 738.36,
+              "y1_px": 281.45
+            }
+          },
+          {
+            "identifier": "annotation:supported_34__14_9:1",
+            "category": "annotation",
+            "font_size_source_pt": 9.0,
+            "font_size_print_pt": 9.0,
+            "inside_canvas": true,
+            "bounds": {
+              "x0_px": 60.38,
+              "y0_px": 149.69,
+              "x1_px": 172.38,
+              "y1_px": 197.7
+            }
+          },
+          {
+            "identifier": "annotation:not_supported_122__53_5:1",
+            "category": "annotation",
+            "font_size_source_pt": 9.0,
+            "font_size_print_pt": 9.0,
+            "inside_canvas": true,
+            "bounds": {
+              "x0_px": 368.26,
+              "y0_px": 149.69,
+              "x1_px": 516.26,
+              "y1_px": 197.7
+            }
+          },
+          {
+            "identifier": "annotation:complete_but_inconclusive_72__31_6:1",
+            "category": "annotation",
+            "font_size_source_pt": 9.0,
+            "font_size_print_pt": 9.0,
+            "inside_canvas": true,
+            "bounds": {
+              "x0_px": 714.02,
+              "y0_px": 149.69,
+              "x1_px": 981.02,
+              "y1_px": 197.7
+            }
+          },
+          {
+            "identifier": "explanatory_text:overall_disposition__34_supported_candidates___1:1",
+            "category": "explanatory_text",
+            "font_size_source_pt": 8.6,
+            "font_size_print_pt": 8.6,
+            "inside_canvas": true,
+            "bounds": {
+              "x0_px": 79.5,
+              "y0_px": 12.8,
+              "x1_px": 928.5,
+              "y1_px": 59.15
             }
           }
         ],
@@ -2397,218 +2353,127 @@
         "violations": [],
         "all_checks_passed": true
       },
-      "bytes": 25078,
-      "sha256": "54d6c03cb9100575b0582e928625451d198e918d0c923d5047f51686be86baf4"
+      "bytes": 26894,
+      "sha256": "f4af8b34400880c5efcbecc898c8601649a7758dc174f6028fa8e1f3ba63195b"
     },
     {
       "path": "generated/figures/fig_placebos.pdf",
       "kind": "vector_figure",
       "sources": [
+        "artifacts/real_transition_88101_event_audit.csv",
         "artifacts/time_placebo_summary.csv"
       ],
       "layout_qa": {
         "figure": "fig_placebos.pdf",
         "final_print_width_pt": 453.54,
         "source_width_in": 6.3,
-        "source_height_in": 3.3,
+        "source_height_in": 2.9,
         "print_scale": 0.9999,
-        "smallest_font_size_print_pt": 9.0,
+        "smallest_font_size_print_pt": 8.5,
         "text_inside_nodes_passed": true,
         "annotation_overlap_passed": true,
         "canvas_boundary_passed": true,
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
-        "grayscale_luminance_contrast": 211.77,
+        "strict_node_geometry_checked": false,
+        "strict_node_geometry_passed": true,
+        "grayscale_luminance_contrast": 213.8,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
           "final_page_crop_review": "pending_final_build"
         },
-        "node_records": [
-          {
-            "identifier": "placebo_complete",
-            "text_inside_node": true,
-            "text_bounds": {
-              "x0_px": 106.91,
-              "y0_px": 274.2,
-              "x1_px": 203.91,
-              "y1_px": 324.87
-            },
-            "node_bounds": {
-              "x0_px": 88.69,
-              "y0_px": 259.65,
-              "x1_px": 222.12,
-              "y1_px": 339.42
-            }
-          },
-          {
-            "identifier": "placebo_available",
-            "text_inside_node": true,
-            "text_bounds": {
-              "x0_px": 211.34,
-              "y0_px": 324.64,
-              "x1_px": 319.34,
-              "y1_px": 375.31
-            },
-            "node_bounds": {
-              "x0_px": 193.13,
-              "y0_px": 310.09,
-              "x1_px": 337.55,
-              "y1_px": 389.86
-            }
-          },
-          {
-            "identifier": "placebo_unavailable",
-            "text_inside_node": true,
-            "text_bounds": {
-              "x0_px": 217.34,
-              "y0_px": 173.32,
-              "x1_px": 313.34,
-              "y1_px": 223.99
-            },
-            "node_bounds": {
-              "x0_px": 199.13,
-              "y0_px": 158.77,
-              "x1_px": 331.55,
-              "y1_px": 238.54
-            }
-          },
-          {
-            "identifier": "placebo_100_dates",
-            "text_inside_node": true,
-            "text_bounds": {
-              "x0_px": 327.01,
-              "y0_px": 367.32,
-              "x1_px": 430.01,
-              "y1_px": 418.0
-            },
-            "node_bounds": {
-              "x0_px": 308.79,
-              "y0_px": 352.78,
-              "x1_px": 448.22,
-              "y1_px": 432.54
-            }
-          },
-          {
-            "identifier": "placebo_50_to_99_dates",
-            "text_inside_node": true,
-            "text_bounds": {
-              "x0_px": 313.51,
-              "y0_px": 258.68,
-              "x1_px": 443.51,
-              "y1_px": 309.35
-            },
-            "node_bounds": {
-              "x0_px": 295.29,
-              "y0_px": 244.13,
-              "x1_px": 461.72,
-              "y1_px": 323.9
-            }
-          }
-        ],
+        "node_records": [],
         "elements": [
           {
-            "identifier": "panel_title:nested_time_placebo_availability:1",
+            "identifier": "panel_title:a__placebo_date_availability:1",
             "category": "panel_title",
-            "font_size_source_pt": 10.5,
-            "font_size_print_pt": 10.5,
+            "font_size_source_pt": 10.0,
+            "font_size_print_pt": 10.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 59.07,
-              "y0_px": 481.87,
-              "x1_px": 478.07,
-              "y1_px": 505.2
+              "x0_px": 60.48,
+              "y0_px": 407.03,
+              "x1_px": 401.48,
+              "y1_px": 429.37
             }
           },
           {
-            "identifier": "placebo_complete:1",
-            "category": "node_label",
-            "font_size_source_pt": 9.5,
-            "font_size_print_pt": 9.5,
-            "inside_canvas": true,
-            "bounds": {
-              "x0_px": 106.91,
-              "y0_px": 274.2,
-              "x1_px": 203.91,
-              "y1_px": 324.87
-            }
-          },
-          {
-            "identifier": "placebo_available:1",
-            "category": "node_label",
-            "font_size_source_pt": 9.5,
-            "font_size_print_pt": 9.5,
-            "inside_canvas": true,
-            "bounds": {
-              "x0_px": 211.34,
-              "y0_px": 324.64,
-              "x1_px": 319.34,
-              "y1_px": 375.31
-            }
-          },
-          {
-            "identifier": "placebo_unavailable:1",
-            "category": "node_label",
-            "font_size_source_pt": 9.5,
-            "font_size_print_pt": 9.5,
-            "inside_canvas": true,
-            "bounds": {
-              "x0_px": 217.34,
-              "y0_px": 173.32,
-              "x1_px": 313.34,
-              "y1_px": 223.99
-            }
-          },
-          {
-            "identifier": "placebo_100_dates:1",
-            "category": "node_label",
-            "font_size_source_pt": 9.5,
-            "font_size_print_pt": 9.5,
-            "inside_canvas": true,
-            "bounds": {
-              "x0_px": 327.01,
-              "y0_px": 367.32,
-              "x1_px": 430.01,
-              "y1_px": 418.0
-            }
-          },
-          {
-            "identifier": "placebo_50_to_99_dates:1",
-            "category": "node_label",
-            "font_size_source_pt": 9.5,
-            "font_size_print_pt": 9.5,
-            "inside_canvas": true,
-            "bounds": {
-              "x0_px": 313.51,
-              "y0_px": 258.68,
-              "x1_px": 443.51,
-              "y1_px": 309.35
-            }
-          },
-          {
-            "identifier": "annotation:100_date_cohort_is_nested_in_the_50__date_cohort:1",
+            "identifier": "annotation:50_dates_71__31_1:1",
             "category": "annotation",
             "font_size_source_pt": 9.0,
             "font_size_print_pt": 9.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 17.57,
-              "y0_px": 104.61,
-              "x1_px": 519.57,
-              "y1_px": 124.61
+              "x0_px": 68.38,
+              "y0_px": 172.66,
+              "x1_px": 180.38,
+              "y1_px": 220.67
             }
           },
           {
-            "identifier": "panel_title:placebo_probability:1",
-            "category": "panel_title",
-            "font_size_source_pt": 10.5,
-            "font_size_print_pt": 10.5,
+            "identifier": "annotation:geq_100_dates_128__56_1:1",
+            "category": "annotation",
+            "font_size_source_pt": 9.0,
+            "font_size_print_pt": 9.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 662.9,
-              "y0_px": 481.87,
-              "x1_px": 912.9,
-              "y1_px": 505.2
+              "x0_px": 293.17,
+              "y0_px": 172.26,
+              "x1_px": 418.17,
+              "y1_px": 221.07
+            }
+          },
+          {
+            "identifier": "annotation:50__99_dates_29__12_7:1",
+            "category": "annotation",
+            "font_size_source_pt": 8.5,
+            "font_size_print_pt": 8.5,
+            "inside_canvas": true,
+            "bounds": {
+              "x0_px": 155.37,
+              "y0_px": 110.1,
+              "x1_px": 273.37,
+              "y1_px": 155.44
+            }
+          },
+          {
+            "identifier": "annotation:157_with___geq_50_dates:1",
+            "category": "annotation",
+            "font_size_source_pt": 8.5,
+            "font_size_print_pt": 8.5,
+            "inside_canvas": true,
+            "bounds": {
+              "x0_px": 232.07,
+              "y0_px": 272.56,
+              "x1_px": 427.07,
+              "y1_px": 292.09
+            }
+          },
+          {
+            "identifier": "annotation:128_with___geq_100_dates:1",
+            "category": "annotation",
+            "font_size_source_pt": 8.5,
+            "font_size_print_pt": 8.5,
+            "inside_canvas": true,
+            "bounds": {
+              "x0_px": 252.17,
+              "y0_px": 336.27,
+              "x1_px": 459.17,
+              "y1_px": 355.8
+            }
+          },
+          {
+            "identifier": "panel_title:b__raw_probability__n_157:1",
+            "category": "panel_title",
+            "font_size_source_pt": 10.0,
+            "font_size_print_pt": 10.0,
+            "inside_canvas": true,
+            "bounds": {
+              "x0_px": 603.63,
+              "y0_px": 407.03,
+              "x1_px": 932.02,
+              "y1_px": 429.37
             }
           },
           {
@@ -2618,36 +2483,36 @@
             "font_size_print_pt": 9.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 665.17,
-              "y0_px": 22.8,
-              "x1_px": 910.62,
-              "y1_px": 42.8
+              "x0_px": 678.05,
+              "y0_px": 43.39,
+              "x1_px": 923.5,
+              "y1_px": 63.39
             }
           },
           {
-            "identifier": "axis_label:complete_events:1",
+            "identifier": "axis_label:events:1",
             "category": "axis_label",
             "font_size_source_pt": 9.0,
             "font_size_print_pt": 9.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 537.15,
-              "y0_px": 195.64,
-              "x1_px": 557.15,
-              "y1_px": 364.64
+              "x0_px": 535.19,
+              "y0_px": 218.38,
+              "x1_px": 555.19,
+              "y1_px": 287.38
             }
           },
           {
-            "identifier": "annotation:frozen_0_10_screen:1",
+            "identifier": "annotation:frozen_exploratory_screen__0_10:1",
             "category": "annotation",
-            "font_size_source_pt": 9.0,
-            "font_size_print_pt": 9.0,
+            "font_size_source_pt": 8.5,
+            "font_size_print_pt": 8.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 649.34,
-              "y0_px": 442.17,
-              "x1_px": 846.34,
-              "y1_px": 462.17
+              "x0_px": 658.83,
+              "y0_px": 324.47,
+              "x1_px": 840.83,
+              "y1_px": 369.81
             }
           }
         ],
@@ -2655,8 +2520,8 @@
         "violations": [],
         "all_checks_passed": true
       },
-      "bytes": 21355,
-      "sha256": "29963d9c5ceceb0f6b06472dd1310a3b7670f2c6e2a9bb6dd6ddeef82ef5b63f"
+      "bytes": 21637,
+      "sha256": "f49fdeaf4151a56d8207c80960b906a7d685312b0dbc3ab0bd9793cc43278a84"
     },
     {
       "path": "generated/figures/fig_interval_coverage.pdf",
@@ -2677,6 +2542,8 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
+        "strict_node_geometry_checked": false,
+        "strict_node_geometry_passed": true,
         "grayscale_luminance_contrast": 235.0,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
@@ -3025,6 +2892,8 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
+        "strict_node_geometry_checked": false,
+        "strict_node_geometry_passed": true,
         "grayscale_luminance_contrast": 230.44,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
@@ -3324,6 +3193,8 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
+        "strict_node_geometry_checked": false,
+        "strict_node_geometry_passed": true,
         "grayscale_luminance_contrast": 171.9,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
@@ -3333,6 +3204,7 @@
           {
             "identifier": "ladder_same_site_poc_context_1",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
               "x0_px": 153.18,
               "y0_px": 705.19,
@@ -3349,6 +3221,7 @@
           {
             "identifier": "ladder_same_site_poc_context_2",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
               "x0_px": 129.68,
               "y0_px": 603.15,
@@ -3365,6 +3238,7 @@
           {
             "identifier": "ladder_same_site_poc_context_3",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
               "x0_px": 127.68,
               "y0_px": 501.11,
@@ -3381,6 +3255,7 @@
           {
             "identifier": "ladder_qa_collocation_context_1",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
               "x0_px": 667.78,
               "y0_px": 705.19,
@@ -3397,6 +3272,7 @@
           {
             "identifier": "ladder_qa_collocation_context_2",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
               "x0_px": 649.28,
               "y0_px": 603.15,
@@ -3413,6 +3289,7 @@
           {
             "identifier": "ladder_qa_collocation_context_3",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
               "x0_px": 608.28,
               "y0_px": 501.11,
@@ -3429,6 +3306,7 @@
           {
             "identifier": "ladder_official_document_context_1",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
               "x0_px": 160.68,
               "y0_px": 324.39,
@@ -3445,6 +3323,7 @@
           {
             "identifier": "ladder_official_document_context_2",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
               "x0_px": 128.18,
               "y0_px": 120.31,
@@ -3461,6 +3340,7 @@
           {
             "identifier": "ladder_separate_88502_pipeline_1",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
               "x0_px": 648.28,
               "y0_px": 324.39,
@@ -3477,6 +3357,7 @@
           {
             "identifier": "ladder_separate_88502_pipeline_2",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
               "x0_px": 652.28,
               "y0_px": 222.35,
@@ -3493,6 +3374,7 @@
           {
             "identifier": "ladder_separate_88502_pipeline_3",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
               "x0_px": 575.28,
               "y0_px": 120.31,
@@ -3721,8 +3603,8 @@
         "violations": [],
         "all_checks_passed": true
       },
-      "bytes": 31744,
-      "sha256": "41499f642fcc2020454bfb97f1394b8c8204c5d494f1e47f75e5247c68754190"
+      "bytes": 31747,
+      "sha256": "e7ba76f41cc22ee9c149ace0685a5327828d0eb930e6fcef5e1d996c996e7943"
     },
     {
       "path": "generated/figures/fig_case_studies_complete.pdf",
@@ -3749,6 +3631,8 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
+        "strict_node_geometry_checked": false,
+        "strict_node_geometry_passed": true,
         "grayscale_luminance_contrast": 218.53,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
@@ -3958,6 +3842,8 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
+        "strict_node_geometry_checked": false,
+        "strict_node_geometry_passed": true,
         "grayscale_luminance_contrast": 220.79,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
@@ -3967,6 +3853,7 @@
           {
             "identifier": "abstention_no_counterfactual",
             "text_inside_node": true,
+            "node_inside_canvas": false,
             "text_bounds": {
               "x0_px": 727.68,
               "y0_px": 260.15,
@@ -3983,6 +3870,7 @@
           {
             "identifier": "abstention_reason",
             "text_inside_node": true,
+            "node_inside_canvas": false,
             "text_bounds": {
               "x0_px": 723.18,
               "y0_px": 152.17,
@@ -4081,21 +3969,22 @@
         "violations": [],
         "all_checks_passed": true
       },
-      "bytes": 28107,
-      "sha256": "8000f1b1dcaa37cd0bcd2f38308d87b4bd4d712af608595c1a2b94b9de2d2e7f"
+      "bytes": 28118,
+      "sha256": "ed4ffaefa629530c93ccce2f30f386839f7f36bd0a5b3396f3cce8937653c94e"
     },
     {
       "path": "generated/figures/fig_applicability_map.pdf",
       "kind": "vector_figure",
       "sources": [
         "artifacts/real_transition_88101_event_audit.csv",
-        "artifacts/real_transition_88101_evidence_tier_summary.json"
+        "artifacts/real_transition_88101_evidence_tier_summary.json",
+        "artifacts/real_transition_88101_evidence_tiers.csv"
       ],
       "layout_qa": {
         "figure": "fig_applicability_map.pdf",
         "final_print_width_pt": 453.54,
         "source_width_in": 6.3,
-        "source_height_in": 4.15,
+        "source_height_in": 4.25,
         "print_scale": 0.9999,
         "smallest_font_size_print_pt": 9.0,
         "text_inside_nodes_passed": true,
@@ -4104,169 +3993,197 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
-        "grayscale_luminance_contrast": 178.69,
+        "strict_node_geometry_checked": true,
+        "strict_node_geometry_passed": true,
+        "grayscale_luminance_contrast": 166.99,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
           "final_page_crop_review": "pending_final_build"
         },
         "node_records": [
           {
-            "identifier": "applicability_observed_1",
+            "identifier": "applicability_state_1",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 161.3,
-              "y0_px": 410.71,
-              "x1_px": 356.3,
-              "y1_px": 461.39
+              "x0_px": 98.18,
+              "y0_px": 483.25,
+              "x1_px": 223.18,
+              "y1_px": 559.26
             },
             "node_bounds": {
-              "x0_px": 137.6,
-              "y0_px": 383.9,
-              "x1_px": 380.01,
-              "y1_px": 488.2
+              "x0_px": 52.3,
+              "y0_px": 455.99,
+              "x1_px": 269.06,
+              "y1_px": 586.52
             }
           },
           {
             "identifier": "applicability_output_1",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 387.6,
-              "y0_px": 410.71,
-              "x1_px": 645.6,
-              "y1_px": 461.39
+              "x0_px": 391.13,
+              "y0_px": 510.7,
+              "x1_px": 472.13,
+              "y1_px": 531.81
             },
             "node_bounds": {
-              "x0_px": 363.89,
-              "y0_px": 383.9,
-              "x1_px": 669.31,
-              "y1_px": 488.2
+              "x0_px": 303.89,
+              "y0_px": 468.56,
+              "x1_px": 559.36,
+              "y1_px": 573.95
             }
           },
           {
             "identifier": "applicability_boundary_1",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 676.4,
-              "y0_px": 410.71,
-              "x1_px": 872.4,
-              "y1_px": 461.39
+              "x0_px": 658.81,
+              "y0_px": 495.92,
+              "x1_px": 881.81,
+              "y1_px": 546.59
             },
             "node_bounds": {
-              "x0_px": 652.69,
-              "y0_px": 383.9,
-              "x1_px": 896.1,
-              "y1_px": 488.2
+              "x0_px": 584.52,
+              "y0_px": 468.56,
+              "x1_px": 956.11,
+              "y1_px": 573.95
             }
           },
           {
-            "identifier": "applicability_observed_2",
+            "identifier": "applicability_state_2",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 146.3,
-              "y0_px": 277.78,
-              "x1_px": 371.3,
-              "y1_px": 328.45
+              "x0_px": 98.18,
+              "y0_px": 322.6,
+              "x1_px": 223.18,
+              "y1_px": 398.61
             },
             "node_bounds": {
-              "x0_px": 122.6,
-              "y0_px": 250.97,
-              "x1_px": 395.01,
-              "y1_px": 355.27
+              "x0_px": 52.3,
+              "y0_px": 295.34,
+              "x1_px": 269.06,
+              "y1_px": 425.87
             }
           },
           {
             "identifier": "applicability_output_2",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 422.6,
-              "y0_px": 277.78,
-              "x1_px": 610.6,
-              "y1_px": 328.45
+              "x0_px": 391.13,
+              "y0_px": 350.05,
+              "x1_px": 472.13,
+              "y1_px": 371.16
             },
             "node_bounds": {
-              "x0_px": 397.86,
-              "y0_px": 250.97,
-              "x1_px": 635.34,
-              "y1_px": 355.27
+              "x0_px": 303.89,
+              "y0_px": 307.91,
+              "x1_px": 559.36,
+              "y1_px": 413.3
             }
           },
           {
             "identifier": "applicability_boundary_2",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 678.9,
-              "y0_px": 277.78,
-              "x1_px": 869.9,
-              "y1_px": 328.45
+              "x0_px": 658.81,
+              "y0_px": 335.27,
+              "x1_px": 881.81,
+              "y1_px": 385.94
             },
             "node_bounds": {
-              "x0_px": 655.19,
-              "y0_px": 250.97,
-              "x1_px": 893.6,
-              "y1_px": 355.27
+              "x0_px": 584.52,
+              "y0_px": 307.91,
+              "x1_px": 956.11,
+              "y1_px": 413.3
             }
           },
           {
-            "identifier": "applicability_observed_3",
+            "identifier": "applicability_state_3",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 141.8,
-              "y0_px": 149.96,
-              "x1_px": 375.8,
-              "y1_px": 200.63
+              "x0_px": 97.68,
+              "y0_px": 161.95,
+              "x1_px": 223.68,
+              "y1_px": 237.96
             },
             "node_bounds": {
-              "x0_px": 118.1,
-              "y0_px": 123.15,
-              "x1_px": 399.51,
-              "y1_px": 227.45
+              "x0_px": 52.3,
+              "y0_px": 134.69,
+              "x1_px": 269.06,
+              "y1_px": 265.22
             }
           },
           {
             "identifier": "applicability_output_3",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 450.1,
-              "y0_px": 149.96,
-              "x1_px": 583.1,
-              "y1_px": 200.63
+              "x0_px": 334.13,
+              "y0_px": 161.95,
+              "x1_px": 529.13,
+              "y1_px": 237.96
             },
             "node_bounds": {
-              "x0_px": 397.86,
-              "y0_px": 123.15,
-              "x1_px": 635.34,
-              "y1_px": 227.45
+              "x0_px": 282.72,
+              "y0_px": 134.69,
+              "x1_px": 580.53,
+              "y1_px": 265.22
             }
           },
           {
             "identifier": "applicability_boundary_3",
             "text_inside_node": true,
+            "node_inside_canvas": true,
             "text_bounds": {
-              "x0_px": 663.9,
-              "y0_px": 149.96,
-              "x1_px": 884.9,
-              "y1_px": 200.63
+              "x0_px": 640.31,
+              "y0_px": 161.95,
+              "x1_px": 900.31,
+              "y1_px": 237.96
             },
             "node_bounds": {
-              "x0_px": 640.19,
-              "y0_px": 123.15,
-              "x1_px": 908.6,
-              "y1_px": 227.45
+              "x0_px": 581.15,
+              "y0_px": 134.69,
+              "x1_px": 959.47,
+              "y1_px": 265.22
+            }
+          },
+          {
+            "identifier": "applicability_mechanism_boundary",
+            "text_inside_node": true,
+            "node_inside_canvas": true,
+            "text_bounds": {
+              "x0_px": 157.04,
+              "y0_px": 37.79,
+              "x1_px": 861.04,
+              "y1_px": 85.8
+            },
+            "node_bounds": {
+              "x0_px": 44.89,
+              "y0_px": 13.72,
+              "x1_px": 973.19,
+              "y1_px": 109.87
             }
           }
         ],
         "elements": [
           {
-            "identifier": "annotation:observed_condition:1",
+            "identifier": "annotation:evidence_state:1",
             "category": "annotation",
             "font_size_source_pt": 10.5,
             "font_size_print_pt": 10.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 133.3,
-              "y0_px": 536.86,
-              "x1_px": 384.3,
-              "y1_px": 560.2
+              "x0_px": 65.68,
+              "y0_px": 605.98,
+              "x1_px": 255.68,
+              "y1_px": 629.31
             }
           },
           {
@@ -4276,36 +4193,36 @@
             "font_size_print_pt": 10.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 415.1,
-              "y0_px": 536.86,
-              "x1_px": 618.1,
-              "y1_px": 560.2
+              "x0_px": 330.13,
+              "y0_px": 605.98,
+              "x1_px": 533.13,
+              "y1_px": 629.31
             }
           },
           {
-            "identifier": "annotation:not_established:1",
+            "identifier": "annotation:claim_boundary:1",
             "category": "annotation",
             "font_size_source_pt": 10.5,
             "font_size_print_pt": 10.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 672.4,
-              "y0_px": 536.86,
-              "x1_px": 876.4,
-              "y1_px": 560.2
+              "x0_px": 668.31,
+              "y0_px": 605.98,
+              "x1_px": 872.31,
+              "y1_px": 629.31
             }
           },
           {
-            "identifier": "applicability_observed_1:1",
+            "identifier": "applicability_state_1:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 161.3,
-              "y0_px": 410.71,
-              "x1_px": 356.3,
-              "y1_px": 461.39
+              "x0_px": 98.18,
+              "y0_px": 483.25,
+              "x1_px": 223.18,
+              "y1_px": 559.26
             }
           },
           {
@@ -4315,10 +4232,10 @@
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 387.6,
-              "y0_px": 410.71,
-              "x1_px": 645.6,
-              "y1_px": 461.39
+              "x0_px": 391.13,
+              "y0_px": 510.7,
+              "x1_px": 472.13,
+              "y1_px": 531.81
             }
           },
           {
@@ -4328,23 +4245,23 @@
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 676.4,
-              "y0_px": 410.71,
-              "x1_px": 872.4,
-              "y1_px": 461.39
+              "x0_px": 658.81,
+              "y0_px": 495.92,
+              "x1_px": 881.81,
+              "y1_px": 546.59
             }
           },
           {
-            "identifier": "applicability_observed_2:1",
+            "identifier": "applicability_state_2:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 146.3,
-              "y0_px": 277.78,
-              "x1_px": 371.3,
-              "y1_px": 328.45
+              "x0_px": 98.18,
+              "y0_px": 322.6,
+              "x1_px": 223.18,
+              "y1_px": 398.61
             }
           },
           {
@@ -4354,10 +4271,10 @@
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 422.6,
-              "y0_px": 277.78,
-              "x1_px": 610.6,
-              "y1_px": 328.45
+              "x0_px": 391.13,
+              "y0_px": 350.05,
+              "x1_px": 472.13,
+              "y1_px": 371.16
             }
           },
           {
@@ -4367,23 +4284,23 @@
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 678.9,
-              "y0_px": 277.78,
-              "x1_px": 869.9,
-              "y1_px": 328.45
+              "x0_px": 658.81,
+              "y0_px": 335.27,
+              "x1_px": 881.81,
+              "y1_px": 385.94
             }
           },
           {
-            "identifier": "applicability_observed_3:1",
+            "identifier": "applicability_state_3:1",
             "category": "node_label",
             "font_size_source_pt": 9.5,
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 141.8,
-              "y0_px": 149.96,
-              "x1_px": 375.8,
-              "y1_px": 200.63
+              "x0_px": 97.68,
+              "y0_px": 161.95,
+              "x1_px": 223.68,
+              "y1_px": 237.96
             }
           },
           {
@@ -4393,10 +4310,10 @@
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 450.1,
-              "y0_px": 149.96,
-              "x1_px": 583.1,
-              "y1_px": 200.63
+              "x0_px": 334.13,
+              "y0_px": 161.95,
+              "x1_px": 529.13,
+              "y1_px": 237.96
             }
           },
           {
@@ -4406,23 +4323,23 @@
             "font_size_print_pt": 9.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 663.9,
-              "y0_px": 149.96,
-              "x1_px": 884.9,
-              "y1_px": 200.63
+              "x0_px": 640.31,
+              "y0_px": 161.95,
+              "x1_px": 900.31,
+              "y1_px": 237.96
             }
           },
           {
-            "identifier": "annotation:applicability_map__not_a_classifier__station_rec:1",
-            "category": "annotation",
+            "identifier": "applicability_mechanism_boundary:1",
+            "category": "node_label",
             "font_size_source_pt": 9.0,
             "font_size_print_pt": 9.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 31.1,
-              "y0_px": 75.82,
-              "x1_px": 1002.1,
-              "y1_px": 95.82
+              "x0_px": 157.04,
+              "y0_px": 37.79,
+              "x1_px": 861.04,
+              "y1_px": 85.8
             }
           }
         ],
@@ -4430,8 +4347,8 @@
         "violations": [],
         "all_checks_passed": true
       },
-      "bytes": 25050,
-      "sha256": "d133f5e5d0234b9cae31543fbc945152787d6ecd6490e397cc366848884fc213"
+      "bytes": 25505,
+      "sha256": "0ae166f83c83cd7a3da35323e625f41acc02fa5cb4c12be536eac48277542ea4"
     },
     {
       "path": "generated/figures/fig_anchor_concentration.pdf",
@@ -4452,6 +4369,8 @@
         "legend_data_overlap_passed": true,
         "typography_passed": true,
         "grayscale_passed": true,
+        "strict_node_geometry_checked": false,
+        "strict_node_geometry_passed": true,
         "grayscale_luminance_contrast": 230.44,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
@@ -4668,8 +4587,8 @@
       "sources": [
         "configs/current_evidence_summary_v2.json"
       ],
-      "bytes": 115496,
-      "sha256": "f32350e6fdf160015825cd217399f23622432994f1a1402c320059da6b18b452"
+      "bytes": 114843,
+      "sha256": "cfa49858d67ebb5cc58c4be35ab367e763f4900b4c730cab0f6d49939147eab4"
     }
   ]
 }

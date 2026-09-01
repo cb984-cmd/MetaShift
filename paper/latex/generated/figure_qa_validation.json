@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-01T16:30:17.993628+00:00",
+  "generated_at_utc": "2026-09-01T19:41:17.427672+00:00",
   "frozen_evidence": {
     "tag": "v0.3.2-evidence-final",
     "commit": "57d678ecabebff724d898abe626c9ef80538775b",
@@ -11,6 +11,57 @@
   },
   "result_label": "stable_full_v2",
   "required_figure_count": 17,
+  "redesigned_figure_partition_counts": {
+    "donor_construction": {
+      "total_anchors": 563,
+      "zero_sites": 169,
+      "one_site": 99,
+      "two_sites": 57,
+      "at_least_three_sites": 238,
+      "at_least_one_site": 394
+    },
+    "workflow": {
+      "total_anchors": 563,
+      "complete_comparisons": 228,
+      "availability_abstentions": 335,
+      "calibration_targets": 66,
+      "evaluation_targets": 80
+    },
+    "event_accounting": {
+      "total_anchors": 563,
+      "donor_insufficient": 325,
+      "input_failure": 10,
+      "complete_comparisons": 228,
+      "supported_candidates": 34,
+      "not_supported": 122,
+      "complete_inconclusive": 72,
+      "overall_inconclusive": 407
+    },
+    "placebos": {
+      "complete_comparisons": 228,
+      "all_placebo_rows": 228,
+      "eligible_placebo_rows": 157,
+      "fewer_than_50": 71,
+      "from_50_to_99": 29,
+      "at_least_50": 157,
+      "at_least_100": 128,
+      "finite_probability_rows": 157
+    },
+    "applicability_matrix": {
+      "total_anchors": 563,
+      "donor_insufficient": 325,
+      "input_failure": 10,
+      "complete_comparisons": 228,
+      "supported_candidates": 34,
+      "not_supported": 122,
+      "complete_inconclusive": 72
+    },
+    "all_evidence_tiers": {
+      "not_supported_by_available_evidence": 122,
+      "inconclusive_insufficient_evidence": 407,
+      "supported_candidate_discontinuity": 34
+    }
+  },
   "checks": [
     {
       "name": "frozen_figure_manifest_identity",
@@ -29,6 +80,11 @@
     },
     {
       "name": "anchor_and_tier_accounting",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "redesigned_figure_partition_semantics",
       "passed": true,
       "violations": []
     },

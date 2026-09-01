@@ -126,8 +126,8 @@ class V05PaperClaimValidationTests(unittest.TestCase):
                 ),
                 "manuscript_assertion": (
                     r"The comparative forced policy also answers every arm "
-                    r"(coverage \VFiveComparativeForcedCoverage{}) but has "
-                    r"observed error \VFiveComparativeForcedRisk{}||"
+                    r"(coverage \VFiveComparativeForcedCoveragePercent{}) but has "
+                    r"observed error \VFiveComparativeForcedRiskPercent{}||"
                     r"Comparative-forced errors & 126,764 & among 460,800 "
                     r"forced scope arms \\"
                 ),
@@ -142,6 +142,13 @@ class V05PaperClaimValidationTests(unittest.TestCase):
         )
 
         self.assertEqual([], violations)
+
+    def test_report_display_formats_probabilities_and_zero_errors(self) -> None:
+        self.assertEqual(r"39.1\%", generator._format_percent(0.3906119792))
+        self.assertEqual(r"19.5\%", generator._format_percent(0.195208))
+        self.assertEqual(
+            "0 observed errors", generator._format_observed_error(0.0)
+        )
 
     def test_generated_macro_validation_detects_frozen_value_mismatch(self) -> None:
         violations = ledger.check_generated_macros(

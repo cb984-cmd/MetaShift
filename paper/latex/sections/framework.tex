@@ -28,8 +28,8 @@ directory existed.
 \caption{Receipt-verified v0.5 finite-policy Scope Answerability Frontier.
 Target-only and comparative policies have no positive-coverage qualifying rule
 through $\alpha=.10$. The comparative channel reaches coverage
-\VFiveComparativeFrontierTwenty{} only at $\alpha=.20$, with observed
-conditional error \VFiveComparativeRiskTwenty{}. The certificate-assisted
+\VFiveComparativeFrontierTwentyPercent{} only at $\alpha=.20$, with observed
+conditional error \VFiveComparativeRiskTwentyPercent{}. The certificate-assisted
 policy uses synthetic design information and is displayed separately rather
 than treated as a deployable external-evidence channel.}
 \label{fig:v05-frontier}
@@ -73,12 +73,13 @@ network identifiability.}
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_audit_pipeline.pdf}
-\caption{MetaShift-Bench evidence workflow. Public archives are canonicalized
-before persistent metadata anchors and distinct physical donor candidates are
-constructed. Stable regimes supply known synthetic truth, while every real
-anchor receives a common comparison or a recorded failure reason. The diagram
-is a workflow schematic; its arrows do not assert that metadata reveals a
-physical instrument state.}
+\caption{Frozen v0.3.2 deployment-evidence workflow. Shared preprocessing
+turns public archives into canonical daily series and persistent metadata
+anchors, then feeds separate stable-window synthetic and observational-audit
+lanes. The synthetic lane has labels known by construction and
+component-disjoint calibration/evaluation partitions; the observational lane
+records bounded audit dispositions and diagnostic context only. The diagram
+does not infer physical mechanism from metadata.}
 \label{fig:audit-pipeline}
 \end{figure}
 

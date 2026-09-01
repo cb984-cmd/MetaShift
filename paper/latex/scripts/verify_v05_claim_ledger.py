@@ -112,6 +112,17 @@ def _format_probability(value: object) -> str:
     return f"{float(value):.6f}"
 
 
+def _format_percent(value: object) -> str:
+    rendered = f"{100.0 * float(value):.1f}".rstrip("0").rstrip(".")
+    return rendered + r"\%"
+
+
+def _format_observed_error(value: object) -> str:
+    if abs(float(value)) < 1e-12:
+        return "0 observed errors"
+    return _format_percent(value)
+
+
 def _format_count(value: object) -> str:
     return f"{int(float(value)):,}"
 
@@ -255,13 +266,25 @@ def receipt_bound_display_values() -> tuple[dict[str, str], dict[str, list[str]]
         "VFiveTargetForcedCoverage": _format_probability(
             target_forced["coverage"]
         ),
+        "VFiveTargetForcedCoveragePercent": _format_percent(
+            target_forced["coverage"]
+        ),
         "VFiveTargetForcedRisk": _format_probability(
+            target_forced["conditional_error"]
+        ),
+        "VFiveTargetForcedRiskPercent": _format_percent(
             target_forced["conditional_error"]
         ),
         "VFiveComparativeForcedCoverage": _format_probability(
             comparative_forced["coverage"]
         ),
+        "VFiveComparativeForcedCoveragePercent": _format_percent(
+            comparative_forced["coverage"]
+        ),
         "VFiveComparativeForcedRisk": _format_probability(
+            comparative_forced["conditional_error"]
+        ),
+        "VFiveComparativeForcedRiskPercent": _format_percent(
             comparative_forced["conditional_error"]
         ),
         "VFiveComparativeForcedErrors": _format_count(
@@ -273,15 +296,33 @@ def receipt_bound_display_values() -> tuple[dict[str, str], dict[str, list[str]]
         "VFiveComparativeFrontierTwenty": _format_probability(
             comparative_frontier["frontier_coverage"]
         ),
+        "VFiveComparativeFrontierTwentyPercent": _format_percent(
+            comparative_frontier["frontier_coverage"]
+        ),
         "VFiveComparativeRiskTwenty": _format_probability(
             comparative_frontier["frontier_conditional_error"]
         ),
+        "VFiveComparativeRiskTwentyPercent": _format_percent(
+            comparative_frontier["frontier_conditional_error"]
+        ),
         "VFiveComparativeGainLower": _format_probability(gain_bootstrap["lower_95"]),
+        "VFiveComparativeGainLowerPercent": _format_percent(
+            gain_bootstrap["lower_95"]
+        ),
         "VFiveComparativeGainUpper": _format_probability(gain_bootstrap["upper_95"]),
+        "VFiveComparativeGainUpperPercent": _format_percent(
+            gain_bootstrap["upper_95"]
+        ),
         "VFiveCertificateCoverage": _format_probability(
             overall_certificate["certificate_pair_coverage"]
         ),
+        "VFiveCertificateCoveragePercent": _format_percent(
+            overall_certificate["certificate_pair_coverage"]
+        ),
         "VFiveCertificateEfficiency": _format_probability(
+            overall_certificate["certificate_efficiency"]
+        ),
+        "VFiveCertificateEfficiencyPercent": _format_percent(
             overall_certificate["certificate_efficiency"]
         ),
         "VFiveCertificateAnsweredPairs": _format_count(
@@ -293,7 +334,13 @@ def receipt_bound_display_values() -> tuple[dict[str, str], dict[str, list[str]]
         "VFiveCertificateObservedError": _format_probability(
             overall_certificate["certificate_conditional_error"]
         ),
+        "VFiveCertificateObservedErrorDisplay": _format_observed_error(
+            overall_certificate["certificate_conditional_error"]
+        ),
         "VFiveNonpositiveMarginPairs": _format_count(nonpositive_margin_pairs),
+        "VFiveCertificateAbstentionPercent": _format_percent(
+            nonpositive_margin_pairs / evaluation_pairs
+        ),
         "VFiveEnvelopeViolations": _format_count(envelope_violations),
         "VFiveQZeroPairs": _format_count(q_zero_pairs),
         "VFiveQZeroCertificateAnsweredPairs": _format_count(
@@ -354,6 +401,12 @@ def receipt_bound_display_values() -> tuple[dict[str, str], dict[str, list[str]]
         "V05-11": [
             _format_probability(q_certificate_rows[group]["certificate_pair_coverage"])
             for group in q_groups
+        ]
+        + [
+            _format_probability(
+                q_certificate_rows[group]["certificate_efficiency"]
+            )
+            for group in q_groups[1:]
         ],
         "V05-12": [
             macro_values["VFiveFreezeTag"],
@@ -687,6 +740,11 @@ def check_generated_table_assertion_values(
         for fragments in expected_claim_fragments.values()
         for fragment in fragments
         if re.fullmatch(r"\d+(?:,\d{3})*(?:\.\d+)?", fragment)
+    )
+    receipt_bound_values.update(
+        _format_percent(value).removesuffix(r"\%")
+        for value in tuple(receipt_bound_values)
+        if 0.0 <= float(value.replace(",", "")) <= 1.0
     )
     receipt_bound_values.update(
         {

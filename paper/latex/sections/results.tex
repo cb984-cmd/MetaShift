@@ -5,26 +5,28 @@
 \textbf{Answer.} The frozen v0.5 finite-policy results support the stipulated
 target-only impossibility endpoint and show that comparative answerability is
 not uniformly available at strict error tolerances. The target-only forced
-policy answers every held-out arm (coverage \VFiveTargetForcedCoverage{}) and
-has observed conditional scope error \VFiveTargetForcedRisk{}; accordingly, no
-positive-coverage target-only policy qualifies for any reported $\alpha<.5$.
+policy answers every held-out arm (coverage
+\VFiveTargetForcedCoveragePercent{}) and has observed conditional scope error
+\VFiveTargetForcedRiskPercent{}; accordingly, no positive-coverage target-only
+policy qualifies for any reported $\alpha<.5$.
 The comparative forced policy also answers every arm (coverage
-\VFiveComparativeForcedCoverage{}) but has observed error
-\VFiveComparativeForcedRisk{}. Its confidence-selective policies calibrated at
-$.01$, $.05$, and $.10$ answer \VFiveStrictConfidenceAnsweredArms{} evaluation
-arms. Only the policy calibrated at $.20$ reaches a positive comparative envelope: coverage
-\VFiveComparativeFrontierTwenty{} at observed error
-\VFiveComparativeRiskTwenty{}.
+\VFiveComparativeForcedCoveragePercent{}) but has observed error
+\VFiveComparativeForcedRiskPercent{}. Its confidence-selective policies
+calibrated at $.01$, $.05$, and $.10$ answer
+\VFiveStrictConfidenceAnsweredArms{} evaluation arms. Only the policy
+calibrated at $.20$ reaches a positive comparative envelope: coverage
+\VFiveComparativeFrontierTwentyPercent{} at observed error
+\VFiveComparativeRiskTwentyPercent{}.
 
 \input{generated/tables/table_v05_frontier}
 
 At $\alpha=.20$, the achieved finite-policy Scope Answerability Gain from the
 target-only to comparative channel is therefore
-\VFiveComparativeFrontierTwenty{}. Its 95\% component-bootstrap interval is
-$[\VFiveComparativeGainLower{},\VFiveComparativeGainUpper{}]$. At $.01$, $.05$, and $.10$, both finite-policy
-frontiers are zero. These values compare frozen policies on held-out synthetic
-components; they do not estimate a universal optimum or guarantee future
-conditional scope risk.
+\VFiveComparativeFrontierTwentyPercent{}. Its 95\% component-bootstrap interval
+is $[\VFiveComparativeGainLowerPercent{},\VFiveComparativeGainUpperPercent{}]$.
+At $.01$, $.05$, and $.10$, both finite-policy frontiers are zero. These values
+compare frozen policies on held-out synthetic components; they do not estimate
+a universal optimum or guarantee future conditional scope risk.
 
 \begin{figure}[tbp]
 \centering
@@ -41,16 +43,19 @@ because it uses synthetic design information.}
 \subsection{RQ0a: Structural certificate and retained failure boundary}
 
 \textbf{Answer.} The bounded certificate is internally valid within its
-declared synthetic contract, but it is intentionally incomplete. It answers
+declared synthetic contract, but it is intentionally incomplete. It answered
 \VFiveCertificateAnsweredPairs{} of \VFiveEvaluationPairs{} matched pairs
-(\VFiveCertificateCoverage{}) and has \VFiveCertificateObservedError{} observed
-conditional error among \VFiveCertificateAnsweredArms{} answered scope arms.
-Its predeclared simulation-information-oracle efficiency is
-\VFiveCertificateEfficiency{}. It abstains on \VFiveNonpositiveMarginPairs{}
-pairs with nonpositive structural margin and has \VFiveEnvelopeViolations{}
-observed envelope violations. These are empirical observations under a bounded
-generator, not evidence of zero population risk or a deployable real-network
-certificate.
+(\VFiveCertificateCoveragePercent{}), with
+\VFiveCertificateObservedErrorDisplay{} among
+\VFiveCertificateAnsweredArms{} answered scope arms. It recovered
+\VFiveCertificateEfficiencyPercent{} of the pairs deemed answerable by the
+predeclared simulation-information oracle and abstained on the remaining
+\VFiveNonpositiveMarginPairs{} pairs
+(\VFiveCertificateAbstentionPercent{}), including all \VFiveQZeroPairs{}
+observationally indistinguishable $q=0$ negative controls. It has
+\VFiveEnvelopeViolations{} observed envelope violations. These finite-grid
+observations hold only under the bounded generator; they are neither evidence
+of zero population risk nor a deployable real-network certificate.
 
 \input{generated/tables/table_v05_certificate}
 
@@ -203,11 +208,13 @@ boundaries rather than removed.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_event_accounting.pdf}
-\caption{Hierarchical accounting of all \TotalAnchors{} primary metadata
-anchors. Donor-insufficient and input-window-failure rows remain inconclusive
-audit dispositions. Only complete comparisons flow into the observational
-three-way tier rules; the lower reconciliation confirms both count partitions.
-No branch represents a physical monitoring diagnosis.}
+\caption{Complete count partitions for all \TotalAnchors{} primary metadata
+anchors. Panel (a) divides every anchor into donor-insufficient,
+input-window-failure, and complete-comparison outcomes. Panel (b) divides only
+the \CompleteComparisons{} complete comparisons into supported-candidate,
+not-supported, and complete-but-inconclusive audit tiers. The reconciliation
+band states how the overall \InconclusiveEvents{} inconclusive outcomes arise.
+These are audit dispositions, not physical monitoring diagnoses.}
 \label{fig:event-accounting}
 \end{figure}
 
@@ -228,10 +235,14 @@ These are diagnostic falsifications rather than causal probabilities.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_placebos.pdf}
-\caption{Time-placebo availability and raw within-event placebo-probability
-distribution. The vertical line marks the frozen exploratory 0.10 screening
-threshold. These values are diagnostic falsification quantities, not causal
-probabilities; incomplete placebo sets remain visible in the left panel.}
+\caption{Time-placebo availability partition and raw within-event
+placebo-probability distribution among the \CompleteComparisons{} complete
+comparisons. The left panel shows 71 with fewer than 50 dates, 29 with 50--99
+dates, and 128 with at least 100 dates; its brackets identify the
+\TimePlaceboEvents{} with at least 50 dates. The right-panel histogram uses
+that 157-event eligible subset, and its vertical line marks the frozen
+exploratory 0.10 screen. Raw probabilities are diagnostic falsification
+quantities, not causal probabilities.}
 \label{fig:placebos}
 \end{figure}
 

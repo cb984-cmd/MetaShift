@@ -79,10 +79,24 @@ FAMILY_LABELS = {
     "temporary_step": "Temporary step",
     "variance_increase": "Variance increase",
 }
+FIGURE_COLORS = {
+    "ink": "#1F2937",
+    "muted_ink": "#5F6B7A",
+    "edge": "#475569",
+    "grid": "#D8DEE9",
+    "shared_input": "#DCEAF7",
+    "synthetic": "#F5E6B3",
+    "audit": "#D9E2F3",
+    "supported": "#008C76",
+    "not_supported": "#D98E04",
+    "inconclusive": "#7A8696",
+    "unavailable": "#E7EAF0",
+    "claim_boundary": "#FFF1C7",
+}
 TIER_COLORS = {
-    "supported_candidate_discontinuity": "#2563EB",
-    "not_supported_by_available_evidence": "#B45309",
-    "inconclusive_insufficient_evidence": "#64748B",
+    "supported_candidate_discontinuity": FIGURE_COLORS["supported"],
+    "not_supported_by_available_evidence": FIGURE_COLORS["not_supported"],
+    "inconclusive_insufficient_evidence": FIGURE_COLORS["inconclusive"],
 }
 
 
@@ -95,6 +109,13 @@ MIN_PANEL_TITLE_PT = 10.0
 NODE_HORIZONTAL_PADDING_PT = 6.0
 NODE_VERTICAL_PADDING_PT = 4.0
 MIN_TEXT_GAP_PT = 3.0
+STRICT_NODE_GEOMETRY_FIGURES = frozenset(
+    {
+        "fig_donor_construction.pdf",
+        "fig_audit_pipeline.pdf",
+        "fig_applicability_map.pdf",
+    }
+)
 
 
 class LayoutNode:
@@ -248,8 +269,14 @@ def _box(
         fontsize=required_fontsize,
         fontweight=weight,
         color="#FFFFFF"
-        if facecolor in {"#2563EB", "#B45309", "#64748B"}
-        else "#111827",
+        if facecolor
+        in {
+            FIGURE_COLORS["supported"],
+            FIGURE_COLORS["inconclusive"],
+            "#2563EB",
+            "#64748B",
+        }
+        else FIGURE_COLORS["ink"],
         transform=axis.transAxes,
         clip_on=False,
     )
@@ -357,6 +384,99 @@ def _comparison_shading(axis: plt.Axes) -> None:
 def _finalize_axes(axis: plt.Axes) -> None:
     axis.grid(axis="both", color="#CBD5E1", alpha=0.55, linewidth=0.55)
     axis.set_axisbelow(True)
+
+
+def _percent(value: int, denominator: int) -> str:
+    if denominator <= 0:
+        raise ValueError("Percentage denominator must be positive.")
+    return f"{100.0 * value / denominator:.1f}%"
+
+
+def _partition_text_color(color: str) -> str:
+    return (
+        "#FFFFFF"
+        if color in {FIGURE_COLORS["supported"], FIGURE_COLORS["inconclusive"]}
+        else FIGURE_COLORS["ink"]
+    )
+
+
+def _draw_partition_bar(
+    axis: plt.Axes,
+    *,
+    values: list[int],
+    labels: list[str],
+    colors: list[str],
+    total: int,
+    y: float = 0.0,
+    height: float = 0.42,
+    internal_min_fraction: float = 0.14,
+) -> list[tuple[float, float]]:
+    """Draw an explicitly reconciled horizontal count partition."""
+
+    if len(values) != len(labels) or len(values) != len(colors):
+        raise ValueError("Partition values, labels, and colors must have equal length.")
+    if sum(values) != total:
+        raise ValueError(f"Partition does not reconcile: {values} != {total}")
+
+    left = 0.0
+    intervals: list[tuple[float, float]] = []
+    for value, label, color in zip(values, labels, colors, strict=True):
+        axis.barh(
+            [y],
+            [value],
+            left=[left],
+            height=height,
+            color=color,
+            edgecolor=FIGURE_COLORS["edge"],
+            linewidth=0.8,
+        )
+        start, end = left, left + value
+        intervals.append((start, end))
+        if value / total >= internal_min_fraction:
+            axis.text(
+                (start + end) / 2,
+                y,
+                f"{label}\n{value} ({_percent(value, total)})",
+                ha="center",
+                va="center",
+                fontsize=9.0,
+                color=_partition_text_color(color),
+            )
+        left = end
+
+    axis.set_xlim(0, total)
+    axis.set_yticks([])
+    axis.spines[["top", "right", "left", "bottom"]].set_visible(False)
+    axis.tick_params(axis="x", length=0, labelbottom=False)
+    return intervals
+
+
+def _draw_bracket(
+    axis: plt.Axes,
+    *,
+    start: float,
+    end: float,
+    y: float,
+    label: str,
+    height: float = 0.07,
+) -> None:
+    axis.plot(
+        [start, start, end, end],
+        [y, y + height, y + height, y],
+        color=FIGURE_COLORS["edge"],
+        linewidth=0.9,
+        clip_on=False,
+    )
+    axis.text(
+        (start + end) / 2,
+        y + height + 0.025,
+        label,
+        ha="center",
+        va="bottom",
+        fontsize=8.5,
+        color=FIGURE_COLORS["ink"],
+        clip_on=False,
+    )
 
 
 def _visible_text(text: Text) -> bool:
@@ -489,6 +609,8 @@ def inspect_figure_layout(figure: plt.Figure, figure_name: str) -> dict[str, Any
     violations: list[dict[str, Any]] = []
 
     node_records: list[dict[str, Any]] = []
+    strict_node_geometry = figure_name in STRICT_NODE_GEOMETRY_FIGURES
+    node_geometry_violations: list[dict[str, str]] = []
     for node in state.nodes:
         text_box = node.text.get_window_extent(renderer)
         patch_box = node.patch.get_window_extent(renderer)
@@ -498,10 +620,17 @@ def inspect_figure_layout(figure: plt.Figure, figure_name: str) -> dict[str, Any
             horizontal_padding_px=horizontal_padding,
             vertical_padding_px=vertical_padding,
         )
+        node_inside_canvas = bool(
+            patch_box.x0 >= canvas.x0
+            and patch_box.x1 <= canvas.x1
+            and patch_box.y0 >= canvas.y0
+            and patch_box.y1 <= canvas.y1
+        )
         node_records.append(
             {
                 "identifier": node.identifier,
                 "text_inside_node": fits,
+                "node_inside_canvas": node_inside_canvas,
                 "text_bounds": _record_box(text_box),
                 "node_bounds": _record_box(patch_box),
             }
@@ -513,6 +642,27 @@ def inspect_figure_layout(figure: plt.Figure, figure_name: str) -> dict[str, Any
                     "element": node.identifier,
                 }
             )
+        if strict_node_geometry and not node_inside_canvas:
+            node_geometry_violations.append(
+                {
+                    "issue": "node_outside_figure_canvas",
+                    "element": node.identifier,
+                }
+            )
+    if strict_node_geometry:
+        for index, first in enumerate(state.nodes):
+            first_box = first.patch.get_window_extent(renderer)
+            for second in state.nodes[index + 1 :]:
+                second_box = second.patch.get_window_extent(renderer)
+                if _boxes_intersect(first_box, second_box):
+                    node_geometry_violations.append(
+                        {
+                            "issue": "node_boxes_overlap",
+                            "first": first.identifier,
+                            "second": second.identifier,
+                        }
+                    )
+    violations.extend(node_geometry_violations)
 
     element_records: list[dict[str, Any]] = []
     for element in text_elements:
@@ -641,6 +791,8 @@ def inspect_figure_layout(figure: plt.Figure, figure_name: str) -> dict[str, Any
             item["issue"] == "font_below_minimum" for item in violations
         ),
         "grayscale_passed": grayscale_passed,
+        "strict_node_geometry_checked": strict_node_geometry,
+        "strict_node_geometry_passed": not node_geometry_violations,
         "grayscale_luminance_contrast": round(grayscale_contrast, 2),
         "visual_inspection": {
             "source_rendered_geometry": "passed" if not violations else "failed",
@@ -758,88 +910,152 @@ def _donor_construction_figure(
         donor_counts,
         bins=[-1, 0, 1, 2, np.inf],
         labels=["0", "1", "2", "3+"],
-    ).value_counts().reindex(["0", "1", "2", "3+"], fill_value=0)
+    ).value_counts().reindex(["0", "1", "2", "3+"], fill_value=0).astype(int)
+    total = int(categories.sum())
+    if total != len(audit):
+        raise ValueError("Donor-availability categories do not cover all metadata anchors.")
+    if int(categories.loc["3+"]) != int((donor_counts >= 3).sum()):
+        raise ValueError("The three-donor eligibility category is inconsistent.")
+
     figure, axes = plt.subplots(
-        1, 2, figsize=(6.3, 3.35), gridspec_kw={"width_ratios": [1.18, 0.82]}
+        2, 1, figsize=(6.3, 4.85), gridspec_kw={"height_ratios": [2.4, 1.0]}
     )
     schematic, distribution = axes
     schematic.axis("off")
-    target = _box(
+    schematic.set_title(
+        "(a) Physical-site deduplication",
+        loc="left",
+        fontsize=10.0,
+        fontweight="bold",
+    )
+    target_identity = _box(
         schematic,
-        0.13,
-        0.68,
-        0.24,
         0.18,
-        "Target site\n+ POC",
-        facecolor="#E0F2FE",
-        identifier="donor_target_site",
+        0.86,
+        0.27,
+        0.11,
+        "Target identity\nState--County--Site--POC",
+        facecolor=FIGURE_COLORS["shared_input"],
+        identifier="donor_target_identity",
+    )
+    target_poc = _box(
+        schematic,
+        0.18,
+        0.60,
+        0.25,
+        0.09,
+        "Target POC\nTreated series",
+        facecolor=FIGURE_COLORS["shared_input"],
+        identifier="donor_target_poc",
     )
     same_site = _box(
         schematic,
-        0.13,
-        0.28,
-        0.24,
-        0.16,
-        "Same-site POC\nexcluded",
-        facecolor="#FEE2E2",
-        edgecolor="#B91C1C",
-        hatch="//",
-        identifier="donor_same_site_poc",
+        0.18,
+        0.34,
+        0.29,
+        0.10,
+        "Alternate same-site POC\nExcluded before donor ranking",
+        facecolor=FIGURE_COLORS["unavailable"],
+        identifier="donor_same_site_excluded",
     )
-    _arrow_between(target, same_site, color="#B91C1C", style="--")
+    donor_sites = _box(
+        schematic,
+        0.71,
+        0.86,
+        0.24,
+        0.09,
+        "Eligible donor\nphysical sites",
+        facecolor=FIGURE_COLORS["audit"],
+        identifier="donor_site_header",
+    )
     donor_nodes: list[LayoutNode] = []
-    for x, label in (
-        (0.43, "Donor A"),
-        (0.66, "Donor B"),
-        (0.89, "Donor C+"),
-    ):
+    for index, y in enumerate((0.60, 0.40, 0.20), start=1):
         donor_nodes.append(
             _box(
                 schematic,
-                x,
-                0.68,
-                0.14,
-                0.14,
-                label,
-                facecolor="#DCFCE7",
-                identifier=f"donor_{label.split()[1].lower().replace('+', 'plus')}",
+                0.71,
+                y,
+                0.25,
+                0.09,
+                f"Site {chr(64 + index)}: one ranked POC",
+                facecolor=FIGURE_COLORS["audit"],
+                identifier=f"donor_physical_site_{index}",
             )
         )
-    for donor in donor_nodes:
-        _arrow_between(target, donor)
-    schematic.text(
-        0.54,
-        0.075,
-        "Physical identity: State + County + Site.\nEach donor box represents one retained POC.",
-        ha="center",
-        va="center",
-        fontsize=9,
-        transform=schematic.transAxes,
+    threshold = _box(
+        schematic,
+        0.25,
+        0.04,
+        0.42,
+        0.07,
+        "At least 3 distinct donor sites required",
+        facecolor=FIGURE_COLORS["claim_boundary"],
+        identifier="donor_three_site_threshold",
     )
-    schematic.set_title("Distinct physical-donor construction", fontweight="bold")
+    _arrow_between(target_identity, target_poc, color=FIGURE_COLORS["edge"])
+    _arrow_between(target_poc, same_site, color=FIGURE_COLORS["edge"])
+    _arrow_between(donor_sites, donor_nodes[0], color=FIGURE_COLORS["edge"])
+    _arrow_between(donor_nodes[0], donor_nodes[1], color=FIGURE_COLORS["edge"])
+    _arrow_between(donor_nodes[1], donor_nodes[2], color=FIGURE_COLORS["edge"])
 
-    bars = distribution.bar(
-        categories.index.astype(str),
+    labels = ["0 sites", "1 site", "2 sites", r"$\geq$3 sites"]
+    colors = [
+        FIGURE_COLORS["unavailable"],
+        FIGURE_COLORS["unavailable"],
+        FIGURE_COLORS["unavailable"],
+        FIGURE_COLORS["supported"],
+    ]
+    positions = np.arange(len(categories))
+    bars = distribution.barh(
+        positions,
         categories.to_numpy(),
-        color=["#94A3B8", "#CBD5E1", "#F59E0B", "#0F766E"],
-        edgecolor="#334155",
-        linewidth=0.5,
+        color=colors,
+        edgecolor=FIGURE_COLORS["edge"],
+        linewidth=0.8,
     )
-    for bar, value in zip(bars, categories.to_numpy(), strict=True):
+    maximum = float(categories.max())
+    for index, (bar, value) in enumerate(zip(bars, categories.to_numpy(), strict=True)):
+        label = f"{int(value)} ({_percent(int(value), total)})"
+        if index == len(bars) - 1:
+            distribution.text(
+                value / 2,
+                bar.get_y() + bar.get_height() / 2,
+                label,
+                ha="center",
+                va="center",
+                fontsize=9.0,
+                color="#FFFFFF",
+            )
+            continue
         distribution.text(
-            bar.get_x() + bar.get_width() / 2,
-            value,
-            str(int(value)),
-            ha="center",
-            va="bottom",
-            fontsize=9,
+            value + maximum * 0.035,
+            bar.get_y() + bar.get_height() / 2,
+            label,
+            ha="left",
+            va="center",
+            fontsize=9.0,
+            color=FIGURE_COLORS["ink"],
         )
-    distribution.set_ylim(0, float(categories.max()) * 1.20)
-    distribution.set_xlabel("Prequalified distinct donors")
-    distribution.set_ylabel("Metadata anchors")
-    distribution.set_title("Donor availability", fontweight="bold")
-    _finalize_axes(distribution)
-    figure.tight_layout()
+    distribution.set_yticks(positions, labels)
+    distribution.invert_yaxis()
+    distribution.set_xlim(0, maximum * 1.38)
+    distribution.set_xlabel("Metadata anchors")
+    distribution.set_ylabel("")
+    distribution.set_title(
+        "(b) Pre-input donor-site availability",
+        loc="left",
+        fontsize=10.0,
+        fontweight="bold",
+    )
+    distribution.grid(
+        axis="x",
+        color=FIGURE_COLORS["grid"],
+        linewidth=0.55,
+        alpha=0.8,
+    )
+    distribution.set_axisbelow(True)
+    distribution.spines[["top", "right"]].set_visible(False)
+    figure.subplots_adjust(left=0.15, right=0.99, top=0.93, bottom=0.14, hspace=0.42)
     save_figure(
         figure,
         figures / "fig_donor_construction.pdf",
@@ -913,134 +1129,160 @@ def _window_protocol_figure(
 
 
 def _workflow_figure(
-    summary: dict[str, Any],
+    data: dict[str, Any],
     figures: Path,
     save_figure: SaveFigure,
     outputs: list[dict[str, Any]],
 ) -> None:
-    real = summary["real_event_audit"]
-    tiers = summary["evidence_tiers"]
-    figure, axis = plt.subplots(figsize=(6.3, 5.85))
+    audit = data["audit"]
+    split_audit = data["split_audit"]
+    audit_counts = audit["audit_status"].value_counts()
+    total = int(len(audit))
+    complete = int(audit_counts["complete"])
+    availability_abstentions = int(
+        audit_counts["insufficient_geographic_donors"]
+        + audit_counts["estimator_input_failure"]
+    )
+    calibration_targets = int(split_audit["calibration_physical_sites"])
+    evaluation_targets = int(split_audit["evaluation_physical_sites"])
+    if complete + availability_abstentions != total:
+        raise ValueError("Workflow availability counts do not reconcile.")
+
+    figure, axis = plt.subplots(figsize=(6.3, 4.25))
     axis.axis("off")
     archives = _box(
         axis,
         0.5,
-        0.92,
-        0.28,
-        0.10,
+        0.91,
+        0.30,
+        0.08,
         "Public EPA\nbulk archives",
-        facecolor="#E0F2FE",
+        facecolor=FIGURE_COLORS["shared_input"],
         weight="bold",
         identifier="workflow_archives",
     )
-    anchors = _box(
+    canonical = _box(
         axis,
         0.5,
-        0.77,
-        0.38,
+        0.75,
+        0.62,
         0.11,
-        "Canonical daily series\n+ metadata anchors",
-        facecolor="#DBEAFE",
-        identifier="workflow_anchors",
+        "Canonical daily monitor series\n+ persistent Method Code anchors",
+        facecolor=FIGURE_COLORS["shared_input"],
+        identifier="workflow_canonical_series",
     )
-    stable = _box(
+    for left, color in (
+        (0.035, FIGURE_COLORS["synthetic"]),
+        (0.535, FIGURE_COLORS["audit"]),
+    ):
+        axis.add_patch(
+            FancyBboxPatch(
+                (left, 0.14),
+                0.43,
+                0.54,
+                boxstyle="round,pad=0.006,rounding_size=0.012",
+                transform=axis.transAxes,
+                facecolor=color,
+                edgecolor=FIGURE_COLORS["grid"],
+                linewidth=0.8,
+                alpha=0.42,
+                zorder=0,
+            )
+        )
+    synthetic_heading = _box(
         axis,
         0.25,
-        0.58,
-        0.33,
-        0.13,
-        "Stable regimes\nknown synthetic truth",
-        facecolor="#FEF3C7",
-        identifier="workflow_stable_regimes",
-    )
-    real_anchors = _box(
-        axis,
-        0.75,
-        0.58,
-        0.33,
-        0.13,
-        f"All {real['total_anchors']} anchors\ndistinct donor screen",
-        facecolor="#EDE9FE",
-        identifier="workflow_real_anchors",
-    )
-    calibration = _box(
-        axis,
-        0.25,
-        0.37,
-        0.31,
-        0.12,
-        "66 calibration targets\nfreeze thresholds",
-        facecolor="#FEF3C7",
-        identifier="workflow_calibration",
-    )
-    evaluation = _box(
-        axis,
-        0.25,
-        0.16,
-        0.31,
-        0.12,
-        "80 held-out targets\nfixed metrics",
-        facecolor="#FEF3C7",
-        identifier="workflow_evaluation",
-    )
-    comparisons = _box(
-        axis,
-        0.75,
-        0.37,
+        0.57,
         0.34,
-        0.13,
-        f"{real['complete_comparisons']} comparisons\nor recorded abstention",
-        facecolor="#EDE9FE",
-        identifier="workflow_comparisons",
+        0.075,
+        "Synthetic evaluation\nconstructed truth",
+        facecolor=FIGURE_COLORS["synthetic"],
+        weight="bold",
+        identifier="workflow_synthetic_heading",
     )
-    diagnostics = _box(
+    audit_heading = _box(
         axis,
-        0.60,
-        0.16,
+        0.75,
+        0.57,
+        0.34,
+        0.075,
+        "Observational audit\nno mechanism labels",
+        facecolor=FIGURE_COLORS["audit"],
+        weight="bold",
+        identifier="workflow_audit_heading",
+    )
+    synthetic_partition = _box(
+        axis,
         0.25,
-        0.12,
-        f"Diagnostics\nintervals, placebos, LOO",
-        facecolor="#F1F5F9",
-        identifier="workflow_diagnostics",
+        0.39,
+        0.34,
+        0.09,
+        f"{calibration_targets} calibration targets\n"
+        f"{evaluation_targets} disjoint evaluation targets",
+        facecolor=FIGURE_COLORS["synthetic"],
+        identifier="workflow_synthetic_partition",
     )
-    tiers_node = _box(
+    synthetic_outputs = _box(
         axis,
-        0.88,
-        0.16,
-        0.20,
-        0.12,
-        f"Audit tiers\n{tiers['supported_candidate_discontinuity']} / "
-        f"{tiers['not_supported_by_available_evidence']} / "
-        f"{tiers['inconclusive_insufficient_evidence']}",
-        facecolor="#F1F5F9",
-        identifier="workflow_tiers",
+        0.25,
+        0.21,
+        0.31,
+        0.08,
+        "Synthetic: scope, effect, intervals",
+        facecolor="#FFFFFF",
+        identifier="workflow_synthetic_outputs",
     )
-    _arrow_between(archives, anchors)
-    _arrow_between(anchors, stable)
-    _arrow_between(anchors, real_anchors)
-    _arrow_between(stable, calibration)
-    _arrow_between(calibration, evaluation)
-    _arrow_between(real_anchors, comparisons)
-    _arrow_between(comparisons, diagnostics)
-    _arrow_between(comparisons, tiers_node)
-    axis.text(
-        0.5,
-        0.025,
-        "Separate branches: known-truth evaluation versus complete observational audit.",
-        ha="center",
-        va="bottom",
-        fontsize=9,
-        transform=axis.transAxes,
+    audit_partition = _box(
+        axis,
+        0.75,
+        0.39,
+        0.34,
+        0.09,
+        f"{total} metadata anchors\n"
+        f"{complete} complete; {availability_abstentions} abstentions",
+        facecolor=FIGURE_COLORS["audit"],
+        identifier="workflow_audit_partition",
     )
+    audit_outputs = _box(
+        axis,
+        0.75,
+        0.21,
+        0.31,
+        0.08,
+        "Audit: dispositions + context",
+        facecolor="#FFFFFF",
+        identifier="workflow_audit_outputs",
+    )
+    boundary = _box(
+        axis,
+        0.50,
+        0.055,
+        0.84,
+        0.07,
+        "Synthetic labels are constructed; metadata does not identify\n"
+        "physical mechanism.",
+        facecolor=FIGURE_COLORS["claim_boundary"],
+        fontsize=8.5,
+        identifier="workflow_label_boundary",
+    )
+    _arrow_between(archives, canonical)
+    _arrow_between(canonical, synthetic_heading)
+    _arrow_between(canonical, audit_heading)
+    _arrow_between(synthetic_heading, synthetic_partition)
+    _arrow_between(synthetic_partition, synthetic_outputs)
+    _arrow_between(audit_heading, audit_partition)
+    _arrow_between(audit_partition, audit_outputs)
+    del boundary
+    figure.subplots_adjust(left=0.035, right=0.985, top=0.95, bottom=0.025)
     save_figure(
         figure,
         figures / "fig_audit_pipeline.pdf",
-        "Top-down MetaShift-Bench workflow",
+        "Frozen v0.3.2 deployment-evidence architecture",
         [
             "configs/benchmark_release_v2.json",
             "configs/evidence_tier_primary_v1.json",
             "artifacts/real_transition_88101_event_audit.csv",
-            "artifacts/real_transition_88101_evidence_tier_summary.json",
+            "artifacts/stable_synthetic_case_split_audit.json",
         ],
         outputs,
     )
@@ -1440,135 +1682,121 @@ def _event_accounting_figure(
     audit = data["audit"]
     tiers = data["tiers"]
     audit_counts = audit["audit_status"].value_counts()
-    tier_counts = pd.crosstab(tiers["audit_status"], tiers["evidence_tier"])
+    tier_counts = tiers.loc[
+        tiers["audit_status"] == "complete", "evidence_tier"
+    ].value_counts()
     total = int(len(audit))
     donor_insufficient = int(audit_counts["insufficient_geographic_donors"])
     input_failure = int(audit_counts["estimator_input_failure"])
     complete = int(audit_counts["complete"])
-    supported = int(
-        tier_counts.loc["complete", "supported_candidate_discontinuity"]
-    )
-    not_supported = int(
-        tier_counts.loc["complete", "not_supported_by_available_evidence"]
-    )
+    supported = int(tier_counts["supported_candidate_discontinuity"])
+    not_supported = int(tier_counts["not_supported_by_available_evidence"])
     complete_inconclusive = int(
-        tier_counts.loc["complete", "inconclusive_insufficient_evidence"]
+        tier_counts["inconclusive_insufficient_evidence"]
     )
-    figure, axis = plt.subplots(figsize=(6.3, 5.45))
-    axis.axis("off")
-    all_anchors = _box(
-        axis,
-        0.50,
-        0.88,
-        0.28,
-        0.11,
-        f"{total}\nprimary metadata anchors",
-        facecolor="#E0F2FE",
-        weight="bold",
-        identifier="accounting_all_anchors",
+    overall_inconclusive = (
+        donor_insufficient + input_failure + complete_inconclusive
     )
-    donor_insufficient_node = _box(
-        axis,
-        0.23,
-        0.63,
-        0.27,
-        0.14,
-        f"{donor_insufficient}\ndonor insufficient",
-        facecolor="#E2E8F0",
-        hatch="//",
-        identifier="accounting_donor_insufficient",
+    if donor_insufficient + input_failure + complete != total:
+        raise ValueError("Availability accounting does not reconcile.")
+    if supported + not_supported + complete_inconclusive != complete:
+        raise ValueError("Evidence-tier accounting does not reconcile.")
+    if supported + not_supported + overall_inconclusive != total:
+        raise ValueError("Overall audit disposition does not reconcile.")
+
+    figure, axes = plt.subplots(
+        2,
+        1,
+        figsize=(6.3, 3.2),
+        gridspec_kw={"height_ratios": [1.0, 1.0]},
     )
-    donor_eligible_node = _box(
-        axis,
-        0.68,
-        0.63,
-        0.27,
-        0.14,
-        f"{complete + input_failure}\nat least 3 distinct donors",
-        facecolor="#DBEAFE",
-        identifier="accounting_donor_eligible",
+    availability_axis, tiers_axis = axes
+    availability_intervals = _draw_partition_bar(
+        availability_axis,
+        values=[donor_insufficient, input_failure, complete],
+        labels=[
+            "Donor-insufficient",
+            "Input-window failure",
+            "Complete comparison",
+        ],
+        colors=[
+            FIGURE_COLORS["unavailable"],
+            FIGURE_COLORS["not_supported"],
+            FIGURE_COLORS["audit"],
+        ],
+        total=total,
     )
-    input_failure_node = _box(
-        axis,
-        0.39,
-        0.38,
-        0.24,
-        0.14,
-        f"{input_failure}\ninput-window failure",
-        facecolor="#E2E8F0",
-        hatch="//",
-        identifier="accounting_input_failure",
+    availability_axis.set_title(
+        f"(a) Availability partition --- all {total} anchors",
+        loc="left",
+        fontsize=10.0,
+        fontweight="bold",
     )
-    complete_node = _box(
-        axis,
-        0.80,
-        0.38,
-        0.29,
-        0.15,
-        f"{complete}\ncomplete common comparison",
-        facecolor="#EDE9FE",
-        identifier="accounting_complete",
-    )
-    _arrow_between(all_anchors, donor_insufficient_node)
-    _arrow_between(all_anchors, donor_eligible_node)
-    _arrow_between(
-        donor_eligible_node, input_failure_node, color="#B91C1C", style="--"
-    )
-    _arrow_between(donor_eligible_node, complete_node)
-    leaves = (
-        (
-            0.28,
-            0.14,
-            f"{supported}\nsupported candidate",
-            TIER_COLORS["supported_candidate_discontinuity"],
-            None,
-        ),
-        (
-            0.60,
-            0.14,
-            f"{not_supported}\nnot supported",
-            TIER_COLORS["not_supported_by_available_evidence"],
-            "//",
-        ),
-        (
-            0.88,
-            0.14,
-            f"{complete_inconclusive}\ncomplete but\ninconclusive",
-            TIER_COLORS["inconclusive_insufficient_evidence"],
-            None,
-        ),
-    )
-    leaf_nodes: list[LayoutNode] = []
-    for x, y, label, color, hatch in leaves:
-        leaf_nodes.append(
-            _box(
-                axis,
-                x,
-                y,
-                0.23,
-                0.14,
-                label,
-                facecolor=color,
-                hatch=hatch,
-                identifier=f"accounting_leaf_{int(x * 100)}",
-            )
-        )
-    for node in leaf_nodes:
-        _arrow_between(complete_node, node)
-    axis.text(
-        0.50,
-        0.025,
-        f"Reconciliation: {donor_insufficient} + {input_failure} + {complete} = {total}; "
-        f"{supported} + {not_supported} + {complete_inconclusive} = {complete}.",
+    input_start, input_end = availability_intervals[1]
+    availability_axis.annotate(
+        f"Input-window\nfailure\n{input_failure} ({_percent(input_failure, total)})",
+        xy=((input_start + input_end) / 2, 0.22),
+        xytext=((input_start + input_end) / 2, 0.10),
         ha="center",
-        va="center",
-        fontsize=9,
-        transform=axis.transAxes,
+        va="top",
+        fontsize=8.5,
+        color=FIGURE_COLORS["ink"],
+        arrowprops={
+            "arrowstyle": "-",
+            "color": FIGURE_COLORS["edge"],
+            "linewidth": 0.8,
+        },
     )
+    availability_axis.set_ylim(-0.45, 0.93)
+
+    _draw_partition_bar(
+        tiers_axis,
+        values=[supported, not_supported, complete_inconclusive],
+        labels=[
+            "Supported",
+            "Not supported",
+            "Complete but inconclusive",
+        ],
+        colors=[
+            FIGURE_COLORS["supported"],
+            FIGURE_COLORS["not_supported"],
+            FIGURE_COLORS["inconclusive"],
+        ],
+        total=complete,
+    )
+    tiers_axis.set_title(
+        f"(b) Evidence-tier partition --- {complete} complete comparisons",
+        loc="left",
+        fontsize=10.0,
+        fontweight="bold",
+    )
+    tiers_axis.set_ylim(-0.36, 0.61)
+    figure.text(
+        0.5,
+        0.025,
+        (
+            f"Overall disposition: {supported} supported candidates | "
+            f"{not_supported} not supported | {overall_inconclusive} inconclusive\n"
+            f"{overall_inconclusive} = {donor_insufficient} donor-insufficient + "
+            f"{input_failure} input-window failures + "
+            f"{complete_inconclusive} complete but inconclusive"
+        ),
+        ha="center",
+        va="bottom",
+        fontsize=8.6,
+        color=FIGURE_COLORS["ink"],
+        bbox={
+            "boxstyle": "round,pad=0.25",
+            "facecolor": FIGURE_COLORS["claim_boundary"],
+            "edgecolor": FIGURE_COLORS["grid"],
+            "linewidth": 0.7,
+        },
+    )
+    figure.subplots_adjust(left=0.045, right=0.99, top=0.88, bottom=0.25, hspace=0.62)
     save_figure(
         figure,
         figures / "fig_event_accounting.pdf",
-        "Hierarchical accounting of all primary metadata anchors",
+        "Complete count partitions for all primary metadata anchors",
         [
             "artifacts/real_transition_88101_event_audit.csv",
             "artifacts/real_transition_88101_evidence_tiers.csv",
@@ -1584,109 +1812,141 @@ def _placebo_figure(
     save_figure: SaveFigure,
     outputs: list[dict[str, Any]],
 ) -> None:
-    time_placebo = data["time_placebo"]
-    complete = time_placebo.loc[
+    time_placebo = data["time_placebo"].copy()
+    audit = data["audit"]
+    complete_audit_count = int((audit["audit_status"] == "complete").sum())
+    complete_placebo = time_placebo.loc[
         time_placebo["status"].astype(str).str.startswith("complete_")
-    ]
-    complete_count = int(len(complete))
-    at_100 = int((complete["placebo_count"] >= 100).sum())
-    at_50_to_99 = complete_count - at_100
-    unavailable = 228 - complete_count
-    figure, axes = plt.subplots(
-        1, 2, figsize=(6.3, 3.3), gridspec_kw={"width_ratios": [0.94, 1.06]}
+    ].copy()
+    placebo_counts = pd.to_numeric(
+        complete_placebo["placebo_count"], errors="raise"
     )
-    flow, histogram = axes
-    flow.axis("off")
-    complete_node = _box(
-        flow,
-        0.15,
-        0.55,
-        0.24,
-        0.16,
-        "228\ncomplete",
-        facecolor="#EDE9FE",
-        identifier="placebo_complete",
-    )
-    available_node = _box(
-        flow,
-        0.49,
-        0.68,
-        0.26,
-        0.16,
-        f"{complete_count}\n50+ dates",
-        facecolor="#DBEAFE",
-        identifier="placebo_available",
-    )
-    unavailable_node = _box(
-        flow,
-        0.49,
-        0.29,
-        0.25,
-        0.16,
-        f"{unavailable}\nunder 50",
-        facecolor="#E2E8F0",
-        hatch="//",
-        identifier="placebo_unavailable",
-    )
-    at_100_node = _box(
-        flow,
-        0.84,
-        0.79,
-        0.23,
-        0.16,
-        f"{at_100}\n100 dates",
-        facecolor="#C7D2FE",
-        identifier="placebo_100_dates",
-    )
-    at_50_to_99_node = _box(
-        flow,
-        0.84,
-        0.51,
-        0.23,
-        0.16,
-        f"{at_50_to_99}\n50--99 dates",
-        facecolor="#DBEAFE",
-        identifier="placebo_50_to_99_dates",
-    )
-    _arrow_between(complete_node, available_node)
-    _arrow_between(complete_node, unavailable_node, color="#B91C1C", style="--")
-    _arrow_between(available_node, at_100_node)
-    _arrow_between(available_node, at_50_to_99_node)
-    flow.text(
-        0.5,
-        0.06,
-        "100-date cohort is nested in the 50+-date cohort.",
-        ha="center",
-        fontsize=9,
-        transform=flow.transAxes,
-    )
-    flow.set_title("Nested time-placebo availability", fontweight="bold")
+    at_least_50 = int((placebo_counts >= 50).sum())
+    at_least_100 = int((placebo_counts >= 100).sum())
+    between_50_and_99 = at_least_50 - at_least_100
+    fewer_than_50 = complete_audit_count - at_least_50
+    if (
+        fewer_than_50 + between_50_and_99 + at_least_100
+        != complete_audit_count
+    ):
+        raise ValueError("Time-placebo availability partition does not reconcile.")
+    if between_50_and_99 + at_least_100 != at_least_50:
+        raise ValueError("Nested time-placebo cohorts do not reconcile.")
 
-    histogram.hist(
-        complete["placebo_p_value"].dropna(),
+    figure, axes = plt.subplots(
+        1, 2, figsize=(6.3, 2.9), gridspec_kw={"width_ratios": [1.02, 0.98]}
+    )
+    availability_axis, histogram_axis = axes
+    intervals = _draw_partition_bar(
+        availability_axis,
+        values=[fewer_than_50, between_50_and_99, at_least_100],
+        labels=["<50 dates", "50--99 dates", r"$\geq$100 dates"],
+        colors=[
+            FIGURE_COLORS["unavailable"],
+            FIGURE_COLORS["not_supported"],
+            FIGURE_COLORS["supported"],
+        ],
+        total=complete_audit_count,
+        height=0.34,
+        internal_min_fraction=0.15,
+    )
+    middle_start, middle_end = intervals[1]
+    availability_axis.plot(
+        [(middle_start + middle_end) / 2, (middle_start + middle_end) / 2],
+        [-0.17, -0.03],
+        color=FIGURE_COLORS["edge"],
+        linewidth=0.8,
+        clip_on=False,
+    )
+    availability_axis.text(
+        (middle_start + middle_end) / 2,
+        -0.22,
+        f"50--99 dates\n{between_50_and_99} ({_percent(between_50_and_99, complete_audit_count)})",
+        ha="center",
+        va="top",
+        fontsize=8.5,
+        color=FIGURE_COLORS["ink"],
+        clip_on=False,
+    )
+    _draw_bracket(
+        availability_axis,
+        start=intervals[1][0],
+        end=intervals[2][1],
+        y=0.31,
+        label=f"{at_least_50} with $\\geq$50 dates",
+    )
+    _draw_bracket(
+        availability_axis,
+        start=intervals[2][0],
+        end=intervals[2][1],
+        y=0.65,
+        label=f"{at_least_100} with $\\geq$100 dates",
+    )
+    availability_axis.set_ylim(-0.48, 1.08)
+    availability_axis.set_title(
+        "(a) Placebo-date availability",
+        loc="left",
+        fontsize=10.0,
+        fontweight="bold",
+    )
+
+    probabilities = pd.to_numeric(
+        complete_placebo.loc[placebo_counts >= 50, "placebo_p_value"],
+        errors="coerce",
+    ).dropna()
+    sample_label = (
+        f"n={len(probabilities)}"
+        if len(probabilities) == at_least_50
+        else f"n={len(probabilities)} of {at_least_50} eligible"
+    )
+    histogram_axis.hist(
+        probabilities,
         bins=np.linspace(0, 1, 11),
-        color="#0F766E",
+        color=FIGURE_COLORS["supported"],
         edgecolor="#FFFFFF",
+        linewidth=0.7,
     )
-    histogram.axvline(0.10, color="#B91C1C", linestyle="--", linewidth=1)
-    histogram.text(
-        0.12,
-        histogram.get_ylim()[1] * 0.93,
-        "Frozen 0.10 screen",
-        color="#991B1B",
-        fontsize=9,
+    histogram_axis.axvline(
+        0.10,
+        color=FIGURE_COLORS["edge"],
+        linestyle="--",
+        linewidth=1.0,
     )
-    histogram.set_xlim(0, 1)
-    histogram.set_xlabel("Raw placebo probability")
-    histogram.set_ylabel("Complete events")
-    histogram.set_title("Placebo probability", fontweight="bold")
-    _finalize_axes(histogram)
-    figure.tight_layout()
+    histogram_axis.text(
+        0.14,
+        histogram_axis.get_ylim()[1] * 0.90,
+        "Frozen exploratory\nscreen: 0.10",
+        color=FIGURE_COLORS["ink"],
+        fontsize=8.5,
+        ha="left",
+        va="top",
+    )
+    histogram_axis.set_xlim(0, 1)
+    histogram_axis.set_xlabel("Raw placebo probability")
+    histogram_axis.set_ylabel("Events")
+    histogram_axis.set_title(
+        f"(b) Raw probability, {sample_label}",
+        loc="left",
+        fontsize=10.0,
+        fontweight="bold",
+    )
+    histogram_axis.grid(
+        axis="y",
+        color=FIGURE_COLORS["grid"],
+        linewidth=0.55,
+        alpha=0.8,
+    )
+    histogram_axis.set_axisbelow(True)
+    histogram_axis.spines[["top", "right"]].set_visible(False)
+    figure.subplots_adjust(left=0.06, right=0.99, top=0.86, bottom=0.23, wspace=0.33)
     save_figure(
         figure,
         figures / "fig_placebos.pdf",
-        "Nested time-placebo availability and probability distribution",
-        ["artifacts/time_placebo_summary.csv"],
+        "Time-placebo availability and raw probability distribution",
+        [
+            "artifacts/real_transition_88101_event_audit.csv",
+            "artifacts/time_placebo_summary.csv",
+        ],
         outputs,
     )
 
@@ -2224,24 +2484,43 @@ def _case_study_figures(
 
 
 def _applicability_map_figure(
-    summary: dict[str, Any],
+    data: dict[str, Any],
     figures: Path,
     save_figure: SaveFigure,
     outputs: list[dict[str, Any]],
 ) -> None:
-    audit = summary["real_event_audit"]
-    tiers = summary["evidence_tiers"]
-    figure, axis = plt.subplots(figsize=(6.3, 4.15))
+    audit = data["audit"]
+    tiers = data["tiers"]
+    audit_counts = audit["audit_status"].value_counts()
+    complete_tier_counts = tiers.loc[
+        tiers["audit_status"] == "complete", "evidence_tier"
+    ].value_counts()
+    donor_insufficient = int(audit_counts["insufficient_geographic_donors"])
+    input_failure = int(audit_counts["estimator_input_failure"])
+    complete = int(audit_counts["complete"])
+    supported = int(complete_tier_counts["supported_candidate_discontinuity"])
+    not_supported = int(
+        complete_tier_counts["not_supported_by_available_evidence"]
+    )
+    complete_inconclusive = int(
+        complete_tier_counts["inconclusive_insufficient_evidence"]
+    )
+    if donor_insufficient + input_failure + complete != len(audit):
+        raise ValueError("Applicability-map availability counts do not reconcile.")
+    if supported + not_supported + complete_inconclusive != complete:
+        raise ValueError("Applicability-map evidence tiers do not reconcile.")
+
+    figure, axis = plt.subplots(figsize=(6.3, 4.25))
     axis.axis("off")
     headers = (
-        (0.17, "Observed condition"),
-        (0.50, "Protocol output"),
-        (0.83, "Not established"),
+        (0.14, "Evidence state"),
+        (0.42, "Protocol output"),
+        (0.77, "Claim boundary"),
     )
     for x, label in headers:
         axis.text(
             x,
-            0.93,
+            0.94,
             label,
             ha="center",
             va="center",
@@ -2251,78 +2530,83 @@ def _applicability_map_figure(
         )
     rows = (
         (
-            f"Donor insufficient\n{audit['insufficient_geographic_donors']} anchors",
-            "Inconclusive:\ncomparison unavailable",
-            "No physical cause\nestablished",
-            "#E2E8F0",
+            f"Donor\nunavailable\nn={donor_insufficient}",
+            "Abstain",
+            "No scope result;\nno mechanism claim",
+            FIGURE_COLORS["unavailable"],
         ),
         (
-            f"Input-window failure\n{audit['estimator_input_failure']} anchors",
-            "Inconclusive:\ninput unavailable",
-            "No imputed effect\nor interval",
-            "#E2E8F0",
+            f"Input\nunavailable\nn={input_failure}",
+            "Abstain",
+            "No effect estimate;\nno mechanism claim",
+            FIGURE_COLORS["unavailable"],
         ),
         (
-            f"Complete comparison\n{audit['complete_comparisons']} anchors",
-            "Audit tiers:\n"
-            f"{tiers['supported_candidate_discontinuity']} / "
-            f"{tiers['not_supported_by_available_evidence']} / "
-            f"{audit['complete_comparisons'] - tiers['supported_candidate_discontinuity'] - tiers['not_supported_by_available_evidence']}",
-            "No verified fault,\nreplacement, or bias",
-            "#EDE9FE",
+            f"Complete\ncomparison\nn={complete}",
+            f"{supported} supported\n"
+            f"{not_supported} not supported\n"
+            f"{complete_inconclusive} inconclusive",
+            "No verified failure\nor causal bias;\nno automatic correction",
+            FIGURE_COLORS["audit"],
         ),
     )
     for index, (y, (left, middle, right, color)) in enumerate(
-        zip((0.71, 0.45, 0.20), rows, strict=True)
+        zip((0.79, 0.54, 0.29), rows, strict=True)
     ):
-        left_node = _box(
+        _box(
             axis,
-            0.17,
+            0.14,
             y,
-            0.28,
-            0.18,
+            0.20,
+            0.14,
             left,
             facecolor=color,
-            identifier=f"applicability_observed_{index + 1}",
+            identifier=f"applicability_state_{index + 1}",
         )
-        middle_node = _box(
+        _box(
             axis,
-            0.50,
+            0.42,
             y,
-            0.28,
-            0.18,
+            0.24,
+            0.14,
             middle,
-            facecolor="#DBEAFE",
+            facecolor=(
+                FIGURE_COLORS["unavailable"]
+                if index < 2
+                else FIGURE_COLORS["audit"]
+            ),
             identifier=f"applicability_output_{index + 1}",
         )
-        right_node = _box(
+        _box(
             axis,
-            0.83,
+            0.77,
             y,
-            0.28,
-            0.18,
+            0.36,
+            0.14,
             right,
-            facecolor="#FEF3C7",
+            facecolor=FIGURE_COLORS["claim_boundary"],
             identifier=f"applicability_boundary_{index + 1}",
         )
-        _arrow_between(left_node, middle_node)
-        _arrow_between(middle_node, right_node)
-    axis.text(
-        0.5,
-        0.025,
-        "Applicability map, not a classifier: station records and human technical review remain required.",
-        ha="center",
-        va="center",
-        fontsize=9,
-        transform=axis.transAxes,
+    _box(
+        axis,
+        0.50,
+        0.075,
+        0.90,
+        0.09,
+        "Mechanism claims always require station histories, technical records,\nand human review.",
+        facecolor=FIGURE_COLORS["claim_boundary"],
+        fontsize=8.5,
+        identifier="applicability_mechanism_boundary",
     )
+    figure.subplots_adjust(left=0.025, right=0.985, top=0.965, bottom=0.02)
     save_figure(
         figure,
         figures / "fig_applicability_map.pdf",
-        "Applicability and failure-mode map",
+        "Applicability and claim-boundary matrix",
         [
             "artifacts/real_transition_88101_event_audit.csv",
             "artifacts/real_transition_88101_evidence_tier_summary.json",
+            "artifacts/real_transition_88101_evidence_tiers.csv",
         ],
         outputs,
     )
@@ -2423,7 +2707,7 @@ def create_revised_figures(
     _synthetic_example_figure(synthetic_example, figures, save_figure, outputs)
     _donor_construction_figure(data, figures, save_figure, outputs)
     _window_protocol_figure(window_config, figures, save_figure, outputs)
-    _workflow_figure(summary, figures, save_figure, outputs)
+    _workflow_figure(data, figures, save_figure, outputs)
     _split_integrity_figure(data, figures, save_figure, outputs)
     _synthetic_metrics_figure(data, figures, save_figure, format_decimal, outputs)
     _perturbation_figure(data, figures, save_figure, format_decimal, outputs)
@@ -2434,5 +2718,5 @@ def create_revised_figures(
     _screening_sensitivity_figure(data, figures, save_figure, outputs)
     _external_evidence_figure(summary, data, external_config, figures, save_figure, outputs)
     _case_study_figures(cases, figures, save_figure, outputs)
-    _applicability_map_figure(summary, figures, save_figure, outputs)
+    _applicability_map_figure(data, figures, save_figure, outputs)
     _anchor_concentration_figure(data, figures, save_figure, outputs)

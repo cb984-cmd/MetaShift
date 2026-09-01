@@ -54,8 +54,12 @@ def build_report() -> dict[str, object]:
             and protocol.get("protocol_state")
             == "execution_freeze_candidate"
             and protocol.get("protocol_only_predecessor", {}).get("tag")
-            == "v0.4.0-protocol-freeze",
-            "The protocol has the declared v0.4 identity, predecessor, and honest pre-execution state.",
+            == "v0.4.0-protocol-freeze"
+            and protocol.get("execution_freeze_predecessor", {}).get("tag")
+            == "v0.4.0-execution-freeze"
+            and protocol.get("execution_freeze_predecessor", {}).get("commit")
+            == "9f4660a88beef829e6c3cac72e0d59134b929add",
+            "The protocol has the declared v0.4 identity, preserved predecessors, and honest pre-execution state.",
         ),
         check(
             "independent_source_and_protected_baseline",
@@ -124,6 +128,7 @@ def build_report() -> dict[str, object]:
                 "metashift/metrics.py",
                 "metashift/synthetic.py",
                 "scripts/run_v04_identifiability_benchmark.py",
+                "scripts/verify_v04_identifiability_results.py",
             ]
             and "must not call a CSV loader"
             in protocol.get("data_access", {}).get("input_access_enforcement", ""),
@@ -133,13 +138,24 @@ def build_report() -> dict[str, object]:
             "one_time_output_contract",
             output.get("overwrite_rule", "").startswith("The execution entrypoint must atomically")
             and len(output_files) == 6
-            and output.get("execution_freeze_tag") == "v0.4.0-execution-freeze"
+            and output.get("execution_freeze_tag") == "v0.4.1-execution-freeze"
             and output.get("execution_manifest")
             == "configs/v04_identifiability_execution_manifest.json"
             and output.get("attempt_record")
             == "artifacts/.v04_identifiability_core_attempt.json"
             and not declared_output_exists,
             "Declared v0.4 result files do not exist before the execution freeze.",
+        ),
+        check(
+            "post_execution_result_validation_contract",
+            output.get("post_execution_verifier")
+            == "scripts/verify_v04_identifiability_results.py"
+            and output.get("post_execution_verification_path")
+            == "artifacts/v04_identifiability_core/v04_result_verification.json"
+            and "replay the deterministic core and stress suite in memory"
+            in output.get("post_execution_verifier_behavior", "")
+            and "post-execution result verifier" in narrative,
+            "A tagged verifier is required to validate all completed-result claims.",
         ),
         check(
             "narrative_boundaries",

@@ -65,7 +65,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--execute",
         action="store_true",
-        help="Execute only after v0.4.0-execution-freeze is created and pushed.",
+        help="Execute only after the configured execution-freeze tag is created and pushed.",
     )
     return parser.parse_args()
 
@@ -1040,9 +1040,12 @@ def generate_stress_rows(protocol: dict[str, Any]) -> pd.DataFrame:
 def assert_output_schema(
     frame: pd.DataFrame, required_columns: list[str], filename: str
 ) -> None:
-    missing = set(required_columns).difference(frame.columns)
-    if missing:
-        raise RuntimeError(f"{filename} is missing required columns: {sorted(missing)}")
+    actual_columns = list(frame.columns)
+    if actual_columns != required_columns:
+        raise RuntimeError(
+            f"{filename} schema differs from the frozen contract: "
+            f"expected {required_columns}, found {actual_columns}."
+        )
 
 
 def acquire_attempt(
@@ -1202,7 +1205,7 @@ def main() -> None:
                     "protocol_id": protocol["protocol_id"],
                     "message": (
                         "Pass --execute only at the matching "
-                        "v0.4.0-execution-freeze commit."
+                        "configured execution-freeze commit."
                     ),
                 },
                 indent=2,

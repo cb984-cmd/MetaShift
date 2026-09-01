@@ -2,11 +2,14 @@
 
 **Status:** The initial `v0.4.0-protocol-freeze` tag is retained as a
 protocol-only historical record. Its pre-execution audit identified missing
-implementation-binding details before any result existed; it is superseded by
-the corrected execution manifest and future `v0.4.0-execution-freeze` tag.
-The current protocol state is `execution_freeze_candidate`: it is not an
-execution freeze until the runner is implemented, tested, committed, and
-separately tagged.
+implementation-binding details before any result existed. The unrun
+`v0.4.0-execution-freeze` tag is also retained as historical evidence: its
+audit found that no independently committed post-execution result verifier was
+present. Neither tag produced an output directory or attempt record. Both are
+superseded before outcome generation by the corrected manifest and future
+`v0.4.1-execution-freeze` tag. The current protocol state is
+`execution_freeze_candidate`: it is not an execution freeze until the runner,
+result verifier, tests, and source hashes are committed and separately tagged.
 **Machine-readable authority:**
 [`configs/v04_identifiability_protocol.json`](../../configs/v04_identifiability_protocol.json).
 
@@ -120,10 +123,12 @@ is an execution defect that blocks interpretation.
 ## One-time execution rule
 
 The protocol-only specification may be tagged
-`v0.4.0-protocol-freeze`, but that tag alone cannot authorize execution. Before
-the benchmark is generated, the complete runner and all its contract tests
-must be implemented, committed, verified, and tagged
-`v0.4.0-execution-freeze`. An execution manifest will bind the corrected
+`v0.4.0-protocol-freeze`, but that tag alone cannot authorize execution. The
+unrun `v0.4.0-execution-freeze` tag also cannot authorize execution because it
+lacks a precommitted post-execution result verifier. Before the benchmark is
+generated, the complete runner, independent post-execution result verifier,
+and all contract tests must be implemented, committed, verified, and tagged
+`v0.4.1-execution-freeze`. An execution manifest will bind the corrected
 protocol SHA-256 and hashes of every allowlisted source file at that tag. The
 runner must verify a clean worktree, that HEAD equals the resolved
 execution-tag commit through a local annotated tag, that `origin` exposes the
@@ -140,7 +145,16 @@ blob content across Windows and non-Windows worktrees; generated output hashes
 remain hashes of their exact written bytes.
 
 Only pre-outcome unit and protocol-contract tests may run before the execution
-freeze tag.
+freeze tag. The precommitted post-execution result verifier must recompute and
+check receipt and payload hashes, N/L/R and split accounting, calibration-only
+threshold provenance, scope risk/coverage and abstentions, component bootstrap
+validity, raw-scale stress bounds, and the exact input allowlist before any
+scientific interpretation. It first requires the same local annotated tag and
+peeled `origin` tag, loads the protocol and manifest from Git blobs at that
+tag, and confirms every allowlisted working-tree source hash matches its tagged
+blob. Only then does it replay the deterministic core and stress suite in
+memory; it never invokes the output-writing entrypoint or creates another
+attempt record.
 The full result files named in the output contract must not exist at freeze
 time. Any implementation defect found before generating those files must be
 fixed and reverified before the tag; a defect found after generation must

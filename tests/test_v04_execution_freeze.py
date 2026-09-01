@@ -8,7 +8,7 @@ class ExecutionFreezeTests(unittest.TestCase):
         report = verifier.build_report()
 
         self.assertTrue(report["all_checks_passed"])
-        self.assertEqual(9, len(report["checks"]))
+        self.assertEqual(11, len(report["checks"]))
         self.assertTrue(
             next(
                 item["passed"]

@@ -8,7 +8,7 @@ class ProtocolFreezeTests(unittest.TestCase):
         report = verifier.build_report()
 
         self.assertTrue(report["all_checks_passed"])
-        self.assertEqual(10, len(report["checks"]))
+        self.assertEqual(11, len(report["checks"]))
         self.assertEqual(64, len(report["protocol_sha256"]))
 
 

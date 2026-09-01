@@ -57,7 +57,8 @@ def build_report() -> dict[str, object]:
             protocol.get("protocol_state") == "execution_freeze_candidate"
             and manifest.get("protocol_id") == protocol.get("protocol_id")
             and manifest.get("execution_freeze_tag")
-            == contract.get("execution_freeze_tag"),
+            == contract.get("execution_freeze_tag")
+            and contract.get("execution_freeze_tag") == "v0.4.1-execution-freeze",
             "Protocol and execution manifest bind the same future execution tag.",
         ),
         check(
@@ -71,6 +72,18 @@ def build_report() -> dict[str, object]:
             "The retained protocol-only tag is explicitly historical and pre-outcome.",
         ),
         check(
+            "superseded_execution_tag_history",
+            protocol.get("execution_freeze_predecessor", {}).get("tag")
+            == "v0.4.0-execution-freeze"
+            and protocol.get("execution_freeze_predecessor", {}).get("commit")
+            == "9f4660a88beef829e6c3cac72e0d59134b929add"
+            and manifest.get("execution_freeze_predecessor", {}).get("tag")
+            == "v0.4.0-execution-freeze"
+            and "no independently committed post-execution result verifier"
+            in protocol.get("execution_freeze_predecessor", {}).get("disposition", ""),
+            "The inadequate unrun execution tag is preserved and explicitly superseded.",
+        ),
+        check(
             "protocol_hash_binding",
             manifest.get("protocol_sha256") == source_sha256(PROTOCOL_PATH),
             "Execution manifest binds the exact corrected protocol SHA-256.",
@@ -80,6 +93,15 @@ def build_report() -> dict[str, object]:
             set(bound_hashes) == expected_bound_paths
             and bound_hashes == current_bound_hashes,
             "The manifest hashes every allowlisted input except its non-self manifest file.",
+        ),
+        check(
+            "post_execution_verifier_is_bound",
+            contract.get("post_execution_verifier")
+            == "scripts/verify_v04_identifiability_results.py"
+            and contract.get("post_execution_verifier") in allowlist
+            and contract.get("post_execution_verifier") in bound_hashes
+            and (ROOT / str(contract.get("post_execution_verifier"))).is_file(),
+            "The post-execution verifier is frozen with the input contract before output.",
         ),
         check(
             "no_external_data_loader",

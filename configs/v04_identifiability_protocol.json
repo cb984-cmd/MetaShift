@@ -7,6 +7,11 @@
     "commit": "37e5bde5949018789e439d27ee2ac444f7b2e45d",
     "disposition": "Superseded before any v0.4 output or attempt record existed because the pre-execution audit found unbound implementation, leakage-audit, randomization, threshold, and receipt details."
   },
+  "execution_freeze_predecessor": {
+    "tag": "v0.4.0-execution-freeze",
+    "commit": "9f4660a88beef829e6c3cac72e0d59134b929add",
+    "disposition": "Preserved and superseded before any v0.4 output or attempt record existed because the execution-freeze audit found that no independently committed post-execution result verifier could validate output hashes, accounting, threshold provenance, selective risk and coverage, bootstrap validity, stress bounds, and input boundaries."
+  },
   "purpose": "Test a theorem-aligned distinction between target-only change detection and cross-site change-scope auditing. This is not an algorithm-superiority, causal, instrument-failure, or external monitoring-network validation study.",
   "immutable_baseline": {
     "evidence_tag": "v0.3.2-evidence-final",
@@ -31,7 +36,8 @@
       "metashift/identifiability.py",
       "metashift/metrics.py",
       "metashift/synthetic.py",
-      "scripts/run_v04_identifiability_benchmark.py"
+      "scripts/run_v04_identifiability_benchmark.py",
+      "scripts/verify_v04_identifiability_results.py"
     ],
     "input_access_enforcement": "The execution entrypoint may read only the allowlisted tracked configuration and source files for its receipt. Panel data are created in memory. It must not call a CSV loader, AQS client, raw-data reader, v0.3.2 artifact reader, or generic input-path argument."
   },
@@ -236,8 +242,11 @@
     "execution_manifest": "configs/v04_identifiability_execution_manifest.json",
     "source_hash_semantics": "SHA-256 of UTF-8 tracked text after CRLF line endings are normalized to LF, matching the Git blob representation.",
     "protocol_freeze_tag": "v0.4.0-protocol-freeze",
-    "execution_freeze_tag": "v0.4.0-execution-freeze",
+    "execution_freeze_tag": "v0.4.1-execution-freeze",
     "attempt_record": "artifacts/.v04_identifiability_core_attempt.json",
+    "post_execution_verifier": "scripts/verify_v04_identifiability_results.py",
+    "post_execution_verification_path": "artifacts/v04_identifiability_core/v04_result_verification.json",
+    "post_execution_verifier_behavior": "Only after the single result bundle exists, the separately frozen verifier must require the local annotated tag and matching peeled origin tag, load authority from tagged Git blobs, confirm the clean checkout matches every tagged allowlisted source hash, and replay the deterministic core and stress suite in memory without invoking the output-writing entrypoint or creating an attempt record.",
     "overwrite_rule": "The execution entrypoint must atomically create the attempt record with exclusive creation, refuse every later attempt if that record or output directory exists, and write durable started, failed, or completed state.",
     "execution_preconditions": [
       "git status --porcelain is empty",
@@ -259,6 +268,9 @@
       "protocol SHA-256",
       "execution Git commit",
       "pre-outcome protocol tag",
+      "execution tag and remote execution-tag commit",
+      "execution manifest SHA-256",
+      "allowlisted input hashes",
       "input count accounting",
       "per-file SHA-256",
       "failure count"
@@ -278,9 +290,20 @@
         "schedule_sha256",
         "target_only_score",
         "comparative_scope_score",
+        "comparative_log_effect",
         "local_regional_target_identity",
         "detection_prediction",
-        "forced_scope_prediction"
+        "forced_scope_prediction",
+        "target_only_scope_prediction",
+        "scope_confidence",
+        "abstention_reason_q0.00",
+        "answered_q0.00",
+        "abstention_reason_q0.25",
+        "answered_q0.25",
+        "abstention_reason_q0.50",
+        "answered_q0.50",
+        "abstention_reason_q0.75",
+        "answered_q0.75"
       ],
       "v04_core_thresholds.json": [
         "detection_threshold",

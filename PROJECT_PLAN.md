@@ -1,19 +1,18 @@
 # MetaShift execution plan
 
 **Updated:** 2026-09-01
-**Research status:** Integrity remediation complete (I0/I1/I2). The frozen
-evidence release is
-[`v0.3.2-evidence-final`](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final)
-at `57d678ecabebff724d898abe626c9ef80538775b`: release gate 35/35,
-document consistency 12/12, manuscript-number verification 57/57, and 34
-designated two-environment core-artifact hashes match. The stricter formal
-competition-report figure-and-method revision is technically complete: clean
-report-source commit `2aad488726a04e1a1adda1e768b909b350686aad` produced a
-44-page, 1,048,269-byte PDF with SHA-256
-`08841e8ed3ed9e4a3a69ceddf62a42a385c0077e0a6cdf9d761c20a6ceb22d40`, zero
-overfull boxes, 17 source-bound figures, 38 deterministic assets, 34
-150/300-DPI figure crops, a clean 18-PDF/125-font audit, and 15/15
-formal-report checks. Taxonomy stratification remains human-blocked.
+**Research status:** `v0.3.2-evidence-final` is an immutable, archived
+evidence baseline at `57d678ecabebff724d898abe626c9ef80538775b`: release gate
+35/35, document consistency 12/12, manuscript-number verification 57/57, and
+34 designated two-environment core-artifact hashes match. On 2026-09-01 the
+project began a separate `v0.4.0-identifiability-audit` reconstruction. Phase
+0 passed its metadata-only evidence and contamination boundary audit; no
+candidate v0.4 post-window observations, scores, or outcomes were read.
+
+The prior 44-page LaTeX report and its presentation checks remain an archived
+v0.3.2 presentation baseline, not the active manuscript. No manuscript,
+figure, or taxonomy-stratification work may resume until the v0.4 theory and
+novelty gate passes. Taxonomy stratification remains human-blocked.
 
 ## Evidence rule
 
@@ -22,6 +21,29 @@ MetaShift remains one transparent cross-site counterfactual estimator in the
 comparison set; it is not claimed to outperform standard synthetic control.
 A Method Code transition is a metadata anchor, not proof of physical instrument
 replacement or measurement bias.
+
+## v0.4 identifiability-audit reconstruction
+
+- [x] **P0 -- Evidence and contamination audit.** The frozen v0.3.2 release,
+  all previously viewed partitions, and the physical input graph were
+  inventoried without reading candidate post-window values. A metadata-only
+  graph scan found six components containing nine eligible anchors and 35
+  physical sites that are disjoint from the 294-site v0.3.2 stable-benchmark
+  input footprint. This establishes candidate availability, not eligibility or
+  blindness. See
+  [`paper/upgrade/PHASE_0_EVIDENCE_AND_CONTAMINATION_AUDIT.md`](paper/upgrade/PHASE_0_EVIDENCE_AND_CONTAMINATION_AUDIT.md).
+- [ ] **P1 -- Closest-work and novelty audit.** Verify primary literature and
+  test the narrow identifiability-aware selective-auditing novelty claim.
+- [ ] **P2 -- Theory and task specification.** Define observational
+  equivalence, selective-audit scope, residual assumptions, and truth-regime
+  separation before any new experiment.
+- [ ] **P3 -- Pre-outcome v0.4 protocol freeze.** Freeze a physically
+  disjoint candidate manifest, thresholds, perturbations, and checks before
+  accessing any candidate post-window outcome.
+- [ ] **P4/P5 -- Implementation and one-time evaluation.** These phases may
+  start only after the theory/novelty gate and pre-outcome freeze pass.
+- [ ] **P6-P8 -- Manuscript, figures, and adversarial review.** These phases
+  remain blocked until v0.4 evidence supports them.
 
 ## Current checkpoint
 

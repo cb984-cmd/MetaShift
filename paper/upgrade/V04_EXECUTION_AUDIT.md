@@ -68,6 +68,9 @@ The complete threshold, denominator, calibration/evaluation, confusion, and
 selective-abstention audit is in
 [`V04_CORE_METRIC_AUDIT.md`](V04_CORE_METRIC_AUDIT.md) and
 [`V04_CORE_CONFUSION_MATRICES.csv`](V04_CORE_CONFUSION_MATRICES.csv).
+The raw-scale stress bounds and unavailable-metric boundary are separately
+audited in [`V04_STRESS_SUITE_AUDIT.md`](V04_STRESS_SUITE_AUDIT.md) and
+[`V04_ASSUMPTION_FAILURE_MATRIX.csv`](V04_ASSUMPTION_FAILURE_MATRIX.csv).
 
 ## Post-execution verification
 

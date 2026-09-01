@@ -105,6 +105,14 @@ replacement or measurement bias.
   [`paper/upgrade/V04_CORE_METRIC_AUDIT.md`](paper/upgrade/V04_CORE_METRIC_AUDIT.md)
   and
   [`paper/upgrade/V04_CORE_CONFUSION_MATRICES.csv`](paper/upgrade/V04_CORE_CONFUSION_MATRICES.csv).
+- [x] **P5c -- Raw-scale stress audit.** The complete unfiltered
+  five-family-by-two-split matrix aggregates all 1,800 preserved diagnostic
+  rows and their leakage extrema; its read-only verifier checks the bound
+  status of every underlying row. It explicitly records that the frozen stress
+  schema cannot support classification, risk, or coverage metrics; see
+  [`paper/upgrade/V04_STRESS_SUITE_AUDIT.md`](paper/upgrade/V04_STRESS_SUITE_AUDIT.md)
+  and
+  [`paper/upgrade/V04_ASSUMPTION_FAILURE_MATRIX.csv`](paper/upgrade/V04_ASSUMPTION_FAILURE_MATRIX.csv).
 - [ ] **P6-P8 -- Manuscript, figures, and adversarial review.**
   Taxonomy-independent preparation is no longer globally paused, but it remains
   gated on the theory, core-metric, stress-suite, and closest-work audits. P5

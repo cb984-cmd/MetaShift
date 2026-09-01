@@ -281,37 +281,41 @@ def _donor_construction_figure(
         bins=[-1, 0, 1, 2, np.inf],
         labels=["0", "1", "2", "3+"],
     ).value_counts().reindex(["0", "1", "2", "3+"], fill_value=0)
-    figure, axes = plt.subplots(1, 2, figsize=(6.6, 3.15), gridspec_kw={"width_ratios": [1.12, 0.88]})
+    figure, axes = plt.subplots(
+        1, 2, figsize=(6.6, 3.15), gridspec_kw={"width_ratios": [1.12, 0.88]}
+    )
     schematic, distribution = axes
     schematic.axis("off")
     _box(
         schematic,
-        0.17,
+        0.14,
         0.64,
-        0.25,
         0.22,
-        "Target series\n(physical site, POC)",
+        0.22,
+        "Target site\nand POC",
         facecolor="#E0F2FE",
     )
     _box(
         schematic,
-        0.17,
+        0.14,
         0.25,
-        0.25,
+        0.22,
         0.18,
-        "Same-site alternate POC\nexcluded as a donor",
+        "Same-site POC\nnot a donor",
         facecolor="#FEE2E2",
         edgecolor="#B91C1C",
         hatch="//",
     )
-    _arrow(schematic, (0.17, 0.52), (0.17, 0.36), color="#B91C1C", style="--")
+    _arrow(schematic, (0.14, 0.52), (0.14, 0.36), color="#B91C1C", style="--")
     for x, label in (
-        (0.48, "Donor site A\none ranked POC"),
-        (0.70, "Donor site B\none ranked POC"),
-        (0.91, "Donor site C+\none ranked POC"),
+        (0.43, "Donor A\nranked POC"),
+        (0.66, "Donor B\nranked POC"),
+        (0.89, "Donor C+\nranked POC"),
     ):
-        _box(schematic, x, 0.64, 0.18, 0.22, label, facecolor="#DCFCE7", fontsize=8)
-        _arrow(schematic, (0.30, 0.64), (x - 0.10, 0.64))
+        _box(
+            schematic, x, 0.64, 0.16, 0.22, label, facecolor="#DCFCE7", fontsize=7.5
+        )
+        _arrow(schematic, (0.25, 0.64), (x - 0.09, 0.64))
     schematic.text(
         0.53,
         0.16,
@@ -921,7 +925,7 @@ def _event_accounting_figure(
         0.63,
         0.27,
         0.14,
-        f"{complete + input_failure}\nmeet >=3 distinct donor eligibility",
+        f"{complete + input_failure}\nat least 3 distinct donors",
         facecolor="#DBEAFE",
     )
     _arrow(axis, (0.43, 0.825), (0.31, 0.70))

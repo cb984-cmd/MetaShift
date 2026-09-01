@@ -64,6 +64,11 @@ The zero comparative error is a property of these generated panels and
 predeclared score thresholds, not a statement about real monitoring data or
 instrument conditions.
 
+The complete threshold, denominator, calibration/evaluation, confusion, and
+selective-abstention audit is in
+[`V04_CORE_METRIC_AUDIT.md`](V04_CORE_METRIC_AUDIT.md) and
+[`V04_CORE_CONFUSION_MATRICES.csv`](V04_CORE_CONFUSION_MATRICES.csv).
+
 ## Post-execution verification
 
 `scripts/verify_v04_identifiability_results.py --require-results` passed

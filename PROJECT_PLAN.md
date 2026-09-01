@@ -97,6 +97,14 @@ replacement or measurement bias.
   `0f0c23c7ff2ca31c96768e9e890ccfbea90cd892935efa73e77575cf580d541f`.
   Packaging did not rerun the benchmark; release-asset publication remains a
   human decision.
+- [x] **P5b -- Core metric audit.** The complete 72-cell calibration and
+  evaluation confusion/abstention table is transcribed from the frozen
+  2,160-row event CSV by a read-only verifier. It separately records detection,
+  forced comparative scope, target-only scope, selective scope, thresholds,
+  denominators, and component-bootstrap intervals; see
+  [`paper/upgrade/V04_CORE_METRIC_AUDIT.md`](paper/upgrade/V04_CORE_METRIC_AUDIT.md)
+  and
+  [`paper/upgrade/V04_CORE_CONFUSION_MATRICES.csv`](paper/upgrade/V04_CORE_CONFUSION_MATRICES.csv).
 - [ ] **P6-P8 -- Manuscript, figures, and adversarial review.**
   Taxonomy-independent preparation is no longer globally paused, but it remains
   gated on the theory, core-metric, stress-suite, and closest-work audits. P5

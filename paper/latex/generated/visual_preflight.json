@@ -1,9 +1,9 @@
 {
-  "generated_at_utc": "2026-09-01T02:22:37.791586+00:00",
+  "generated_at_utc": "2026-09-01T03:20:56.776165+00:00",
   "review_type": "automated rendered-page preflight",
   "manual_review_required": true,
-  "source_pdf": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
-  "page_count": 41,
+  "source_pdf": "paper/latex/build/MetaShift_Bench_Yau_2026.pdf",
+  "page_count": 44,
   "all_pages_rendered_and_nontrivial": true,
   "pages": [
     {
@@ -20,25 +20,25 @@
     },
     {
       "page": "page-03.png",
-      "bytes": 222908,
+      "bytes": 223256,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-04.png",
-      "bytes": 142261,
+      "bytes": 141817,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-05.png",
-      "bytes": 348008,
+      "bytes": 337606,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-06.png",
-      "bytes": 374465,
+      "bytes": 385433,
       "width_px": 1191,
       "height_px": 1684
     },
@@ -50,7 +50,7 @@
     },
     {
       "page": "page-08.png",
-      "bytes": 174823,
+      "bytes": 179925,
       "width_px": 1191,
       "height_px": 1684
     },
@@ -68,189 +68,212 @@
     },
     {
       "page": "page-11.png",
-      "bytes": 311984,
+      "bytes": 387298,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-12.png",
-      "bytes": 366797,
+      "bytes": 258070,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-13.png",
-      "bytes": 123247,
+      "bytes": 134465,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-14.png",
-      "bytes": 344154,
+      "bytes": 345205,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-15.png",
-      "bytes": 351065,
+      "bytes": 374886,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-16.png",
-      "bytes": 359017,
+      "bytes": 310729,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-17.png",
-      "bytes": 380224,
+      "bytes": 378440,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-18.png",
-      "bytes": 176450,
+      "bytes": 296558,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-19.png",
-      "bytes": 375694,
+      "bytes": 365832,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-20.png",
-      "bytes": 223463,
+      "bytes": 226555,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-21.png",
-      "bytes": 342975,
+      "bytes": 179740,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-22.png",
-      "bytes": 250423,
+      "bytes": 113476,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-23.png",
-      "bytes": 214193,
+      "bytes": 303024,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-24.png",
-      "bytes": 329890,
+      "bytes": 196017,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-25.png",
-      "bytes": 218246,
+      "bytes": 329737,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-26.png",
-      "bytes": 340400,
+      "bytes": 115678,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-27.png",
-      "bytes": 224315,
+      "bytes": 140749,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-28.png",
-      "bytes": 454095,
+      "bytes": 362737,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-29.png",
-      "bytes": 330435,
+      "bytes": 203287,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-30.png",
-      "bytes": 101370,
+      "bytes": 350769,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-31.png",
-      "bytes": 235810,
-      "width_px": 1684,
-      "height_px": 1191
+      "bytes": 485733,
+      "width_px": 1191,
+      "height_px": 1684
     },
     {
       "page": "page-32.png",
-      "bytes": 370769,
+      "bytes": 161888,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-33.png",
-      "bytes": 359783,
+      "bytes": 243830,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-34.png",
-      "bytes": 253324,
+      "bytes": 370670,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-35.png",
-      "bytes": 452769,
+      "bytes": 359706,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-36.png",
-      "bytes": 391255,
+      "bytes": 253645,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-37.png",
-      "bytes": 253024,
+      "bytes": 452937,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-38.png",
-      "bytes": 364896,
-      "width_px": 1684,
-      "height_px": 1191
+      "bytes": 391167,
+      "width_px": 1191,
+      "height_px": 1684
     },
     {
       "page": "page-39.png",
-      "bytes": 189905,
+      "bytes": 253039,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-40.png",
-      "bytes": 89251,
+      "bytes": 331600,
+      "width_px": 1684,
+      "height_px": 1191
+    },
+    {
+      "page": "page-41.png",
+      "bytes": 128741,
+      "width_px": 1684,
+      "height_px": 1191
+    },
+    {
+      "page": "page-42.png",
+      "bytes": 163205,
       "width_px": 1191,
       "height_px": 1684
     },
     {
-      "page": "page-41.png",
-      "bytes": 347963,
+      "page": "page-43.png",
+      "bytes": 104115,
+      "width_px": 1191,
+      "height_px": 1684
+    },
+    {
+      "page": "page-44.png",
+      "bytes": 348017,
       "width_px": 1191,
       "height_px": 1684
     }
-  ]
+  ],
+  "high_resolution_page_renders": {
+    "150": 44,
+    "300": 44
+  },
+  "final_figure_placement_qa": "paper/latex/generated/final_figure_placement_qa.json"
 }

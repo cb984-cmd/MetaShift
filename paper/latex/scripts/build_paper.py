@@ -600,6 +600,7 @@ def main() -> None:
         "scripts/verify_pdf_fonts.py",
         "--pdf",
         "build/MetaShift_Bench_Yau_2026.pdf",
+        "--include-generated-figures",
     ]
     run(font_command, LATEX_ROOT)
 

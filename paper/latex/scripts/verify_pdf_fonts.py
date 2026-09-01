@@ -34,6 +34,11 @@ def parse_args() -> argparse.Namespace:
         help="PDF to audit; repeat to audit multiple paths.",
     )
     parser.add_argument(
+        "--include-generated-figures",
+        action="store_true",
+        help="Audit all generated vector figures in addition to explicitly requested PDFs.",
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=DEFAULT_OUTPUT,
@@ -96,7 +101,12 @@ def main() -> None:
         raise RuntimeError("Required command is unavailable: pdffonts")
     output_path = resolve_from_latex(args.output)
     requested = [resolve_from_latex(path) for path in args.pdf]
-    targets = requested or [FINAL_PDF, *sorted(FIGURES_DIR.glob("*.pdf"))]
+    figures = sorted(FIGURES_DIR.glob("*.pdf"))
+    targets = (
+        [*requested, *figures]
+        if requested and args.include_generated_figures
+        else requested or [FINAL_PDF, *figures]
+    )
     audits = [audit_pdf(pdffonts, path) for path in targets]
     violations = [
         {

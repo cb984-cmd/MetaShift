@@ -1,13 +1,13 @@
 {
-  "generated_at_utc": "2026-09-01T02:22:41.475624+00:00",
+  "generated_at_utc": "2026-09-01T03:21:22.180969+00:00",
   "tool": "pdffonts",
-  "pdf_count": 17,
-  "font_count": 120,
+  "pdf_count": 18,
+  "font_count": 125,
   "all_checks_passed": true,
   "audits": [
     {
-      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\MetaShift_Bench_Yau_2026.pdf",
-      "font_count": 72,
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\build\\MetaShift_Bench_Yau_2026.pdf",
+      "font_count": 74,
       "type3_fonts": [],
       "unembedded_fonts": []
     },
@@ -30,8 +30,14 @@
       "unembedded_fonts": []
     },
     {
-      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_case_studies.pdf",
-      "font_count": 4,
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_case_studies_abstention.pdf",
+      "font_count": 3,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_case_studies_complete.pdf",
+      "font_count": 3,
       "type3_fonts": [],
       "unembedded_fonts": []
     },
@@ -43,7 +49,7 @@
     },
     {
       "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_event_accounting.pdf",
-      "font_count": 2,
+      "font_count": 3,
       "type3_fonts": [],
       "unembedded_fonts": []
     },

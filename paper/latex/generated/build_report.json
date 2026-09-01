@@ -1,15 +1,17 @@
 {
-  "generated_at_utc": "2026-09-01T02:22:41.681787+00:00",
-  "source_git_commit": "bd4164242638f723eb6f5aec72c822507e098030",
+  "generated_at_utc": "2026-09-01T03:20:57.441418+00:00",
+  "source_git_commit": "4415ea392e6766b182c194a517f2154e165f22d4",
   "source_worktree_clean_at_start": true,
   "source_worktree_status_at_start": [],
   "build_mode": "final",
   "build_pdf": "paper/latex/build/MetaShift_Bench_Yau_2026.pdf",
+  "candidate_pdf": "paper/latex/build/MetaShift_Bench_Yau_2026.pdf",
+  "candidate_pdf_sha256": "cc156a66d07117e356124212da4894eadfcbdb5a8d3b8e15ab5cc42a396ad618",
   "final_pdf": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
-  "pdf_bytes": 1050437,
-  "pdf_sha256": "efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc",
-  "build_pdf_sha256": "efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc",
-  "rendered_page_count": 41,
+  "pdf_bytes": 1048291,
+  "pdf_sha256": "cc156a66d07117e356124212da4894eadfcbdb5a8d3b8e15ab5cc42a396ad618",
+  "build_pdf_sha256": "cc156a66d07117e356124212da4894eadfcbdb5a8d3b8e15ab5cc42a396ad618",
+  "rendered_page_count": 44,
   "overfull_hbox_warnings": 0,
   "pdf_metadata": {
     "Title": "MetaShift-Bench: A Metadata-Anchored Audit Benchmark for PM2.5 Method-Transition Discontinuities",
@@ -19,6 +21,7 @@
   "frozen_evidence_summary": "configs/current_evidence_summary_v2.json",
   "clean_build_record": "paper/latex/generated/clean_build_record.json",
   "visual_preflight": "paper/latex/generated/visual_preflight.json",
+  "final_figure_placement_qa": "paper/latex/generated/final_figure_placement_qa.json",
   "font_audit": "paper/latex/generated/font_audit.json",
   "build_commands": [
     "generate_paper_assets --write",
@@ -28,8 +31,10 @@
     "verify_references",
     "verify_paper_asset_determinism",
     "pdflatex, bibtex, pdflatex, pdflatex",
-    "pdftoppm -png -r 144",
+    "pdftoppm -png -r 144, 150, 300",
+    "pdftotext -bbox for figure-page crop locations",
     "verify_pdf_fonts",
-    "verify_formal_report"
+    "verify_formal_report --candidate-pdf build/MetaShift_Bench_Yau_2026.pdf",
+    "verify_formal_report after transactional canonical publication"
   ]
 }

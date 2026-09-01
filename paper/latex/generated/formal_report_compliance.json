@@ -1,6 +1,8 @@
 {
-  "generated_at_utc": "2026-09-01T03:05:22.919293+00:00",
+  "generated_at_utc": "2026-09-01T03:20:57.499394+00:00",
   "formal_report": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
+  "verification_mode": "candidate",
+  "verified_pdf": "paper/latex/build/MetaShift_Bench_Yau_2026.pdf",
   "frozen_evidence": {
     "tag": "v0.3.2-evidence-final",
     "commit": "57d678ecabebff724d898abe626c9ef80538775b",
@@ -10,21 +12,15 @@
       "v0.3.1-evidence-final"
     ]
   },
-  "source_word_count_estimate": 9647,
+  "source_word_count_estimate": 9642,
   "compiled_pdf": {
-    "bytes": 1050437,
-    "sha256": "efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc",
-    "rendered_page_count": 41
+    "bytes": 1048291,
+    "sha256": "cc156a66d07117e356124212da4894eadfcbdb5a8d3b8e15ab5cc42a396ad618",
+    "rendered_page_count": 44
   },
   "human_completion_status": "required",
   "taxonomy_status": "human_blocked",
-  "record_violations": [
-    {
-      "issue": "missing_json_record",
-      "record": "final_figure_placement_qa",
-      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\final_figure_placement_qa.json"
-    }
-  ],
+  "record_violations": [],
   "checks": [
     {
       "name": "official_order_and_required_sections",
@@ -63,7 +59,7 @@
     },
     {
       "name": "final_print_geometry_and_crop_review",
-      "passed": false,
+      "passed": true,
       "detail": "All 17 figures have measured source geometry plus 150- and 300-DPI final-page crop records."
     },
     {

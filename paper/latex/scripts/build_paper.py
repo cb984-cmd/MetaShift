@@ -118,6 +118,36 @@ def require_command(name: str) -> str:
     return location
 
 
+def require_bbox_pdftotext(pdfinfo: str) -> str:
+    """Find a pdftotext executable that can emit word bounding boxes."""
+
+    pdfinfo_path = Path(pdfinfo)
+    candidates = [
+        pdfinfo_path.with_name("pdftotext" + pdfinfo_path.suffix),
+        Path(require_command("pdftotext")),
+    ]
+    checked: set[Path] = set()
+    for candidate in candidates:
+        resolved = candidate.resolve()
+        if resolved in checked or not resolved.is_file():
+            continue
+        checked.add(resolved)
+        completed = subprocess.run(
+            [str(resolved), "-h"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+        )
+        if "-bbox" in completed.stdout:
+            return str(resolved)
+    raise RuntimeError(
+        "Required command is unavailable: a pdftotext executable with -bbox support."
+    )
+
+
 def git_commit() -> str:
     return subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, encoding="utf-8"
@@ -463,8 +493,8 @@ def main() -> None:
     pdflatex = require_command("pdflatex")
     bibtex = require_command("bibtex")
     pdftoppm = require_command("pdftoppm")
-    pdftotext = require_command("pdftotext")
     pdfinfo = require_command("pdfinfo")
+    pdftotext = require_bbox_pdftotext(pdfinfo)
     source_commit = git_commit()
     source_worktree_status = git_worktree_status()
     removed = clean_known_build_outputs()

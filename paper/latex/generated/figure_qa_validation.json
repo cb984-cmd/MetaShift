@@ -1,0 +1,67 @@
+{
+  "generated_at_utc": "2026-09-01T02:11:11.412532+00:00",
+  "frozen_evidence": {
+    "tag": "v0.3.2-evidence-final",
+    "commit": "57d678ecabebff724d898abe626c9ef80538775b",
+    "release_url": "https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final",
+    "supersedes": [
+      "v0.3.0-distinct-donors",
+      "v0.3.1-evidence-final"
+    ]
+  },
+  "result_label": "stable_full_v2",
+  "required_figure_count": 16,
+  "checks": [
+    {
+      "name": "frozen_figure_manifest_identity",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "vector_figures_and_hashed_sources",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "anchor_and_tier_accounting",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "complete_input_footprint_isolation",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "nested_placebo_availability",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "interval_nominal_coverage_and_width",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "inclusive_window_protocol",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "external_evidence_ladder",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "appendix_only_descriptive_2023_concentration",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "deterministic_case_reconstruction",
+      "passed": true,
+      "violations": []
+    }
+  ],
+  "all_checks_passed": true
+}

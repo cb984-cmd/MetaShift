@@ -1,15 +1,25 @@
 {
-  "generated_at_utc": "2026-09-01T01:08:26.067840+00:00",
-  "source_git_commit": "e9fbf3c8dda4fb0755fd0d5770fa966e7ebfe206",
-  "source_worktree_clean_at_start": true,
-  "source_worktree_status_at_start": [],
-  "build_mode": "final",
+  "generated_at_utc": "2026-09-01T02:11:57.669412+00:00",
+  "source_git_commit": "d2168ec4c4e4c989f7c7b3d6943936ec093b0c91",
+  "source_worktree_clean_at_start": false,
+  "source_worktree_status_at_start": [
+    " M paper/latex/generated/asset_determinism_validation.json",
+    " M paper/latex/generated/build_report.json",
+    " M paper/latex/generated/claim_ledger_validation.json",
+    " M paper/latex/generated/clean_build_record.json",
+    " M paper/latex/generated/font_audit.json",
+    " M paper/latex/generated/paper_source_validation.json",
+    " M paper/latex/generated/reference_validation.json",
+    " M paper/latex/generated/visual_preflight.json",
+    "?? paper/latex/generated/figure_qa_validation.json"
+  ],
+  "build_mode": "staged_only",
   "build_pdf": "paper/latex/build/MetaShift_Bench_Yau_2026.pdf",
-  "final_pdf": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
-  "pdf_bytes": 859080,
-  "pdf_sha256": "2cb941ca6acc91b7937bdf4626db04a9cdb34ceb0814ae4ea81db0c885437e08",
-  "build_pdf_sha256": "2cb941ca6acc91b7937bdf4626db04a9cdb34ceb0814ae4ea81db0c885437e08",
-  "rendered_page_count": 36,
+  "final_pdf": null,
+  "pdf_bytes": 1052819,
+  "pdf_sha256": "a1711aa64689e34272fdaa702c4000392c882ad9bae39e9323f1f7939ddb2588",
+  "build_pdf_sha256": "a1711aa64689e34272fdaa702c4000392c882ad9bae39e9323f1f7939ddb2588",
+  "rendered_page_count": 42,
   "overfull_hbox_warnings": 0,
   "pdf_metadata": {
     "Title": "MetaShift-Bench: A Metadata-Anchored Audit Benchmark for PM2.5 Method-Transition Discontinuities",
@@ -22,13 +32,13 @@
   "font_audit": "paper/latex/generated/font_audit.json",
   "build_commands": [
     "generate_paper_assets --write",
+    "verify_figures",
     "verify_claim_ledger --require-assets",
     "verify_paper_source",
     "verify_references",
     "verify_paper_asset_determinism",
     "pdflatex, bibtex, pdflatex, pdflatex",
     "pdftoppm -png -r 144",
-    "verify_pdf_fonts",
-    "verify_formal_report"
+    "verify_pdf_fonts"
   ]
 }

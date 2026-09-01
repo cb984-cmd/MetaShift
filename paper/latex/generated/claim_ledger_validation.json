@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-01T01:07:39.097135+00:00",
+  "generated_at_utc": "2026-09-01T02:11:11.631431+00:00",
   "ledger": "paper/latex/CLAIM_EVIDENCE_LEDGER.csv",
   "frozen_evidence": {
     "tag": "v0.3.2-evidence-final",
@@ -11,10 +11,10 @@
     ]
   },
   "input_summary_sha256": "7a4c7219af77cb80c7c3aa5a2175a1ffa29f6ac826f8ec95305185d66f05bc55",
-  "claim_count": 36,
-  "asset_reference_count": 65,
+  "claim_count": 39,
+  "asset_reference_count": 69,
   "verification_status_counts": {
-    "verified_frozen_evidence": 36
+    "verified_frozen_evidence": 39
   },
   "all_checks_passed": true,
   "checks": [

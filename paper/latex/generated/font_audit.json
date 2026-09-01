@@ -1,12 +1,12 @@
 {
-  "generated_at_utc": "2026-09-01T19:39:50.651902+00:00",
+  "generated_at_utc": "2026-09-01T20:19:28.657043+00:00",
   "tool": "pdffonts",
   "pdf_count": 18,
   "font_count": 125,
   "all_checks_passed": true,
   "audits": [
     {
-      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\build\\MetaShift_Bench_Yau_2026.pdf",
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\MetaShift_Bench_Yau_2026.pdf",
       "font_count": 75,
       "type3_fonts": [],
       "unembedded_fonts": []

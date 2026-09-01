@@ -221,7 +221,8 @@ def main() -> None:
         and assets.get("frozen_evidence") == frozen
         and assets.get("result_label") == "stable_full_v2"
         and r"\input{generated/evidence_macros}" in metadata
-        and r"\EvidenceTag" in frontmatter
+        and r"\EvidenceTag" in all_sections
+        and r"\EvidenceCommit" in all_sections
     )
     add_check(
         checks,

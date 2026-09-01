@@ -1,0 +1,96 @@
+{
+  "claims": {
+    "V05-01": {
+      "expected_ledger_fragments": [
+        "230,400",
+        "460,800",
+        "360",
+        "120",
+        "76,800",
+        "614,400"
+      ]
+    },
+    "V05-02": {
+      "expected_ledger_fragments": [
+        "1.000000",
+        "0.500000"
+      ]
+    },
+    "V05-03": {
+      "expected_ledger_fragments": [
+        "1.000000",
+        "0.275095",
+        "126,764"
+      ]
+    },
+    "V05-04": {
+      "expected_ledger_fragments": [
+        "0.01",
+        "0.05",
+        "0.10",
+        "0"
+      ]
+    },
+    "V05-05": {
+      "expected_ledger_fragments": [
+        "0.603746",
+        "0.195208",
+        "0.600863",
+        "0.607008"
+      ]
+    },
+    "V05-06": {
+      "expected_ledger_fragments": [
+        "0.603746",
+        "0.195208"
+      ]
+    },
+    "V05-07": {
+      "expected_ledger_fragments": [
+        "89,997",
+        "179,994",
+        "0.390612",
+        "0.000000"
+      ]
+    },
+    "V05-08": {
+      "expected_ledger_fragments": [
+        "0.976583"
+      ]
+    },
+    "V05-09": {
+      "expected_ledger_fragments": [
+        "46,080",
+        "0"
+      ]
+    },
+    "V05-10": {
+      "expected_ledger_fragments": [
+        "140,403",
+        "0"
+      ]
+    },
+    "V05-11": {
+      "expected_ledger_fragments": [
+        "0.000000",
+        "0.109375",
+        "0.382812",
+        "0.663997",
+        "0.796875"
+      ]
+    },
+    "V05-12": {
+      "expected_ledger_fragments": [
+        "v0.5.0-answerability-freeze",
+        "v0.5.0-answerability-execution-claim",
+        "14fd0fee4fb015e6c661299041e35ff704a27286",
+        "954fc9b56a8f526644320aa7b1b15ed76844e400e1394ffd8f733729996a87c9"
+      ]
+    }
+  },
+  "execution_claim_tag": "v0.5.0-answerability-execution-claim",
+  "execution_freeze_tag": "v0.5.0-answerability-freeze",
+  "protocol_id": "v0.5-answerability-frontier",
+  "schema_version": 1,
+  "source_receipt_sha256": "954fc9b56a8f526644320aa7b1b15ed76844e400e1394ffd8f733729996a87c9"
+}

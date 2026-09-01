@@ -22,7 +22,14 @@ HUMAN_CHECKLIST_PATH = LATEX_ROOT / "HUMAN_COMPLETION_CHECKLIST.md"
 SELF_REVIEW_PATH = LATEX_ROOT / "PAPER_SELF_REVIEW.md"
 COMPLETION_REPORT_PATH = LATEX_ROOT / "REVISION_COMPLETION_REPORT.md"
 SUMMARY_PATH = ROOT / "configs" / "current_evidence_summary_v2.json"
+V05_RESULT_MANIFEST_PATH = ROOT / "configs" / "v05_frozen_result_manifest.json"
 ASSET_MANIFEST_PATH = LATEX_ROOT / "generated" / "asset_manifest.json"
+V05_ASSET_MANIFEST_PATH = LATEX_ROOT / "generated" / "v05_answerability_asset_manifest.json"
+V05_ASSET_VALIDATION_PATH = LATEX_ROOT / "generated" / "v05_answerability_asset_validation.json"
+V05_ASSET_DETERMINISM_PATH = (
+    LATEX_ROOT / "generated" / "v05_answerability_asset_determinism.json"
+)
+V05_LEDGER_REPORT_PATH = LATEX_ROOT / "generated" / "v05_claim_ledger_validation.json"
 LEDGER_REPORT_PATH = LATEX_ROOT / "generated" / "claim_ledger_validation.json"
 SOURCE_REPORT_PATH = LATEX_ROOT / "generated" / "paper_source_validation.json"
 REFERENCE_REPORT_PATH = LATEX_ROOT / "generated" / "reference_validation.json"
@@ -135,7 +142,26 @@ def main() -> None:
     audited_pdf = candidate_pdf if candidate_pdf is not None else FINAL_PDF_PATH
     record_violations: list[dict[str, object]] = []
     summary = load_json(SUMMARY_PATH, record_violations, "frozen_evidence_summary")
+    v05_result = load_json(
+        V05_RESULT_MANIFEST_PATH, record_violations, "v05_frozen_result_manifest"
+    )
     assets = load_json(ASSET_MANIFEST_PATH, record_violations, "asset_manifest")
+    v05_assets = load_json(
+        V05_ASSET_MANIFEST_PATH, record_violations, "v05_answerability_asset_manifest"
+    )
+    v05_asset_validation = load_json(
+        V05_ASSET_VALIDATION_PATH,
+        record_violations,
+        "v05_answerability_asset_validation",
+    )
+    v05_asset_determinism = load_json(
+        V05_ASSET_DETERMINISM_PATH,
+        record_violations,
+        "v05_answerability_asset_determinism",
+    )
+    v05_ledger = load_json(
+        V05_LEDGER_REPORT_PATH, record_violations, "v05_claim_ledger_validation"
+    )
     ledger = load_json(LEDGER_REPORT_PATH, record_violations, "claim_ledger_validation")
     source = load_json(SOURCE_REPORT_PATH, record_violations, "paper_source_validation")
     references = load_json(REFERENCE_REPORT_PATH, record_violations, "reference_validation")
@@ -251,6 +277,34 @@ def main() -> None:
         "The report and generated assets bind to the immutable v0.3.2 evidence release.",
     )
 
+    v05_receipt = next(
+        (
+            record
+            for record in v05_result.get("artifacts", [])
+            if isinstance(record, dict)
+            and record.get("path")
+            == "artifacts/v05_answerability_frontier/v05_execution_receipt.json"
+        ),
+        {},
+    )
+    v05_ok = (
+        v05_result.get("manifest_id") == "v0.5.0-frozen-result-provenance"
+        and v05_result.get("evidence_status") == "frozen_one_time_execution_verified"
+        and v05_result.get("execution_authority", {}).get("execution_freeze_tag")
+        == "v0.5.0-answerability-freeze"
+        and v05_result.get("execution_authority", {}).get("execution_claim_tag")
+        == "v0.5.0-answerability-execution-claim"
+        and v05_assets.get("protocol_id") == "v0.5-answerability-frontier"
+        and v05_assets.get("source_receipt", {}).get("sha256") == v05_receipt.get("sha256")
+        and v05_asset_validation.get("all_checks_passed") is True
+    )
+    add_check(
+        checks,
+        "frozen_v05_scope_answerability_binding",
+        v05_ok,
+        "The report's v0.5 tables and figures remain bound to the one-time frozen receipt.",
+    )
+
     ledger_ok = (
         ledger.get("all_checks_passed") is True
         and ledger.get("claim_count", 0) == 39
@@ -286,6 +340,34 @@ def main() -> None:
         "Two independent paper-asset generations have identical hashes for 38 or more outputs.",
     )
 
+    v05_presentation_ok = (
+        v05_assets.get("schema_version") == 1
+        and len(v05_assets.get("outputs", [])) == 11
+        and v05_asset_validation.get("all_checks_passed") is True
+        and v05_asset_determinism.get("all_hashes_match") is True
+        and v05_asset_determinism.get("output_count") == 11
+    )
+    add_check(
+        checks,
+        "v05_receipt_bound_presentation_assets",
+        v05_presentation_ok,
+        "Five v0.5 figures, three tables, and claim-value metadata are receipt-bound.",
+    )
+
+    v05_ledger_ok = (
+        v05_ledger.get("all_checks_passed") is True
+        and v05_ledger.get("claim_count") == 12
+        and v05_ledger.get("asset_reference_count", 0) >= 20
+        and v05_ledger.get("verification_status_counts")
+        == {"verified_frozen_v05_evidence": 12}
+    )
+    add_check(
+        checks,
+        "v05_claim_ledger_validation",
+        v05_ledger_ok,
+        "All 12 v0.5 manuscript claims are recomputed from receipt-bound frozen evidence.",
+    )
+
     figure_qa_ok = (
         figure_qa.get("all_checks_passed") is True
         and figure_qa.get("required_figure_count") == 17
@@ -301,8 +383,14 @@ def main() -> None:
     final_figure_qa_ok = (
         figure_layout_qa.get("all_checks_passed") is True
         and figure_layout_qa.get("required_figure_count") == 17
+        and load_json(
+            V05_ASSET_MANIFEST_PATH,
+            record_violations,
+            "v05_answerability_asset_manifest_for_figures",
+        ).get("schema_version")
+        == 1
         and final_figure_qa.get("all_checks_passed") is True
-        and final_figure_qa.get("required_figure_count") == 17
+        and final_figure_qa.get("required_figure_count") == 22
         and final_figure_qa.get("source_pdf_sha256") == build.get("pdf_sha256")
         and final_figure_qa.get("crop_dpi") == [150, 300]
     )
@@ -310,7 +398,7 @@ def main() -> None:
         checks,
         "final_print_geometry_and_crop_review",
         final_figure_qa_ok,
-        "All 17 figures have measured source geometry plus 150- and 300-DPI final-page crop records.",
+        "All 22 figures have measured source geometry plus 150- and 300-DPI final-page crop records.",
     )
 
     normalized_sections = normalized(all_sections)
@@ -361,7 +449,7 @@ def main() -> None:
         and len(pages) > 1
         and build.get("overfull_hbox_warnings") == 0
         and build.get("pdf_metadata", {}).get("Title")
-        == "MetaShift-Bench: A Metadata-Anchored Audit Benchmark for PM2.5 Method-Transition Discontinuities"
+        == "MetaShift-Bench: A Target-Fixed Benchmark for Selective Scope Answerability"
         and build.get("pdf_metadata", {}).get("Author") == "Human completion required"
         and candidate_contract_ok
     )
@@ -421,15 +509,18 @@ def main() -> None:
     review_documents_ok = (
         "Evidence-based self-review" in self_review
         and "v0.3.2-evidence-final" in self_review
+        and "v0.5-answerability-frontier" in self_review
+        and "V05_CLAIM_EVIDENCE_LEDGER.csv" in self_review
         and "Revision completion report" in completion
         and "v0.3.2-evidence-final" in completion
+        and "v0.5.0-answerability-freeze" in completion
         and "HUMAN REVIEW REQUIRED" in completion
     )
     add_check(
         checks,
         "self_review_and_completion_handoff",
         review_documents_ok,
-        "The review and completion records distinguish technical completion from human-only submission work.",
+        "The review and completion records distinguish frozen v0.3.2/v0.5 evidence from human-only submission work.",
     )
 
     word_count = source_word_count()

@@ -471,6 +471,7 @@ class V05ExecutionContractTests(unittest.TestCase):
         with (
             patch.object(runner, "_run_pre_outcome_verifier"),
             patch.object(runner, "validate_runtime_environment", return_value={}),
+            patch.object(runner, "ensure_execution_claim_absent"),
             patch.object(runner, "git_text", side_effect=fake_git_text),
             patch.object(
                 runner,

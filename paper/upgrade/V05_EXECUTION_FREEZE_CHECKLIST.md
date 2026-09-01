@@ -37,7 +37,8 @@ not a basis for rerunning or revising the protocol.
   locked CPython 3.13 environment.
 - [x] Remote one-time claim acquisition and the post-claim
   `claim_acquired_setup_failed` path have direct regression coverage.
-- [ ] CI passes from the final pre-execution commit.
+- [x] CI run `33509140737` passed from the final pre-execution commit
+  `14fd0fee4fb015e6c661299041e35ff704a27286`.
 - [x] Manual source/diff and read-only provenance audits confirm no v0.3.2/v0.4
   frozen file changed.
 
@@ -70,14 +71,17 @@ not a basis for rerunning or revising the protocol.
  identity, and all 640 grid cells as satisfied.
 - [x] The receipt's implementation-semantics check passed over 640 cells
  (maximum absolute difference `1.6653345369377348e-16`, tolerance `1e-12`).
-- [x] `verify_v05_protocol_freeze.py --allow-existing-outputs` and
- `verify_v05_frozen_result_provenance.py` pass as post-execution, read-only
- checks. The latter validates every sealed artifact, the receipt/attempt chain,
- both local and remote annotated tags, and every frozen allowlisted source.
-- [x] The current unpinned local environment is explicitly not treated as a
- successful full replay: its NumPy `2.4.6` differs from the receipt-pinned
- NumPy `2.5.2`, so the full result verifier fails closed before its runtime
- provenance check. No output was changed by that check.
+- [x] `verify_v05_protocol_freeze.py --allow-existing-outputs` passes as a
+ post-execution, read-only contract check.
+- [x] Under the receipt-pinned CPython 3.13.14 environment with NumPy `2.5.2`,
+ `verify_v05_frozen_result_provenance.py --verify-results` passes all byte,
+ schema, receipt/attempt, annotated-tag, frozen-source, and full deterministic
+ result-verifier checks. No output was changed by that check.
+- [x] The historical unpinned local environment is not treated as a successful
+ full replay: its NumPy `2.4.6` differs from receipt-pinned NumPy `2.5.2`, so
+ the full verifier fails closed at runtime provenance. This failure remains
+ recorded as validation of the runtime boundary, not as a frozen-result
+ failure.
 - [x] `V05_EXECUTION_AUDIT.md` records favorable and unfavorable outcomes,
  q=0 treatment, certificate limits, artifact bindings, and verifier status.
 

@@ -7,6 +7,7 @@ import csv
 import hashlib
 import json
 import subprocess
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -207,6 +208,12 @@ def _tag_and_source_check(manifest: dict[str, Any], receipt: dict[str, Any]) -> 
             raise ValueError(f"freeze-tag source hash differs for {relative_path}")
 
 
+def result_verifier_command() -> list[str]:
+    """Run the optional replay with the interpreter that passed provenance checks."""
+
+    return [sys.executable, "scripts/verify_v05_answerability_results.py"]
+
+
 def build_report(manifest: dict[str, Any], root: Path = ROOT) -> dict[str, Any]:
     metadata = build_metadata_report(manifest)
     authority = manifest["execution_authority"]
@@ -276,7 +283,7 @@ def main() -> None:
     report = build_report(manifest)
     if args.verify_results and report["all_checks_passed"]:
         completed = subprocess.run(
-            ["python", "scripts/verify_v05_answerability_results.py"],
+            result_verifier_command(),
             cwd=ROOT,
             capture_output=True,
             text=True,

@@ -1,7 +1,53 @@
 \section{Experimental design}
 \label{sec:experimental-design}
 
-\subsection{Stable-regime synthetic benchmark}
+\subsection{v0.5 preregistered answerability-frontier experiment}
+
+The primary experiment is \texttt{v0.5-answerability-frontier}. It was
+implemented, tested, source-frozen, and independently protocol-verified before
+any evaluation output was created. It uses newly generated bounded synthetic
+panels only; AQS data and metadata, v0.3.2 evidence, v0.4 evidence, and the
+taxonomy review are forbidden inputs. Each component has 300 dates, one target,
+four donors, a fixed anchor day, fixed equal donor weights, and independently
+generated bounded common and idiosyncratic innovations. Calibration has
+\VFiveCalibrationComponents{} components, and evaluation has
+\VFiveEvaluationComponents{} components with \VFiveEvaluationPairs{} matched
+pairs and \VFiveEvaluationArms{} scope arms; their identifiers and seed streams
+are disjoint.
+
+For every component, the full $5\times4\times2^5=640$ Cartesian grid crosses
+nominal donor participation $q\in\{0,.25,.50,.75,1\}$, signal strength
+$H\in\{.04,.08,.12,.20\}$, donor mismatch, availability loss, one-donor
+contamination, a common nonlinear raw-scale field, and bounded noise. Every
+cell produces one local and one shared arm. The target arrays are required to
+be exactly identical between the pair; at $q=0$, donor arrays must also be
+identical. The protocol fails closed on target-identity violations, footprint
+leakage, stale hashes, incomplete cells, calibration/evaluation mixing, or
+outcome-dependent configuration changes.
+
+The frozen design yields \VFiveCalibrationPairs{} calibration pairs and
+\VFiveEvaluationPairs{} evaluation pairs, with \VFiveEvaluationArms{}
+evaluation scope arms and \VFiveTotalArms{} total scope arms. A
+calibration-only threshold selects the comparative forced policy. Confidence
+cutoffs are selected from 101 calibration quantiles separately for each
+predeclared calibration tolerance. Evaluation then reports every frozen policy
+at every reporting tolerance; it does not select a different policy or retune
+a cutoff after outcomes. The certificate threshold is analytic and uses frozen
+synthetic-design inputs: the declared bounds plus the realized retained-date
+availability and panel values required by the clipping-aware raw-field bound.
+The ambiguous partial region consists of all $q>0$ pairs with nonpositive
+structural margin, where the certificate must abstain; $q=0$ is recorded
+separately as observationally unanswerable.
+
+The unit of uncertainty is the evaluation component, not a scope arm, date, or
+grid row. The protocol uses a 1,000-repetition percentile component bootstrap
+with prespecified seed and reports full policy risk--coverage, envelope,
+certificate, and subgroup results without collapsing them into a favorable
+score. The source freeze tag, remote execution-claim tag, manifest hashes, and
+receipt are described in Section~\ref{sec:reproducibility}. The single
+authorized execution is not retuned or rerun after its results are inspected.
+
+\subsection{Historical v0.3.2 stable-regime synthetic benchmark}
 
 Real metadata anchors have no physical-bias ground truth. Known-effect
 evaluation therefore uses only stable target and donor regimes separated from
@@ -10,6 +56,17 @@ contains \SyntheticCases{} physical target sites. Whole connected components of
 the complete target-plus-donor physical input graph were assigned to the
 \CalibrationCases{}-site calibration subset or the \EvaluationCases{}-site
 held-out evaluation subset, so no physical input site crosses the split.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_stable_synthetic_example.pdf}
+\caption{Data-derived stable-window illustration for the lexicographically
+first held-out v0.3.2 case fixed in the display contract. The same frozen
+additive injection is applied to the target alone (left) or to the target and
+donor composite (right). The illustration is historical endpoint context, not
+the v0.5 partial-scope continuum or a model of a real Method Code transition.}
+\label{fig:stable-synthetic-example}
+\end{figure}
 
 \begin{figure}[tbp]
 \centering

@@ -2,11 +2,12 @@
 
 ## Scope and evidence boundary
 
-This audit records the presentation review of the baseline formal report at
-source commit `9f89ad56d205acd616862982ef3643c6b6769c1b`. All scientific values
-remain bound to the frozen `v0.3.2-evidence-final` release
-(`57d678ecabebff724d898abe626c9ef80538775b`). The audit does not alter a
-result, a threshold, an estimator, a donor rule, or the viewed evaluation
+This audit records the presentation review of the historical v0.3.2 baseline
+at source commit `9f89ad56d205acd616862982ef3643c6b6769c1b`. Its scientific
+values remain bound to `v0.3.2-evidence-final`
+(`57d678ecabebff724d898abe626c9ef80538775b`). The answerability-first
+revision additionally includes receipt-bound v0.5 figures; it does not alter
+any frozen result, threshold, estimator, donor rule, or viewed evaluation
 partition.
 
 All baseline scientific figures were inspected as vector PDFs and as rendered
@@ -54,13 +55,14 @@ numeric or physical claim.
 
 ## Acceptance criteria for the revised figure set
 
-The post-revision QA report must show that every referenced figure is a
-manifested vector PDF with existing, hash-verified frozen or display-contract
-inputs; all 563 anchors reconcile in the accounting figure; placebo nesting,
-split isolation, interval nominal levels, and external-evidence ladders are
-arithmetically correct; and no figure contains a placeholder, a causal
-instrument assertion, a hidden truncated coverage axis, or a claim unsupported
-by its sources.
+The post-revision QA report must show that every legacy scientific figure is a
+manifested vector PDF and every v0.5 scientific figure is a receipt-bound
+raster PNG, each with existing hash-verified frozen or display-contract inputs.
+All 563 anchors must reconcile in the legacy accounting figure; placebo
+nesting, split isolation, interval nominal levels, and external-evidence
+ladders must remain arithmetically correct; and no figure may contain a
+placeholder, a causal-instrument assertion, a hidden truncated coverage axis,
+or a claim unsupported by its sources.
 
 ## Stricter measured layout gate
 
@@ -78,12 +80,9 @@ signed off, every figure must have:
 4. a grayscale contrast check; and
 5. a 150-DPI and 300-DPI final-page crop record.
 
-**Status: technical visual remediation is complete.** Clean report-source
-commit `2aad488726a04e1a1adda1e768b909b350686aad` generated the current
-44-page canonical PDF (SHA-256
-`08841e8ed3ed9e4a3a69ceddf62a42a385c0077e0a6cdf9d761c20a6ceb22d40`; 1,048,269
-bytes) with zero overfull boxes. All 17 figures passed the 11/11 source gate,
-all 44 pages were rendered at 150 and 300 DPI, and the 34 focused
-figure-placement crops were reviewed. The candidate and canonical PDFs also
-passed the 18-PDF/125-font audit and 15/15 formal-report checks. This
-presentation work does not complete any human-only submission item.
+**Status: the historical v0.3.2-only visual sign-off is superseded.** The
+current report has 17 legacy vector figures and five v0.5 receipt-bound raster
+figures. The final source gate must generate a combined 22-figure,
+150/300-DPI crop record and a new canonical PDF from a clean committed
+worktree. This presentation work does not complete any human-only submission
+item.

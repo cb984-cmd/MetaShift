@@ -1,37 +1,46 @@
 # Formal LaTeX report
 
-This A4 project turns only frozen `v0.3.2-evidence-final` evidence into the
-formal research-report draft. It never runs analysis, model tuning, taxonomy
-stratification, or raw-data download.
+This A4 report presents MetaShift-Bench as a target-fixed benchmark for
+selective scope answerability. It preserves three evidence roles:
+
+| Evidence release | Permitted role |
+| --- | --- |
+| `v0.3.2-evidence-final` | Real-data deployment and abstention evidence |
+| v0.4 | Historical endpoint and raw-leakage sanity checks |
+| `v0.5-answerability-frontier` | Frozen synthetic scope-answerability boundary evidence |
+
+The v0.5 raw outputs are immutable. Presentation scripts only read
+receipt-hashed outputs; they never execute, tune, replace, or reinterpret the
+frozen experiment. Use the receipt-pinned interpreter, not an unpinned
+`python`, for all v0.5 provenance-dependent commands:
 
 ```powershell
-python scripts\generate_paper_assets.py --write
-python scripts\verify_claim_ledger.py --require-assets
-python scripts\verify_paper_source.py
-python scripts\verify_references.py
-python scripts\verify_paper_asset_determinism.py
-python scripts\build_paper.py
-python scripts\verify_formal_report.py
+$py = 'C:\Users\marco\.copilot\session-state\863d8d39-4e41-4fe4-9ac9-3b3055a632d1\files\metashift-repro-venv\Scripts\python.exe'
+& $py scripts\generate_paper_assets.py --write
+& $py scripts\verify_claim_ledger.py --require-assets
+& $py scripts\generate_v05_answerability_assets.py --write
+& $py scripts\verify_v05_answerability_assets.py
+& $py scripts\verify_v05_answerability_asset_determinism.py
+& $py scripts\verify_v05_claim_ledger.py --require-assets
+& $py scripts\verify_paper_source.py
+& $py scripts\verify_references.py
+& $py scripts\verify_paper_asset_determinism.py
 ```
 
-`generated/` contains reproducible tables, 17 vector figures, evidence macros,
-and manifests. `generated/figure_layout_qa.json` records measured node padding,
-text separation, canvas boundaries, final print width, typography, and
-grayscale checks. `build/`, `rendered_pages/`, and the 150/300-DPI
-`qa_page_crops/` are local compilation outputs. The final PDF is copied to
-`MetaShift_Bench_Yau_2026.pdf` only after a successful build.
+After committing all report sources and generated assets, run
+`& $py scripts\build_paper.py` from a clean worktree. Final mode transactionally
+publishes `MetaShift_Bench_Yau_2026.pdf` only after source, evidence,
+determinism, geometry, rendered-page, font, and formal-compliance checks pass.
+The canonical final-build record is intentionally pending that clean build;
+do not cite the superseded v0.3.2-only PDF record.
 
-The current strict final build is from clean report-source commit
-`2aad488726a04e1a1adda1e768b909b350686aad`: 44 pages, 1,048,269 bytes, and
-SHA-256 `08841e8ed3ed9e4a3a69ceddf62a42a385c0077e0a6cdf9d761c20a6ceb22d40`.
-It has zero overfull boxes, 11/11 source figure checks for 17 figures, 38
-deterministic assets, all 44 pages rendered at 150 and 300 DPI, 34 focused
-figure crops, an 18-PDF/125-font audit with no Type 3 or unembedded fonts, and
-15/15 formal-report checks. See `generated/build_report.json` and
-`generated/formal_report_compliance.json`.
+`generated/` holds 38 legacy presentation assets and 11 receipt-bound v0.5
+assets, including 17 legacy vector figures and five v0.5 raster figures.
+`generated/figure_layout_qa.json` and
+`generated/v05_figure_layout_qa.json` record source-layout checks; `build/`,
+`rendered_pages/`, and `qa_page_crops/` are local build outputs.
 
-Do not replace `HUMAN COMPLETION REQUIRED` identity, contribution, advisor,
+Do not replace `HUMAN COMPLETION REQUIRED` identity, contribution, adviser,
 AI-use, or attestation fields with invented content. The Method Code taxonomy
-remains human-blocked; this report includes no taxonomy-stratified analysis.
-Use `HUMAN_COMPLETION_CHECKLIST.md` only for independently verified student and
-teacher review, disclosures, signatures, and final submission materials.
+remains human-blocked and only affects mechanism-level claims; it does not
+validate or invalidate the v0.5 synthetic scope result.

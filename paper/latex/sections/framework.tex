@@ -1,5 +1,75 @@
 \section{MetaShift-Bench audit framework}
 
+\subsection{Channel-specific selective scope audit}
+
+The primary benchmark workflow is fixed before evaluation and does not read AQS
+data, v0.3.2 evidence, v0.4 outputs, or taxonomy decisions. It generates
+bounded synthetic target-and-donor panels in memory, assigns calibration and
+evaluation by independent component identifier and seed stream, then applies
+the complete Cartesian product of seven declared factors. Each local/shared
+pair reuses the same target path, target noise, component seed, base panel, and
+non-scope stress factors. The paired arms differ only in how much of the target
+schedule reaches available donors.
+
+The target-only forced policy receives a signed target-change score and always
+predicts local. The comparative forced policy receives the signed
+target-minus-availability-normalized-donor residual score and a threshold
+selected on calibration components only. Four confidence-selective policies
+use the same frozen prediction with separately calibration-chosen cutoffs for
+$\alpha=.01,.05,.10,.20$. The certificate-assisted policy is not a fitted
+confidence rule: it answers only when the declared structural margin is
+strictly positive. All thresholds, policy definitions, groupings, error
+tolerances, seeds, output schemas, and tests were fixed before the evaluation
+directory existed.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_v05_answerability_frontier.png}
+\caption{Receipt-verified v0.5 finite-policy Scope Answerability Frontier.
+Target-only and comparative policies have no positive-coverage qualifying rule
+through $\alpha=.10$. The comparative channel reaches coverage
+\VFiveComparativeFrontierTwenty{} only at $\alpha=.20$, with observed
+conditional error \VFiveComparativeRiskTwenty{}. The certificate-assisted
+policy uses synthetic design information and is displayed separately rather
+than treated as a deployable external-evidence channel.}
+\label{fig:v05-frontier}
+\end{figure}
+
+The complete held-out finite-policy envelope is reported in
+Table~\ref{tab:v05-frontier}; its strict-tolerance failures remain part of the
+primary result rather than being hidden by the displayed comparative endpoint.
+
+\subsection{Partial-scope continuum and structural abstention}
+
+The five nominal $q$ levels sample a partial-participation continuum rather
+than form a binary convenience sample. At $q=0$, both donor and target
+observations are identical across local/shared arms and the stratum is a
+required comparative-channel negative control. At $q=1$, every available donor
+receives the target schedule. For intermediate $q$, the fixed participation
+vector is renormalized over the actually available donor weights on each date.
+The design makes no claim that these five values are physical scope fractions
+in AQS data.
+
+The structural margin aggregates a lower bound on the realized score gap and
+upper bounds for donor mismatch, bounded pre/post noise, nonlinear raw-scale
+leakage, and donor contamination. A nonpositive margin is an explicit
+structural abstention, not a confidence score rounded down after results are
+seen. The raw-field factor is intentionally outside the exact analysis-scale
+identity and is evaluated only through the clipping-aware bound.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_v05_structural_margin.png}
+\caption{Normalized structural-margin phase diagram from the complete frozen
+v0.5 grid. The reference boundary at one separates declared interval
+separation from required certificate abstention. This is a property of the
+stipulated bounded generator and certificate inputs, not a map of real sensor
+network identifiability.}
+\label{fig:v05-structural-margin}
+\end{figure}
+
+\subsection{Deployment audit framework}
+
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_audit_pipeline.pdf}

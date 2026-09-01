@@ -1,8 +1,105 @@
 \section{Results}
 
+\subsection{RQ0: Scope Answerability Frontier and information gain}
+
+\textbf{Answer.} The frozen v0.5 finite-policy results support the stipulated
+target-only impossibility endpoint and show that comparative answerability is
+not uniformly available at strict error tolerances. The target-only forced
+policy answers every held-out arm (coverage \VFiveTargetForcedCoverage{}) and
+has observed conditional scope error \VFiveTargetForcedRisk{}; accordingly, no
+positive-coverage target-only policy qualifies for any reported $\alpha<.5$.
+The comparative forced policy also answers every arm (coverage
+\VFiveComparativeForcedCoverage{}) but has observed error
+\VFiveComparativeForcedRisk{}. Its confidence-selective policies calibrated at
+$.01$, $.05$, and $.10$ answer \VFiveStrictConfidenceAnsweredArms{} evaluation
+arms. Only the policy calibrated at $.20$ reaches a positive comparative envelope: coverage
+\VFiveComparativeFrontierTwenty{} at observed error
+\VFiveComparativeRiskTwenty{}.
+
+\input{generated/tables/table_v05_frontier}
+
+At $\alpha=.20$, the achieved finite-policy Scope Answerability Gain from the
+target-only to comparative channel is therefore
+\VFiveComparativeFrontierTwenty{}. Its 95\% component-bootstrap interval is
+$[\VFiveComparativeGainLower{},\VFiveComparativeGainUpper{}]$. At $.01$, $.05$, and $.10$, both finite-policy
+frontiers are zero. These values compare frozen policies on held-out synthetic
+components; they do not estimate a universal optimum or guarantee future
+conditional scope risk.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_v05_risk_coverage.png}
+\caption{Receipt-verified held-out v0.5 risk--coverage comparison for all
+predeclared policies. Forced comparative classification has full coverage but
+substantial error. Strict confidence policies abstain entirely; the least
+strict frozen confidence policy answers at its calibration target but remains
+above the stricter reporting tolerances. The certificate is shown separately
+because it uses synthetic design information.}
+\label{fig:v05-risk-coverage}
+\end{figure}
+
+\subsection{RQ0a: Structural certificate and retained failure boundary}
+
+\textbf{Answer.} The bounded certificate is internally valid within its
+declared synthetic contract, but it is intentionally incomplete. It answers
+\VFiveCertificateAnsweredPairs{} of \VFiveEvaluationPairs{} matched pairs
+(\VFiveCertificateCoverage{}) and has \VFiveCertificateObservedError{} observed
+conditional error among \VFiveCertificateAnsweredArms{} answered scope arms.
+Its predeclared simulation-information-oracle efficiency is
+\VFiveCertificateEfficiency{}. It abstains on \VFiveNonpositiveMarginPairs{}
+pairs with nonpositive structural margin and has \VFiveEnvelopeViolations{}
+observed envelope violations. These are empirical observations under a bounded
+generator, not evidence of zero population risk or a deployable real-network
+certificate.
+
+\input{generated/tables/table_v05_certificate}
+
+The $q=0$ stratum contains \VFiveQZeroPairs{} matched pairs with exactly
+identical target and donor observations in both scope arms. It produces
+\VFiveQZeroCertificateAnsweredPairs{} certificate answers and no
+oracle-answerable pair, as required by the negative-control contract. For
+$q>0$, the certificate coverage rises with nominal participation but decreases
+under contamination, nonlinear raw fields, and heteroskedastic noise. The
+result does not imply that all real partial scope is objectively ambiguous; it
+shows where this particular structural bound refuses to answer.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_v05_certificate_validity.png}
+\caption{Certificate validity summary from receipt-verified v0.5 outputs.
+The certificate has no observed envelope violations under the stipulated
+bounded construction, but its coverage and oracle efficiency remain
+condition-dependent. It is a synthetic-design-assisted sufficient condition,
+not an empirical external-evidence policy.}
+\label{fig:v05-certificate-validity}
+\end{figure}
+
+\input{generated/tables/table_v05_failure_accounting}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_v05_failure_mode_map.png}
+\caption{Complete v0.5 failure-mode map. Low signal and adverse comparison
+conditions retain forced-comparative errors or certificate abstentions instead
+of being excluded. The $q=0$ row is an observational-identity negative
+control, not comparative success.}
+\label{fig:v05-failure-mode-map}
+\end{figure}
+
+\subsection{Historical v0.4 endpoint sanity check}
+
+The immutable v0.4 construction supplies only an endpoint check: when matched
+local and regional worlds hold the target sequence fixed, target-only
+classification has observed error $0.5$, while its constructed comparative
+rule has zero observed error on that finite endpoint evaluation. It does not
+measure a risk--coverage frontier, calibration-selected abstention, partial
+scope, a failure boundary, or real measurement mechanisms. The v0.5
+continuum is therefore the primary scope evidence; v0.4 is retained as an
+historical sanity check and is not rerun or reinterpreted.
+
 \subsection{RQ1: Stable-window synthetic comparison}
 
-\textbf{Answer.} The frozen benchmark distinguishes cross-site methods from
+\textbf{Historical answer.} The frozen v0.3.2 benchmark distinguishes cross-site methods from
 single-series baselines, but no method is uniformly best across all metrics and
 paired perturbation families. Table~\ref{tab:synthetic-metrics} reports the
 four cross-site methods used for the primary comparison, while

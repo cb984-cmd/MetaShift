@@ -1,5 +1,50 @@
 \section{Background and related work}
 
+\subsection{Information, selective prediction, and answerability}
+
+Blackwell's comparison of statistical experiments formalizes when one
+observation can reproduce another decision problem by discarding or garbling
+information \citep{blackwell1951,blackwell1953}. The nested-channel
+monotonicity in this report is a direct policy-set specialization of that
+established idea. It does not imply that a fitted rule benefits from more
+features, that a finite sample achieves the population frontier, or that
+comparative records are trustworthy in a real monitoring network.
+
+Selective classification and reject-option learning already study the
+risk--coverage trade-off, optimal coverage subject to a desired risk, and the
+cost of abstention \citep{chow1970,elyaniv2010,bartlett2008,geifman2017,franc2023}.
+Hierarchical selective classification further permits a less-specific answer
+when a fine label is not justified \citep{goren2024}. These are important
+precedents, not contributions claimed here. MetaShift-Bench specializes the
+object being selected: the answer is a synthetic local-versus-shared
+\emph{scope} judgment under explicitly contrasting information channels.
+The held-out envelope is deliberately descriptive. Calibration-selected
+confidence does not itself provide a distribution-free conditional-risk
+guarantee \citep{barberlimits2021}.
+
+\subsection{Common, idiosyncratic, and weakly labelled changes}
+
+Multivariate change-point work distinguishes common and idiosyncratic
+components or tests common breaks in panels \citep{bai1998,barigozzi2018}.
+Those methods motivate the scope distinction, but they do not make an
+availability-normalized donor-participation continuum or this benchmark's
+target-fixed paired design standard. Conversely, weak-supervision research
+studies inference with partial or proxy labels \citep{ratner2016,cauchois2024}.
+The v0.5 scope labels are generator-defined gold labels, whereas a real AQS
+Method Code remains only a weak metadata anchor. Neither form of evidence
+identifies a physical mechanism.
+
+\subsection{Residual signatures, fault diagnosis, and sensor placement}
+
+Analytical redundancy, residual signatures, fault distinguishability, and
+sensor placement are established in model-based diagnosis
+\citep{chowwillsky1984,krysander2008,taiebat2017}. They require physical
+relations, fault models, or sensor-network assumptions that this project does
+not possess. The structural certificate is therefore not claimed as a new
+fault-diagnosis method, a sensor-observability result, or a real-device
+isolation procedure. It is a bounded sufficient condition for abstention in
+the stipulated synthetic score construction.
+
 \subsection{Monitoring comparability and public metadata}
 
 Monitoring comparability is an empirical property rather than a label inferred
@@ -38,6 +83,8 @@ Synthetic control provides donor-weighted counterfactuals and in-space placebo
 logic \citep{abadie2010,abadie2015}. Generalized, augmented, and synthetic
 difference-in-differences extensions address other panel structures and
 regularization choices \citep{xu2017,benmichael2021,arkhangelsky2021}.
+The modern synthetic-control overview emphasizes that data requirements and
+failure conditions remain substantive \citep{abadie2021}.
 Modern difference-in-differences work also emphasizes assumptions and
 heterogeneity under varied treatment timing \citep{callaway2021,goodmanbacon2021}.
 MetaShift-Bench adopts the computational ideas of pre-event fitting and
@@ -105,12 +152,16 @@ records for mechanism; it does not claim a homogenized corrected PM2.5 series. \
 \end{tabularx}
 \end{table}
 
-MetaShift-Bench integrates established ingredients into one constrained
-workflow: AQS Method Code metadata defines anchors; distinct physical sites
-define geographic donors; stable windows receive known synthetic perturbations;
-and every eligible real anchor receives either a result or an explicit
-exclusion. We are not aware of a prior benchmark that jointly uses reported AQS
-measurement-method transitions as reproducible metadata anchors, cross-site
-diagnostic controls, stable-window synthetic perturbations, and complete
-eligible-event accounting. This is a scoped literature statement, not an
-assertion of being first in a broader field.
+The bounded joint contribution is a target-fixed donor-participation continuum
+that evaluates channel-specific selective scope answerability and a
+bounded-error structural abstention condition in a synthetic audit setting.
+It combines established ingredients rather than claiming their invention:
+information refinement, selective risk--coverage, common/idiosyncratic
+changes, donor-weighted comparisons, pairwise monitoring comparisons, and
+residual diagnosis are all prior work. Pairwise homogenization in particular
+has long used reference comparisons and controlled simulations
+\citep{menne2009,williams2012}. We did not identify, in a focused
+primary-source audit, a source stating this complete joint construction. That
+absence is not proof of priority. The report makes no ``first ever'' claim,
+no generic risk--coverage claim, no estimator-superiority claim, and no real
+monitoring-mechanism identification claim.

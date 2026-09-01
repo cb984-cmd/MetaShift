@@ -1,0 +1,73 @@
+{
+  "execution_claim_tag": "v0.5.0-answerability-execution-claim",
+  "execution_freeze_tag": "v0.5.0-answerability-freeze",
+  "execution_git_commit": "14fd0fee4fb015e6c661299041e35ff704a27286",
+  "generator": "paper/latex/scripts/generate_v05_answerability_assets.py",
+  "outputs": [
+    {
+      "bytes": 72334,
+      "path": "generated/figures/fig_v05_answerability_frontier.png",
+      "sha256": "db39ebf71705d3e30cba8285f5df07096dbef14ee5276557fe2d262092e4d1b5"
+    },
+    {
+      "bytes": 54133,
+      "path": "generated/figures/fig_v05_certificate_validity.png",
+      "sha256": "eb717f72922763b66fd94b0907f4c8ccb8cd099a96d2bc3f29b6f67506fbb64c"
+    },
+    {
+      "bytes": 132631,
+      "path": "generated/figures/fig_v05_failure_mode_map.png",
+      "sha256": "62e646bccb947c17b1ff5b7266c862381cda4e86b452dda5872e9d89b60cbc7f"
+    },
+    {
+      "bytes": 50082,
+      "path": "generated/figures/fig_v05_risk_coverage.png",
+      "sha256": "7f6f9e44001865c137566837de585192cfcbc829c52aafc4a95b0ad4ad480675"
+    },
+    {
+      "bytes": 150455,
+      "path": "generated/figures/fig_v05_structural_margin.png",
+      "sha256": "a63b9bee081ff2ea898c436020d17a243141c879f2e7c7acbedf1d2676b29668"
+    },
+    {
+      "bytes": 699,
+      "path": "generated/tables/table_v05_certificate.tex",
+      "sha256": "019498f2c9ec8b292e96f2e246826656b8d5011195b7e7741bea49a69bfa10d1"
+    },
+    {
+      "bytes": 830,
+      "path": "generated/tables/table_v05_failure_accounting.tex",
+      "sha256": "ef97276d4061756a8caf23c9a46d35755d2a3b45a5dbb21571c385789c517343"
+    },
+    {
+      "bytes": 823,
+      "path": "generated/tables/table_v05_frontier.tex",
+      "sha256": "16041f8604f4fa49f52a6e6e4ed9499301ef2616889121b1578f3367557612a0"
+    },
+    {
+      "bytes": 1625,
+      "path": "generated/v05_answerability_macros.tex",
+      "sha256": "822e3a79f129dfbf78349e54655733274913617ca9f9cfda82ce1f3cb2a94b91"
+    },
+    {
+      "bytes": 1973,
+      "path": "generated/v05_claim_value_manifest.json",
+      "sha256": "d29551a6abb1a621cc11979fe05c8b417ac1ed54666246471d33f4abcce912ae"
+    },
+    {
+      "bytes": 3081,
+      "path": "generated/v05_figure_layout_qa.json",
+      "sha256": "7e0a55628140c2f91313c0065077ae0cbc82b29202e837b3dffb56218bb9e398"
+    }
+  ],
+  "protocol_id": "v0.5-answerability-frontier",
+  "schema_version": 1,
+  "source_figure_manifest": {
+    "path": "figures/v05_answerability_frontier/v05_figure_manifest.json",
+    "sha256": "2ea55d9476a08f147ca96d4dbf022cb5f733fcb29f02cda11d2bfad2e80290de"
+  },
+  "source_receipt": {
+    "path": "artifacts/v05_answerability_frontier/v05_execution_receipt.json",
+    "sha256": "954fc9b56a8f526644320aa7b1b15ed76844e400e1394ffd8f733729996a87c9"
+  }
+}

@@ -1,9 +1,45 @@
 \section{Reproducibility, integrity, and contributions}
 \label{sec:reproducibility}
 
-\subsection{Frozen evidence and computational handoff}
+\subsection{One-time v0.5 execution and receipt-verified handoff}
 
-All reported numerical evidence remains bound to the
+The scope-answerability experiment was source-frozen at the following
+annotated tag and commit:
+\begin{center}
+\small\texttt{\VFiveFreezeTag{}}\\
+\texttt{\VFiveExecutionCommit{}}
+\end{center}
+Before allocating an output directory, its executor acquired the following
+annotated remote claim tag:
+\begin{center}
+\small\texttt{v0.5.0-answerability-execution-claim}
+\end{center}
+The claim binds the source
+freeze, protocol hash, execution-manifest hash, allowlisted source-bundle
+hash, and locked runtime. A local attempt record is written before result
+allocation, so a post-claim setup failure cannot be silently reused as a new
+execution opportunity.
+
+The sole authorized execution wrote immutable result files and a receipt with
+SHA-256 prefix \texttt{\VFiveReceiptSHA{}}. The read-only result verifier
+checks provenance, tag bindings, source hashes, runtime lock, schemas, full
+grid accounting, target and $q=0$ identity, calibration separation,
+certificate envelope accounting, and deterministic replay. It passed all
+eight checks after execution. The frozen-result manifest records every
+artifact's path, bytes, SHA-256, row count, and receipt binding; presentation
+assets are copied only after their source result files and figure manifest
+verify against that receipt.
+
+The v0.5 result directory is intentionally not regenerated, overwritten,
+retuned, or deleted. A reproduction package must use the preserved outputs
+and read-only verifiers; running the executor again with \texttt{--execute}
+is prohibited by the one-time claim contract. This restriction applies even
+if a future reader dislikes the observed comparative frontier, strict-policy
+abstention, or certificate coverage.
+
+\subsection{Frozen v0.3.2 evidence and deployment handoff}
+
+The v0.3.2 deployment-audit numerical evidence remains bound to the
 \EvidenceTag{} release and commit \texttt{\EvidenceCommit{}}. The tracked
 evidence summary names every required scientific artifact, records its
 SHA-256, and specifies the \texttt{stable\_full\_v2} case-manifest checksum.
@@ -34,7 +70,8 @@ directories.
 
 \subsection{Build and review procedure}
 
-The formal-paper build invokes, in order, frozen-asset generation,
+The formal-paper build invokes, in order, read-only v0.5 manuscript-asset
+generation, frozen v0.3.2 asset generation,
 claim-ledger validation, source-structure validation, reference validation,
 asset determinism validation, a clean LaTeX build, a font audit, and
 page-by-page rendering for visual review. Generated assets are deterministic;

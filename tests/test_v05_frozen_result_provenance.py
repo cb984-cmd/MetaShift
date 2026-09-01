@@ -45,6 +45,12 @@ class FrozenV05ResultProvenanceTests(unittest.TestCase):
         self.assertEqual(0, completed.returncode, completed.stderr)
         self.assertIn("Archive existing v0.5 frozen evidence", completed.stdout)
 
+    def test_optional_result_verifier_uses_the_calling_interpreter(self) -> None:
+        command = verifier.result_verifier_command()
+
+        self.assertEqual(sys.executable, command[0])
+        self.assertEqual("scripts/verify_v05_answerability_results.py", command[1])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,94 @@
+{
+  "all_checks_passed": true,
+  "figures": [
+    {
+      "all_checks_passed": true,
+      "checks": {
+        "minimum_effective_print_resolution": true,
+        "nontrivial_dimensions": true,
+        "source_and_copy_match": true,
+        "valid_png": true
+      },
+      "effective_print_ppi": 220.03,
+      "figure": "fig_v05_answerability_frontier.png",
+      "final_print_width_pt": 453.54,
+      "minimum_effective_print_ppi": 200.0,
+      "source_figure": "v05_answerability_frontier.png",
+      "source_height_px": 850,
+      "source_type": "receipt_verified_raster_png",
+      "source_width_px": 1386
+    },
+    {
+      "all_checks_passed": true,
+      "checks": {
+        "minimum_effective_print_resolution": true,
+        "nontrivial_dimensions": true,
+        "source_and_copy_match": true,
+        "valid_png": true
+      },
+      "effective_print_ppi": 352.9,
+      "figure": "fig_v05_structural_margin.png",
+      "final_print_width_pt": 453.54,
+      "minimum_effective_print_ppi": 200.0,
+      "source_figure": "v05_structural_margin_phase_diagram.png",
+      "source_height_px": 927,
+      "source_type": "receipt_verified_raster_png",
+      "source_width_px": 2223
+    },
+    {
+      "all_checks_passed": true,
+      "checks": {
+        "minimum_effective_print_resolution": true,
+        "nontrivial_dimensions": true,
+        "source_and_copy_match": true,
+        "valid_png": true
+      },
+      "effective_print_ppi": 219.87,
+      "figure": "fig_v05_risk_coverage.png",
+      "final_print_width_pt": 453.54,
+      "minimum_effective_print_ppi": 200.0,
+      "source_figure": "v05_risk_coverage.png",
+      "source_height_px": 850,
+      "source_type": "receipt_verified_raster_png",
+      "source_width_px": 1385
+    },
+    {
+      "all_checks_passed": true,
+      "checks": {
+        "minimum_effective_print_resolution": true,
+        "nontrivial_dimensions": true,
+        "source_and_copy_match": true,
+        "valid_png": true
+      },
+      "effective_print_ppi": 237.02,
+      "figure": "fig_v05_certificate_validity.png",
+      "final_print_width_pt": 453.54,
+      "minimum_effective_print_ppi": 200.0,
+      "source_figure": "v05_certificate_validity_table.png",
+      "source_height_px": 526,
+      "source_type": "receipt_verified_raster_png",
+      "source_width_px": 1493
+    },
+    {
+      "all_checks_passed": true,
+      "checks": {
+        "minimum_effective_print_resolution": true,
+        "nontrivial_dimensions": true,
+        "source_and_copy_match": true,
+        "valid_png": true
+      },
+      "effective_print_ppi": 352.9,
+      "figure": "fig_v05_failure_mode_map.png",
+      "final_print_width_pt": 453.54,
+      "minimum_effective_print_ppi": 200.0,
+      "source_figure": "v05_failure_mode_map.png",
+      "source_height_px": 927,
+      "source_type": "receipt_verified_raster_png",
+      "source_width_px": 2223
+    }
+  ],
+  "protocol_id": "v0.5-answerability-frontier",
+  "required_figure_count": 5,
+  "schema_version": 1,
+  "source_receipt_sha256": "954fc9b56a8f526644320aa7b1b15ed76844e400e1394ffd8f733729996a87c9"
+}

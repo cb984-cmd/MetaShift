@@ -1,15 +1,39 @@
 \section{Discussion}
 
-MetaShift-Bench turns a weakly labelled monitoring question into an auditable
-computer-science benchmark. The key contribution is not an assertion that a
-new weighting method detects more instrument problems than existing methods.
-Rather, it is an evidence architecture that makes the input identity,
-time-respecting computation, known-truth evaluation, full event population,
-and failure paths inspectable together. This matters for public monitoring
-data because a compelling graph can conceal a non-comparable donor, an
-unrecorded selection decision, or an unavailable input window. A useful
-benchmark should make those contingencies visible rather than treating them as
-implementation details.
+MetaShift-Bench reframes the central computer-science question as
+\emph{answerability}, not estimator superiority. The v0.5 result makes clear
+why this distinction matters. The target-only channel is structurally
+uninformative for balanced matched scope labels, and the comparative channel
+does not magically remove that limitation: its frozen finite-policy frontier
+is zero at the three strict tolerances. At $\alpha=.20$ it has positive
+coverage, but that policy's observed answered-case error remains close to the
+tolerance. This is useful evidence precisely because it rules out an
+unqualified claim that a donor residual always resolves scope.
+
+The structural certificate provides a different kind of result. Given
+synthetic design information and bounded envelopes, it safely refuses
+nonseparated cases and had no observed envelope violations in this execution.
+Its coverage is intentionally lower than the comparative confidence policy,
+and its efficiency is measured only against a predeclared
+simulation-information oracle. Neither the certificate nor the oracle is a
+physical mechanism model, a confidence calibration theorem, or a deployable
+monitoring-network policy. The right conclusion is a conditional boundary:
+when the stated structural assumptions hold, the score intervals separate; when
+they do not, abstention is mandatory.
+
+This hierarchy clarifies the roles of the project's earlier evidence. The
+v0.4 local/regional construction established a useful exact endpoint but could
+not characterize how information degrades between endpoints. The v0.3.2 AQS
+release retains value as a reproducible deployment and abstention audit: it
+shows how often a distinct-physical-donor comparison is computationally
+available and how external records remain insufficient for mechanism claims.
+Neither predecessor validates v0.5 synthetic scope labels as real-world scope
+truth.
+
+The broader evidence architecture still matters. A compelling graph can
+conceal a non-comparable donor, an unrecorded selection decision, or an
+unavailable input window. A useful benchmark should make those contingencies
+visible rather than treating them as implementation details.
 
 The physical-site/POC distinction is a concrete example. An AQS POC identifies
 a reported occurrence in the data system, not a universally stable physical

@@ -31,6 +31,7 @@ CLEAN_BUILD_PATH = LATEX_ROOT / "generated" / "clean_build_record.json"
 VISUAL_PREFLIGHT_PATH = LATEX_ROOT / "generated" / "visual_preflight.json"
 FONT_AUDIT_PATH = LATEX_ROOT / "generated" / "font_audit.json"
 FIGURE_LAYOUT_QA_PATH = LATEX_ROOT / "generated" / "figure_layout_qa.json"
+V05_FIGURE_LAYOUT_QA_PATH = LATEX_ROOT / "generated" / "v05_figure_layout_qa.json"
 FINAL_FIGURE_QA_PATH = LATEX_ROOT / "generated" / "final_figure_placement_qa.json"
 KNOWN_BUILD_OUTPUTS = (
     "main.aux",
@@ -48,6 +49,45 @@ KNOWN_BUILD_OUTPUTS = (
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 FINAL_PRINT_WIDTH_PT = 453.54
 FIGURE_CAPTION_MARKERS = {
+    "fig_v05_answerability_frontier.png": (
+        "receiptverified",
+        "v05",
+        "finitepolicy",
+        "scope",
+        "answerability",
+        "frontier",
+    ),
+    "fig_v05_structural_margin.png": (
+        "normalized",
+        "structuralmargin",
+        "phase",
+        "diagram",
+        "complete",
+        "v05",
+        "grid",
+    ),
+    "fig_v05_risk_coverage.png": (
+        "receiptverified",
+        "heldout",
+        "v05",
+        "riskcoverage",
+        "comparison",
+    ),
+    "fig_v05_certificate_validity.png": (
+        "certificate",
+        "validity",
+        "receiptverified",
+        "v05",
+        "outputs",
+    ),
+    "fig_v05_failure_mode_map.png": (
+        "complete",
+        "v05",
+        "failuremode",
+        "map",
+        "negative",
+        "control",
+    ),
     "fig_stable_synthetic_example.pdf": ("dataderived", "stablewindow", "illustration"),
     "fig_audit_pipeline.pdf": ("metashiftbench", "evidence", "workflow"),
     "fig_donor_construction.pdf": ("distinct", "physicaldonor", "construction"),
@@ -164,6 +204,16 @@ def git_worktree_status() -> list[str]:
     return output.splitlines()
 
 
+def require_clean_final_worktree(
+    source_worktree_status: list[str], *, staged_only: bool
+) -> None:
+    if source_worktree_status and not staged_only:
+        raise RuntimeError(
+            "A final build requires a clean Git worktree at build start. "
+            "Commit or resolve report-source changes before publishing."
+        )
+
+
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as source:
@@ -224,6 +274,15 @@ def pdf_page_size_points(pdfinfo: str, path: Path) -> tuple[float, float]:
     if match is None:
         raise RuntimeError(f"Could not determine PDF page size for {path}: {page_size}")
     return float(match.group(1)), float(match.group(2))
+
+
+def source_figure_dimensions(pdfinfo: str, path: Path) -> tuple[float, float]:
+    """Return an aspect-preserving source size for vector or raster figures."""
+
+    if path.suffix.casefold() == ".png":
+        width_px, height_px = png_dimensions(path)
+        return float(width_px), float(height_px)
+    return pdf_page_size_points(pdfinfo, path)
 
 
 def render_pages(
@@ -334,14 +393,18 @@ def crop_figure_from_page(
 def write_final_figure_placement_qa(
     pdftoppm: str, pdftotext: str, pdfinfo: str, pdf: Path
 ) -> dict[str, object]:
-    if not FIGURE_LAYOUT_QA_PATH.is_file():
-        raise FileNotFoundError(f"Missing source geometry record: {FIGURE_LAYOUT_QA_PATH}")
-    layout_qa = json.loads(FIGURE_LAYOUT_QA_PATH.read_text(encoding="utf-8"))
-    layout_records = {
-        str(record.get("figure")): record
-        for record in layout_qa.get("figures", [])
-        if isinstance(record, dict) and isinstance(record.get("figure"), str)
-    }
+    layout_records: dict[str, dict[str, object]] = {}
+    for layout_path in (FIGURE_LAYOUT_QA_PATH, V05_FIGURE_LAYOUT_QA_PATH):
+        if not layout_path.is_file():
+            raise FileNotFoundError(f"Missing source geometry record: {layout_path}")
+        layout_qa = json.loads(layout_path.read_text(encoding="utf-8"))
+        for record in layout_qa.get("figures", []):
+            if not isinstance(record, dict) or not isinstance(record.get("figure"), str):
+                continue
+            figure = str(record["figure"])
+            if figure in layout_records:
+                raise RuntimeError(f"Duplicate source geometry record: {figure}")
+            layout_records[figure] = record
     missing_layouts = sorted(set(FIGURE_CAPTION_MARKERS) - set(layout_records))
     if missing_layouts:
         raise RuntimeError(
@@ -357,7 +420,7 @@ def write_final_figure_placement_qa(
     for figure_name in FIGURE_CAPTION_MARKERS:
         location = caption_locations[figure_name]
         source_figure = LATEX_ROOT / "generated" / "figures" / figure_name
-        source_width_pt, source_height_pt = pdf_page_size_points(pdfinfo, source_figure)
+        source_width_pt, source_height_pt = source_figure_dimensions(pdfinfo, source_figure)
         printed_width_pt = float(layout_records[figure_name]["final_print_width_pt"])
         printed_height_pt = source_height_pt / source_width_pt * printed_width_pt
         page_number = int(location["page"])
@@ -497,6 +560,9 @@ def main() -> None:
     pdftotext = require_bbox_pdftotext(pdfinfo)
     source_commit = git_commit()
     source_worktree_status = git_worktree_status()
+    require_clean_final_worktree(
+        source_worktree_status, staged_only=args.staged_only
+    )
     removed = clean_known_build_outputs()
     write_json(
         CLEAN_BUILD_PATH,
@@ -512,6 +578,26 @@ def main() -> None:
         },
     )
 
+    run(
+        [
+            sys.executable,
+            "scripts/verify_v05_frozen_result_provenance.py",
+            "--verify-results",
+        ],
+        ROOT,
+    )
+    run(
+        [sys.executable, "scripts/verify_v05_answerability_asset_determinism.py"],
+        LATEX_ROOT,
+    )
+    run(
+        [sys.executable, "scripts/verify_v05_answerability_assets.py"],
+        LATEX_ROOT,
+    )
+    run(
+        [sys.executable, "scripts/verify_v05_claim_ledger.py", "--require-assets"],
+        LATEX_ROOT,
+    )
     run([sys.executable, "scripts/generate_paper_assets.py", "--write"], LATEX_ROOT)
     run([sys.executable, "scripts/verify_figures.py"], LATEX_ROOT)
     run(
@@ -630,6 +716,7 @@ def main() -> None:
             "Subject": metadata.get("Subject", ""),
         },
         "frozen_evidence_summary": "configs/current_evidence_summary_v2.json",
+        "frozen_v05_result_manifest": "configs/v05_frozen_result_manifest.json",
         "clean_build_record": str(CLEAN_BUILD_PATH.relative_to(ROOT)).replace("\\", "/"),
         "visual_preflight": str(VISUAL_PREFLIGHT_PATH.relative_to(ROOT)).replace("\\", "/"),
         "final_figure_placement_qa": str(
@@ -637,6 +724,10 @@ def main() -> None:
         ).replace("\\", "/"),
         "font_audit": str(FONT_AUDIT_PATH.relative_to(ROOT)).replace("\\", "/"),
         "build_commands": [
+            "verify_v05_frozen_result_provenance --verify-results",
+            "verify_v05_answerability_asset_determinism",
+            "verify_v05_answerability_assets",
+            "verify_v05_claim_ledger --require-assets",
             "generate_paper_assets --write",
             "verify_figures",
             "verify_claim_ledger --require-assets",

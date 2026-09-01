@@ -1,68 +1,219 @@
 \section{Problem formulation and claim boundaries}
 
-\subsection{Objects, metadata anchors, and the target question}
+\subsection{Three questions and observation channels}
 
-Let $s=(\text{state},\text{county},\text{site})$ denote a physical monitoring
-site, let $p$ denote its reported POC, and let $y_{s,p,t}$ be the retained
-daily concentration at date $t$. A monitor \emph{series} is the ordered pair
-$(s,p)$; a physical site is $s$ alone. This distinction is essential because
-different POCs can occur at the same location without furnishing independent
-geographic information. For the primary parameter, an anchor is
+Let $Y\in\{L,S\}$ denote a stipulated synthetic scope label, where $L$ is
+target-local and $S$ is shared with comparative donors. Let $X$ be the
+declared target path; let $D$ contain donor paths, fixed donor weights, and
+availability indicators; and let $E$ denote external records when such records
+are admissible. The conceptual nested channels are
+\[
+  O_T=X,\qquad O_C=(X,D),\qquad O_E=(X,D,E).
+\]
+The scope question is distinct from detection and mechanism. Detection asks
+whether a target changed. Scope asks whether the target change is local or
+shared under a declared comparative construction. Mechanism asks why it
+occurred. The v0.5 experiment supplies constructed labels only for the first
+two questions. It contains no admissible external-evidence channel or
+mechanism labels, so it does not empirically estimate an $O_E$ frontier.
+
+A selective policy $\phi=(g,s)$ maps an allowed observation channel and
+auxiliary randomness to a scope prediction $g$ and an answer indicator
+$s\in\{0,1\}$. Its population answerability frontier at tolerated conditional
+scope error $\alpha$ is
+\[
+  \Gamma_{\mathcal I}(\alpha)=
+  \sup_{\substack{\phi\ \mathcal I\text{-measurable}\\
+                  \Pr(s_\phi=1)>0\\
+                  \Pr(g_\phi(O)\ne Y\mid s_\phi=1)\leq\alpha}}
+  \Pr(s_\phi=1).
+\]
+The supremum is defined as zero if no positive-coverage policy meets the
+constraint. This is an inverse selective risk--coverage objective specialized
+to a scope label; it is not a new generic risk--coverage definition
+\citep{elyaniv2010,franc2023}.
+
+For nested channels, the \emph{Scope Answerability Gain} is
+\[
+  \operatorname{SAG}_{\mathcal I\to\mathcal J}(\alpha)
+  =\Gamma_{\mathcal J}(\alpha)-\Gamma_{\mathcal I}(\alpha).
+\]
+The benchmark-specific name does not make its nonnegativity a new
+decision-theoretic principle. If the richer channel can discard its additional
+coordinates, its policy set includes the poorer-channel policy set, a
+Blackwell-style information-refinement argument \citep{blackwell1951,blackwell1953}.
+
+\subsection{Target-only impossibility and finite-policy estimation}
+
+\paragraph{Proposition 1 (target-only impossibility).}
+Suppose the synthetic labels are balanced and the matched construction
+satisfies
+\[
+  \Pr(Y=L)=\Pr(Y=S)=\frac12,\qquad
+  \mathcal L(X\mid Y=L)=\mathcal L(X\mid Y=S).
+\]
+If selection and prediction use only $X$ and auxiliary randomness that is
+conditionally independent of $Y$ given $X$, then every positive-coverage
+target-only policy has conditional scope error $1/2$. Therefore
+\[
+  \Gamma_T(\alpha)=0\qquad\text{for }\alpha<\frac12.
+\]
+
+\noindent\emph{Proof.} Conditioning on a target-only answer does not change
+the balanced posterior label probability because the accepted target law is
+the same under both labels. Either binary prediction is consequently wrong
+with probability $1/2$. \hfill$\square$
+
+This statement would fail if target-only input leaked a pair identifier, row
+order, donor availability summary, participation value, label schedule,
+generator truth, or label-dependent auxiliary randomness. The v0.5 execution
+contract forbids those side channels and tests target identity explicitly.
+
+\paragraph{Proposition 2 (nested-channel monotonicity).}
+When $O_C$ contains $O_T$ under the same joint law, label space, loss, and
+policy class,
+\[
+  \Gamma_C(\alpha)\geq\Gamma_T(\alpha).
+\]
+The result follows by implementing every target-only policy after discarding
+$D$. It neither implies strict improvement nor validates any finite-sample
+comparative classifier.
+
+The frozen execution estimates neither unrestricted population frontier.
+Instead it reports the held-out finite-policy envelope
+\[
+  \widehat\Gamma_{\mathcal I}^{\mathcal P}(\alpha)
+  =\max_{\substack{\phi\in\mathcal P\\ \widehat R_\phi\le\alpha}}
+       \widehat C_\phi,
+\]
+with zero when no positive-coverage frozen policy qualifies. Here $\mathcal
+P$ contains the target-only forced rule, comparative forced rule, four
+separately calibration-selected confidence rules, and the specified
+synthetic-design-assisted certificate. Thus every displayed result is a
+descriptive held-out envelope for the frozen generator and policy set, not a
+population optimum, conditional-risk guarantee, or post-evaluation policy
+choice.
+
+\subsection{Target-fixed partial-scope construction}
+
+The exact v0.5 construction is performed on the analysis scale
+$z=f(y)=\log(1+\max(y,0))$. Let $w_j\geq0$ be fixed donor weights and
+$a_{jt}$ denote donor availability. On every retained date,
+\[
+  \widetilde w_{jt}
+  =\frac{w_ja_{jt}}{\sum_k w_ka_{kt}},\qquad
+  q_t=\sum_j\widetilde w_{jt}\lambda_{jt},
+\]
+where $\lambda_{jt}\in[0,1]$ is declared donor participation. For positive
+post-anchor schedule $h_t$, the paired worlds are
+\[
+  z^L_t=z_t+h_t,\quad z^L_{jt}=z_{jt},
+  \qquad
+  z^S_t=z_t+h_t,\quad z^S_{jt}=z_{jt}+\lambda_{jt}h_t.
+\]
+The target path is exactly identical in both worlds. With fixed offset $b$,
+\[
+  r_t=z_t-\sum_j\widetilde w_{jt}z_{jt}-b,
+  \qquad
+  A=\operatorname{mean}_{W_{\rm post}}r_t-
+    \operatorname{mean}_{W_{\rm pre}}r_t .
+\]
+
+\paragraph{Proposition 3 (construction-specific residual identity).}
+With arm-invariant availability, retained dates, weights, preprocessing, and
+pre-anchor offset,
+\[
+  r^L_t-r_t=h_t,\qquad
+  r^S_t-r_t=(1-q_t)h_t.
+\]
+For a constant post schedule $h_t=H$, the score-center separation is
+\[
+  A^L-A^S=\overline{q_tH}.
+\]
+For a variable schedule the correct expression is $\overline{q_th_t}$, not
+$\bar q\,\bar h$. This is exact algebra for the stipulated analysis-scale
+construction, not a generic identifiability claim. A raw-scale additive field
+does not preserve this identity after the nonlinear transformation and is
+treated only through a conservative leakage envelope.
+
+\subsection{Structural Answerability Certificate}
+
+The certificate is deliberately a synthetic-design-information-assisted
+policy, denoted here by $O_C^+$ rather than by the unobserved real-world
+$O_E$. It receives the generated participation and bounded-error quantities
+that a deployed monitoring system would not know. Suppose its local and shared
+scores obey
+\[
+  |A^L-H|\leq B_L,\qquad
+  |A^S-(H-G)|\leq B_S,
+\]
+and all scored retained dates satisfy $q_t\geq q_{\min}$ and
+$h_t\geq H_{\min}>0$. Let
+\[
+  G_{\min}=q_{\min}H_{\min},\qquad
+  \kappa=G_{\min}-(B_L+B_S).
+\]
+
+\paragraph{Proposition 4 (interval-separation certificate).}
+If $\kappa>0$, the local and shared score intervals are disjoint. Every
+threshold in
+\[
+  \left(H-G_{\min}+B_S,\ H-B_L\right)
+\]
+separates them under the stated bounds. The implementation uses their
+midpoint,
+\[
+  \tau_{\rm cert}
+  =H-\frac{G_{\min}}2+\frac{B_S-B_L}{2},
+\]
+answers only if $\kappa>0$, and predicts local if $A>\tau_{\rm cert}$.
+
+\noindent\emph{Proof.} The upper shared bound is
+$H-G_{\min}+B_S$ and the lower local bound is $H-B_L$; their strict ordering is
+exactly $\kappa>0$. \hfill$\square$
+
+The theorem requires bounded noise, fixed retained-date semantics, valid
+availability normalization, modeled donor mismatch, bounded contamination, and
+a valid clipping-aware raw-field bound. Nonfinite values, changed dates,
+unmodeled transformations, fewer than three donors, or an envelope violation
+invalidate the certificate and require abstention. A nominal midpoint
+$H-G_{\min}/2$ is not generally safe under asymmetric bounds; the asymmetric
+term above is necessary. The certificate does not establish a physical sensor
+fault, a real-network policy, or a confidence-based proof of identifiability.
+
+\subsection{AQS deployment context and observation boundaries}
+
+The v0.3.2 public-data audit provides a separate deployment context. Let
+$s=(\text{state},\text{county},\text{site})$ be a physical monitoring site,
+$p$ a reported POC, and $y_{s,p,t}$ a retained daily concentration. An AQS
+anchor is
 \[
   a=(s,p,t_0,m^-,m^+),
 \]
-where $t_0$ is a persistent reported Method Code transition from $m^-$ to
-$m^+$. The anchor is observable metadata, not a verified intervention.
+where $t_0$ is a persistent reported Method Code transition. This anchor is
+observable metadata, not a verified intervention. The deployment audit asks
+whether a pre-specified residual can be computed and whether its
+observational diagnostics are available; it does not provide synthetic scope
+labels or physical mechanism truth.
 
-For each anchor, the computational question is whether a pre-specified
-cross-site residual changes around $t_0$ more than would be expected from the
-benchmark's comparison procedures. It is \emph{not} ``did a device change?''
-or ``what was the true pollution concentration?'' These questions would
-require station histories, calibration records, deployment information, and
-possibly meteorological and emissions evidence that do not follow from an AQS
-Method Code field alone.
-
-\subsection{Time-respecting residual estimand}
-
-For a target series $i=(s,p)$ and qualified donor series $j\in N_a$, the
-analysis uses the fixed transformation
+For a qualified real target $i=(s,p)$ and donors $j\in N_a$, the frozen
+deployment residual is
 \[
-  z_{i,t}=\log(1+\max(y_{i,t},0)).
+  r_{i,t}=z_{i,t}-\sum_{j\in N_a}w_{ij}z_{j,t}
+  -\operatorname{median}_{u\in T_{\mathrm{cal}}}
+  \left(z_{i,u}-\sum_{j\in N_a}w_{ij}z_{j,u}\right).
 \]
-With nonnegative donor weights $w_{ij}$ that sum to one, define the
-calibration-centered residual
-\[
- r_{i,t}=z_{i,t}-\sum_{j\in N_a}w_{ij}z_{j,t}
- -\operatorname{median}_{u\in T_{\mathrm{cal}}}
- \left(z_{i,u}-\sum_{j\in N_a}w_{ij}z_{j,u}\right).
-\]
-The implemented inclusive calibration slice runs from $t_0-180$ through
-$t_0-15$ (166 possible calendar dates), while the comparison slices run from
-$t_0-60$ through $t_0-1$ and from $t_0$ through $t_0+59$ (60 possible dates
-each). It requires at least 30 retained observations in each required window
-and at least two available donors on retained dates. The calibration and
-pre-anchor slices overlap on 46 calendar dates. No post-anchor outcome enters
-weight fitting or residual centering, but the overlap means that displayed
-pre-window residuals are not an independent validation set. This is a frozen
-implementation limitation, not a post-hoc sensitivity adjustment. The
-displayed protocol-defined effect is
-\[
-  \widehat{\Delta}_a =
-  \operatorname{median}_{t\in T_{\mathrm{post}}}r_{i,t}
-  -\operatorname{median}_{t\in T_{\mathrm{pre}}}r_{i,t}.
-\]
-It is a local residual discontinuity on the log scale. It is not an estimate
-of a causal physical bias or a corrected concentration.
+Its displayed effect is the post-minus-pre median residual. It remains a
+diagnostic local residual discontinuity on the log scale, not a causal
+physical-bias estimate or corrected concentration.
 
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_window_protocol.pdf}
-\caption{Inclusive date-window implementation used by the frozen primary
-real-anchor audit. The amber overlap is 46 calendar dates shared by fitting
-and the displayed pre-anchor comparison. No post-anchor outcomes are used for
-fitting, but the overlap prevents treating pre-window residuals as an
-independent validation set. The figure is an implementation audit, not a new
-estimator or re-analysis.}
+\caption{Inclusive date-window implementation used by the frozen v0.3.2
+deployment audit. The calibration and displayed pre-anchor slices overlap on
+46 calendar dates. No post-anchor outcome is fitted, but the overlap prevents
+treating displayed pre-anchor residuals as an independent validation set.}
 \label{fig:window-protocol}
 \end{figure}
 
@@ -70,22 +221,8 @@ estimator or re-analysis.}
 
 \input{generated/tables/table_claim_boundaries}
 
-The benchmark's core logic is comparable to weakly labelled audit problems:
-an observed administrative marker gives a reproducible condition to inspect,
-but not a ground-truth class \citep{liu2016,frenay2014}. Accordingly, the
-protocol makes three commitments. First, it fixes the anchor and the
-time-respecting donor construction before the local residual is measured.
-Second, it uses synthetic perturbations in stable regimes whenever an outcome
-requires known truth. Third, it preserves non-complete cases as abstentions
-rather than treating missing evidence as a negative result.
-
-\subsection{What a negative model result means}
-
-MetaShift is evaluated as a metadata-informed weighting hypothesis alongside
-standard synthetic control, nearest-neighbor difference-in-differences, and
-single-series change-point baselines. The benchmark permits a benchmark-specific
-performance comparison, including paired uncertainty for local-effect error.
-It does not permit a conclusion of robust superiority from a favorable point
-estimate whose paired uncertainty interval crosses zero. This boundary protects
-against selection after inspecting the held-out partition and keeps the paper's
-main contribution focused on auditable benchmark construction.
+The public-data audit records metadata anchors, synthetic evaluations, and
+availability failures without promoting weak records to mechanism labels
+\citep{liu2016,frenay2014}. The answerability results specialize only to a
+new bounded synthetic generator. The method taxonomy remains human-blocked:
+no taxonomy-stratified analysis is reported.

@@ -1,72 +1,48 @@
 # Evidence-based self-review
 
-## Scope and status
+## Scope and current status
 
-This file records the active technical review of the formal report built from
-the frozen `v0.3.2-evidence-final` evidence release
-(`57d678ecabebff724d898abe626c9ef80538775b`). It reviews the report source,
-deterministic presentation assets, and canonical PDF. It records a completed
-technical presentation sign-off, but it is not a student-authorship statement,
-a Method Code taxonomy review, or a completed competition submission.
+This is a technical review of the answerability-first report source. The prior
+v0.3.2-only PDF sign-off is superseded. The current integration has not yet
+received a clean final build, so it makes no canonical page-count, PDF-hash, or
+final-compliance claim.
 
-## Superseded presentation baseline
-
-The earlier canonical `MetaShift_Bench_Yau_2026.pdf` and named build copy were
-generated from clean source commit `e9fbf3c8dda4fb0755fd0d5770fa966e7ebfe206`.
-Their 36-page SHA-256 record
-`2cb941ca6acc91b7937bdf4626db04a9cdb34ceb0814ae4ea81db0c885437e08` is
-historical only. It was superseded as a presentation baseline when the
-figure-and-method audit identified deficiencies that required the active
-revision. Do not cite its page count, hash, asset count, or 13-check result
-as the current report sign-off.
-
-## Scientific claims reviewed
+The real-data release remains `v0.3.2-evidence-final`; the independent
+synthetic scope release is `v0.5-answerability-frontier`.
 
 | Review topic | Evidence-backed conclusion | Boundary retained |
 | --- | --- | --- |
-| Benchmark contribution | Metadata anchors, distinct physical donors, synthetic truth, and complete event accounting form an auditable benchmark. | A Method Code transition is not proof of a physical instrument event. |
-| Cross-site comparison | The frozen distinct-donor protocol retains 238 anchors with at least three physical donors and 228 complete comparisons. | Donor insufficiency (325) and input-window failures (10) remain part of the result. |
-| Evidence tiers | The audit contains 34 supported candidates, 122 not-supported events, and 407 inconclusive events. | Tiers are rule-based observational outputs, not physical-fault labels. |
-| Method comparison | The held-out results do not support a general MetaShift superiority claim over standard synthetic control. | No optimization or claim escalation is performed on the viewed evaluation partition. |
-| Intervals | Fixed-weight coverage under-covers and split-conformal coverage over-covers under the frozen synthetic design. | Real-event nested intervals are conditional diagnostics, not calibrated physical-bias confidence intervals. |
-| Reproducibility | Frozen evidence and the presentation layer are connected by SHA-256-verified manifests. | The two-environment statement applies only to the 34 designated core artifacts. |
+| Problem hierarchy | Detection, scope, and mechanism are separate questions. | v0.5 measures scope only; it does not establish a mechanism. |
+| v0.5 target-fixed design | Scope labels vary while paired target arrays remain identical. | The conclusion applies to the frozen synthetic comparative channel. |
+| Target-only policies | At the reported finite-policy tolerances, target-only has no positive qualifying frontier coverage. | This is not a population-optimality or unrestricted-policy theorem. |
+| Comparative frontier | The held-out comparative frontier becomes nonzero at the prespecified 0.20 tolerance. | It is an observed finite-policy envelope, not a calibrated deployment guarantee. |
+| Structural certificate | The declared certificate has high synthetic-oracle efficiency and retains a nonpositive-margin abstention region. | It uses synthetic design information and does not prove real-world identifiability. |
+| Endpoint and stress evidence | v0.4 remains an exact endpoint sanity check and raw-scale leakage-bound evidence. | It is not the primary v0.5 continuum result. |
+| Real anchors | v0.3.2 documents deployment coverage, missingness, and abstention behavior. | It supplies no labeled real-world scope accuracy or physical-fault validation. |
+| Method comparison | The held-out results do not support a general MetaShift superiority claim over standard synthetic control. | Negative results remain in the report. |
+| Reproducibility | Frozen result bytes, source bindings, generated assets, and manuscript assertions are independently audited. | The audit does not replace human authorship or integrity review. |
 
-## Active stricter visual-review record
+## Evidence-chain review
 
-- The current source contains **17** source-bound vector figures and **38**
-  deterministic generated assets.
-- `generated/figure_layout_qa.json` records passing measured source geometry:
-  6-pt horizontal and 4-pt vertical node padding, 3-pt independent-text
-  separation, no overflow, no legend/data collision, minimum print typography,
-  and grayscale contrast.
-- The figure validator passes **11/11** checks for the current 17-figure set.
-  The claim ledger maps **39** claims through **70** evidence-asset references;
-  source and reference validation cover **33** citations and **33**
-  bibliography entries.
-- Clean report-source commit `2aad488726a04e1a1adda1e768b909b350686aad`
-  produced the current 44-page, 1,048,269-byte canonical PDF with SHA-256
-  `08841e8ed3ed9e4a3a69ceddf62a42a385c0077e0a6cdf9d761c20a6ceb22d40` and zero
-  overfull boxes. All 44 pages and 34 figure crops were rendered at 150 and
-  300 DPI and reviewed; the final candidate/canonical gate passed 15/15
-  checks, and the 18-PDF/125-font audit found zero Type 3 or unembedded fonts.
-  The `human_blocked` taxonomy status is unchanged.
+- The v0.5 receipt is SHA-256-bound to the one-time execution at
+  `14fd0fee4fb015e6c661299041e35ff704a27286`.
+- `V05_CLAIM_EVIDENCE_LEDGER.csv` has 12 v0.5 claims. Each maps to immutable evidence,
+  receipt-bound generated assets, and an exact assertion in its declared
+  manuscript file; it rejects manually written protected frozen result values.
+- Presentation source includes 17 legacy vector figures and five receipt-bound
+  v0.5 raster figures. The clean final-build gate must regenerate the combined
+  22-figure rendered-page and crop record.
+- The taxonomy status remains `human_blocked`. It blocks only taxonomy-based
+  mechanism interpretation, not the synthetic scope theory or frozen v0.5
+  evidence.
 
-## Superseded 16-figure final-build snapshot
+## Required human completion
 
-The following values are historical only and do not sign off the current
-17-figure source: clean source commit
-`bd4164242638f723eb6f5aec72c822507e098030`; PDF SHA-256
-`efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc`; 41
-pages; 36 assets; 10/10 figure checks; 69 evidence-asset references; 14/14
-formal-report checks; and zero Type 3 or unembedded fonts. The strict
-remediation must independently reproduce the final PDF and visual evidence.
-
-## Required follow-up
-
-1. Have student authors and supervising teachers replace the disclosure
-   template with truthful, verified information.
-2. Complete the human-only Method Code taxonomy review before any
-   taxonomy-stratified analysis or claim.
-3. Complete authorship, contribution, advisor/compensation, AI-use,
-   signature, stamp, plagiarism, academic-integrity, and final-attestation
-   requirements.
+1. Student authors and supervising teachers must verify authorship,
+   contributions, adviser relationships, compensation, external help, and
+   AI-use disclosures.
+2. The Method Code taxonomy must be reviewed before taxonomy-stratified
+   analysis or mechanism attribution.
+3. Required signatures, institutional stamps, plagiarism report,
+   academic-integrity declaration, and final submission decisions remain human
+   responsibilities.

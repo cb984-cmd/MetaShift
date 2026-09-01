@@ -112,6 +112,42 @@ class FormalFigureValidationTests(unittest.TestCase):
             )
         )
 
+    def test_caption_lookup_accepts_hyphenated_and_split_marker_words(self) -> None:
+        words = (
+            "Figure",
+            "10:",
+            "Complete",
+            "v0.5",
+            "failure-mode",
+            "map.",
+            "The",
+            "negative",
+            "control.",
+        )
+        xml_words = "".join(
+            f'<word xMin="0" yMin="{index}" xMax="10" yMax="{index + 1}">{word}</word>'
+            for index, word in enumerate(words)
+        )
+        bbox_xml = f'<doc><page width="595" height="842">{xml_words}</page></doc>'
+        markers = {
+            "fig_v05_failure_mode_map.png": (
+                "complete",
+                "v05",
+                "failuremode",
+                "map",
+                "negative",
+                "control",
+            )
+        }
+
+        with (
+            patch.object(paper_builder, "FIGURE_CAPTION_MARKERS", markers),
+            patch.object(paper_builder.subprocess, "check_output", return_value=bbox_xml),
+        ):
+            locations = paper_builder.extract_caption_locations("pdftotext", Path("paper.pdf"))
+
+        self.assertEqual(1, locations["fig_v05_failure_mode_map.png"]["page"])
+
     def test_final_build_cannot_skip_compliance(self) -> None:
         final_args = paper_builder.argparse.Namespace(
             skip_final_compliance=True, staged_only=False
@@ -123,6 +159,16 @@ class FormalFigureValidationTests(unittest.TestCase):
             skip_final_compliance=True, staged_only=True
         )
         paper_builder.validate_build_options(staged_args)
+
+    def test_final_build_requires_clean_worktree_before_building(self) -> None:
+        with self.assertRaisesRegex(RuntimeError, "clean Git worktree"):
+            paper_builder.require_clean_final_worktree(
+                [" M paper/latex/main.tex"], staged_only=False
+            )
+
+        paper_builder.require_clean_final_worktree(
+            [" M paper/latex/main.tex"], staged_only=True
+        )
 
     def test_failed_post_publish_check_restores_canonical_pdf(self) -> None:
         with TemporaryDirectory() as temporary_directory:

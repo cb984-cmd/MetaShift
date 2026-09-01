@@ -2,8 +2,8 @@
 
 ## Scope and immutable evidence boundary
 
-This is a presentation, documentation, and frozen-result expansion pass for the
-formal English report. The sole scientific evidence source remains:
+This is a presentation, documentation, and frozen-result integration pass for
+the formal English report. The report preserves these distinct evidence roles:
 
 | Item | Locked value |
 | --- | --- |
@@ -12,12 +12,15 @@ formal English report. The sole scientific evidence source remains:
 | Evidence release | <https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final> |
 | Synthetic result label | `stable_full_v2` |
 | Frozen case-manifest SHA-256 | `065b1b65c231c5298fb4969a7b5669f3ae8850b9228d50afee7d98422575e099` |
+| Scope-answerability protocol | `v0.5-answerability-frontier` |
+| v0.5 execution freeze | `v0.5.0-answerability-freeze` |
+| v0.5 execution commit | `14fd0fee4fb015e6c661299041e35ff704a27286` |
 
 No work in this revision may tune an estimator, threshold, donor rule, or
-perturbation after the held-out evaluation; change the viewed test set; delete
+perturbation after a held-out evaluation; change the viewed test set; delete
 unfavorable events; treat Method Code as physical-instrument ground truth; or
 perform taxonomy stratification. The current taxonomy status remains
-`human_blocked`.
+`human_blocked` and blocks mechanism-level interpretation only.
 
 ## Starting point
 
@@ -29,33 +32,21 @@ no-calibrated-real-interval boundaries.
 
 ## Current execution state
 
-The earlier 36-page PDF and its 13-check formal-compliance record are a
-superseded presentation baseline, not the current sign-off. The active
-remediation replaces the prior visual gate with text-measured geometry and
-splits the crowded combined representative-case figure into separate complete
-comparison and abstention displays. It retains the data-derived, hash-pinned
-figures; exact inclusive-window implementation and its 46-date
-calibration/pre overlap; external-QA availability ladder; and appendix-only
-2023 descriptive concentration analysis.
+The earlier v0.3.2-only final-PDF records are superseded presentation
+baselines, not the current sign-off. The active report keeps 38 legacy
+presentation assets and adds 11 receipt-bound v0.5 presentation assets. It
+maps 39 v0.3.2 claims and 12 v0.5 claims to frozen evidence. The v0.5
+assertion ledger independently rederives macro values from frozen CSV/receipt
+data, binds every report-facing v0.5 macro use to a concrete manuscript
+assertion, and rejects raw frozen output literals in report prose.
 
-The current source generates 38 presentation assets and maps 39 quantitative
-claims through 70 frozen evidence-asset references. Its source QA checks 17
-figures for hashes, vector structure, full-event accounting, input-footprint
-isolation, nested-placebo arithmetic, interval construction, external
-availability counts, deterministic case reconstruction, descriptive
-concentration arithmetic, and measured geometry. The geometry record requires
-node padding, independent-text separation, canvas containment, readable final
-print typography, legend/data separation, and grayscale contrast. Clean
-report-source commit `2aad488726a04e1a1adda1e768b909b350686aad` completed the
-strict final build: the canonical 44-page PDF has SHA-256
-`08841e8ed3ed9e4a3a69ceddf62a42a385c0077e0a6cdf9d761c20a6ceb22d40`, zero
-overfull boxes, 150/300-DPI rendering for all 44 pages, 34 focused figure
-crops, an 18-PDF/125-font clean audit, and 15/15 formal-report checks.
-Technical presentation work is complete.
-
-No new data, analysis, tuning, taxonomy work, or evidence-release change is
-permitted during this revision. The CI-safe public-document checker writes to
-an ignored transient artifact by default, leaving the frozen release
+The source QA has 17 legacy vector figures and five v0.5 receipt-bound raster
+figures. The next final build must begin from a clean committed worktree,
+recreate the combined 22-figure crop record, and supply the new page count,
+PDF hash, font audit, and formal-compliance record. No new data, analysis,
+tuning, taxonomy work, or evidence-release change is permitted during this
+revision. The CI-safe public-document checker writes to an ignored transient
+artifact by default, leaving the frozen release
 `results/document_consistency.json` unchanged.
 
 All contribution, identity, taxonomy, advisor, AI-use, signature, stamp,

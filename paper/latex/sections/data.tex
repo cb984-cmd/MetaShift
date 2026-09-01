@@ -1,5 +1,23 @@
 \section{Data and benchmark construction}
 
+\subsection{v0.5 synthetic input boundary}
+
+The primary scope-answerability experiment does not use an observational
+corpus. It constructs bounded target-and-donor panels in memory from fixed
+seed streams. Its component, target, donor, and date identifiers have no
+physical-site identity or relation to AQS data. The execution entry point has
+no input-data path and is prohibited from reading AQS, v0.3.2, v0.4, taxonomy,
+API, or external files. This separation prevents an already viewed
+observational pattern from informing the v0.5 generator, calibration,
+threshold, policy, or interpretation.
+
+The independent synthetic panels are not presented as a realistic physical
+model of PM2.5 transport or monitoring hardware. Their purpose is narrower:
+to create matched scope worlds that preserve the target path while controlling
+the comparison channel. The bounded raw-scale field and clipping-aware
+transformation are adverse tests of the analysis-scale algebra, not claims
+about the prevalence or magnitude of a real raw-scale process.
+
 \subsection{Primary public-data corpus}
 
 The primary corpus comprises the seven annual EPA AirData daily archives for
@@ -21,6 +39,12 @@ claim that the public source is immutable or complete for all later AQS
 updates.
 
 \input{generated/tables/table_data_summary}
+
+The frozen deployment inventory contains \TotalAnchors{} persistent anchors,
+of which \ThreeDonorAnchors{} pass the distinct-physical-donor eligibility
+screen before the separate common-input-window check. These counts describe
+where the legacy observational workflow can be formed; they are not labels for
+local scope or physical mechanism.
 
 \begin{figure}[tbp]
 \centering

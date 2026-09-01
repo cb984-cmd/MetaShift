@@ -12,8 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class V05ProtocolFreezeTests(unittest.TestCase):
-    def test_pre_outcome_contract_is_complete_without_outputs(self) -> None:
-        report = verifier.build_report(require_no_outputs=True)
+    def test_post_execution_contract_remains_complete_with_outputs(self) -> None:
+        report = verifier.build_report(require_no_outputs=False)
 
         self.assertTrue(report["all_checks_passed"])
         self.assertEqual(16, len(report["checks"]))

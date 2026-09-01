@@ -16,6 +16,7 @@ MAIN_PATH = LATEX_ROOT / "main.tex"
 METADATA_PATH = LATEX_ROOT / "metadata.tex"
 BIB_PATH = LATEX_ROOT / "references.bib"
 ASSET_MANIFEST_PATH = LATEX_ROOT / "generated" / "asset_manifest.json"
+V05_ASSET_MANIFEST_PATH = LATEX_ROOT / "generated" / "v05_answerability_asset_manifest.json"
 DEFAULT_OUTPUT = LATEX_ROOT / "generated" / "paper_source_validation.json"
 REQUIRED_INPUTS = (
     "sections/cover",
@@ -90,6 +91,19 @@ REQUIRED_GENERATED_FIGURES = (
     "fig_applicability_map.pdf",
     "fig_anchor_concentration.pdf",
 )
+REQUIRED_V05_GENERATED_INPUTS = (
+    "generated/v05_answerability_macros",
+    "generated/tables/table_v05_frontier",
+    "generated/tables/table_v05_certificate",
+    "generated/tables/table_v05_failure_accounting",
+)
+REQUIRED_V05_GENERATED_FIGURES = (
+    "fig_v05_answerability_frontier.png",
+    "fig_v05_structural_margin.png",
+    "fig_v05_risk_coverage.png",
+    "fig_v05_certificate_validity.png",
+    "fig_v05_failure_mode_map.png",
+)
 LEGACY_FIGURE_NAMES = (
     "fig_local_regional_schematic.pdf",
     "fig_data_construction.pdf",
@@ -125,6 +139,28 @@ REQUIRED_CITATION_KEYS = frozenset(
         "menne2009",
         "truong2020",
         "xu2017",
+    }
+)
+REQUIRED_V05_CITATION_KEYS = frozenset(
+    {
+        "abadie2021",
+        "bai1998",
+        "barberlimits2021",
+        "barigozzi2018",
+        "bartlett2008",
+        "blackwell1951",
+        "blackwell1953",
+        "cauchois2024",
+        "chow1970",
+        "chowwillsky1984",
+        "elyaniv2010",
+        "franc2023",
+        "geifman2017",
+        "goren2024",
+        "krysander2008",
+        "ratner2016",
+        "taiebat2017",
+        "williams2012",
     }
 )
 FORBIDDEN_PHRASES = (
@@ -185,6 +221,21 @@ def load_asset_manifest(violations: list[dict[str, object]]) -> dict[str, Any]:
     return manifest
 
 
+def load_v05_asset_manifest(violations: list[dict[str, object]]) -> dict[str, Any]:
+    if not V05_ASSET_MANIFEST_PATH.is_file():
+        violations.append({"issue": "missing_v05_asset_manifest"})
+        return {}
+    try:
+        manifest = json.loads(V05_ASSET_MANIFEST_PATH.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        violations.append({"issue": "invalid_v05_asset_manifest", "error": str(error)})
+        return {}
+    if not isinstance(manifest, dict):
+        violations.append({"issue": "v05_asset_manifest_is_not_object"})
+        return {}
+    return manifest
+
+
 def main() -> None:
     args = parse_args()
     output_path = resolve_from_latex(args.output)
@@ -225,9 +276,17 @@ def main() -> None:
             violations.append(
                 {"issue": "missing_generated_input", "input": generated_input}
             )
+    for generated_input in REQUIRED_V05_GENERATED_INPUTS:
+        if rf"\input{{{generated_input}}}" not in combined:
+            violations.append(
+                {"issue": "missing_v05_generated_input", "input": generated_input}
+            )
     for figure in REQUIRED_GENERATED_FIGURES:
         if rf"\includegraphics" not in combined or figure not in combined:
             violations.append({"issue": "missing_generated_figure", "figure": figure})
+    for figure in REQUIRED_V05_GENERATED_FIGURES:
+        if rf"\includegraphics" not in combined or figure not in combined:
+            violations.append({"issue": "missing_v05_generated_figure", "figure": figure})
     for figure in LEGACY_FIGURE_NAMES:
         if figure in combined:
             violations.append({"issue": "superseded_figure_reference", "figure": figure})
@@ -252,10 +311,15 @@ def main() -> None:
     if "no taxonomy-stratified analysis is reported" not in re.sub(r"\s+", " ", lower):
         violations.append({"issue": "taxonomy_human_block_missing"})
     metadata_checks = {
-        "pdf_title": "pdftitle={MetaShift-Bench:" in metadata,
+        "pdf_title": (
+            "pdftitle={MetaShift-Bench: A Target-Fixed Benchmark for Selective Scope Answerability}"
+            in metadata
+        ),
         "pdf_author_placeholder": "pdfauthor={Human completion required}" in metadata,
         "pdf_subject": "pdfsubject={Formal research report" in metadata,
         "embedded_generated_macros": r"\input{generated/evidence_macros}" in metadata,
+        "embedded_v05_generated_macros": r"\input{generated/v05_answerability_macros}"
+        in metadata,
     }
     for name, passed in metadata_checks.items():
         if not passed:
@@ -278,7 +342,9 @@ def main() -> None:
         )
     if len(cited) < 30:
         violations.append({"issue": "insufficient_citation_breadth", "count": len(cited)})
-    missing_required_citations = sorted(REQUIRED_CITATION_KEYS - cited)
+    missing_required_citations = sorted(
+        (REQUIRED_CITATION_KEYS | REQUIRED_V05_CITATION_KEYS) - cited
+    )
     if missing_required_citations:
         violations.append(
             {
@@ -340,12 +406,62 @@ def main() -> None:
                 {"issue": "missing_or_empty_required_generated_asset", "path": relative_path}
             )
 
+    v05_assets = load_v05_asset_manifest(violations)
+    v05_output_records = {
+        str(output.get("path")): output
+        for output in v05_assets.get("outputs", [])
+        if isinstance(output, dict) and isinstance(output.get("path"), str)
+    }
+    expected_v05_asset_paths = {
+        "generated/v05_answerability_macros.tex",
+        "generated/v05_claim_value_manifest.json",
+        *(
+            "generated/tables/" + generated_input.rsplit("/", 1)[-1] + ".tex"
+            for generated_input in REQUIRED_V05_GENERATED_INPUTS
+            if generated_input.startswith("generated/tables/")
+        ),
+        *("generated/figures/" + figure for figure in REQUIRED_V05_GENERATED_FIGURES),
+        "generated/v05_figure_layout_qa.json",
+    }
+    missing_v05_records = sorted(expected_v05_asset_paths - set(v05_output_records))
+    if missing_v05_records:
+        violations.append(
+            {
+                "issue": "required_v05_asset_missing_from_manifest",
+                "paths": missing_v05_records,
+            }
+        )
+    for relative_path in sorted(expected_v05_asset_paths):
+        path = LATEX_ROOT / relative_path
+        record = v05_output_records.get(relative_path, {})
+        if not path.is_file() or path.stat().st_size == 0:
+            violations.append(
+                {"issue": "missing_or_empty_v05_generated_asset", "path": relative_path}
+            )
+        elif record.get("sha256") is not None:
+            import hashlib
+
+            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+            if digest != record.get("sha256"):
+                violations.append(
+                    {"issue": "v05_generated_asset_hash_mismatch", "path": relative_path}
+                )
+    if (
+        v05_assets.get("schema_version") != 1
+        or v05_assets.get("protocol_id") != "v0.5-answerability-frontier"
+        or v05_assets.get("execution_freeze_tag") != "v0.5.0-answerability-freeze"
+        or v05_assets.get("execution_claim_tag")
+        != "v0.5.0-answerability-execution-claim"
+    ):
+        violations.append({"issue": "v05_asset_manifest_identity_mismatch"})
+
     report = {
         "generated_at_utc": datetime.now(UTC).isoformat(),
         "source_files": sorted(sources),
         "citation_count": len(cited),
         "bibliography_entry_count": len(defined),
         "asset_output_count": len(outputs),
+        "v05_asset_output_count": len(v05_output_records),
         "all_checks_passed": not violations,
         "violations": violations,
     }

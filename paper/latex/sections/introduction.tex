@@ -1,97 +1,83 @@
 \section{Introduction}
 
-Air-quality measurements support regulatory compliance, public communication,
-trend analysis, exposure assessment, and health research. A visible break in a
-monitor's PM2.5 series can have several explanations: meteorology, wildfire
-smoke, local emissions, siting, operations, data processing, or a change in
-reported measurement metadata. These explanations cannot be separated by a
-numerical change-point alone. The problem is consequently both scientific and
-computational: an analyst needs a reproducible way to join heterogeneous public
-records, construct time-respecting comparison sets, evaluate algorithms against
-known truth where possible, and record when the inputs do not justify an
-algorithmic answer.
+An observed time-series break and a defensible explanation of its scope are
+different computational objects. A target path may plainly change while the
+available observation contains no information about whether that change is
+local, shared across a network, or associated with a physical mechanism. A
+numerical classifier can still emit a label in that setting, but its confidence
+does not create missing information. The central question of this report is
+therefore not ``which estimator wins?'' It is:
+\begin{quote}
+\emph{Given a specified observation channel and an allowed scope-error rate,
+what fraction of scope questions can a system answer, and when must it abstain?}
+\end{quote}
 
-Figure~\ref{fig:stable-synthetic-example} illustrates the central distinction
-using a checksum-pinned held-out stable window rather than generic curves. At a
-pseudo-anchor, the same frozen additive magnitude is injected either into the
-target alone or into the target and its donor composite together. The first
-condition creates a known target-reference residual; the matched regional
-condition should not. This display is synthetic evaluation data derived from a
-stable observed window, not an observation or causal model of a real Method
-Code transition.
-
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_stable_synthetic_example.pdf}
-\caption{Data-derived stable-window illustration for the lexicographically
-first held-out case fixed in the display contract. The same frozen additive
-injection is applied to the target alone (left) or to the target and donor
-composite (right). Blue and amber bands identify the protocol-defined 60-day
-pre- and post-pseudo-anchor windows. The underlying baseline is
-checksum-pinned public data; the injected conditions are known synthetic truth,
-not a model or diagnosis of a real metadata anchor.}
-\label{fig:stable-synthetic-example}
-\end{figure}
-
-The AQS data model provides a narrow and auditable starting point. Its daily
-records expose a reported Method Code, Method Name, and Parameter Occurrence
-Code (POC) for each series \citep{epa_airdata_formats,epa_method_code,epa_poc}.
-A persistent Method Code transition can therefore define a candidate date
-before any local residual has been inspected. It is not an instrument log: a
-POC is not a universal physical-instrument identifier, and a reported code
-transition may have several non-hardware explanations. This report therefore
-uses the term \emph{metadata anchor}, rather than treatment, failure, or
-replacement.
-
-MetaShift-Bench asks whether a target-minus-reference residual near a reported
-anchor is unusual relative to stable dates and reference sites. The intended
-output is an evidence audit, not an automatic correction of historical
-concentrations. Cross-site counterfactual methods can separate some
-station-specific and regional patterns, but their interpretation requires
-pre-event agreement, qualified reference series, and transparent uncertainty
-boundaries. Synthetic control and difference-in-differences provide useful
-counterfactual and placebo precedents \citep{abadie2010,abadie2015,callaway2021};
-they do not convert monitoring metadata into a randomized intervention.
-
-The report addresses five predeclared questions:
+We call this \emph{information-constrained selective scope auditing}. It
+separates three questions that are frequently conflated:
 \begin{enumerate}
-  \item \textbf{RQ1:} How do cross-site and single-series methods behave under
-  known local and matched regional perturbations in stable monitoring windows?
-  \item \textbf{RQ2:} Does either frozen MetaShift variant establish a
-  confidence-supported aggregate advantage over standard synthetic control?
-  \item \textbf{RQ3:} What fraction of the complete metadata-anchor universe
-  supports a common cross-site comparison, and what do its placebo and
-  sensitivity diagnostics show?
-  \item \textbf{RQ4:} How well do the reported interval constructions cover
-  known synthetic effects, and what uncertainty remains uncalibrated?
-  \item \textbf{RQ5:} What contextual support is available from same-site POC
-  records, official documents, and a separate PM2.5 parameter pipeline?
+  \item \textbf{Detection:} did the target path change?
+  \item \textbf{Scope:} is the target change local or shared with a declared
+  comparison network?
+  \item \textbf{Mechanism:} is a measurement, device, maintenance, processing,
+  or other physical process responsible?
+\end{enumerate}
+Detection can be studied from a target series. Scope requires valid comparative
+information. Mechanism additionally requires records, technical metadata, and
+human review. The last distinction is especially important for public
+air-quality data: a reported Method Code transition is an observable metadata
+anchor, not evidence that a device was replaced, failed, or biased.
+
+MetaShift-Bench supplies a deliberately target-fixed synthetic test of the
+second question. Every matched pair has byte-identical target observations in
+the local and shared arms. Only donor participation changes. Consequently, a
+target-only policy cannot distinguish balanced local from shared labels in the
+stipulated experiment, whereas a policy that receives the target and donor
+channel can potentially do so. The benchmark measures a finite-policy
+\emph{Scope Answerability Frontier}: maximum held-out answer coverage among
+predeclared policies whose observed answered-case scope error is at most a
+specified tolerance. The difference between comparative and target-only
+frontiers is named the \emph{Scope Answerability Gain}.
+
+The central v0.5 design extends the earlier binary local-versus-regional
+endpoint into a donor-participation continuum. It crosses nominal participation
+$q\in\{0,.25,.50,.75,1\}$ with signal strength and five adverse comparison
+conditions. A bounded structural certificate answers only when its
+availability-normalized score intervals are provably separated under the
+generator's declared envelopes. This makes an unfavorable outcome useful:
+nonpositive structural margin is reported as a required abstention region, not
+hidden as a weak classification score.
+
+The report asks five linked questions:
+\begin{enumerate}
+  \item \textbf{RQ0:} What answerability frontier is achieved by target-only,
+  comparative, and synthetic-design-assisted policies across prespecified
+  scope-error tolerances?
+  \item \textbf{RQ1:} Under which assumptions is target-only scope inference
+  impossible, and how does donor participation create exact comparative
+  separation on the stated analysis scale?
+  \item \textbf{RQ2:} Does a structural certificate safely abstain when the
+  declared comparison channel cannot separate local from partially shared
+  scope?
+  \item \textbf{RQ3:} What does the earlier v0.4 endpoint check establish, and
+  what does it fail to establish about a continuous boundary?
+  \item \textbf{RQ4:} What role remains for the v0.3.2 AQS benchmark and the
+  negative MetaShift-versus-standard-synthetic-control comparison?
 \end{enumerate}
 
-The contribution is a measurement-method transition \emph{audit benchmark},
-not a promoted estimator. More specifically, this report contributes:
-\begin{enumerate}
-  \item a public-data provenance chain that preserves archive checksums,
-  canonical cleaning rules, and a reproducible primary PM2.5 signal;
-  \item a metadata-anchor definition that is fixed before local-effect
-  inspection and explicitly separates a monitor series from a physical site;
-  \item a distinct-physical-donor rule that prevents multiple POCs at one
-  site from being counted as independent geographic evidence;
-  \item a stable-regime synthetic benchmark with target-only and matched
-  regional perturbations, complete input-footprint split isolation, and
-  frozen evaluation metrics;
-  \item a complete real-anchor ledger with counterfactual diagnostics,
-  placebos, donor sensitivity, rule-based evidence tiers, and explicit
-  abstention; and
-  \item a negative model-comparison result: neither frozen MetaShift variant
-  establishes a confidence-supported aggregate advantage over standard
-  synthetic control.
-\end{enumerate}
+Our bounded contribution is fourfold. First, we instantiate a target-fixed
+paired benchmark that measures selective scope answerability by information
+channel, rather than treating scope accuracy as an unconditional classifier
+score. Second, we formalize a partial-scope construction with
+availability-normalized donor participation and derive its exact residual
+separation for the defined mean score. Third, we test a predeclared bounded
+structural abstention condition on a full adverse-condition grid, preserving
+all failures and $q=0$ negative controls. Fourth, we retain an independently
+frozen public-data audit as deployment context while refusing to convert its
+metadata anchors into scope labels or physical mechanisms.
 
-This framing is deliberately conservative. No taxonomy-stratified analysis is
-reported because the frozen Method Code taxonomy remains pending independent
-student and teacher review. The benchmark does not claim that a Method Code
-change proves a device replacement, a measurement failure, or a causal
-measurement bias. Instead, it supplies an auditable record of what the
-available public metadata and time series can support, what they cannot
-support, and which questions require records-based human investigation.
+This is not a claim to invent selective classification, risk--coverage
+analysis, comparison of statistical experiments, common-versus-idiosyncratic
+change detection, fault distinguishability, or synthetic control. The related
+work and theory delimit what is established from what is specialized to this
+synthetic setting. No taxonomy-stratified analysis is reported because the
+Method Code taxonomy remains pending independent human review.

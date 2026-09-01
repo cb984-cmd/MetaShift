@@ -2,53 +2,38 @@
 
 ## Scope
 
-This report records the visual and machine-checkable QA protocol for the formal
-MetaShift-Bench report. It binds every scientific graphic to
-`v0.3.2-evidence-final`; it does not certify a human taxonomy review, authorship
-statement, physical mechanism, or competition submission.
+This report records the visual and machine-checkable QA protocol for the
+answerability-first manuscript. It distinguishes:
 
-## Baseline finding
+| Figure family | Count | Binding |
+| --- | ---: | --- |
+| Legacy v0.3.2 vector figures | 17 | Frozen evidence manifest and source figure verifier |
+| v0.5 raster figures | 5 | Execution-receipt hash, figure manifest, and v0.5 asset verifier |
+| Total final-PDF placements | 22 | Combined final-page crop validator |
 
-The prior 36-page PDF passed vector/font checks but failed this higher
-presentation audit in several substantive ways: generic motivating curves,
-crossing workflow arrows, non-hierarchical anchor/tier counts, peer-style
-placebo nesting, truncated coverage display, sparse interval context, a
-case-study header collision, and an unexplained 2023 chart in the main text.
-These are recorded figure-by-figure in `FIGURE_AUDIT.md`.
+No figure certifies taxonomy labels, real physical mechanisms, authorship, or a
+competition submission.
 
-## Required post-revision machine checks
+## Required checks
 
 | Check | Evidence |
 | --- | --- |
-| Every referenced PDF exists, is nonempty, and is in the asset manifest | `generated/figure_qa_validation.json` |
-| Every figure has frozen or SHA-256-pinned display inputs | Asset manifest and figure verifier |
-| All 563 primary anchors reconcile through audit disposition and evidence-tier leaves | Figure verifier accounting check |
-| Placebo counts preserve `228 -> 157 -> 128` nesting and 71 unavailable cases | Figure verifier placebo check |
-| Complete target-plus-donor input footprints remain split-disjoint | Frozen split audit and figure verifier |
-| Coverage figure uses 95% conditional and 90% conformal nominal references with saved widths | Figure verifier interval check |
-| No non-vector scientific figure, placeholder, Type 3 font, or unembedded font remains | Figure/font validators |
-| Every final-PDF page is rendered and visually inspected | Build preflight plus manual page review |
+| Legacy source figures exist, are vector, and preserve frozen accounting | `generated/figure_qa_validation.json` |
+| v0.5 figures derive only from receipt-hashed frozen outputs | `generated/v05_answerability_asset_validation.json` |
+| v0.5 asset generation is deterministic | `generated/v05_answerability_asset_determinism.json` |
+| Source geometry records satisfy print-layout constraints | `generated/figure_layout_qa.json` and `generated/v05_figure_layout_qa.json` |
+| Every final-PDF figure caption is located and cropped at 150 and 300 DPI | `generated/final_figure_placement_qa.json` |
+| Final PDF and vector figures contain no Type 3 or unembedded font | `generated/font_audit.json` |
 
-## Stricter measured-layout requirements
-
-The active gate is stricter than the historical sign-off below. It measures
-final source-rendered positions and requires 6-pt horizontal and 4-pt vertical
-node padding, 3-pt minimum separation between independent text boxes, no text
-or node overflow, no legend over a data axes, and grayscale luminance contrast
-of at least 35. It rejects report-facing text below 8.5 pt, node text below 9
-pt, or titles below 10 pt at the measured final print width. The current source
-set contains 17 figures because the former combined case-study display is now
-separate complete-comparison and abstention figures.
+The source-layout gate requires 6-pt horizontal and 4-pt vertical node
+padding, 3-pt separation between independent text boxes, no text/node
+overflow, no legend/data collision, and grayscale luminance contrast of at
+least 35. It rejects report-facing text below 8.5 pt, node text below 9 pt, or
+titles below 10 pt at final print width.
 
 ## Status
 
-**The prior 16-figure technical sign-off is superseded.** The current strict
-gate passed at clean report-source commit
-`2aad488726a04e1a1adda1e768b909b350686aad`: 11/11 figure checks for 17 vector
-figures, 38 deterministic assets, 44 rendered final-PDF pages at both 150 and
-300 DPI, and 34 focused figure-placement crops. The canonical 44-page PDF has
-SHA-256 `08841e8ed3ed9e4a3a69ceddf62a42a385c0077e0a6cdf9d761c20a6ceb22d40`,
-zero overfull boxes, and passes both the 18-PDF/125-font audit and the 15/15
-formal-report gate. This remains a presentation and reproducibility review
-only; student and teacher completion of the human-only disclosures is still
-required.
+The prior v0.3.2-only visual sign-off is superseded. The v0.5 figures have
+receipt-bound generation and source-layout records, but combined final-PDF
+page rendering, 44 150/300-DPI figure crops, visual inspection, and the
+canonical font audit are pending the clean committed-worktree build.

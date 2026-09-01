@@ -86,8 +86,10 @@ descriptive finite-policy results for this frozen synthetic protocol only.
 | Pre-outcome protocol verifier required by the executor | Passed before output creation; the completed source-bound attempt and receipt are its durable execution evidence. | Does not establish post-execution semantics alone. |
 | Post-execution result verifier `verify_v05_answerability_results.py` | Reported successful after the authorized execution. Its output is not a declared raw artifact, so no result-verifier report hash is asserted. | The successful completion is recorded without fabricating a missing report file. |
 | Current `verify_v05_protocol_freeze.py --allow-existing-outputs` | Passed. | Read-only post-execution contract inspection. |
-| Current `verify_v05_frozen_result_provenance.py` | Passed all seven checks. | Validates bytes, schemas/rows, receipt/attempt, tags, and frozen source binding without execution. |
-| Current full result-verifier replay in this local environment | Failed closed at runtime provenance because installed NumPy is `2.4.6`, not receipt-pinned `2.5.2`; all other observed non-runtime checks and deterministic replay completed. | Not a frozen-result failure and not a rerun. A successful replay requires the receipt-pinned CPython 3.13 environment. |
+| Current `verify_v05_frozen_result_provenance.py` under the receipt-pinned interpreter | Passed all eight checks, including the existing read-only deterministic result verifier. | Validates bytes, schemas/rows, receipt/attempt, tags, frozen source binding, and full result semantics without execution. |
+| CI run `33509140737` on the execution commit | Passed. | The repository test workflow completed successfully for `14fd0fee4fb015e6c661299041e35ff704a27286`. |
+| Historical unpinned local full result-verifier invocation | Failed closed at runtime provenance because installed NumPy was `2.4.6`, not receipt-pinned `2.5.2`. | This was not a frozen-result failure or rerun; it established that the verifier fails closed outside the pinned runtime. |
+| Current receipt-pinned local full result-verifier replay | Passed under CPython 3.13.14 with receipt-pinned NumPy `2.5.2`. | Read-only deterministic verification only; it did not execute the experiment, alter outputs, or permit retuning. |
 
 No status above authorizes a second execution, altered raw output, outcome-driven
 policy change, or broader claim than the frozen v0.5 protocol permits.

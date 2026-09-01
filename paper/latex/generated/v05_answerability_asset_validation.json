@@ -1,0 +1,37 @@
+{
+  "scope": "Receipt-bound v0.5 manuscript asset validation; no execution or retuning.",
+  "asset_manifest": "paper/latex/generated/v05_answerability_asset_manifest.json",
+  "all_checks_passed": true,
+  "checks": [
+    {
+      "name": "asset_manifest_identity_and_inventory",
+      "passed": true,
+      "detail": "The manuscript manifest names exactly the expected receipt-bound v0.5 assets."
+    },
+    {
+      "name": "generated_output_hashes",
+      "passed": true,
+      "detail": "All manuscript assets match the asset manifest."
+    },
+    {
+      "name": "frozen_receipt_binding",
+      "passed": true,
+      "detail": "The manuscript asset chain is bound to the frozen result receipt."
+    },
+    {
+      "name": "source_figure_manifest_and_copy_binding",
+      "passed": true,
+      "detail": "Every manuscript figure is byte-identical to a receipt-bound source figure."
+    },
+    {
+      "name": "raster_figure_resolution_and_layout",
+      "passed": true,
+      "detail": "All five receipt-verified raster figures meet the predeclared print-resolution contract."
+    },
+    {
+      "name": "expected_frozen_result_values_rendered",
+      "passed": true,
+      "detail": "The report tables and macros contain the frozen primary answerability values."
+    }
+  ]
+}

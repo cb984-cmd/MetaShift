@@ -1,11 +1,13 @@
-# MetaShift-Bench: A Metadata-Anchored Counterfactual Benchmark for Auditing Measurement-Method Transitions in Air-Quality Networks
+# Historical v0.3.2 Manuscript Draft
 
-> **Working draft source (v0.3.2 frozen evidence).** The scientific evidence is
-> [`v0.3.2-evidence-final`](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final)
-> at `57d678ecabebff724d898abe626c9ef80538775b`, with 35/35 release-gate,
-> 12/12 document-consistency, and 57/57 manuscript-number checks passing.
-> Replace all bracketed identity fields, verify every citation, and complete
-> human AI-use and contribution records before submission.
+> **Superseded narrative source.** This file preserves the earlier
+> metadata-anchored v0.3.2 draft for traceability. The authoritative active
+> manuscript is [`latex/main.tex`](latex/main.tex), titled
+> *MetaShift-Bench: A Target-Fixed Benchmark for Selective Scope
+> Answerability*. It incorporates the independently frozen
+> `v0.5-answerability-frontier` experiment while retaining v0.3.2 only as
+> deployment and abstention context. Do not use this historical draft as the
+> submission manuscript or as a source for v0.5 findings.
 
 **Student author(s):** [Name(s)]  
 **School, province/state, country:** [Fill in]  

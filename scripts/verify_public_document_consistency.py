@@ -33,6 +33,7 @@ PUBLIC_DOCUMENTS = [
     ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
     ROOT / "paper" / "CLAIM_EVIDENCE_MAP.csv",
     ROOT / "paper" / "SUBMISSION_CHECKLIST.md",
+    ROOT / "MetaShift_项目结果汇总.txt",
 ]
 
 V2_PATH_FILES = PUBLIC_DOCUMENTS
@@ -46,6 +47,7 @@ CURRENT_RELEASE_DOCUMENTS = [
     ROOT / "REPRODUCIBILITY.md",
     ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
     ROOT / "paper" / "SUBMISSION_CHECKLIST.md",
+    ROOT / "MetaShift_项目结果汇总.txt",
 ]
 
 EXTERNAL_REVIEW_DOCUMENTS = [
@@ -53,6 +55,7 @@ EXTERNAL_REVIEW_DOCUMENTS = [
     ROOT / "PAPER_OPTIMIZATION_PLAN.md",
     ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
     ROOT / "paper" / "CLAIM_EVIDENCE_MAP.csv",
+    ROOT / "MetaShift_项目结果汇总.txt",
 ]
 
 STALE_LANGUAGE_FILES = {
@@ -252,10 +255,8 @@ def check_stale_count_consistency() -> dict[str, object]:
 
 
 def check_current_numbers_from_summary() -> dict[str, object]:
-    """Verify core numbers from the tracked summary appear in the manuscript."""
+    """Verify core numbers from the tracked summary appear in both report summaries."""
     summary = load_summary()
-    manuscript = (ROOT / "paper" / "MANUSCRIPT_DRAFT.md").read_text(encoding="utf-8")
-    normalized = re.sub(r"\s+", " ", manuscript)
     required = {
         "canonical_records": summary["data_gate"]["canonical_records"],
         "monitor_series": summary["data_gate"]["monitor_series"],
@@ -272,14 +273,26 @@ def check_current_numbers_from_summary() -> dict[str, object]:
         "inconclusive": summary["evidence_tiers"]["inconclusive_insufficient_evidence"],
     }
     violations: list[dict[str, object]] = []
-    for key, value in required.items():
-        pattern = rf"\b{value:,}\b|\b{value}\b"
-        if not re.search(pattern, normalized):
-            violations.append({"key": key, "expected_value": value, "type": "missing_in_manuscript"})
+    for path in (
+        ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
+        ROOT / "MetaShift_项目结果汇总.txt",
+    ):
+        normalized = re.sub(r"\s+", " ", path.read_text(encoding="utf-8"))
+        for key, value in required.items():
+            pattern = rf"\b{value:,}\b|\b{value}\b"
+            if not re.search(pattern, normalized):
+                violations.append(
+                    {
+                        "file": str(path.relative_to(ROOT)),
+                        "key": key,
+                        "expected_value": value,
+                        "type": "missing_current_number",
+                    }
+                )
     return make_check(
         "current_numbers_in_manuscript",
         not violations,
-        f"All {len(required)} core numbers from tracked summary must appear in manuscript.",
+        f"All {len(required)} core numbers from tracked summary must appear in both report summaries.",
         violations,
     )
 
@@ -370,6 +383,7 @@ def check_interval_coverage_status() -> dict[str, object]:
         ROOT / "PAPER_OPTIMIZATION_PLAN.md",
         ROOT / "docs" / "study_protocol.md",
         ROOT / "paper" / "MANUSCRIPT_DRAFT.md",
+        ROOT / "MetaShift_项目结果汇总.txt",
     ]
     violations: list[dict[str, object]] = []
     for path in documents:

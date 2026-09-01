@@ -56,7 +56,7 @@
     },
     "Q08": {
       "expected_ledger_fragments": [
-        "fixed-prior",
+        "reliability-prior",
         "cross-validated"
       ]
     },
@@ -246,6 +246,28 @@
         "06-031-0004-poc8-2021-01-12",
         "01-103-0011-poc3-2023-02-01",
         "1e-9"
+      ]
+    },
+    "Q37": {
+      "expected_ledger_fragments": [
+        "393/563",
+        "69.8%",
+        "354/393",
+        "90.1%"
+      ]
+    },
+    "Q38": {
+      "expected_ledger_fragments": [
+        "t0-180 through t0-15",
+        "166",
+        "46"
+      ]
+    },
+    "Q39": {
+      "expected_ledger_fragments": [
+        "12",
+        "2",
+        "0"
       ]
     }
   }

@@ -1,19 +1,19 @@
 \appendix
 \section{Supplementary protocol details}
 
-\subsection{Reproducible audit sequence}
+\subsection{Anchor-level audit pseudocode}
 
-For each primary-parameter anchor, the frozen workflow executes the following
-sequence:
-\begin{enumerate}
+For each primary-parameter anchor $a=(s,p,t_0,m^-,m^+)$, the frozen workflow
+executes the following pseudocode:
+\begin{enumerate}[label=\textbf{\arabic*.}]
   \item validate canonical daily observations and identify a persistent
   reported Method Code transition;
   \item construct a geographic candidate pool at distinct physical sites,
   retaining at most one POC per site by the pre-event ranking rule;
   \item record an explicit donor-insufficient disposition if fewer than three
   qualified physical donors exist;
-  \item fit cross-site weights only on the 180-day pre-anchor calibration
-  interval ending 15 days before the anchor;
+  \item fit cross-site weights and residual center only on the inclusive
+  $t_0-180$ through $t_0-15$ calibration slice;
   \item require at least two available donors and at least 30 retained
   observations in each calibration, pre-anchor, and post-anchor residual
   window;
@@ -33,7 +33,7 @@ does not claim that any step confirms a physical mechanism.
 The representative-case configuration is a display contract rather than a new
 experiment. It fixes selection rules before rendering, binds public source
 archives by their saved SHA-256 values, uses the frozen data-cleaning and
-fixed-prior weight rules, and records the selected donor physical sites and
+reliability-prior weight rule, and records the selected donor physical sites and
 reconstruction tolerance. If a required archive is unavailable or mismatched,
 the renderer fails rather than silently substituting a current public download.
 No raw archive is distributed with this paper.
@@ -42,9 +42,36 @@ No raw archive is distributed with this paper.
 
 Table~\ref{tab:perturbation-metrics} contains every frozen method, metric, and
 paired local/regional perturbation family. It is placed in the appendix for
-readability; Figure~\ref{fig:perturbation-metrics} presents the same complete
-matrix visually in the main text.
+readability; Figure~\ref{fig:perturbation-metrics} gives a deliberately
+simplified main-text comparison while preserving the complete matrix here.
 
 \begin{landscape}
 \input{generated/tables/table_perturbation_metrics}
 \end{landscape}
+
+\subsection{Descriptive concentration of reported anchors in 2023}
+
+The frozen inventory has 393 of 563 anchors (69.8\%) dated in 2023. Two named
+reported code-pair transitions, 236 to 636 and 238 to 638, account for
+354 of those 393 anchors (90.1\%). Their new Method Name strings include
+``Network Data Alignment enabled.'' Figure~\ref{fig:anchor-concentration} and
+Table~\ref{tab:anchor-concentration} make that concentration visible because
+it is relevant to interpretation and possible future records requests.
+
+This pattern is descriptive only. A code-pair label, a temporal cluster, or an
+EPA method-context document does not establish an administrative, software,
+hardware, policy, calibration, or data-processing cause for any site-level
+record. The human-blocked taxonomy review remains outside this report's
+stratified analysis.
+
+\input{generated/tables/table_anchor_concentration}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_anchor_concentration.pdf}
+\caption{Appendix-only descriptive concentration of reported 88101 metadata
+anchors. The left panel shows the frozen date distribution; the right panel
+shows the two named code-pair counts within 2023. The association between
+labels and dates is not evidence of a physical or administrative cause.}
+\label{fig:anchor-concentration}
+\end{figure}

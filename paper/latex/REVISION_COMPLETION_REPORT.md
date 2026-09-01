@@ -1,8 +1,10 @@
 # Revision completion report
 
-## Technical status
+## Status of the prior completion record
 
-The formal-report revision is **technically complete, not submission-final**.
+This is a **superseded prior completion record**, not the sign-off for the
+active figure-and-method revision. The prior formal-report revision was
+technically complete, not submission-final.
 Its scientific content is bound to the frozen
 `v0.3.2-evidence-final` evidence release at
 `57d678ecabebff724d898abe626c9ef80538775b`. No frozen analysis artifact,
@@ -13,7 +15,11 @@ The canonical `paper/latex/MetaShift_Bench_Yau_2026.pdf` was built from clean
 source commit `e9fbf3c8dda4fb0755fd0d5770fa966e7ebfe206`. Its 36 pages and the
 named build copy match at SHA-256
 `2cb941ca6acc91b7937bdf4626db04a9cdb34ceb0814ae4ea81db0c885437e08`.
-The final formal-report compliance gate passed all 13 checks.
+The final formal-report compliance gate then passed all 13 checks. The active
+revision replaces that presentation baseline with new source-bound figures and
+methodological disclosure, and must receive a new clean-source build, visual
+review, and formal-compliance record before a revised completion report is
+issued.
 
 ## Revision deliverables
 

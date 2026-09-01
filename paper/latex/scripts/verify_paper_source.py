@@ -69,22 +69,31 @@ REQUIRED_GENERATED_INPUTS = (
     "generated/tables/table_screening_sensitivity",
     "generated/tables/table_case_studies",
     "generated/tables/table_reproducibility",
+    "generated/tables/table_anchor_concentration",
 )
 REQUIRED_GENERATED_FIGURES = (
-    "fig_local_regional_schematic.pdf",
+    "fig_stable_synthetic_example.pdf",
     "fig_audit_pipeline.pdf",
-    "fig_data_construction.pdf",
+    "fig_donor_construction.pdf",
+    "fig_window_protocol.pdf",
     "fig_split_integrity.pdf",
     "fig_synthetic_metrics.pdf",
     "fig_perturbation_metrics.pdf",
     "fig_paired_bootstrap.pdf",
-    "fig_event_flow.pdf",
-    "fig_evidence_tiers.pdf",
+    "fig_event_accounting.pdf",
     "fig_placebos.pdf",
     "fig_interval_coverage.pdf",
     "fig_screening_sensitivity.pdf",
     "fig_external_evidence.pdf",
     "fig_case_studies.pdf",
+    "fig_applicability_map.pdf",
+    "fig_anchor_concentration.pdf",
+)
+LEGACY_FIGURE_NAMES = (
+    "fig_local_regional_schematic.pdf",
+    "fig_data_construction.pdf",
+    "fig_event_flow.pdf",
+    "fig_evidence_tiers.pdf",
 )
 REQUIRED_MACRO_USAGES = (
     r"\EvidenceTag",
@@ -217,6 +226,9 @@ def main() -> None:
     for figure in REQUIRED_GENERATED_FIGURES:
         if rf"\includegraphics" not in combined or figure not in combined:
             violations.append({"issue": "missing_generated_figure", "figure": figure})
+    for figure in LEGACY_FIGURE_NAMES:
+        if figure in combined:
+            violations.append({"issue": "superseded_figure_reference", "figure": figure})
     for macro in REQUIRED_MACRO_USAGES:
         if macro not in combined:
             violations.append({"issue": "missing_evidence_macro", "macro": macro})
@@ -284,6 +296,7 @@ def main() -> None:
         "generated/evidence_macros.tex",
         "generated/claim_value_manifest.json",
         "generated/case_study_manifest.json",
+        "generated/synthetic_motivating_example_manifest.json",
         *(
             "generated/tables/" + generated_input.rsplit("/", 1)[-1] + ".tex"
             for generated_input in REQUIRED_GENERATED_INPUTS
@@ -313,9 +326,9 @@ def main() -> None:
                 "actual": asset_manifest.get("result_label"),
             }
         )
-    if len(outputs) < 32:
+    if len(outputs) < 36:
         violations.append(
-            {"issue": "insufficient_generated_assets", "actual": len(outputs), "minimum": 32}
+            {"issue": "insufficient_generated_assets", "actual": len(outputs), "minimum": 36}
         )
     for relative_path in sorted(required_asset_paths):
         path = LATEX_ROOT / relative_path

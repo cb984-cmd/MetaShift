@@ -7,7 +7,8 @@ evidence release is
 at `57d678ecabebff724d898abe626c9ef80538775b`: release gate 35/35,
 document consistency 12/12, manuscript-number verification 57/57, and 34
 designated two-environment core-artifact hashes match. Formal competition-report
-drafting is in progress; taxonomy stratification remains human-blocked.
+figure-and-method revision is in progress; taxonomy stratification remains
+human-blocked.
 
 ## Evidence rule
 
@@ -234,6 +235,14 @@ the already viewed 80-site stable-synthetic evaluation set.
   evidence. The draft is machine-validated but remains a pre-submission
   document until the human handoff below is complete. Any new learned method
   additionally requires its own blind, input-disjoint test manifest.
+- [!] **E7b — Complete the formal report figure-and-method revision.** The
+  presentation layer now uses 16 source-bound vector figures, an explicit
+  inclusive-window overlap audit, a QA evidence-availability ladder, and
+  appendix-only 2023 descriptive concentration results. It has 39
+  ledger-mapped quantitative claims and passed staged machine validation; a
+  clean-source final build, full rendered-page inspection, and updated formal
+  compliance record are still required. This work does not modify frozen v0.3.2
+  evidence or lift the human block on taxonomy.
 
 ## Human submission handoff
 

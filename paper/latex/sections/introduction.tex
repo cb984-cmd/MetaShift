@@ -11,24 +11,26 @@ records, construct time-respecting comparison sets, evaluate algorithms against
 known truth where possible, and record when the inputs do not justify an
 algorithmic answer.
 
-Figure~\ref{fig:local-regional-schematic} illustrates the central distinction.
-At a pseudo-anchor, a target-only change creates a target-reference residual;
-a matched target-and-reference regional change should not. The curves are a
-schematic rather than observed data. Their purpose is to make the benchmark
-question precise: can a frozen procedure separate a local perturbation from a
-shared regional pattern without mistaking either for a physical instrument
-diagnosis?
+Figure~\ref{fig:stable-synthetic-example} illustrates the central distinction
+using a checksum-pinned held-out stable window rather than generic curves. At a
+pseudo-anchor, the same frozen additive magnitude is injected either into the
+target alone or into the target and its donor composite together. The first
+condition creates a known target-reference residual; the matched regional
+condition should not. This display is synthetic evaluation data derived from a
+stable observed window, not an observation or causal model of a real Method
+Code transition.
 
 \begin{figure}[tbp]
 \centering
-\includegraphics[width=\linewidth]{fig_local_regional_schematic.pdf}
-\caption{Conceptual local-versus-regional discrimination target. In the left
-panel a target-only perturbation separates the target from its reference; in
-the right panel a matched regional perturbation moves both together. These
-illustrative normalized curves are a schematic generated from the frozen
-benchmark design, not observations and not a causal model of a Method Code
-transition.}
-\label{fig:local-regional-schematic}
+\includegraphics[width=\linewidth]{fig_stable_synthetic_example.pdf}
+\caption{Data-derived stable-window illustration for the lexicographically
+first held-out case fixed in the display contract. The same frozen additive
+injection is applied to the target alone (left) or to the target and donor
+composite (right). Blue and amber bands identify the protocol-defined 60-day
+pre- and post-pseudo-anchor windows. The underlying baseline is
+checksum-pinned public data; the injected conditions are known synthetic truth,
+not a model or diagnosis of a real metadata anchor.}
+\label{fig:stable-synthetic-example}
 \end{figure}
 
 The AQS data model provides a narrow and auditable starting point. Its daily

@@ -288,14 +288,14 @@ def collect_expectations() -> dict[str, str]:
         "real_effect_medians": (
             "is "
             f"{format_decimal(method_medians['metashift_v1_fixed'], 5)} for "
-            "fixed-prior MetaShift, "
+            "fixed reliability-prior MetaShift, "
             f"{format_decimal(method_medians['standard_synthetic_control'], 5)} "
             "for standard synthetic control, and "
             f"{format_decimal(method_medians['nearest_neighbor_did'], 5)} "
             "for nearest-neighbor DiD."
         ),
         "effect_window_medians": (
-            "The corresponding fixed-prior MetaShift median log effects are "
+            "The corresponding fixed reliability-prior MetaShift median log effects are "
             f"{format_decimal(metashift_windows.loc[45, 'median_log_effect'], 5)}, "
             f"{format_decimal(metashift_windows.loc[60, 'median_log_effect'], 5)}, "
             f"and {format_decimal(metashift_windows.loc[90, 'median_log_effect'], 5)} "
@@ -350,7 +350,7 @@ def collect_expectations() -> dict[str, str]:
         expectations[f"aggregate:{method}"] = exact_table_row(
             {
                 "standard_synthetic_control": "Standard synthetic control",
-                "metashift_v1_fixed": "MetaShift fixed-prior",
+                "metashift_v1_fixed": "MetaShift fixed reliability prior",
                 "metashift_v2_cv": "MetaShift cross-validated",
                 "nearest_neighbor_did": "Nearest-neighbor DiD",
                 "bayesian_mean_shift": "Bayesian mean shift",
@@ -367,7 +367,7 @@ def collect_expectations() -> dict[str, str]:
     ablation_labels = {
         "standard_synthetic_control": "Standard synthetic control",
         "metashift_full_correlation_distance": "MetaShift full prior, ridge=0.1",
-        "ablation_no_graph_prior": "No graph-prior penalty",
+        "ablation_no_graph_prior": "No reliability-prior penalty",
         "ablation_no_distance": "No distance term",
         "ablation_no_ridge": "No ridge penalty",
         "ablation_ridge_0_01": "Ridge=0.01",
@@ -405,7 +405,7 @@ def collect_expectations() -> dict[str, str]:
         )
     for comparison, row in bootstrap.iterrows():
         label = {
-            "metashift_v1_fixed minus standard_synthetic_control": "fixed-prior MetaShift",
+            "metashift_v1_fixed minus standard_synthetic_control": "fixed reliability-prior MetaShift",
             "metashift_v2_cv minus standard_synthetic_control": "cross-validated MetaShift",
         }[comparison]
         expectations[f"bootstrap:{comparison}"] = (

@@ -15,11 +15,12 @@ without collapsing them into a post-hoc composite score.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_synthetic_metrics.pdf}
-\caption{Held-out stable-regime synthetic metrics for the four cross-site
-methods. Each metric is evaluated on the frozen 80-site complete-input-disjoint
-partition: lower local-effect MAE and regional false-positive rate are
-preferable, whereas higher macro-F1 is preferable. Bars compare different
-criteria, not a universal ranking; all numerical values originate in the saved
+\caption{Held-out stable-regime synthetic comparison for the four cross-site
+methods. Dots show local-effect MAE, macro-F1, and regional false-positive
+rate on the frozen 80-site complete-input-disjoint partition; AUPRC is retained
+in Table~\ref{tab:synthetic-metrics}. Lower MAE and regional false-positive
+rate are preferable, whereas higher macro-F1 is preferable. The panels do not
+form a post-hoc composite ranking; all values originate in the saved
 \texttt{stable\_full\_v2} metrics table.}
 \label{fig:synthetic-metrics}
 \end{figure}
@@ -43,12 +44,14 @@ protocol-defined level-effect estimator for the variance-only condition.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_perturbation_metrics.pdf}
-\caption{All nine frozen methods across the five paired local/regional
-perturbation families. Each cell aggregates 800 evaluation instances: a
-target-only local variant and a matched target-and-donor regional variant.
-Values are local-effect MAE, AUPRC, macro-F1, and regional false-positive rate,
-as labeled. N/A means that a method or variance-only condition has no defined
-local-effect magnitude estimate; it does not denote exclusion.}
+\caption{Main-text perturbation comparison. The left panel gives each
+non-variance perturbation family's local-effect MAE difference from standard
+synthetic control for the three cross-site comparators; negative values favor
+the comparator on that metric. The right panel retains aggregate macro-F1 for
+all nine frozen methods, separated by cross-site versus single-series status.
+The complete five-family, all-metric matrix remains in
+Table~\ref{tab:perturbation-metrics}; variance-only local-effect MAE is N/A by
+definition, not an exclusion.}
 \label{fig:perturbation-metrics}
 \end{figure}
 
@@ -102,13 +105,13 @@ boundaries rather than removed.
 
 \begin{figure}[tbp]
 \centering
-\includegraphics[width=0.82\linewidth]{fig_event_flow.pdf}
-\caption{Complete disposition of all 563 primary-parameter metadata anchors.
-``Complete comparison'' requires the common cross-site inputs under the
-distinct-physical-donor rule. ``Fewer than three donors'' and
-``input-window failure'' are retained audit dispositions, not deleted events
-or evidence that no monitoring change occurred.}
-\label{fig:event-flow}
+\includegraphics[width=0.88\linewidth]{fig_event_accounting.pdf}
+\caption{Hierarchical accounting of all \TotalAnchors{} primary metadata
+anchors. Donor-insufficient and input-window-failure rows remain inconclusive
+audit dispositions. Only complete comparisons flow into the observational
+three-way tier rules; the lower reconciliation confirms both count partitions.
+No branch represents a physical monitoring diagnosis.}
+\label{fig:event-accounting}
 \end{figure}
 
 The exploratory evidence synthesis assigns \SupportedCandidates{} supported
@@ -116,16 +119,6 @@ candidates, \NotSupportedEvents{} not-supported events, and
 \InconclusiveEvents{} inconclusive events. The supported label means that
 predeclared diagnostic conditions were jointly met; it does not confirm a
 physical failure, replacement, or causal bias.
-
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=0.76\linewidth]{fig_evidence_tiers.pdf}
-\caption{Exploratory evidence tiers for the full 88101 anchor inventory.
-Supported, not-supported, and inconclusive are rule-based observational audit
-outcomes. They do not diagnose instrument failure, physical replacement,
-measurement bias, or a true pollution correction.}
-\label{fig:evidence-tiers}
-\end{figure}
 
 Time-placebo coverage is available for \TimePlaceboEvents{} complete events
 with at least 50 dates, including \FullTimePlaceboEvents{} with 100 dates.
@@ -160,11 +153,13 @@ conservative.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_interval_coverage.pdf}
-\caption{Empirical held-out synthetic interval coverage for four cross-site
-methods. Blue bars are fixed-weight conditional moving-block intervals at
-nominal 95\%; purple bars are split-conformal intervals at nominal 90\%.
-Dashed lines mark the corresponding nominal targets. Undercoverage and
-overcoverage are reported as negative calibration findings, not tuned away.}
+\caption{Empirical held-out synthetic coverage and mean interval width for
+four cross-site methods. Circles are fixed-weight conditional moving-block
+intervals at nominal 95\%; diamonds are split-conformal intervals at nominal
+90\%. The coverage panel intentionally uses the full 0--100\% scale, and
+paired width values show the cost of conservative coverage. Dashed reference
+lines identify nominal targets. Undercoverage and overcoverage are negative
+calibration findings, not parameters tuned after inspection.}
 \label{fig:interval-coverage}
 \end{figure}
 
@@ -187,11 +182,12 @@ optimized after viewing results.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_screening_sensitivity.pdf}
-\caption{Predeclared geographic screening and evidence-tier threshold
-sensitivity. The left panel counts anchors meeting the three-donor requirement
-under different radius rules; the right panel shows the resulting exploratory
-tier counts. These describe availability and rule dependence, not physical
-causality or a search for a favorable specification.}
+\caption{Predeclared evidence-tier and geographic-screening sensitivity. The
+left panel normalizes tier composition to all anchors while retaining counts in
+the bars; the right panel shows how the three-donor availability boundary
+changes with the predeclared radius. These describe rule dependence and data
+availability, not physical causality or a search for a favorable
+specification.}
 \label{fig:screening-sensitivity}
 \end{figure}
 
@@ -205,6 +201,11 @@ official-document review found \ExternalReviewConfirmations{}/\ExternalReviewEve
 dated site-specific confirmations. A missing public notice is unavailable
 evidence, not evidence that no physical change occurred.
 
+The separately pinned QA-collocation review contains 12 candidate records, of
+which 2 match the target POC and 0 provide adequate matched pre/post windows.
+It is therefore an evidence-availability result, not a validation of a
+measurement-bias hypothesis.
+
 The independent 88502 pipeline has \SecondaryAnchors{} eligible metadata
 anchors and only \SecondaryComplete{} complete common-method comparisons. It
 demonstrates separate-pipeline feasibility but is too sparse to support broad
@@ -215,10 +216,12 @@ confirmation for the reviewed anchors.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_external_evidence.pdf}
-\caption{Availability of same-site POC and targeted official-document context.
-Counts describe available auxiliary evidence in the frozen review population.
-Neither a POC agreement nor an unlocated document supplies universal
-physical-instrument ground truth.}
+\caption{Four contextual-evidence ladders: same-site POC, QA collocation,
+targeted official-document review, and the separate 88502 pipeline. Each
+ladder visibly retains unavailable evidence, including zero adequate QA
+matched pre/post windows and zero dated site-specific confirmations. Neither a
+POC agreement nor an unlocated document supplies universal physical-instrument
+ground truth.}
 \label{fig:external-evidence}
 \end{figure}
 

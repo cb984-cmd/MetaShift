@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "evidence_version": "v0.3.2",
+  "evidence_tag": "v0.3.2-evidence-final",
+  "purpose": "Presentation-only audit of the inclusive date boundaries implemented by the frozen v0.3.2 real-anchor cross-site estimators. This record reports an implementation limitation and does not change or re-estimate a frozen result.",
+  "implementation_sources": [
+    {
+      "path": "metashift/counterfactual.py",
+      "sha256": "e362330203f02ba172d5e71a81148a15dc8659ccebc561bff1f12b236c9b6c37"
+    },
+    {
+      "path": "scripts/run_real_transition_audit.py",
+      "sha256": "c29eda2ee6aba00d1aef290dd66c63d0ed17a22e1e8dce65b1da6c97a83b5bd5"
+    },
+    {
+      "path": "scripts/run_feasibility_prototype.py",
+      "sha256": "95669f58b3ed040068e338b45bc16228e4ec4d954fbd1a614de804b1b47f9555"
+    }
+  ],
+  "windows": {
+    "calibration": {
+      "start_offset_days": -180,
+      "end_offset_days": -15,
+      "inclusive_calendar_dates": 166,
+      "role": "Fixed weight fitting and calibration-residual centering."
+    },
+    "pre": {
+      "start_offset_days": -60,
+      "end_offset_days": -1,
+      "inclusive_calendar_dates": 60,
+      "role": "Protocol-defined pre-anchor effect comparison."
+    },
+    "post": {
+      "start_offset_days": 0,
+      "end_offset_days": 59,
+      "inclusive_calendar_dates": 60,
+      "role": "Protocol-defined post-anchor effect comparison."
+    },
+    "calibration_pre_overlap_calendar_dates": 46
+  },
+  "interpretation": "No post-anchor outcome is used in fitting. The 46-date calibration/pre overlap means that the displayed pre residuals are not an independent validation set. A separate non-overlapping analysis was not preregistered or incorporated into the frozen v0.3.2 evidence release."
+}

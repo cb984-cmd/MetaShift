@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "evidence_version": "v0.3.2",
+  "evidence_tag": "v0.3.2-evidence-final",
+  "purpose": "Display-only validation contract for the external-evidence ladder. The figure reports availability and does not infer physical mechanism.",
+  "qa_collocation_evidence": {
+    "path": "artifacts/external_validation_evidence.csv",
+    "sha256": "4e87d092e69c7ed4c27a2fb5a18d53c4a1adc89dff94caf9a1e5d0eab77e52d1",
+    "source_filter": "evidence_source == qa_collocation",
+    "expected_counts": {
+      "candidates": 12,
+      "target_poc_matched": 2,
+      "adequate_matched_pre_post": 0
+    }
+  },
+  "interpretation_boundary": "A QA record can provide contextual comparative evidence. It neither identifies a physical cause of a Method Code transition nor confirms a measurement bias."
+}

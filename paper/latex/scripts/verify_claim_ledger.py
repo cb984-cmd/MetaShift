@@ -36,6 +36,10 @@ REQUIRED_COLUMNS = (
 MANUSCRIPT_LOCATIONS = {
     "Abstract": ("sections/frontmatter.tex", r"\section*{Abstract}"),
     "Data": ("sections/data.tex", r"\section{Data and benchmark construction}"),
+    "Problem": (
+        "sections/problem.tex",
+        r"\section{Problem formulation and claim boundaries}",
+    ),
     "Experiments": ("sections/experiments.tex", r"\section{Experimental design}"),
     "Framework": (
         "sections/framework.tex",
@@ -74,8 +78,12 @@ MANUSCRIPT_LOCATIONS = {
         r"\section{Reproducibility, integrity, and contributions}",
     ),
     "Conclusion": ("sections/conclusion.tex", r"\section{Conclusion}"),
+    "Appendix": (
+        "sections/appendix.tex",
+        r"\section{Supplementary protocol details}",
+    ),
 }
-REQUIRED_CLAIM_IDS = frozenset(f"Q{index:02d}" for index in range(1, 37))
+REQUIRED_CLAIM_IDS = frozenset(f"Q{index:02d}" for index in range(1, 40))
 
 
 def parse_args() -> argparse.Namespace:

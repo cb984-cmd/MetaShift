@@ -6,6 +6,17 @@ organizes the residual risks by construct, internal, statistical, and external
 validity. The mitigations constrain interpretation, but none turns the audit
 into a physical instrument diagnosis.
 
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_applicability_map.pdf}
+\caption{Applicability and failure-mode map for the frozen audit. The diagram
+is not a classifier: an available cross-site diagnostic result and an
+inconclusive availability failure both leave physical mechanism unresolved.
+Station histories, technical records, and human review remain necessary for
+any equipment-level hypothesis.}
+\label{fig:applicability-map}
+\end{figure}
+
 \begin{landscape}
 \begin{longtable}{@{}p{0.10\linewidth}p{0.19\linewidth}p{0.21\linewidth}p{0.20\linewidth}p{0.20\linewidth}@{}}
 \caption{Threats to validity, current mitigation, residual consequence, and
@@ -77,6 +88,14 @@ overcoverage are negative results, not defects repaired by changing
 confidence levels or block lengths after inspection. Multiple-screening
 quantities remain exploratory and do not transform all audit rows into formal
 causal hypothesis tests.
+
+The implementation also centers residuals with the inclusive $t_0-180$ through
+$t_0-15$ calibration slice while displaying a $t_0-60$ through $t_0-1$
+pre-anchor comparison, producing a 46-calendar-date overlap. This does not
+leak post-anchor outcomes into fitting, but it prevents the displayed
+pre-anchor residuals from serving as an independent validation sample. The
+frozen evidence is reported as implemented; no post-hoc non-overlap result is
+substituted for it.
 
 \subsection{External validity}
 

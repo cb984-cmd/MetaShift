@@ -46,7 +46,7 @@ At the frozen release configuration:
 | Independent 88502 anchors / complete comparisons | 34 / 3 |
 
 In the stable synthetic evaluation, standard synthetic control achieved
-macro-F1/AUPRC of **0.816 / 0.915**. Fixed-prior and pre-period
+macro-F1/AUPRC of **0.816 / 0.915**. Fixed reliability-prior and pre-period
 cross-validated MetaShift achieved **0.795 / 0.898** and **0.809 / 0.902**.
 Cross-validated MetaShift's lower local-effect MAE point estimate was not
 confidence-supported by paired event bootstrap, so the repository makes **no

@@ -113,7 +113,7 @@ def reliability_constrained_weights(
     prior_penalty: float = 0.10,
     min_observations: int = 60,
 ) -> pd.Series:
-    """Fit pre-event synthetic-control weights regularized toward graph reliability.
+    """Fit pre-event synthetic-control weights regularized toward a reliability prior.
 
     The intercept is profiled out by centering each series within the supplied
     pre-event calibration table. Inputs must be restricted to dates before the

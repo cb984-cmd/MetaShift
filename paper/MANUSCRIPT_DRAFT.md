@@ -35,8 +35,9 @@ as insufficient-donor cases and 10 as input-window failures. A stable-regime
 synthetic benchmark uses 146 distinct physical target sites, with 66 for
 threshold calibration and 80 for independent evaluation. Each local and
 matched regional perturbation variant has 400 evaluation samples. Standard
-synthetic control obtains macro-F1/AUPRC of 0.816/0.915, while fixed-prior and
-pre-period cross-validated MetaShift obtain 0.795/0.898 and 0.809/0.902.
+synthetic control obtains macro-F1/AUPRC of 0.816/0.915, while fixed
+reliability-prior and pre-period cross-validated MetaShift obtain 0.795/0.898
+and 0.809/0.902.
 Cross-validated MetaShift has a lower local-effect MAE point estimate
 (0.09742 versus 0.09983), but its paired bootstrap difference against standard
 synthetic control is -0.00240 (95% CI [-0.00772, 0.00347]). We therefore do
@@ -213,7 +214,7 @@ an interpretation aid.
 
 The benchmark includes before-after median, Bayesian mean shift, CUSUM,
 rolling-MAD, PELT, nearest-neighbor difference-in-differences, standard
-synthetic control, fixed-prior MetaShift, and a pre-period
+synthetic control, fixed reliability-prior MetaShift, and a pre-period
 cross-validated MetaShift variant.
 
 ### 4.3 Evidence tiers for real anchors
@@ -296,7 +297,7 @@ Table 2. Aggregate independent synthetic-evaluation performance.
 | Method | Local-effect MAE | AUPRC | Macro-F1 | Regional FPR |
 | --- | ---: | ---: | ---: | ---: |
 | Standard synthetic control | 0.09983 | 0.91476 | 0.81641 | 0.140 |
-| MetaShift fixed-prior | 0.10344 | 0.89832 | 0.79515 | 0.150 |
+| MetaShift fixed reliability prior | 0.10344 | 0.89832 | 0.79515 | 0.150 |
 | MetaShift cross-validated | 0.09742 | 0.90178 | 0.80916 | 0.135 |
 | Nearest-neighbor DiD | 0.11150 | 0.88443 | 0.78852 | 0.075 |
 | Bayesian mean shift | 0.24672 | 0.50116 | 0.49962 | 0.542 |
@@ -308,7 +309,7 @@ Table 2. Aggregate independent synthetic-evaluation performance.
 Cross-validated MetaShift has a lower point-estimate MAE than standard
 synthetic control, but standard synthetic control has better attribution
 ranking, macro-F1, and regional false-attribution rate. The paired
-event-cluster bootstrap difference for fixed-prior MetaShift minus standard
+event-cluster bootstrap difference for fixed reliability-prior MetaShift minus standard
 synthetic control is 0.00361 (95% CI [-0.00401, 0.01163]); for
 cross-validated MetaShift minus standard synthetic control is -0.00240
 (95% CI [-0.00772, 0.00347]).
@@ -326,7 +327,7 @@ Table 2b. Reliability-prior and ridge ablations on the same synthetic inputs.
 | --- | ---: | ---: | ---: |
 | Standard synthetic control | 0.09983 | 0.81641 | 0.140 |
 | MetaShift full prior, ridge=0.1 | 0.10344 | 0.79515 | 0.150 |
-| No graph-prior penalty | 0.10350 | 0.80167 | 0.133 |
+| No reliability-prior penalty | 0.10350 | 0.80167 | 0.133 |
 | No distance term | 0.10370 | 0.80588 | 0.088 |
 | No ridge penalty | 0.10289 | 0.80127 | 0.138 |
 | Ridge=0.01 | 0.10304 | 0.80263 | 0.130 |
@@ -350,7 +351,7 @@ Table 3. Full 88101 audit status.
 | Total | 563 |
 
 For the 228 complete comparisons, the median signed 60-day log residual effect
-is -0.08704 for fixed-prior MetaShift, -0.07078 for standard synthetic
+is -0.08704 for fixed reliability-prior MetaShift, -0.07078 for standard synthetic
 control, and -0.07490 for nearest-neighbor DiD. These are observational
 estimates, not measured instrument-bias labels.
 
@@ -415,7 +416,7 @@ For the real-event effect audit, changing the symmetric pre/post window from
 the target's intended pre/post segments and every fixed donor. The 45-day
 window is complete for 224/228 events with 93.3% direction agreement to 60
 days; the 90-day window is complete for 196/228 events with 93.9% agreement.
-The corresponding fixed-prior MetaShift median log effects are -0.08769,
+The corresponding fixed reliability-prior MetaShift median log effects are -0.08769,
 -0.08704, and -0.08064 for 45, 60, and 90 days. 4 45-day and 32 90-day
 events are unavailable because the full window is not method-stable or does
 not meet its specified observation requirement.

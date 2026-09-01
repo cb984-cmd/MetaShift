@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "evidence_version": "v0.3.2",
+  "evidence_tag": "v0.3.2-evidence-final",
+  "purpose": "Deterministic display-only stable-window example for explaining target-local versus matched-regional synthetic perturbations. It does not select a favorable result or contribute a new benchmark metric.",
+  "stable_cases": {
+    "path": "artifacts/stable_synthetic_cases.csv",
+    "sha256": "a73873d5b43e37938407f202f2c71181148ef0449a55906e6cfacf638375d75f"
+  },
+  "stable_case_donors": {
+    "path": "artifacts/stable_synthetic_case_donors.csv",
+    "sha256": "e8292577235cc1290d1f31cf25d0e11fdf1d5ccf7969280865c575c85241720b"
+  },
+  "selection": {
+    "rule": "Select the lexicographically first case_id in the frozen held-out evaluation partition.",
+    "expected_case_id": "stable-04-013-0019-3-2020-02-18"
+  },
+  "injection": {
+    "magnitude_multiplier": 1.0,
+    "local_kind": "additive_step",
+    "regional_kind": "regional_additive_step",
+    "magnitude_rule": "Use the frozen benchmark additive magnitude: two times the robust 180/15 pre-anchor target scale times the declared multiplier.",
+    "random_seed": 0
+  },
+  "display": {
+    "days_before_anchor": 60,
+    "days_after_anchor": 60,
+    "series_scale": "log1p concentration centered by the pre-anchor target/donor calibration offset",
+    "residual_scale": "calibration-centered log residual"
+  }
+}

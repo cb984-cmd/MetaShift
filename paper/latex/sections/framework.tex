@@ -26,10 +26,10 @@ problem
   \left(z_{i,t}-\sum_{j\in N_a}w_jz_{j,t}\right)^2.
 \]
 The intercept is represented by calibration centering in the residual
-definition of Section~2. All fitting data end before the 15-day buffer; no
-post-anchor outcome is supplied to either method.
+definition of Section~2. No post-anchor outcome is supplied to either method.
 
-Fixed-prior MetaShift starts from the pre-event reliability preference
+Fixed-weight MetaShift with a reliability-prior penalty starts from the
+pre-event reliability preference
 \[
   \pi_{ij}\propto
   \max(\rho_{ij},0)^2\exp(-d_{ij}/50),
@@ -46,6 +46,41 @@ taxonomy. In the synthetic benchmark only, cross-validated MetaShift tests a
 frozen set of penalty pairs on the final 45 pre-event days, chooses the
 smallest validation RMSE, and refits the selected pair on the supplied
 pre-event calibration table. It never sees anchor-post data during selection.
+
+\subsection{Two-level donor rule, algorithm, and computational scope}
+
+The audit uses two intentionally different donor conditions. An anchor is
+eligible for a common cross-site comparison only when at least three
+\emph{distinct physical sites} pass the frozen geographic, stability, paired
+pre-event, and correlation screens. This protects against treating multiple
+POCs at a single location as independent geographic evidence. After dates are
+retained, a complete numerical comparison requires at least two available
+donors on a date and at least 30 retained observations in every required
+window. The latter condition protects calculation feasibility; it does not
+weaken the three-physical-donor eligibility rule.
+
+For each anchor, the implementation follows the fixed sequence below:
+\begin{enumerate}
+  \item identify and physically deduplicate prequalified donor candidates;
+  \item retain one deterministically ranked POC per donor site and abstain if
+  fewer than three sites remain;
+  \item fit fixed cross-site weights using only the inclusive calibration
+  slice, then center residuals on that same slice;
+  \item verify retained-date availability in calibration, pre, and post
+  windows, recording an input-window failure when it is insufficient; and
+  \item compute the protocol-defined effect and diagnostic outputs only for a
+  complete comparison.
+\end{enumerate}
+
+If $D$ candidates have $T_{\mathrm{pre}}$ paired pre-event records, screening
+and correlation assembly scale with the available paired data (on the order of
+$D T_{\mathrm{pre}}$), and deterministic ranking adds $O(D\log D)$. The
+retained donor set is capped at three to five sites; residual assembly therefore
+scales linearly in the retained window length and this small set size. The
+constrained numerical fit has solver-dependent iteration cost, so the report
+does not claim a hardware-independent closed-form runtime. The complete audit
+ledger reports failures rather than treating an optimization or input failure
+as a negative physical finding.
 
 \subsection{Single-series comparators}
 

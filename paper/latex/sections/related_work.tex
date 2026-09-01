@@ -66,6 +66,45 @@ forcing a positive or negative physical diagnosis.
 
 \subsection{Contribution boundary}
 
+Table~\ref{tab:related-work-boundary} locates the benchmark relative to its
+component literatures. The comparison concerns the scope of the reported
+workflow, not a claim that MetaShift-Bench improves the underlying methods.
+
+\begin{table}[tbp]
+\centering
+\caption{Relationship between MetaShift-Bench and contributing research
+traditions.}
+\label{tab:related-work-boundary}
+\small
+\begin{tabularx}{\linewidth}{@{}p{0.22\linewidth}X X@{}}
+\toprule
+Research tradition & Typical object and evidence & MetaShift-Bench boundary \\
+\midrule
+Synthetic control and DiD \citep{abadie2010,arkhangelsky2021} &
+Pre-intervention panel outcomes and comparison units for an estimand under
+explicit assumptions. &
+Uses pre-anchor donor fitting and placebos as diagnostics; does not assert
+policy-style causal identification for metadata transitions. \\
+\addlinespace
+Single-series change points \citep{killick2012,truong2020} &
+One sequence and a change statistic or estimated break. &
+Retains these methods as baselines but separates a target-local pattern from a
+matched regional movement only when a qualified reference is available. \\
+\addlinespace
+Monitoring comparability and collocation \citep{khan2024,epa_pm25_comparability} &
+Configuration-specific technical comparisons, collocation, and station
+documentation. &
+Treats auxiliary POC, QA, and document records as contextual evidence; no
+metadata field is promoted to physical-device ground truth. \\
+\addlinespace
+Climate-record homogenization \citep{menne2009} &
+Station histories plus pairwise evidence for record inhomogeneities. &
+Adopts the audit logic of preserving candidate discontinuities and requiring
+records for mechanism; it does not claim a homogenized corrected PM2.5 series. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 MetaShift-Bench integrates established ingredients into one constrained
 workflow: AQS Method Code metadata defines anchors; distinct physical sites
 define geographic donors; stable windows receive known synthetic perturbations;

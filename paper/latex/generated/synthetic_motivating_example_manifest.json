@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "purpose": "Display-only stable-window synthetic example.",
+  "frozen_evidence": {
+    "tag": "v0.3.2-evidence-final",
+    "commit": "57d678ecabebff724d898abe626c9ef80538775b",
+    "release_url": "https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final",
+    "supersedes": [
+      "v0.3.0-distinct-donors",
+      "v0.3.1-evidence-final"
+    ]
+  },
+  "result_label": "stable_full_v2",
+  "configuration": {
+    "path": "paper/latex/configs/synthetic_motivating_example_v1.json",
+    "sha256": "a64b91066333a06af3dcdb53d5e51f1b10313d225367e30eed917abb329595a2"
+  },
+  "case_id": "stable-04-013-0019-3-2020-02-18",
+  "anchor_date": "2020-02-18",
+  "additive_magnitude": 11.8608,
+  "weights": {
+    "04-013-9812-3": 0.2451589087116635,
+    "04-013-4003-3": 0.21837780222439424,
+    "04-013-9997-3": 0.22338275960719306,
+    "04-013-1004-3": 0.1630582515681251,
+    "04-013-2001-3": 0.15002227788862416
+  }
+}

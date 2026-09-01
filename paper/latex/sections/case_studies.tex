@@ -15,8 +15,9 @@ donors, archive manifest checksum, donor-table checksum, fitted weights, and
 reconstruction error are stored in the generated case-study manifest.
 
 For the two complete cases, the renderer reads only the checksum-pinned public
-EPA archives, applies the frozen cleaning rule, reconstructs the fixed-prior
-MetaShift weights from pre-anchor data, and fails if the reconstructed saved
+EPA archives, applies the frozen cleaning rule, reconstructs fixed-weight
+MetaShift with the reliability-prior penalty from pre-anchor data, and fails
+if the reconstructed saved
 log effect differs by more than $10^{-9}$. The raw archives remain outside
 version control. The third case intentionally has no reconstructed
 counterfactual: its audit disposition is that fewer than three qualified
@@ -27,15 +28,16 @@ distinct physical donors were available.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_case_studies.pdf}
-\caption{Deterministically selected representative cases. Top row: retained
+\caption{Deterministically selected representative cases. Row 1 shows retained
 daily target values and, for complete cases only, the pre-anchor-fitted
-fixed-prior MetaShift counterfactual in $\mu$g/m$^3$. Middle row: calibrated
-log residuals for complete cases; the inconclusive case instead states why no
-counterfactual is constructed. Bottom row: protocol-defined fixed and nested
-diagnostic intervals for complete cases; no effect or interval is imputed for
-the donor-insufficient anchor. Blue and yellow shading mark the 60-day pre-
-and post-anchor comparison windows. All raw display inputs are checksum-pinned
-locally; the figure is not evidence of a physical instrument event.}
+reliability-prior MetaShift counterfactual in $\mu$g/m$^3$. Row 2 shows
+calibrated log residuals; Row 3 shows only the saved per-case placebo summary
+and explicitly does not fabricate a per-date distribution; Row 4 shows fixed
+and nested diagnostic intervals. No counterfactual, placebo, effect, or
+interval is imputed for the donor-insufficient anchor. Blue and amber shading
+mark the 60-day pre- and post-anchor comparison windows. All raw display
+inputs are checksum-pinned locally; the figure is not evidence of a physical
+instrument event.}
 \label{fig:case-studies}
 \end{figure}
 

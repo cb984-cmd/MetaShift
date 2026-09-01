@@ -157,6 +157,7 @@ def main() -> None:
     )
 
     run([sys.executable, "scripts/generate_paper_assets.py", "--write"], LATEX_ROOT)
+    run([sys.executable, "scripts/verify_figures.py"], LATEX_ROOT)
     run(
         [sys.executable, "scripts/verify_claim_ledger.py", "--require-assets"],
         LATEX_ROOT,
@@ -282,6 +283,7 @@ def main() -> None:
         "font_audit": str(FONT_AUDIT_PATH.relative_to(ROOT)).replace("\\", "/"),
         "build_commands": [
             "generate_paper_assets --write",
+            "verify_figures",
             "verify_claim_ledger --require-assets",
             "verify_paper_source",
             "verify_references",

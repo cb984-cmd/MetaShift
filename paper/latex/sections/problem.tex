@@ -36,11 +36,16 @@ calibration-centered residual
  -\operatorname{median}_{u\in T_{\mathrm{cal}}}
  \left(z_{i,u}-\sum_{j\in N_a}w_{ij}z_{j,u}\right).
 \]
-The protocol uses a 180-day calibration interval ending 15 days before the
-anchor, a 60-day pre-anchor comparison interval, and a 60-day post-anchor
-interval. It requires at least 30 retained observations in each required
-window and at least two available donors on retained dates. The displayed
-protocol-defined effect is
+The implemented inclusive calibration slice runs from $t_0-180$ through
+$t_0-15$ (166 possible calendar dates), while the comparison slices run from
+$t_0-60$ through $t_0-1$ and from $t_0$ through $t_0+59$ (60 possible dates
+each). It requires at least 30 retained observations in each required window
+and at least two available donors on retained dates. The calibration and
+pre-anchor slices overlap on 46 calendar dates. No post-anchor outcome enters
+weight fitting or residual centering, but the overlap means that displayed
+pre-window residuals are not an independent validation set. This is a frozen
+implementation limitation, not a post-hoc sensitivity adjustment. The
+displayed protocol-defined effect is
 \[
   \widehat{\Delta}_a =
   \operatorname{median}_{t\in T_{\mathrm{post}}}r_{i,t}
@@ -48,6 +53,18 @@ protocol-defined effect is
 \]
 It is a local residual discontinuity on the log scale. It is not an estimate
 of a causal physical bias or a corrected concentration.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_window_protocol.pdf}
+\caption{Inclusive date-window implementation used by the frozen primary
+real-anchor audit. The amber overlap is 46 calendar dates shared by fitting
+and the displayed pre-anchor comparison. No post-anchor outcomes are used for
+fitting, but the overlap prevents treating pre-window residuals as an
+independent validation set. The figure is an implementation audit, not a new
+estimator or re-analysis.}
+\label{fig:window-protocol}
+\end{figure}
 
 \subsection{Claim boundaries}
 

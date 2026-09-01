@@ -23,7 +23,14 @@ TABLES = GENERATED / "tables"
 FIGURES = GENERATED / "figures"
 MANIFEST_PATH = GENERATED / "asset_manifest.json"
 SUMMARY_PATH = ROOT / "configs" / "current_evidence_summary_v2.json"
-CASE_RENDERING_CONFIG_PATH = LATEX_ROOT / "configs" / "case_study_rendering_v1.json"
+CASE_RENDERING_CONFIG_PATH = LATEX_ROOT / "configs" / "case_study_rendering_v2.json"
+SYNTHETIC_EXAMPLE_CONFIG_PATH = (
+    LATEX_ROOT / "configs" / "synthetic_motivating_example_v1.json"
+)
+EXTERNAL_EVIDENCE_CONFIG_PATH = (
+    LATEX_ROOT / "configs" / "external_evidence_rendering_v1.json"
+)
+WINDOW_PROTOCOL_CONFIG_PATH = LATEX_ROOT / "configs" / "window_protocol_audit_v1.json"
 
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -42,6 +49,9 @@ from metashift.counterfactual import (
     reliability_constrained_weights,
     weighted_donor_series,
 )
+from metashift.synthetic import PerturbationKind, inject_perturbation
+
+from figure_factory import create_revised_figures
 
 REQUIRED_ARTIFACTS = (
     "artifacts/data_gate/summary.json",
@@ -91,7 +101,7 @@ METHOD_LABELS = {
     "pelt": "PELT",
     "rolling_mad": "Rolling MAD",
     "metashift_full_correlation_distance": "MetaShift full prior",
-    "ablation_no_graph_prior": "No graph-prior",
+    "ablation_no_graph_prior": "No reliability-prior penalty",
     "ablation_no_distance": "No distance term",
     "ablation_no_ridge": "No ridge penalty",
     "ablation_ridge_0_01": "Ridge = 0.01",
@@ -265,10 +275,36 @@ def load_case_rendering_config() -> dict[str, Any]:
     return config
 
 
+def load_json_config(path: Path, description: str) -> dict[str, Any]:
+    if not path.is_file():
+        raise FileNotFoundError(f"Missing {description}: {path}")
+    config = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(config, dict):
+        raise RuntimeError(f"{description} must be a JSON object.")
+    return config
+
+
+def verify_hashed_record(
+    record: object, field: str, description: str
+) -> tuple[str, str]:
+    if not isinstance(record, dict):
+        raise RuntimeError(f"{description} lacks {field}.")
+    relative_path = record.get("path")
+    expected_hash = record.get("sha256")
+    if not isinstance(relative_path, str) or not isinstance(expected_hash, str):
+        raise RuntimeError(f"{description} {field} must specify path and sha256.")
+    path = safe_root_path(relative_path)
+    if not path.is_file():
+        raise FileNotFoundError(f"Missing {description} input: {path}")
+    if sha256(path) != expected_hash:
+        raise RuntimeError(f"{description} input checksum mismatch: {relative_path}")
+    return relative_path, expected_hash
+
+
 def verify_case_rendering_inputs() -> dict[str, Any]:
     config = load_case_rendering_config()
     expected_identity = {
-        "schema_version": 1,
+        "schema_version": 2,
         "evidence_version": "v0.3.2",
         "evidence_tag": "v0.3.2-evidence-final",
     }
@@ -279,18 +315,7 @@ def verify_case_rendering_inputs() -> dict[str, Any]:
                 f"{config.get(field)!r}"
             )
     for field in ("source_manifest", "geographic_controls"):
-        record = config.get(field)
-        if not isinstance(record, dict):
-            raise RuntimeError(f"Case-study rendering configuration lacks {field}.")
-        relative_path = record.get("path")
-        expected_hash = record.get("sha256")
-        if not isinstance(relative_path, str) or not isinstance(expected_hash, str):
-            raise RuntimeError(f"Case-study rendering {field} must specify path and sha256.")
-        path = safe_root_path(relative_path)
-        if not path.is_file():
-            raise FileNotFoundError(f"Missing case-study input: {path}")
-        if sha256(path) != expected_hash:
-            raise RuntimeError(f"Case-study input checksum mismatch: {relative_path}")
+        verify_hashed_record(record=config.get(field), field=field, description="Case-study configuration")
     if not isinstance(config.get("selection"), dict) or not isinstance(
         config.get("reconstruction"), dict
     ):
@@ -298,13 +323,144 @@ def verify_case_rendering_inputs() -> dict[str, Any]:
     return config
 
 
-def presentation_input_sources(config: dict[str, Any]) -> list[dict[str, str]]:
+def verify_synthetic_example_inputs() -> dict[str, Any]:
+    config = load_json_config(
+        SYNTHETIC_EXAMPLE_CONFIG_PATH, "synthetic motivating-example configuration"
+    )
+    expected_identity = {
+        "schema_version": 1,
+        "evidence_version": "v0.3.2",
+        "evidence_tag": "v0.3.2-evidence-final",
+    }
+    for field, expected in expected_identity.items():
+        if config.get(field) != expected:
+            raise RuntimeError(
+                f"Synthetic motivating-example configuration has unexpected {field}: "
+                f"{config.get(field)!r}"
+            )
+    for field in ("stable_cases", "stable_case_donors"):
+        verify_hashed_record(
+            record=config.get(field),
+            field=field,
+            description="Synthetic motivating-example configuration",
+        )
+    selection = config.get("selection")
+    injection = config.get("injection")
+    display = config.get("display")
+    if not all(isinstance(value, dict) for value in (selection, injection, display)):
+        raise RuntimeError(
+            "Synthetic motivating-example configuration lacks selection, injection, or display."
+        )
+    return config
+
+
+def verify_external_evidence_inputs() -> dict[str, Any]:
+    config = load_json_config(
+        EXTERNAL_EVIDENCE_CONFIG_PATH, "external-evidence rendering configuration"
+    )
+    if (
+        config.get("schema_version") != 1
+        or config.get("evidence_version") != "v0.3.2"
+        or config.get("evidence_tag") != "v0.3.2-evidence-final"
+    ):
+        raise RuntimeError("External-evidence rendering configuration identity is invalid.")
+    path, _ = verify_hashed_record(
+        record=config.get("qa_collocation_evidence"),
+        field="qa_collocation_evidence",
+        description="External-evidence rendering configuration",
+    )
+    qa_config = config["qa_collocation_evidence"]
+    expected = qa_config.get("expected_counts")
+    if not isinstance(expected, dict):
+        raise RuntimeError("External-evidence rendering configuration lacks expected QA counts.")
+    records = pd.read_csv(safe_root_path(path))
+    qa = records.loc[records["evidence_source"] == "qa_collocation"]
+    actual = {
+        "candidates": int(len(qa)),
+        "target_poc_matched": int(
+            (
+                qa["evidence_status"]
+                == "insufficient_matched_pre_post_qa_records"
+            ).sum()
+        ),
+        "adequate_matched_pre_post": int(
+            (qa["evidence_status"] == "paired_pre_post_available").sum()
+        ),
+    }
+    if actual != {key: int(value) for key, value in expected.items()}:
+        raise RuntimeError(
+            f"External-evidence QA counts do not match the display contract: {actual}"
+        )
+    return config
+
+
+def verify_window_protocol_inputs() -> dict[str, Any]:
+    config = load_json_config(
+        WINDOW_PROTOCOL_CONFIG_PATH, "window-protocol audit configuration"
+    )
+    if (
+        config.get("schema_version") != 1
+        or config.get("evidence_version") != "v0.3.2"
+        or config.get("evidence_tag") != "v0.3.2-evidence-final"
+    ):
+        raise RuntimeError("Window-protocol audit configuration identity is invalid.")
+    sources = config.get("implementation_sources")
+    windows = config.get("windows")
+    if not isinstance(sources, list) or not isinstance(windows, dict):
+        raise RuntimeError("Window-protocol audit configuration lacks sources or windows.")
+    for source in sources:
+        verify_hashed_record(
+            record=source,
+            field="implementation_source",
+            description="Window-protocol audit configuration",
+        )
+    calibration = windows.get("calibration")
+    pre = windows.get("pre")
+    post = windows.get("post")
+    if not all(isinstance(value, dict) for value in (calibration, pre, post)):
+        raise RuntimeError("Window-protocol audit configuration lacks window definitions.")
+    required_offsets = {
+        "calibration": (-180, -15, 166),
+        "pre": (-60, -1, 60),
+        "post": (0, 59, 60),
+    }
+    for name, (start, end, expected_count) in required_offsets.items():
+        record = windows[name]
+        if (
+            int(record.get("start_offset_days", 999)) != start
+            or int(record.get("end_offset_days", 999)) != end
+            or int(record.get("inclusive_calendar_dates", -1)) != expected_count
+        ):
+            raise RuntimeError(f"Window-protocol audit has invalid {name} bounds.")
+    overlap = int(windows.get("calibration_pre_overlap_calendar_dates", -1))
+    if overlap != 46:
+        raise RuntimeError("Window-protocol audit must record the 46-date pre-window overlap.")
+    return config
+
+
+def presentation_input_sources(
+    case_config: dict[str, Any],
+    synthetic_config: dict[str, Any],
+    external_config: dict[str, Any],
+    window_config: dict[str, Any],
+) -> list[dict[str, str]]:
     paths = [
         CASE_RENDERING_CONFIG_PATH,
+        SYNTHETIC_EXAMPLE_CONFIG_PATH,
+        EXTERNAL_EVIDENCE_CONFIG_PATH,
+        WINDOW_PROTOCOL_CONFIG_PATH,
         ROOT / "configs" / "benchmark_release_v2.json",
         ROOT / "configs" / "evidence_tier_primary_v1.json",
-        safe_root_path(str(config["source_manifest"]["path"])),
-        safe_root_path(str(config["geographic_controls"]["path"])),
+        ROOT / "configs" / "evidence_tier_sensitivity_v2.json",
+        safe_root_path(str(case_config["source_manifest"]["path"])),
+        safe_root_path(str(case_config["geographic_controls"]["path"])),
+        safe_root_path(str(synthetic_config["stable_cases"]["path"])),
+        safe_root_path(str(synthetic_config["stable_case_donors"]["path"])),
+        safe_root_path(str(external_config["qa_collocation_evidence"]["path"])),
+        *(
+            safe_root_path(str(record["path"]))
+            for record in window_config["implementation_sources"]
+        ),
     ]
     return [
         {"path": relative_to_root(path), "sha256": sha256(path)}
@@ -338,6 +494,9 @@ def verify_frozen_inputs(summary: dict[str, Any]) -> None:
             "Frozen source artifact validation failed: " + ", ".join(mismatches)
         )
     verify_case_rendering_inputs()
+    verify_synthetic_example_inputs()
+    verify_external_evidence_inputs()
+    verify_window_protocol_inputs()
 
 
 def latex_table(
@@ -674,10 +833,13 @@ def as_optional_text(value: object) -> str:
 
 
 def build_case_records(
-    data: dict[str, Any], config: dict[str, Any]
+    data: dict[str, Any],
+    config: dict[str, Any],
+    series: dict[tuple[str, str, str, str], pd.Series] | None = None,
 ) -> list[dict[str, Any]]:
     selected_cases = select_case_rows(data, config)
-    series = load_case_series(config)
+    if series is None:
+        series = load_case_series(config)
     controls = pd.read_csv(
         safe_root_path(str(config["geographic_controls"]["path"])), dtype="string"
     )
@@ -711,6 +873,12 @@ def build_case_records(
         visible_end = anchor_date + pd.Timedelta(
             days=int(config["reconstruction"]["visible_days_after_anchor"])
         )
+        placebo_rows = data["time_placebo"].loc[
+            data["time_placebo"]["anchor_id"].astype("string") == anchor_id
+        ]
+        if len(placebo_rows) > 1:
+            raise RuntimeError(f"Expected at most one time-placebo row for {anchor_id}.")
+        placebo = placebo_rows.iloc[0] if len(placebo_rows) == 1 else None
         record: dict[str, Any] = {
             "case_group": str(selected["case_group"]),
             "selection_strategy": str(selected["selection_strategy"]),
@@ -738,6 +906,16 @@ def build_case_records(
             ),
             "placebo_count": as_optional_float(selected.get("placebo_count")),
             "placebo_p_value": as_optional_float(selected.get("placebo_p_value")),
+            "placebo_actual_score": (
+                as_optional_float(placebo.get("actual_standardized_score"))
+                if placebo is not None
+                else None
+            ),
+            "placebo_median_score": (
+                as_optional_float(placebo.get("placebo_median_score"))
+                if placebo is not None
+                else None
+            ),
             "leave_one_donor_out_fraction": as_optional_float(
                 selected.get("leave_one_donor_out_direction_fraction")
             ),
@@ -857,6 +1035,156 @@ def build_case_records(
     return records
 
 
+def build_synthetic_motivating_example(
+    config: dict[str, Any],
+    series: dict[tuple[str, str, str, str], pd.Series],
+) -> dict[str, Any]:
+    """Reconstruct a deterministic display-only synthetic example from pinned inputs."""
+
+    cases = pd.read_csv(
+        safe_root_path(str(config["stable_cases"]["path"])), dtype="string"
+    )
+    donors = pd.read_csv(
+        safe_root_path(str(config["stable_case_donors"]["path"])), dtype="string"
+    )
+    for column in (
+        "rank",
+        "distance_km",
+        "pre_transition_paired_days",
+        "pre_transition_log_correlation",
+    ):
+        donors[column] = pd.to_numeric(donors[column], errors="raise")
+    evaluation = cases.loc[cases["split"] == "evaluation"].sort_values(
+        "case_id", kind="stable"
+    )
+    if evaluation.empty:
+        raise RuntimeError("Synthetic motivating example has no evaluation cases.")
+    selected = evaluation.iloc[0]
+    expected_case_id = str(config["selection"]["expected_case_id"])
+    if str(selected["case_id"]) != expected_case_id:
+        raise RuntimeError(
+            "Synthetic motivating example selection differs from its frozen display contract."
+        )
+    target_key = (
+        str(selected["State Code"]).zfill(2),
+        str(selected["County Code"]).zfill(3),
+        str(selected["Site Num"]).zfill(4),
+        str(selected["POC"]),
+    )
+    target = series.get(target_key)
+    if target is None:
+        raise RuntimeError(
+            "Checksum-pinned archives lack the selected stable target series: "
+            + "-".join(target_key)
+        )
+    selected_donors = donors.loc[donors["case_id"] == selected["case_id"]].sort_values(
+        "rank", kind="stable"
+    )
+    if len(selected_donors) < 3:
+        raise RuntimeError("Synthetic motivating example has fewer than three donors.")
+    donor_columns: dict[str, pd.Series] = {}
+    for donor in selected_donors.itertuples(index=False):
+        donor_key = (
+            str(donor.control_state_code).zfill(2),
+            str(donor.control_county_code).zfill(3),
+            str(donor.control_site_num).zfill(4),
+            str(donor.control_poc),
+        )
+        values = series.get(donor_key)
+        if values is None:
+            raise RuntimeError(
+                "Checksum-pinned archives lack the selected stable donor series: "
+                + "-".join(donor_key)
+            )
+        donor_columns["-".join(donor_key)] = values
+    donor_frame = pd.DataFrame(donor_columns).sort_index()
+    metadata = selected_donors.copy()
+    metadata.index = donor_frame.columns
+    anchor_date = pd.Timestamp(selected["pseudo_anchor_date"])
+    calibration = slice(
+        anchor_date - pd.Timedelta(days=180),
+        anchor_date - pd.Timedelta(days=15),
+    )
+    prior = donor_weights(metadata)
+    weights = reliability_constrained_weights(
+        target.loc[calibration],
+        donor_frame.loc[calibration],
+        prior,
+        ridge_penalty=0.1,
+        prior_penalty=0.1,
+    )
+    pre_values = target.loc[calibration].dropna().to_numpy(dtype=float)
+    if len(pre_values) < 60:
+        raise RuntimeError("Synthetic motivating example lacks 60 calibration observations.")
+    robust_scale = max(
+        1.4826 * float(np.median(np.abs(pre_values - np.median(pre_values)))), 0.5
+    )
+    multiplier = float(config["injection"]["magnitude_multiplier"])
+    magnitude = robust_scale * 2 * multiplier
+    display_before = int(config["display"]["days_before_anchor"])
+    display_after = int(config["display"]["days_after_anchor"])
+    visible = slice(
+        anchor_date - pd.Timedelta(days=display_before),
+        anchor_date + pd.Timedelta(days=display_after),
+    )
+    raw_donor, _ = weighted_donor_series(donor_frame, weights, logarithmic=False)
+    raw_calibration = pd.concat(
+        [target.rename("target"), raw_donor.rename("donor")],
+        axis="columns",
+        sort=False,
+    ).loc[calibration].dropna()
+    log_target = np.log1p(target.clip(lower=0.0))
+    log_donor, _ = weighted_donor_series(donor_frame, weights, logarithmic=True)
+    log_calibration = pd.concat(
+        [log_target.rename("target"), log_donor.rename("donor")],
+        axis="columns",
+        sort=False,
+    ).loc[calibration].dropna()
+    if raw_calibration.empty or log_calibration.empty:
+        raise RuntimeError("Synthetic motivating example has no donor calibration overlap.")
+    raw_offset = float(np.median(raw_calibration["target"] - raw_calibration["donor"]))
+    log_offset = float(np.median(log_calibration["target"] - log_calibration["donor"]))
+
+    variants: dict[str, pd.DataFrame] = {}
+    for label, field in (("local", "local_kind"), ("regional", "regional_kind")):
+        changed_target, changed_donors, _ = inject_perturbation(
+            target,
+            donor_frame,
+            anchor_date,
+            PerturbationKind(str(config["injection"][field])),
+            magnitude,
+            random_seed=int(config["injection"]["random_seed"]),
+        )
+        changed_raw_donor, _ = weighted_donor_series(
+            changed_donors, weights, logarithmic=False
+        )
+        changed_log_donor, _ = weighted_donor_series(
+            changed_donors, weights, logarithmic=True
+        )
+        display = pd.concat(
+            [
+                changed_target.rename("target"),
+                (changed_raw_donor + raw_offset).rename("donor_composite"),
+                (
+                    np.log1p(changed_target.clip(lower=0.0))
+                    - changed_log_donor
+                    - log_offset
+                ).rename("residual"),
+            ],
+            axis="columns",
+            sort=False,
+        ).loc[visible]
+        display["relative_day"] = (display.index - anchor_date).days
+        variants[label] = display
+    return {
+        "case_id": str(selected["case_id"]),
+        "anchor_date": anchor_date,
+        "magnitude": magnitude,
+        "weights": {key: float(value) for key, value in weights.items()},
+        "variants": variants,
+    }
+
+
 def case_study_manifest(
     summary: dict[str, Any], config: dict[str, Any], cases: list[dict[str, Any]]
 ) -> dict[str, Any]:
@@ -883,6 +1211,8 @@ def case_study_manifest(
                 "nested_interval": list(case["nested_interval"]),
                 "placebo_count": case["placebo_count"],
                 "placebo_p_value": case["placebo_p_value"],
+                "placebo_actual_score": case["placebo_actual_score"],
+                "placebo_median_score": case["placebo_median_score"],
                 "leave_one_donor_out_direction_fraction": case[
                     "leave_one_donor_out_fraction"
                 ],
@@ -909,6 +1239,8 @@ def build_claim_value_manifest(
     data: dict[str, Any],
     cases: list[dict[str, Any]],
     case_config: dict[str, Any],
+    window_config: dict[str, Any],
+    external_config: dict[str, Any],
 ) -> dict[str, Any]:
     """Derive the exact display fragments for every formal-paper ledger claim."""
 
@@ -926,6 +1258,22 @@ def build_claim_value_manifest(
     risk = data["risk"]
     method_results = data["method_results"]
     stable_manifest = data["stable_manifest"]
+    anchor_dates = pd.to_datetime(audit["anchor_date"], errors="raise")
+    anchors_2023 = audit.loc[anchor_dates.dt.year == 2023]
+    pair_counts_2023 = (
+        anchors_2023.assign(
+            old_method_code=anchors_2023["old_method_code"].astype(str),
+            new_method_code=anchors_2023["new_method_code"].astype(str),
+        )
+        .groupby(["old_method_code", "new_method_code"], dropna=False)
+        .size()
+        .sort_values(ascending=False)
+    )
+    paired_alignment_count = int(
+        pair_counts_2023.loc[("236", "636")]
+        + pair_counts_2023.loc[("238", "638")]
+    )
+    qa_counts = external_config["qa_collocation_evidence"]["expected_counts"]
     aggregate = metrics.loc[metrics["perturbation_family"].isna()].set_index("method")
     audit_counts = audit["audit_status"].value_counts()
     complete_audit_count = int(audit_counts["complete"])
@@ -995,7 +1343,7 @@ def build_claim_value_manifest(
             format_decimal(standard["macro_f1"], 5),
             format_decimal(standard["regional_false_positive_rate"], 3),
         ],
-        "Q08": ["fixed-prior", "cross-validated"],
+        "Q08": ["reliability-prior", "cross-validated"],
         "Q09": [
             format_decimal(cv["paired_mae_difference_vs_standard"], 5),
             format_decimal(cv["paired_mae_difference_95ci"][0], 5),
@@ -1155,6 +1503,24 @@ def build_claim_value_manifest(
         "Q36": [
             *(str(case["anchor_id"]) for case in cases),
             "1e-9",
+        ],
+        "Q37": [
+            f"{len(anchors_2023)}/{len(audit)}",
+            percent(len(anchors_2023) / len(audit), 1).replace(r"\%", "%"),
+            f"{paired_alignment_count}/{len(anchors_2023)}",
+            percent(paired_alignment_count / len(anchors_2023), 1).replace(
+                r"\%", "%"
+            ),
+        ],
+        "Q38": [
+            "t0-180 through t0-15",
+            str(window_config["windows"]["calibration"]["inclusive_calendar_dates"]),
+            str(window_config["windows"]["calibration_pre_overlap_calendar_dates"]),
+        ],
+        "Q39": [
+            str(qa_counts["candidates"]),
+            str(qa_counts["target_poc_matched"]),
+            str(qa_counts["adequate_matched_pre_post"]),
         ],
     }
     return {
@@ -1776,6 +2142,78 @@ def create_tables(
         size=r"\scriptsize",
         scale_to_width=True,
     )
+    anchor_dates = pd.to_datetime(audit["anchor_date"], errors="raise")
+    anchors_2023 = audit.loc[anchor_dates.dt.year == 2023].copy()
+    pair_counts = (
+        anchors_2023.assign(
+            old_method_code=anchors_2023["old_method_code"].astype(str),
+            new_method_code=anchors_2023["new_method_code"].astype(str),
+        )
+        .groupby(
+            [
+                "old_method_code",
+                "new_method_code",
+                "old_method_name",
+                "new_method_name",
+            ],
+            dropna=False,
+        )
+        .size()
+        .sort_values(ascending=False)
+    )
+    top_pairs = pair_counts.head(2)
+    paired_count = int(top_pairs.sum())
+    top_date = (
+        anchors_2023.assign(anchor_date=anchor_dates.loc[anchors_2023.index])
+        .groupby("anchor_date")
+        .size()
+        .sort_values(ascending=False)
+        .index[0]
+    )
+    top_date_count = int(
+        (
+            anchor_dates.loc[anchors_2023.index] == top_date
+        ).sum()
+    )
+    top_state = anchors_2023["target_state"].astype(str).value_counts().index[0]
+    top_state_count = int(
+        (anchors_2023["target_state"].astype(str) == top_state).sum()
+    )
+    concentration_rows = [
+        [
+            "Anchors dated in 2023",
+            f"{len(anchors_2023)}/{len(audit)} ({percent(len(anchors_2023) / len(audit), 1)})",
+        ],
+    ]
+    for (old_code, new_code, old_name, new_name), count in top_pairs.items():
+        concentration_rows.append(
+            [
+                latex_escape(
+                    f"{old_code} -> {new_code}: {old_name} -> {new_name}"
+                ),
+                str(int(count)),
+            ]
+        )
+    concentration_rows.extend(
+        [
+            [
+                "Top two named code-pair transitions among 2023 anchors",
+                f"{paired_count}/{len(anchors_2023)} ({percent(paired_count / len(anchors_2023), 1)})",
+            ],
+            ["Largest single 2023 date", f"{top_date.date().isoformat()}: {top_date_count}"],
+            ["Largest 2023 state-code subtotal", f"{top_state}: {top_state_count}"],
+        ]
+    )
+    tables[TABLES / "table_anchor_concentration.tex"] = latex_table(
+        "anchor-concentration",
+        "Appendix-only temporal concentration of reported 88101 metadata anchors.",
+        r"p{0.76\linewidth}r",
+        ["Descriptive observation", "Count"],
+        concentration_rows,
+        "Method Code names are reported AQS metadata. The clustering is descriptive and "
+        "does not establish a hardware, agency, policy, data-processing, or administrative cause.",
+        size=r"\scriptsize",
+    )
     return tables
 
 
@@ -1804,7 +2242,9 @@ def save_figure(
     )
 
 
-def create_case_study_figure(
+# Retained only as a historical implementation reference; write_assets uses
+# figure_factory.create_revised_figures for every current report figure.
+def _retired_create_case_study_figure(
     cases: list[dict[str, Any]], outputs: list[dict[str, Any]]
 ) -> None:
     figure, axes = plt.subplots(3, len(cases), figsize=(8.35, 8.8), squeeze=False)
@@ -1842,7 +2282,7 @@ def create_case_study_figure(
                 counterfactual,
                 color="#2563EB",
                 linewidth=1.1,
-                label="Fixed-prior counterfactual",
+                label="Reliability-prior counterfactual",
             )
             residual = case["residual"].loc[visible_slice]
             middle.plot(residual, color="#7C3AED", linewidth=1.1)
@@ -1983,7 +2423,7 @@ def create_case_study_figure(
     )
 
 
-def create_figures(
+def _retired_create_figures(
     summary: dict[str, Any],
     data: dict[str, Any],
     cases: list[dict[str, Any]],
@@ -2584,7 +3024,7 @@ def create_figures(
         ],
         outputs,
     )
-    create_case_study_figure(cases, outputs)
+    _retired_create_case_study_figure(cases, outputs)
 
 
 def load_data() -> dict[str, Any]:
@@ -2644,7 +3084,16 @@ def load_data() -> dict[str, Any]:
         "risk": pd.read_csv(
             ROOT / "artifacts/synthetic_risk_coverage_stable_full_v2.csv"
         ),
+        "external_validation": pd.read_csv(
+            ROOT / "artifacts/external_validation_evidence.csv"
+        ),
+        "secondary_audit": pd.read_csv(
+            ROOT / "artifacts/real_transition_88502_event_audit.csv"
+        ),
         "stable_manifest": load_json("artifacts/stable_synthetic_case_manifest.json"),
+        "split_audit": load_json(
+            "artifacts/stable_synthetic_case_split_audit.json"
+        ),
     }
 
 
@@ -2658,9 +3107,16 @@ def add_output_hashes(outputs: list[dict[str, Any]]) -> None:
 def write_assets() -> None:
     summary = json.loads(SUMMARY_PATH.read_text(encoding="utf-8"))
     verify_frozen_inputs(summary)
-    case_config = load_case_rendering_config()
+    case_config = verify_case_rendering_inputs()
+    synthetic_config = verify_synthetic_example_inputs()
+    external_config = verify_external_evidence_inputs()
+    window_config = verify_window_protocol_inputs()
     data = load_data()
-    cases = build_case_records(data, case_config)
+    series = load_case_series(case_config)
+    cases = build_case_records(data, case_config, series)
+    synthetic_example = build_synthetic_motivating_example(
+        synthetic_config, series
+    )
     GENERATED.mkdir(parents=True, exist_ok=True)
     TABLES.mkdir(parents=True, exist_ok=True)
     FIGURES.mkdir(parents=True, exist_ok=True)
@@ -2679,7 +3135,15 @@ def write_assets() -> None:
     write_text(
         claim_values_path,
         json.dumps(
-            build_claim_value_manifest(summary, data, cases, case_config), indent=2
+            build_claim_value_manifest(
+                summary,
+                data,
+                cases,
+                case_config,
+                window_config,
+                external_config,
+            ),
+            indent=2,
         )
         + "\n",
     )
@@ -2692,7 +3156,9 @@ def write_assets() -> None:
                 "artifacts/stable_synthetic_case_manifest.json",
                 "artifacts/real_transition_88101_evidence_tiers.csv",
                 "artifacts/real_transition_88101_method_results.csv",
-                "paper/latex/configs/case_study_rendering_v1.json",
+                "paper/latex/configs/case_study_rendering_v2.json",
+                "paper/latex/configs/window_protocol_audit_v1.json",
+                "paper/latex/configs/external_evidence_rendering_v1.json",
             ],
         }
     )
@@ -2708,9 +3174,45 @@ def write_assets() -> None:
             "sources": [
                 "artifacts/real_transition_88101_evidence_tiers.csv",
                 "artifacts/real_transition_88101_method_results.csv",
-                "paper/latex/configs/case_study_rendering_v1.json",
+                "paper/latex/configs/case_study_rendering_v2.json",
                 "artifacts/data_gate/source_manifest.json",
                 "artifacts/data_gate/geographic_controls.csv",
+            ],
+        }
+    )
+    synthetic_manifest_path = GENERATED / "synthetic_motivating_example_manifest.json"
+    write_text(
+        synthetic_manifest_path,
+        json.dumps(
+            {
+                "schema_version": 1,
+                "purpose": "Display-only stable-window synthetic example.",
+                "frozen_evidence": summary["frozen_evidence"],
+                "result_label": summary["result_label"],
+                "configuration": {
+                    "path": relative_to_root(SYNTHETIC_EXAMPLE_CONFIG_PATH),
+                    "sha256": sha256(SYNTHETIC_EXAMPLE_CONFIG_PATH),
+                },
+                "case_id": synthetic_example["case_id"],
+                "anchor_date": synthetic_example["anchor_date"].date().isoformat(),
+                "additive_magnitude": synthetic_example["magnitude"],
+                "weights": synthetic_example["weights"],
+            },
+            indent=2,
+        )
+        + "\n",
+    )
+    outputs.append(
+        {
+            "path": str(synthetic_manifest_path.relative_to(LATEX_ROOT)).replace(
+                "\\", "/"
+            ),
+            "kind": "synthetic_example_manifest",
+            "sources": [
+                "paper/latex/configs/synthetic_motivating_example_v1.json",
+                "artifacts/stable_synthetic_cases.csv",
+                "artifacts/stable_synthetic_case_donors.csv",
+                "paper/latex/configs/case_study_rendering_v2.json",
             ],
         }
     )
@@ -2723,7 +3225,18 @@ def write_assets() -> None:
                 "sources": ["configs/current_evidence_summary_v2.json"],
             }
         )
-    create_figures(summary, data, cases, outputs)
+    create_revised_figures(
+        summary,
+        data,
+        cases,
+        synthetic_example,
+        window_config,
+        external_config,
+        FIGURES,
+        save_figure,
+        format_decimal,
+        outputs,
+    )
     add_output_hashes(outputs)
     manifest = {
         "schema_version": 3,
@@ -2735,7 +3248,12 @@ def write_assets() -> None:
             {"path": path, "sha256": source_hashes(summary)[path]}
             for path in REQUIRED_ARTIFACTS
         ],
-        "presentation_input_sources": presentation_input_sources(case_config),
+        "presentation_input_sources": presentation_input_sources(
+            case_config,
+            synthetic_config,
+            external_config,
+            window_config,
+        ),
         "outputs": outputs,
     }
     write_text(MANIFEST_PATH, json.dumps(manifest, indent=2) + "\n")

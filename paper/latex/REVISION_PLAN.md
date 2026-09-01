@@ -29,20 +29,26 @@ no-calibrated-real-interval boundaries.
 
 ## Current execution state
 
-The scientific narrative, deterministic display layer, and technical review are
-**complete**. A clean-worktree final-mode build from
-`e9fbf3c8dda4fb0755fd0d5770fa966e7ebfe206` produced a 36-page canonical
-`MetaShift_Bench_Yau_2026.pdf`; it matches its named build copy at SHA-256
-`2cb941ca6acc91b7937bdf4626db04a9cdb34ceb0814ae4ea81db0c885437e08`.
-The report contains 32 generated presentation assets, 36 evidence-ledger
-claims, and 33 cited references. The final compliance gate passes 13 checks,
-with no overfull boxes and no Type 3 or unembedded fonts across its 15-PDF font
-audit.
+The earlier 36-page PDF and its 13-check formal-compliance record are a
+superseded presentation baseline, not the current sign-off. The active
+revision replaces generic or logically ambiguous graphics with data-derived,
+hash-pinned figures; records the exact inclusive window implementation and
+its 46-date calibration/pre overlap; and adds the external QA availability
+ladder and appendix-only 2023 descriptive concentration analysis.
 
-No further technical handoff requires new data, analysis, tuning, taxonomy
-work, or an evidence-release change. The CI-safe public-document checker now
-writes to an ignored transient artifact by default, leaving the frozen
-release `results/document_consistency.json` unchanged.
+The current staged source generates 36 presentation assets and maps 39
+quantitative claims to frozen evidence. Its new figure QA checks 16 figures
+for source hashes, vector structure, full-event accounting, input-footprint
+isolation, nested-placebo arithmetic, interval construction, external
+availability counts, deterministic case reconstruction, and descriptive
+concentration arithmetic. A clean-worktree final-mode build and final
+page-by-page review remain required before this revision can be called
+technically complete.
+
+No new data, analysis, tuning, taxonomy work, or evidence-release change is
+permitted during this revision. The CI-safe public-document checker writes to
+an ignored transient artifact by default, leaving the frozen release
+`results/document_consistency.json` unchanged.
 
 All contribution, identity, taxonomy, advisor, AI-use, signature, stamp,
 plagiarism, integrity-declaration, and final-attestation items remain human

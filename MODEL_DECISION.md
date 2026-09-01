@@ -39,11 +39,11 @@ a stable advantage across the complex local-shape profile.
 
 ## Rationale
 
-The fixed-prior round over-constrained donor weights for some target states and
-larger injected shifts. The cross-validated round addressed that mechanism,
-but its additive MAE gain was effectively zero and it worsened the aggregate
-complex-shape profile. These constitute two consecutive rounds without stable,
-predeclared improvement.
+The fixed reliability-prior round over-constrained donor weights for some
+target states and larger injected shifts. The cross-validated round addressed
+that mechanism, but its additive MAE gain was effectively zero and it worsened
+the aggregate complex-shape profile. These constitute two consecutive rounds
+without stable, predeclared improvement.
 
 Further tuning against the same development cases would increase selection
 bias. The final-test target states must not be used to rescue the algorithm
@@ -66,11 +66,11 @@ perturbation variant has 400 evaluation samples.
 
 On the frozen `stable_full_v2` replacement benchmark, standard synthetic
 control had local-effect MAE 0.09983, macro-F1 0.81641, AUPRC 0.91476, and
-regional false-positive rate 0.140. Fixed-prior and cross-validated MetaShift
-had MAE 0.10344/0.09742, macro-F1 0.79515/0.80916, AUPRC 0.89832/0.90178,
-and regional false-positive rate 0.150/0.135. The paired 95% bootstrap
-interval for fixed-prior MetaShift minus standard synthetic control was
-[-0.00401, 0.01163]; the cross-validated interval was
+regional false-positive rate 0.140. Fixed reliability-prior and
+cross-validated MetaShift had MAE 0.10344/0.09742, macro-F1 0.79515/0.80916,
+AUPRC 0.89832/0.90178, and regional false-positive rate 0.150/0.135. The
+paired 95% bootstrap interval for fixed reliability-prior MetaShift minus
+standard synthetic control was [-0.00401, 0.01163]; the cross-validated interval was
 [-0.00772, 0.00347]. Both cross zero. These results fail the algorithm-route
 criterion for confidence-supported aggregate MAE improvement and do not
 support a general superiority claim.

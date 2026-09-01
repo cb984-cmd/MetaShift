@@ -12,8 +12,8 @@
   },
   "result_label": "stable_full_v2",
   "case_rendering_configuration": {
-    "path": "paper/latex/configs/case_study_rendering_v1.json",
-    "sha256": "11df7ecc1adbd2aedf8854f778982ca243e3427f6931b355327156a5386eaab4"
+    "path": "paper/latex/configs/case_study_rendering_v2.json",
+    "sha256": "ef28fd63f07834314824e026788163eb1fe1ee0bab20cbec90da7d152e6f6db0"
   },
   "source_manifest": {
     "path": "artifacts/data_gate/source_manifest.json",
@@ -48,6 +48,8 @@
       ],
       "placebo_count": 87.0,
       "placebo_p_value": 0.0113636363636363,
+      "placebo_actual_score": 1.3962395423889582,
+      "placebo_median_score": 0.1659445257378881,
       "leave_one_donor_out_direction_fraction": 1.0,
       "selected_donors": [
         {
@@ -106,6 +108,8 @@
       ],
       "placebo_count": 100.0,
       "placebo_p_value": 0.4356435643564356,
+      "placebo_actual_score": 0.4501690121743828,
+      "placebo_median_score": 0.3544956011585665,
       "leave_one_donor_out_direction_fraction": 1.0,
       "selected_donors": [
         {
@@ -164,6 +168,8 @@
       ],
       "placebo_count": null,
       "placebo_p_value": null,
+      "placebo_actual_score": null,
+      "placebo_median_score": null,
       "leave_one_donor_out_direction_fraction": null,
       "selected_donors": []
     }

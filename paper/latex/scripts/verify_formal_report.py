@@ -33,6 +33,7 @@ BUILD_REPORT_PATH = LATEX_ROOT / "generated" / "build_report.json"
 CLEAN_BUILD_PATH = LATEX_ROOT / "generated" / "clean_build_record.json"
 VISUAL_PREFLIGHT_PATH = LATEX_ROOT / "generated" / "visual_preflight.json"
 FONT_AUDIT_PATH = LATEX_ROOT / "generated" / "font_audit.json"
+FIGURE_QA_PATH = LATEX_ROOT / "generated" / "figure_qa_validation.json"
 FINAL_PDF_PATH = LATEX_ROOT / "MetaShift_Bench_Yau_2026.pdf"
 NAMED_BUILD_PDF_PATH = LATEX_ROOT / "build" / "MetaShift_Bench_Yau_2026.pdf"
 RENDER_DIR = LATEX_ROOT / "rendered_pages"
@@ -133,6 +134,7 @@ def main() -> None:
         VISUAL_PREFLIGHT_PATH, record_violations, "visual_preflight"
     )
     font_audit = load_json(FONT_AUDIT_PATH, record_violations, "font_audit")
+    figure_qa = load_json(FIGURE_QA_PATH, record_violations, "figure_qa_validation")
 
     checks: list[dict[str, object]] = []
     main_source = read_text(MAIN_PATH)
@@ -230,14 +232,14 @@ def main() -> None:
 
     ledger_ok = (
         ledger.get("all_checks_passed") is True
-        and ledger.get("claim_count", 0) == 36
+        and ledger.get("claim_count", 0) == 39
         and ledger.get("asset_reference_count", 0) >= 60
     )
     add_check(
         checks,
         "claim_ledger_validation",
         ledger_ok,
-        "All 36 quantitative formal-paper claims map to hash-verified sources and assets.",
+        "All 39 quantitative formal-paper claims map to hash-verified sources and assets.",
     )
 
     source_ok = (
@@ -260,7 +262,19 @@ def main() -> None:
         and len(assets.get("outputs", [])) >= 32
         and asset_determinism.get("all_hashes_match") is True
         and asset_determinism.get("output_count", 0) >= 32,
-        "Two independent paper-asset generations have identical hashes for 32 or more outputs.",
+        "Two independent paper-asset generations have identical hashes for 36 or more outputs.",
+    )
+
+    figure_qa_ok = (
+        figure_qa.get("all_checks_passed") is True
+        and figure_qa.get("required_figure_count") == 16
+        and len(figure_qa.get("checks", [])) >= 10
+    )
+    add_check(
+        checks,
+        "figure_logical_and_vector_validation",
+        figure_qa_ok,
+        "All 16 figures pass source-hash, vector, accounting, isolation, interval, and display-contract checks.",
     )
 
     normalized_sections = normalized(all_sections)
@@ -341,7 +355,7 @@ def main() -> None:
 
     font_ok = (
         font_audit.get("all_checks_passed") is True
-        and font_audit.get("pdf_count", 0) >= 15
+        and font_audit.get("pdf_count", 0) >= 17
         and font_audit.get("font_count", 0) > 0
         and build.get("font_audit") == "paper/latex/generated/font_audit.json"
     )

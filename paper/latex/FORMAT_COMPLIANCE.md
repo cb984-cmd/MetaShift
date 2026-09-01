@@ -27,17 +27,21 @@ the post-build audit opened a new figure and methods revision, recorded in
 - [x] Source, reference, claim-ledger, asset-determinism, and figure-QA
   validators pass in source mode: 39 claims, 70 evidence-asset references, 38
   deterministic assets, 17 figures, and 33 citations/33 bibliography entries.
-- [ ] A clean final build records its source commit, PDF checksum, page count,
-  and zero-overfull-box result.
-- [ ] Every final-PDF page and all 17 figure placements have 150-DPI and
+- [x] Clean report-source commit `2aad488726a04e1a1adda1e768b909b350686aad`
+  records the current 44-page, 1,048,269-byte PDF with SHA-256
+  `08841e8ed3ed9e4a3a69ceddf62a42a385c0077e0a6cdf9d761c20a6ceb22d40` and zero
+  overfull boxes.
+- [x] All 44 final-PDF pages and all 17 figure placements have 150-DPI and
   300-DPI rendered evidence, including 34 focused figure crops.
-- [ ] Final-mode formal-report and font validation pass against that build.
+- [x] Final-mode formal-report validation passes 15/15 checks, and the
+  candidate/canonical PDF plus all figures pass the 18-PDF/125-font audit with
+  zero Type 3 or unembedded fonts.
 - [x] Citation links are restrained for print while remaining functional.
 - [x] The human-only fields remain visibly incomplete until truthful human
   confirmation is supplied.
 
-**Status: source-level visual validation is passing; final-PDF visual
-validation is in progress. No competition-submission completion is claimed.**
+**Status: the strict technical visual and final-PDF validation is complete. No
+competition-submission completion is claimed.**
 
 ## Superseded 16-figure final-build snapshot
 

@@ -6,12 +6,14 @@ evidence release is
 [`v0.3.2-evidence-final`](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final)
 at `57d678ecabebff724d898abe626c9ef80538775b`: release gate 35/35,
 document consistency 12/12, manuscript-number verification 57/57, and 34
-designated two-environment core-artifact hashes match. The formal
+designated two-environment core-artifact hashes match. The stricter formal
 competition-report figure-and-method revision is technically complete: clean
-source commit `bd4164242638f723eb6f5aec72c822507e098030` produced a 41-page
-PDF with SHA-256 `efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc`,
-zero overfull boxes, and 14/14 formal-report checks. Taxonomy stratification
-remains human-blocked.
+report-source commit `2aad488726a04e1a1adda1e768b909b350686aad` produced a
+44-page, 1,048,269-byte PDF with SHA-256
+`08841e8ed3ed9e4a3a69ceddf62a42a385c0077e0a6cdf9d761c20a6ceb22d40`, zero
+overfull boxes, 17 source-bound figures, 38 deterministic assets, 34
+150/300-DPI figure crops, a clean 18-PDF/125-font audit, and 15/15
+formal-report checks. Taxonomy stratification remains human-blocked.
 
 ## Evidence rule
 
@@ -238,17 +240,19 @@ the already viewed 80-site stable-synthetic evaluation set.
   evidence. The draft is machine-validated but remains a pre-submission
   document until the human handoff below is complete. Any new learned method
   additionally requires its own blind, input-disjoint test manifest.
-- [-] **E7b — Complete the stricter formal report figure-and-method
+- [x] **E7b — Complete the stricter formal report figure-and-method
   remediation.** The prior 16-figure visual sign-off at
-  `bd4164242638f723eb6f5aec72c822507e098030` remains historical but is
-  superseded for the stricter acceptance gate. The active work replaces
-  fixed-size diagram boxes with text-measured layouts, adds geometry,
-  typography, grayscale, final-print-width, and 150/300-DPI page-crop checks,
-  splits the representative complete-case and abstention displays, and
-  corrects constrained tables and float placement. It must finish with zero
-  layout violations before it can be marked complete. This presentation-only
-  task does not modify frozen v0.3.2 evidence or lift the human block on
-  taxonomy.
+  `bd4164242638f723eb6f5aec72c822507e098030` remains historical and
+  superseded. Clean report-source commit
+  `2aad488726a04e1a1adda1e768b909b350686aad` passed the measured
+  geometry/typography/grayscale gate for 17 figures (11/11 figure checks),
+  generated 38 deterministic assets, and produced a 44-page canonical PDF
+  with zero overfull boxes. All 44 final-PDF pages and all 34 focused
+  150/300-DPI figure crops were rendered and reviewed; the top-aligned
+  validity-threat table no longer occupies a vertically centered float page.
+  The candidate and canonical PDFs passed the 18-PDF/125-font audit and 15/15
+  formal-report checks. This presentation-only task does not modify frozen
+  v0.3.2 evidence or lift the human block on taxonomy.
 
 ## Human submission handoff
 

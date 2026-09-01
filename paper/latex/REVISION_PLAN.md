@@ -45,10 +45,13 @@ isolation, nested-placebo arithmetic, interval construction, external
 availability counts, deterministic case reconstruction, descriptive
 concentration arithmetic, and measured geometry. The geometry record requires
 node padding, independent-text separation, canvas containment, readable final
-print typography, legend/data separation, and grayscale contrast. A clean
-final build, 150/300-DPI page and crop inspection, final font audit, and
-formal-report validation remain pending. Technical presentation work is
-therefore in progress.
+print typography, legend/data separation, and grayscale contrast. Clean
+report-source commit `2aad488726a04e1a1adda1e768b909b350686aad` completed the
+strict final build: the canonical 44-page PDF has SHA-256
+`08841e8ed3ed9e4a3a69ceddf62a42a385c0077e0a6cdf9d761c20a6ceb22d40`, zero
+overfull boxes, 150/300-DPI rendering for all 44 pages, 34 focused figure
+crops, an 18-PDF/125-font clean audit, and 15/15 formal-report checks.
+Technical presentation work is complete.
 
 No new data, analysis, tuning, taxonomy work, or evidence-release change is
 permitted during this revision. The CI-safe public-document checker writes to

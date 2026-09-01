@@ -5,9 +5,9 @@
 This file records the active technical review of the formal report built from
 the frozen `v0.3.2-evidence-final` evidence release
 (`57d678ecabebff724d898abe626c9ef80538775b`). It reviews the report source,
-deterministic presentation assets, and canonical PDF. It is not a completed
-technical sign-off, student-authorship statement, a Method Code taxonomy review,
-or a completed competition submission.
+deterministic presentation assets, and canonical PDF. It records a completed
+technical presentation sign-off, but it is not a student-authorship statement,
+a Method Code taxonomy review, or a completed competition submission.
 
 ## Superseded presentation baseline
 
@@ -43,8 +43,12 @@ as the current report sign-off.
   The claim ledger maps **39** claims through **70** evidence-asset references;
   source and reference validation cover **33** citations and **33**
   bibliography entries.
-- A clean final build, 150/300-DPI page and figure-crop review, final PDF/font
-  audit, and final formal-report gate remain required before technical sign-off.
+- Clean report-source commit `2aad488726a04e1a1adda1e768b909b350686aad`
+  produced the current 44-page, 1,048,269-byte canonical PDF with SHA-256
+  `08841e8ed3ed9e4a3a69ceddf62a42a385c0077e0a6cdf9d761c20a6ceb22d40` and zero
+  overfull boxes. All 44 pages and 34 figure crops were rendered at 150 and
+  300 DPI and reviewed; the final candidate/canonical gate passed 15/15
+  checks, and the 18-PDF/125-font audit found zero Type 3 or unembedded fonts.
   The `human_blocked` taxonomy status is unchanged.
 
 ## Superseded 16-figure final-build snapshot

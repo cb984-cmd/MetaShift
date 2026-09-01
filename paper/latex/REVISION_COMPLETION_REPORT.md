@@ -1,20 +1,24 @@
 # Revision completion report
 
-## Active visual-remediation status
+## Completed technical visual-remediation status
 
-The stricter text-measured figure remediation is in progress, not
+The stricter text-measured figure remediation is technically complete, not
 submission-final. Its scientific content remains bound to the frozen
 `v0.3.2-evidence-final` evidence release at
 `57d678ecabebff724d898abe626c9ef80538775b`. No frozen analysis artifact,
 experimental protocol, target partition, donor rule, model parameter, or
 scientific conclusion was changed during the presentation revision.
 
-The active source gate has 17 vector figures and 38 deterministic assets.
-`generated/figure_layout_qa.json` records passing measurements for node
-padding, text separation, canvas boundaries, print typography, legend/data
-placement, and grayscale contrast. A clean final build must still produce the
-final-PDF placement record, 150/300-DPI pages and 34 figure crops, final font
-audit, and formal-report validation before this report may state completion.
+Clean report-source commit `2aad488726a04e1a1adda1e768b909b350686aad`
+produced the current 44-page, 1,048,269-byte canonical PDF with SHA-256
+`08841e8ed3ed9e4a3a69ceddf62a42a385c0077e0a6cdf9d761c20a6ceb22d40` and zero
+overfull boxes. The current source gate has 17 vector figures and 38
+deterministic assets. `generated/figure_layout_qa.json` records passing
+measurements for node padding, text separation, canvas boundaries, print
+typography, legend/data placement, and grayscale contrast. All 44 final-PDF
+pages and all 34 focused figure crops were rendered at 150 and 300 DPI and
+reviewed. The candidate/canonical gate passed 15/15 formal-report checks, and
+the 18-PDF/125-font audit found zero Type 3 or unembedded fonts.
 
 ## Current technical deliverables
 
@@ -29,8 +33,8 @@ audit, and formal-report validation before this report may state completion.
 | Deterministic presentation assets | 38 outputs with matching independent hashes |
 | Source/reference validation | 33 citations and 33 bibliography entries |
 | Source figure verification | 17 vector figures, 11/11 checks, measured layout QA |
-| Final PDF preflight and font audit | Pending clean final build |
-| Canonical PDF and full formal compliance | Pending final-page placement evidence |
+| Final PDF preflight and font audit | Passed: 44 pages at 150/300 DPI; 18 PDFs/125 font records; zero Type 3 or unembedded fonts |
+| Canonical PDF and full formal compliance | Passed: zero overfull boxes; 34 figure crops; 15/15 formal-report checks |
 
 ## Superseded 16-figure technical sign-off
 

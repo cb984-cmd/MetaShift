@@ -42,11 +42,13 @@ separate complete-comparison and abstention figures.
 
 ## Status
 
-**The prior 16-figure technical sign-off is superseded.** The current
-source-level preflight passes 11 checks for 17 vector figures and records the
-measured layout in `generated/figure_layout_qa.json`. Final-PDF placement
-checks, 150/300-DPI crop generation, and rendered-page inspection are pending a
-clean final build. The historical PDF statistics above are no longer a sign-off
-for this source revision. This remains a presentation and reproducibility
-review only; student and teacher completion of the human-only disclosures is
-still required.
+**The prior 16-figure technical sign-off is superseded.** The current strict
+gate passed at clean report-source commit
+`2aad488726a04e1a1adda1e768b909b350686aad`: 11/11 figure checks for 17 vector
+figures, 38 deterministic assets, 44 rendered final-PDF pages at both 150 and
+300 DPI, and 34 focused figure-placement crops. The canonical 44-page PDF has
+SHA-256 `08841e8ed3ed9e4a3a69ceddf62a42a385c0077e0a6cdf9d761c20a6ceb22d40`,
+zero overfull boxes, and passes both the 18-PDF/125-font audit and the 15/15
+formal-report gate. This remains a presentation and reproducibility review
+only; student and teacher completion of the human-only disclosures is still
+required.

@@ -78,7 +78,12 @@ signed off, every figure must have:
 4. a grayscale contrast check; and
 5. a 150-DPI and 300-DPI final-page crop record.
 
-**Status: source-layout preflight is passing for 17 figures, but the previous
-41-page PDF and its 16-figure visual sign-off are historical only. A clean
-final build and rendered-page inspection remain required. This presentation
-work does not complete any human-only submission item.**
+**Status: technical visual remediation is complete.** Clean report-source
+commit `2aad488726a04e1a1adda1e768b909b350686aad` generated the current
+44-page canonical PDF (SHA-256
+`08841e8ed3ed9e4a3a69ceddf62a42a385c0077e0a6cdf9d761c20a6ceb22d40`; 1,048,269
+bytes) with zero overfull boxes. All 17 figures passed the 11/11 source gate,
+all 44 pages were rendered at 150 and 300 DPI, and the 34 focused
+figure-placement crops were reviewed. The candidate and canonical PDFs also
+passed the 18-PDF/125-font audit and 15/15 formal-report checks. This
+presentation work does not complete any human-only submission item.

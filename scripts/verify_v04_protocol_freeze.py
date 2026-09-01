@@ -33,7 +33,13 @@ def check(name: str, passed: bool, detail: str) -> dict[str, object]:
     return {"name": name, "passed": bool(passed), "detail": detail}
 
 
-def build_report() -> dict[str, object]:
+def no_declared_output_exists(output_directory: Path, output_files: list[object]) -> bool:
+    return output_directory.is_dir() and any(
+        (output_directory / str(filename)).exists() for filename in output_files
+    )
+
+
+def build_report(*, require_no_outputs: bool = True) -> dict[str, object]:
     protocol = json.loads(PROTOCOL_PATH.read_text(encoding="utf-8"))
     narrative = NARRATIVE_PATH.read_text(encoding="utf-8")
     panel = protocol.get("synthetic_panel", {})
@@ -43,10 +49,7 @@ def build_report() -> dict[str, object]:
     output = protocol.get("output_contract", {})
     output_directory = ROOT / str(output.get("directory", ""))
     output_files = output.get("files", [])
-    declared_output_exists = (
-        output_directory.is_dir()
-        and any((output_directory / str(filename)).exists() for filename in output_files)
-    )
+    declared_output_exists = no_declared_output_exists(output_directory, output_files)
     checks = [
         check(
             "pre_outcome_identity",
@@ -143,8 +146,13 @@ def build_report() -> dict[str, object]:
             == "configs/v04_identifiability_execution_manifest.json"
             and output.get("attempt_record")
             == "artifacts/.v04_identifiability_core_attempt.json"
-            and not declared_output_exists,
-            "Declared v0.4 result files do not exist before the execution freeze.",
+            and (not require_no_outputs or not declared_output_exists),
+            (
+                "Declared v0.4 result files do not exist before the execution freeze."
+                if require_no_outputs
+                else "Historical pre-execution output absence is not re-evaluated after "
+                "the authorized run."
+            ),
         ),
         check(
             "post_execution_result_validation_contract",

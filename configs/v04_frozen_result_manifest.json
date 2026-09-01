@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "manifest_id": "v0.4.1-frozen-result-provenance",
+  "recorded_at_utc": "2026-09-01T06:19:38.267-04:00",
+  "evidence_status": "frozen_one_time_execution_verified",
+  "evidence_role": "Confirmatory synthetic-contract evidence only; it does not establish real-world scope attribution, mechanism attribution, AQS external validity, or estimator superiority.",
+  "execution_authority": {
+    "execution_tag": "v0.4.1-execution-freeze",
+    "execution_commit": "b286221f13b5da8c18dc30226114400d071421d1",
+    "prior_unrun_tag": "v0.4.0-execution-freeze",
+    "prior_unrun_commit": "9f4660a88beef829e6c3cac72e0d59134b929add",
+    "protocol_id": "v0.4.0-identifiability-core",
+    "protocol_freeze_tag": "v0.4.0-protocol-freeze",
+    "protocol_sha256": "3d42a641601966cbd418f487ef41c3ee12dad16e91493fcf078b60b564bf4244",
+    "execution_manifest_sha256": "8716fb330eed7b876fdf0ca094badeda4762ba4343a070040d63fe34065e20b7",
+    "producing_command": "python scripts\\run_v04_identifiability_benchmark.py --execute",
+    "completed_at_utc": "2026-09-01T06:00:21.192687+00:00"
+  },
+  "post_execution_verification": {
+    "command": "python scripts\\verify_v04_identifiability_results.py --require-results",
+    "artifact_path": "artifacts/v04_identifiability_core/v04_result_verification.json",
+    "artifact_sha256": "8ab8c71d9ce5b194058751269c804f2d066f64341dcf51ef3325df91ef56aa98",
+    "check_count": 14,
+    "passed_check_count": 14,
+    "status": "completed"
+  },
+  "output_root": "artifacts/v04_identifiability_core",
+  "attempt_record_path": "artifacts/.v04_identifiability_core_attempt.json",
+  "hash_semantics": "SHA-256 of each exact written file byte sequence.",
+  "artifacts": [
+    {
+      "path": "artifacts/v04_identifiability_core/v04_core_event_results.csv",
+      "bytes": 1219607,
+      "sha256": "775f3b148e936bcb59026e6982c18ae340f83df37dbe3512cdb4370808658462",
+      "kind": "csv",
+      "data_rows": 2160,
+      "evidence_role": "preregistered_exact_core_events",
+      "schema": [
+        "protocol_id",
+        "execution_tag",
+        "component_id",
+        "split",
+        "case_id",
+        "pair_id",
+        "state",
+        "schedule_family",
+        "schedule_seed",
+        "schedule_sha256",
+        "target_only_score",
+        "comparative_scope_score",
+        "comparative_log_effect",
+        "local_regional_target_identity",
+        "detection_prediction",
+        "forced_scope_prediction",
+        "target_only_scope_prediction",
+        "scope_confidence",
+        "abstention_reason_q0.00",
+        "answered_q0.00",
+        "abstention_reason_q0.25",
+        "answered_q0.25",
+        "abstention_reason_q0.50",
+        "answered_q0.50",
+        "abstention_reason_q0.75",
+        "answered_q0.75"
+      ]
+    },
+    {
+      "path": "artifacts/v04_identifiability_core/v04_core_thresholds.json",
+      "bytes": 387,
+      "sha256": "189bebe6371e7f3e4223a42e2f2e7d57794f2bb5826ae7e60395658d4de2423c",
+      "kind": "json",
+      "evidence_role": "preregistered_calibration_only_thresholds",
+      "required_keys": [
+        "calibration_case_counts",
+        "detection_threshold",
+        "scope_threshold",
+        "selective_confidence_cutoffs"
+      ]
+    },
+    {
+      "path": "artifacts/v04_identifiability_core/v04_core_metrics.json",
+      "bytes": 2033,
+      "sha256": "2dc66758fdd6a04adeecb4829481a9cbd379193b9018561ccceca9a681cb61ce",
+      "kind": "json",
+      "evidence_role": "preregistered_evaluation_metrics",
+      "required_keys": [
+        "complete_event_accounting",
+        "detection",
+        "forced_scope",
+        "selective_scope",
+        "target_identity_rate",
+        "target_only_scope"
+      ]
+    },
+    {
+      "path": "artifacts/v04_identifiability_core/v04_core_bootstrap.json",
+      "bytes": 2328,
+      "sha256": "21b95b35bccba6fa591204bcb4e93a4fb8e8e20705ea2fdae9a59c4ac9385460",
+      "kind": "json",
+      "evidence_role": "preregistered_component_bootstrap",
+      "required_keys": [
+        "cluster",
+        "metrics",
+        "repetitions",
+        "seed"
+      ]
+    },
+    {
+      "path": "artifacts/v04_identifiability_core/v04_stress_results.csv",
+      "bytes": 264242,
+      "sha256": "c93cfda1183584ba01d8fe82f09ef870acac45c2e59b3b5045de39859f6a763a",
+      "kind": "csv",
+      "data_rows": 1800,
+      "evidence_role": "preregistered_raw_scale_stress_diagnostics",
+      "schema": [
+        "protocol_id",
+        "component_id",
+        "split",
+        "stress_family",
+        "stress_seed",
+        "maximum_residual_leakage_bound",
+        "absolute_median_effect_leakage",
+        "bound_satisfied"
+      ]
+    },
+    {
+      "path": "artifacts/v04_identifiability_core/v04_execution_receipt.json",
+      "bytes": 2145,
+      "sha256": "623f7f1f1f3a41ceac834dac61cf5faf857d4e173a574ec4d4e2321e99a1bbac",
+      "kind": "json",
+      "evidence_role": "preregistered_durable_execution_receipt",
+      "required_keys": [
+        "allowed_input_hashes",
+        "completed_at_utc",
+        "execution_git_commit",
+        "execution_manifest_sha256",
+        "execution_tag",
+        "failure_count",
+        "input_count_accounting",
+        "output_hashes",
+        "protocol_freeze_tag",
+        "protocol_id",
+        "protocol_sha256",
+        "remote_execution_tag_commit",
+        "state"
+      ]
+    },
+    {
+      "path": "artifacts/v04_identifiability_core/v04_result_verification.json",
+      "bytes": 3067,
+      "sha256": "8ab8c71d9ce5b194058751269c804f2d066f64341dcf51ef3325df91ef56aa98",
+      "kind": "json",
+      "evidence_role": "post_execution_deterministic_replay_verification",
+      "required_keys": [
+        "all_checks_passed",
+        "checks",
+        "generated_at_utc",
+        "scope",
+        "state",
+        "verification_output_path"
+      ]
+    },
+    {
+      "path": "artifacts/.v04_identifiability_core_attempt.json",
+      "bytes": 1481,
+      "sha256": "f645be04306e45d72b45bc3af5e12f2aeb0b40922799856a314ff9c828ef1b78",
+      "kind": "json",
+      "evidence_role": "preregistered_durable_attempt_chain",
+      "required_keys": [
+        "allowed_input_hashes",
+        "completed_at_utc",
+        "execution_git_commit",
+        "execution_manifest_sha256",
+        "execution_receipt_sha256",
+        "execution_tag",
+        "protocol_sha256",
+        "remote_execution_tag_commit",
+        "state"
+      ]
+    }
+  ],
+  "archival_plan": {
+    "mechanism": "content-addressed archive in ignored evidence_bundle/ for attachment to an immutable GitHub Release asset",
+    "archive_path": "evidence_bundle/MetaShift-v04-frozen-evidence-b286221f13b5.zip",
+    "sidecar_manifest_path": "evidence_bundle/MetaShift-v04-frozen-evidence-b286221f13b5-manifest.json",
+    "source_snapshot_tag": "v0.4.1-execution-freeze",
+    "release_status": "pending_human_publication_decision",
+    "release_command_template": "gh release create v0.4.1-execution-freeze --title \"MetaShift v0.4.1 Frozen Synthetic Evidence\" --notes-file paper\\upgrade\\V04_FROZEN_RESULT_PROVENANCE.md evidence_bundle\\MetaShift-v04-frozen-evidence-b286221f13b5.zip evidence_bundle\\MetaShift-v04-frozen-evidence-b286221f13b5-manifest.json"
+  }
+}

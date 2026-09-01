@@ -34,7 +34,11 @@ def check(name: str, passed: bool, detail: str) -> dict[str, object]:
     return {"name": name, "passed": bool(passed), "detail": detail}
 
 
-def build_report() -> dict[str, object]:
+def no_outputs_before_execution(output_directory: Path, attempt_record: Path) -> bool:
+    return not output_directory.exists() and not attempt_record.exists()
+
+
+def build_report(*, require_no_outputs: bool = True) -> dict[str, object]:
     protocol = json.loads(PROTOCOL_PATH.read_text(encoding="utf-8"))
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
     contract = protocol["output_contract"]
@@ -151,8 +155,14 @@ def build_report() -> dict[str, object]:
         ),
         check(
             "no_outputs_before_execution",
-            not output_directory.exists() and not attempt_record.exists(),
-            "No v0.4 result directory or one-time attempt record exists.",
+            not require_no_outputs
+            or no_outputs_before_execution(output_directory, attempt_record),
+            (
+                "No v0.4 result directory or one-time attempt record exists."
+                if require_no_outputs
+                else "Historical pre-execution output absence is not re-evaluated after "
+                "the authorized run."
+            ),
         ),
     ]
     return {

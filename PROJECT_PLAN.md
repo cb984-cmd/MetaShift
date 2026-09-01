@@ -12,9 +12,11 @@ candidate v0.4 post-window observations, scores, or outcomes were read.
 The prior 44-page LaTeX report and its presentation checks remain an archived
 v0.3.2 presentation baseline, not the active manuscript. The v0.4 theory,
 novelty, and one-time result-integrity gates now support only its narrow
-synthetic-contract finding. **Manuscript, figure, and taxonomy-stratification
-work remain paused by user direction.** Taxonomy stratification remains
-human-blocked.
+synthetic-contract finding. Taxonomy-independent theory, metric, stress,
+novelty, crosswalk, and preliminary manuscript/figure architecture work may
+proceed after their stated gates. Taxonomy stratification remains human-blocked
+and no final competition manuscript or taxonomy-dependent conclusion may be
+approved autonomously.
 
 ## Evidence rule
 
@@ -78,10 +80,16 @@ replacement or measurement bias.
   error 0.0, and detection macro-F1 0.953125 (95% bootstrap
   0.924833--0.975036). See
   [`paper/upgrade/V04_EXECUTION_AUDIT.md`](paper/upgrade/V04_EXECUTION_AUDIT.md).
-- [!] **P6-P8 -- Manuscript, figures, and adversarial review.** **Paused by
-  user direction.** P5 does not support an algorithm-superiority, causal,
-  instrument-fault, AQS, or external-validity claim, and it does not lift the
-  human block on taxonomy.
+- [~] **P5a -- Frozen evidence packaging.** The active provenance task binds
+  exactly eight ignored one-time output files to a tracked SHA-256, byte-count,
+  schema, row-count, receipt, attempt, replay-verification, and tag-authority
+  manifest. It creates only a non-overwriting ignored `evidence_bundle/`
+  archive after its source commit; it does not rerun the benchmark.
+- [ ] **P6-P8 -- Manuscript, figures, and adversarial review.**
+  Taxonomy-independent preparation is no longer globally paused, but it remains
+  gated on the theory, core-metric, stress-suite, and closest-work audits. P5
+  does not support an algorithm-superiority, causal, instrument-fault, AQS, or
+  external-validity claim, and it does not lift the human block on taxonomy.
 
 ## Current checkpoint
 

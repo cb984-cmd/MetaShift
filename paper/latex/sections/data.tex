@@ -1,32 +1,20 @@
-\section{Data and benchmark construction}
+\section{AQS deployment audit data}
+\suppressfloats[t]
+\label{sec:aqs-data}
 
-\subsection{v0.5 synthetic input boundary}
-
-The primary scope-answerability experiment does not use an observational
-corpus. It constructs bounded target-and-donor panels in memory from fixed
-seed streams. Its component, target, donor, and date identifiers have no
-physical-site identity or relation to AQS data. The execution entry point has
-no input-data path and is prohibited from reading AQS, v0.3.2, v0.4, taxonomy,
-API, or external files. This separation prevents an already viewed
-observational pattern from informing the v0.5 generator, calibration,
-threshold, policy, or interpretation.
-
-The independent synthetic panels are not presented as a realistic physical
-model of PM2.5 transport or monitoring hardware. Their purpose is narrower:
-to create matched scope worlds that preserve the target path while controlling
-the comparison channel. The bounded raw-scale field and clipping-aware
-transformation are adverse tests of the analysis-scale algebra, not claims
-about the prevalence or magnitude of a real raw-scale process.
+The AQS audit is included to study deployment boundaries: whether public
+records support a qualified cross-site comparison and when the audit must
+abstain. It does not label local-versus-shared scope and does not identify a
+physical monitoring mechanism.
 
 \subsection{Primary public-data corpus}
 
-The primary corpus comprises the seven annual EPA AirData daily archives for
-parameter 88101, PM2.5 local conditions, spanning 2019--2025
-\citep{epa_obtaining_aqs,epa_airdata_formats}. The data gate records the
-official download URL, archive bytes, archive SHA-256, selected CSV member,
-retained CSV row count, and acquisition-time modification field for every
-archive. This provenance record permits reconstruction without versioning the
-large raw archives or any API response in the repository.
+The primary corpus comprises seven annual EPA AirData daily archives for
+parameter 88101, PM$_{2.5}$ local conditions, spanning 2019--2025
+\citep{epa_obtaining_aqs,epa_airdata_formats}. The snapshot was acquired on
+2026-08-30 UTC. A versioned data gate records each official URL, archive
+checksum, selected CSV member, and retained row count, enabling reconstruction
+without placing large raw archives or API responses in the repository.
 
 The canonical signal is the reported \texttt{Arithmetic Mean} for
 \texttt{24-HR BLK AVG} observations. The predeclared cleaning rule keeps
@@ -53,11 +41,8 @@ local scope or physical mechanism.
 frozen 88101 inventory (\TotalAnchors{} metadata anchors). A target identity
 includes State--County--Site--POC; alternate POCs at the target physical site
 are excluded, and at most one ranked POC is retained at each other physical
-site. The right panel's mutually exclusive 0-, 1-, 2-, and at-least-3-site
-groups are computed before the common input-window check; only
-\ThreeDonorAnchors{} reach the three-site eligibility threshold. These
-availability counts do not label local scope, physical monitoring changes, or
-mechanism.}
+site. Only \ThreeDonorAnchors{} of \TotalAnchors{} anchors reach the
+three-distinct-site threshold before the common input-window check.}
 \label{fig:donor-construction}
 \end{figure}
 
@@ -73,7 +58,9 @@ An anchor is a persistent reported Method Code transition with at least 60
 calendar days on each side, at least 45 retained observations in each adjacent
 method run, and no more than a seven-day transition gap. Its fields preserve
 the old and new reported codes and method names, but neither field establishes
-why the record changed. An eligible geographic donor must be at a different
+why the record changed. EPA network-data-alignment documentation supplies
+method context but does not date or explain an individual site transition
+\citep{epa_t640_alignment}. An eligible geographic donor must be at a different
 physical site, within the predeclared 100-km radius, method-stable over the
 target window, observed on at least 60 paired pre-event days, and correlated
 at least 0.60 on the log scale before the anchor.
@@ -82,12 +69,13 @@ Physical donor identity is State Code + County Code + Site Number. A target's
 candidate donor list can contain multiple POCs for one physical site, but the
 ranked donor rule retains at most one: highest pre-event correlation, then
 shorter distance, then more paired days, then POC as a deterministic
-tie-breaker. This rule remediates an earlier superseded inventory in which
-multiple POCs could be treated as independent geographic donors. Same-site
-alternate POCs are excluded from geographic donor construction and reserved for
-contextual consistency analysis.
+tie-breaker. An earlier internal inventory could count multiple POCs from one site as
+independent geographic donors. Every AQS result reported here uses the
+corrected physical-site rule; the correction does not affect the separate
+target-fixed benchmark, which has no AQS inputs. Same-site alternate POCs are
+reserved for contextual consistency analysis.
 
-\subsection{Stable-regime synthetic cases}
+\subsection{Stable-regime benchmark inputs}
 
 Real anchors do not provide known physical-bias truth. The benchmark therefore
 constructs pseudo-anchors only inside stable target and donor method regimes,

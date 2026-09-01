@@ -278,13 +278,13 @@ class FormalFigureValidationTests(unittest.TestCase):
         words = (
             "Figure",
             "15:",
-            "Time-placebo",
+            "Supplementary",
+            "time-placebo",
             "availability",
-            "partition",
             "and",
             "raw",
             "within-event",
-            "placebo-probability",
+            "placebo-score",
             "distribution.",
         )
         xml_words = "".join(

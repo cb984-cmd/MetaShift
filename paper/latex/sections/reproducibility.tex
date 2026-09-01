@@ -1,95 +1,39 @@
-\section{Reproducibility, integrity, and contributions}
+\section{Reproducibility package}
+\suppressfloats[t]
 \label{sec:reproducibility}
 
-\subsection{One-time v0.5 execution and receipt-verified handoff}
-
-The scope-answerability experiment was source-frozen at the following
-annotated tag and commit:
+The project preserves two immutable evidence streams. The stable-regime
+benchmark and AQS deployment audit are bound to:
+\begin{center}
+\small\texttt{\EvidenceTag{}}\\
+\texttt{\EvidenceCommit{}}
+\end{center}
+Their manifest records the source artifacts, checksums, and generated
+presentation assets. The target-fixed answerability experiment is separately
+bound to:
 \begin{center}
 \small\texttt{\VFiveFreezeTag{}}\\
-\texttt{\VFiveExecutionCommit{}}
+\texttt{\VFiveExecutionCommit{}}\\
+receipt SHA-256 prefix \texttt{\VFiveReceiptSHA{}}
 \end{center}
-Before allocating an output directory, its executor acquired the following
-annotated remote claim tag:
-\begin{center}
-\small\texttt{v0.5.0-answerability-execution-claim}
-\end{center}
-The claim binds the source
-freeze, protocol hash, execution-manifest hash, allowlisted source-bundle
-hash, and locked runtime. A local attempt record is written before result
-allocation, so a post-claim setup failure cannot be silently reused as a new
-execution opportunity.
-
-The sole authorized execution wrote immutable result files and a receipt with
-SHA-256 prefix \texttt{\VFiveReceiptSHA{}}. The read-only result verifier
-checks provenance, tag bindings, source hashes, runtime lock, schemas, full
-grid accounting, target and $q=0$ identity, calibration separation,
-certificate envelope accounting, and deterministic replay. It passed all
-eight checks after execution. The frozen-result manifest records every
-artifact's path, bytes, SHA-256, row count, and receipt binding; presentation
-assets are copied only after their source result files and figure manifest
-verify against that receipt.
-
-The v0.5 result directory is intentionally not regenerated, overwritten,
-retuned, or deleted. A reproduction package must use the preserved outputs
-and read-only verifiers; running the executor again with \texttt{--execute}
-is prohibited by the one-time claim contract. This restriction applies even
-if a future reader dislikes the observed comparative frontier, strict-policy
-abstention, or certificate coverage.
-
-\subsection{Frozen v0.3.2 evidence and deployment handoff}
-
-The v0.3.2 deployment-audit numerical evidence remains bound to the
-\EvidenceTag{} release and commit \texttt{\EvidenceCommit{}}. The tracked
-evidence summary names every required scientific artifact, records its
-SHA-256, and specifies the \texttt{stable\_full\_v2} case-manifest checksum.
-The paper asset generator refuses a missing, changed, non-v0.3.2, or
-non-\texttt{stable\_full\_v2} source. It writes every displayed numeric table,
-vector figure, evidence macro, case-study manifest, and asset checksum into a
-paper-local manifest. The generator does not run the scientific pipeline or
-alter the frozen analysis artifacts.
-
-Three presentation-only contracts additionally pin the deterministic
-stable-window illustration, the implemented inclusive window boundaries, and
-the QA-collocation evidence ladder. Each names its input SHA-256 values and
-fails if a display source changes. They make limitations visible in the report
-without adding any result to, or changing any value in, the frozen evidence
-release.
+Its result verifier checks source and protocol bindings, full-grid accounting,
+target and $q=0$ identity, split separation, and deterministic result
+consistency without rerunning the executor.
+The execution authority is recorded under
+\texttt{v0.5.0-answerability-execution-claim}.
 
 \input{generated/tables/table_reproducibility}
 
-The display-only representative-case renderer adds a second provenance layer.
-It checks the case-selection configuration, geographic-donor table, and public
-archive source manifest before locally reconstructing the two complete cases.
-It then compares each recomputed fixed-weight MetaShift effect with the
-reliability-prior penalty against the saved
-frozen method result and fails on an absolute mismatch above $10^{-9}$. This
-allows visual inspection of the underlying time series without committing raw
-EPA archives, raw API responses, credentials, virtual environments, or cache
-directories.
+The repository distinguishes archived-result verification from third-party
+reproduction. Read-only verification confirms that the preserved artifacts and
+their claimed provenance match. Reproduction on another environment requires
+the pinned requirements and records comparison; the frozen two-environment
+check applies to the designated core artifacts, not every local file,
+timestamp, cache, or renderer output.
 
-\subsection{Build and review procedure}
-
-The formal-paper build invokes, in order, read-only v0.5 manuscript-asset
-generation, frozen v0.3.2 asset generation,
-claim-ledger validation, source-structure validation, reference validation,
-asset determinism validation, a clean LaTeX build, a font audit, and
-page-by-page rendering for visual review. Generated assets are deterministic;
-timestamps are confined to validation records rather than used as scientific
-inputs. The final build record reports the exact source commit, PDF SHA-256,
-page count, overfull-box result, font report, and visual-review result.
-
-Reproduction claims are deliberately scoped. The two-environment comparison
-means that the 34 designated core artifacts listed in the frozen comparison
-matched by SHA-256 under the locked requirements file. It does not assert that
-every local file, renderer output, timestamp, or untracked raw archive is
-byte-identical across all systems.
-
-\subsection{Student contribution and integrity boundary}
-
-This report is a technical draft, not a competition submission. Identity,
-authorship, advisor relationship, student understanding, AI-use disclosure,
-taxonomy review, signatures, stamps, plagiarism review, and final attestation
-remain human-only. Required human steps are in
-\texttt{HUMAN\_COMPLETION\_CHECKLIST.md}; automation cannot complete them or
-create a taxonomy-stratified claim.
+The report build regenerates presentation-only tables and figures from verified
+inputs, validates source structure, references, numeric claims, and asset
+determinism, then performs a clean LaTeX build, font audit, and visual review.
+It never changes the archived evidence. The one-time target-fixed executor is
+not part of the document-build path and must not be rerun to improve or replace
+its results.

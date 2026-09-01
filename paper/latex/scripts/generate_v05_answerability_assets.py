@@ -7,12 +7,14 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import shutil
 import struct
 import sys
 import tempfile
 from typing import Any
 
+import matplotlib.pyplot as plt
+from matplotlib.ticker import PercentFormatter
+import numpy as np
 import pandas as pd
 
 
@@ -27,26 +29,26 @@ from scripts import verify_v05_answerability_results as result_verifier
 OUTPUT_DIRECTORY = LATEX_ROOT / "generated"
 TABLE_DIRECTORY = OUTPUT_DIRECTORY / "tables"
 FIGURE_DIRECTORY = OUTPUT_DIRECTORY / "figures"
-SOURCE_FIGURE_DIRECTORY = ROOT / "figures" / "v05_answerability_frontier"
-SOURCE_FIGURE_MANIFEST = SOURCE_FIGURE_DIRECTORY / "v05_figure_manifest.json"
 ASSET_MANIFEST = OUTPUT_DIRECTORY / "v05_answerability_asset_manifest.json"
 LAYOUT_QA = OUTPUT_DIRECTORY / "v05_figure_layout_qa.json"
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 FINAL_PRINT_WIDTH_PT = 453.54
 
-FIGURE_NAMES = (
-    "v05_answerability_frontier.png",
-    "v05_structural_margin_phase_diagram.png",
-    "v05_risk_coverage.png",
-    "v05_certificate_validity_table.png",
-    "v05_failure_mode_map.png",
-)
-FIGURE_OUTPUTS = {
-    "v05_answerability_frontier.png": "fig_v05_answerability_frontier.png",
-    "v05_structural_margin_phase_diagram.png": "fig_v05_structural_margin.png",
-    "v05_risk_coverage.png": "fig_v05_risk_coverage.png",
-    "v05_certificate_validity_table.png": "fig_v05_certificate_validity.png",
-    "v05_failure_mode_map.png": "fig_v05_failure_mode_map.png",
+PRESENTATION_SOURCE_TYPE = "deterministic_receipt_bound_csv_presentation"
+PRESENTATION_RENDERER = {
+    "kind": "deterministic_csv_presentation_renderer",
+    "source": "paper/latex/scripts/generate_v05_answerability_assets.py",
+    "scope": (
+        "Presentation-only visual derivatives from receipt-verified frozen result "
+        "CSVs; no experiment execution, retuning, or outcome-dependent selection."
+    ),
+}
+FIGURE_INPUT_FILES = {
+    "fig_v05_answerability_frontier.png": ("v05_answerability_frontier.csv",),
+    "fig_v05_structural_margin.png": ("v05_scope_pair_results.csv",),
+    "fig_v05_risk_coverage.png": ("v05_policy_metrics.csv",),
+    "fig_v05_certificate_validity.png": ("v05_certificate_validity.csv",),
+    "fig_v05_failure_mode_map.png": ("v05_failure_mode_map.csv",),
 }
 
 
@@ -94,43 +96,76 @@ def write_text_atomic(path: Path, text: str) -> None:
     os.replace(temporary_path, path)
 
 
-def copy_verified_figure(source: Path, destination: Path) -> None:
+def _result_input_records(
+    input_names: tuple[str, ...], paths: dict[str, Path]
+) -> list[dict[str, object]]:
+    records = []
+    for name in input_names:
+        path = paths[name]
+        records.append(
+            {
+                "path": str(path.relative_to(ROOT)).replace("\\", "/"),
+                "sha256": sha256(path),
+                "bytes": path.stat().st_size,
+            }
+        )
+    return records
+
+
+def save_presentation_figure(figure: plt.Figure, destination: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(
         mode="wb",
+        suffix=".png",
         dir=destination.parent,
         prefix=f".{destination.name}.",
         delete=False,
     ) as temporary:
         temporary_path = Path(temporary.name)
     try:
-        shutil.copyfile(source, temporary_path)
-        if sha256(source) != sha256(temporary_path):
-            raise ValueError(f"Copied figure hash differs from its verified source: {source}")
+        figure.savefig(
+            temporary_path,
+            format="png",
+            dpi=300,
+            bbox_inches="tight",
+            facecolor="white",
+            edgecolor="white",
+            metadata={
+                "Software": "MetaShift-Bench receipt-bound presentation renderer"
+            },
+        )
+        width_px, height_px = png_dimensions(temporary_path)
+        if width_px < 1200 or height_px < 500:
+            raise ValueError(
+                f"Presentation figure has insufficient dimensions: {destination.name}"
+            )
         os.replace(temporary_path, destination)
     finally:
+        plt.close(figure)
         if temporary_path.exists():
             temporary_path.unlink()
 
 
-def figure_layout_record(source_name: str, output_name: str) -> dict[str, Any]:
-    source = SOURCE_FIGURE_DIRECTORY / source_name
+def figure_layout_record(
+    output_name: str, input_names: tuple[str, ...], paths: dict[str, Path]
+) -> dict[str, Any]:
     destination = FIGURE_DIRECTORY / output_name
-    width_px, height_px = png_dimensions(source)
+    width_px, height_px = png_dimensions(destination)
     print_width_inches = FINAL_PRINT_WIDTH_PT / 72.0
     effective_ppi = width_px / print_width_inches
+    input_records = _result_input_records(input_names, paths)
     checks = {
-        "valid_png": source.is_file() and destination.is_file(),
-        "source_and_copy_match": sha256(source) == sha256(destination),
+        "valid_png": destination.is_file(),
+        "receipt_verified_csv_inputs": bool(input_records),
         "minimum_effective_print_resolution": effective_ppi >= 200.0,
         "nontrivial_dimensions": width_px >= 1200 and height_px >= 500,
     }
     return {
         "figure": output_name,
-        "source_figure": source_name,
-        "source_type": "receipt_verified_raster_png",
-        "source_width_px": width_px,
-        "source_height_px": height_px,
+        "source_type": PRESENTATION_SOURCE_TYPE,
+        "input_artifacts": input_records,
+        "output_width_px": width_px,
+        "output_height_px": height_px,
         "effective_print_ppi": round(effective_ppi, 2),
         "minimum_effective_print_ppi": 200.0,
         "final_print_width_pt": FINAL_PRINT_WIDTH_PT,
@@ -168,12 +203,303 @@ def _format_count(value: object) -> str:
     return f"{int(value):,}"
 
 
+def _plain_percent(value: object, places: int = 1) -> str:
+    """Use report-facing percentages in figures without decimal-log styling."""
+
+    if pd.isna(value):
+        return "--"
+    rendered = f"{100.0 * float(value):.{places}f}".rstrip("0").rstrip(".")
+    return rendered + "%"
+
+
+def _compact_decimal(value: object, places: int = 2) -> str:
+    if pd.isna(value):
+        return "--"
+    return f"{float(value):.{places}f}".rstrip("0").rstrip(".")
+
+
+def _plain_observed_error(value: object) -> str:
+    if pd.isna(value):
+        return "--"
+    if abs(float(value)) < 1e-12:
+        return "0 observed errors"
+    return _plain_percent(value)
+
+
 def _overall(frame: pd.DataFrame) -> pd.DataFrame:
     return frame.loc[
         (frame["split"] == "evaluation")
         & (frame["group_type"] == "overall")
         & (frame["group_value"] == "all")
     ].copy()
+
+
+def render_answerability_frontier_figure(frontier: pd.DataFrame) -> plt.Figure:
+    selected = _overall(frontier)
+    figure, axis = plt.subplots(figsize=(7.2, 4.2))
+    styles = {
+        "target_only": ("#6B7280", "Target-only"),
+        "comparative": ("#1976D2", "Comparative"),
+        "comparative_plus_synthetic_design_information": (
+            "#8E24AA",
+            "Certificate-assisted",
+        ),
+    }
+    for channel, (color, label) in styles.items():
+        curve = selected.loc[selected["channel"] == channel].sort_values("alpha")
+        axis.plot(
+            curve["alpha"],
+            curve["frontier_coverage"],
+            marker="o",
+            linewidth=2.2,
+            markersize=5.5,
+            color=color,
+            label=label,
+        )
+    axis.set(
+        xlabel="Allowed held-out scope-error tolerance ($\\alpha$)",
+        ylabel="Answerable coverage",
+        ylim=(-0.03, 1.03),
+        xlim=(0.0, 0.21),
+    )
+    axis.set_xticks([0.01, 0.05, 0.10, 0.20])
+    axis.set_yticks(np.arange(0.0, 1.01, 0.2))
+    axis.xaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
+    axis.yaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
+    axis.grid(alpha=0.22)
+    axis.legend(frameon=False)
+    figure.tight_layout()
+    return figure
+
+
+def _heatmap_axes(
+    axis: plt.Axes, q_order: list[str], h_order: list[str], title: str
+) -> None:
+    axis.set(
+        title=title,
+        xticks=np.arange(len(q_order)),
+        xticklabels=["0%", "25%", "50%", "75%", "100%"],
+        yticks=np.arange(len(h_order)),
+        yticklabels=["0.04", "0.08", "0.12", "0.20"],
+        xlabel="Nominal donor participation",
+        ylabel="Signal strength $H$",
+    )
+
+
+def render_structural_margin_figure(pairs: pd.DataFrame) -> plt.Figure:
+    selected = pairs.loc[pairs["split"] == "evaluation"].copy()
+    selected["normalized_margin"] = (
+        selected["q_effective_min"] * selected["h_min"]
+    ) / (selected["local_error_bound"] + selected["shared_error_bound"])
+    q_order = ["q0.00", "q0.25", "q0.50", "q0.75", "q1.00"]
+    h_order = ["h0.04", "h0.08", "h0.12", "h0.20"]
+    margin = selected.pivot_table(
+        index="signal_h_name",
+        columns="nominal_q_name",
+        values="normalized_margin",
+        aggfunc="median",
+    ).reindex(index=h_order, columns=q_order)
+    coverage = selected.pivot_table(
+        index="signal_h_name",
+        columns="nominal_q_name",
+        values="certificate_answered",
+        aggfunc="mean",
+    ).reindex(index=h_order, columns=q_order)
+    figure, axes = plt.subplots(1, 2, figsize=(10.0, 4.1), constrained_layout=True)
+    margin_image = axes[0].imshow(
+        margin.to_numpy(dtype=float), cmap="coolwarm", aspect="auto"
+    )
+    _heatmap_axes(axes[0], q_order, h_order, "Median structural-margin ratio")
+    for row, h_name in enumerate(h_order):
+        for column, q_name in enumerate(q_order):
+            axes[0].text(
+                column,
+                row,
+                _compact_decimal(margin.loc[h_name, q_name]),
+                ha="center",
+                va="center",
+                fontsize=8,
+            )
+    figure.colorbar(
+        margin_image,
+        ax=axes[0],
+        label=r"$q_{\min}H_{\min}/(B_L+B_S)$",
+    )
+    coverage_image = axes[1].imshow(
+        coverage.to_numpy(dtype=float),
+        cmap="viridis",
+        vmin=0.0,
+        vmax=1.0,
+        aspect="auto",
+    )
+    _heatmap_axes(axes[1], q_order, h_order, "Certificate-answered coverage")
+    for row, h_name in enumerate(h_order):
+        for column, q_name in enumerate(q_order):
+            value = coverage.loc[h_name, q_name]
+            axes[1].text(
+                column,
+                row,
+                _plain_percent(value),
+                ha="center",
+                va="center",
+                fontsize=8,
+                color="white" if value < 0.55 else "black",
+            )
+    colorbar = figure.colorbar(
+        coverage_image,
+        ax=axes[1],
+        label="Answered-pair coverage",
+    )
+    colorbar.ax.yaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
+    colorbar.update_ticks()
+    return figure
+
+
+def render_risk_coverage_figure(metrics: pd.DataFrame) -> plt.Figure:
+    selected = _overall(metrics)
+    figure, axis = plt.subplots(figsize=(7.2, 4.2))
+    styles = {
+        "target_only_forced": ("#6B7280", "o", "Target-only forced"),
+        "comparative_forced": ("#1976D2", "s", "Comparative forced"),
+        "confidence_selective": ("#E66A00", "^", "Confidence-selective"),
+        "certificate_selective": ("#8E24AA", "D", "Certificate-selective"),
+    }
+    for policy, (color, marker, label) in styles.items():
+        curve = selected.loc[selected["policy"] == policy].dropna(
+            subset=["conditional_error"]
+        )
+        axis.scatter(
+            curve["conditional_error"],
+            curve["coverage"],
+            label=label,
+            color=color,
+            marker=marker,
+            s=52,
+        )
+    axis.set(
+        xlabel="Held-out conditional scope error",
+        ylabel="Coverage",
+        xlim=(-0.01, 0.52),
+        ylim=(-0.03, 1.03),
+    )
+    axis.set_xticks(np.arange(0.0, 0.51, 0.1))
+    axis.set_yticks(np.arange(0.0, 1.01, 0.2))
+    axis.xaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
+    axis.yaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
+    axis.grid(alpha=0.22)
+    axis.legend(frameon=False, fontsize=8)
+    figure.tight_layout()
+    return figure
+
+
+def render_certificate_validity_figure(certificate: pd.DataFrame) -> plt.Figure:
+    selected = certificate.loc[
+        (certificate["split"] == "evaluation")
+        & (
+            (certificate["group_type"] == "overall")
+            | (certificate["group_type"] == "nominal_q")
+        )
+    ].copy()
+    group_order = ["all", "q0.00", "q0.25", "q0.50", "q0.75", "q1.00"]
+    selected = selected.set_index("group_value").reindex(group_order)
+    rows = []
+    for group, row in selected.iterrows():
+        label = "Overall" if group == "all" else f"$q={int(round(float(group[1:]) * 100))}\\%$"
+        rows.append(
+            [
+                label,
+                _plain_percent(row["certificate_pair_coverage"]),
+                _plain_observed_error(row["certificate_conditional_error"]),
+                _plain_observed_error(row["envelope_violation_rate"]),
+                _plain_percent(row["certificate_efficiency"]),
+            ]
+        )
+    figure, axis = plt.subplots(figsize=(8.5, 2.6))
+    axis.axis("off")
+    rendered = axis.table(
+        cellText=rows,
+        colLabels=[
+            "Group",
+            "Pair coverage",
+            "Observed scope error",
+            "Envelope violations",
+            "Oracle recovery",
+        ],
+        colWidths=[0.14, 0.17, 0.25, 0.25, 0.19],
+        cellLoc="center",
+        loc="center",
+    )
+    rendered.auto_set_font_size(False)
+    rendered.set_fontsize(8)
+    rendered.scale(1.0, 1.35)
+    axis.set_title("Certificate behavior on held-out pairs", pad=10)
+    figure.tight_layout()
+    return figure
+
+
+def render_failure_mode_figure(failure: pd.DataFrame) -> plt.Figure:
+    selected = failure.loc[failure["split"] == "evaluation"].copy()
+    grouped = selected.groupby(["signal_h_name", "nominal_q_name"], sort=False).agg(
+        certificate_coverage=(
+            "certificate_answered_pair_rows",
+            lambda values: values.sum()
+            / selected.loc[values.index, "total_pair_rows"].sum(),
+        ),
+        comparative_error_rate=(
+            "comparative_forced_error_events",
+            lambda values: values.sum()
+            / (2 * selected.loc[values.index, "total_pair_rows"].sum()),
+        ),
+    )
+    q_order = ["q0.00", "q0.25", "q0.50", "q0.75", "q1.00"]
+    h_order = ["h0.04", "h0.08", "h0.12", "h0.20"]
+    coverage = grouped["certificate_coverage"].unstack().reindex(
+        index=h_order, columns=q_order
+    )
+    error = grouped["comparative_error_rate"].unstack().reindex(
+        index=h_order, columns=q_order
+    )
+    figure, axes = plt.subplots(1, 2, figsize=(10.0, 4.1), constrained_layout=True)
+    for axis, values, title, colorbar_label, cmap in (
+        (
+            axes[0],
+            coverage,
+            "Certificate-answered coverage",
+            "Pair coverage",
+            "viridis",
+        ),
+        (
+            axes[1],
+            error,
+            "Comparative-forced error",
+            "Scope-arm error rate",
+            "magma_r",
+        ),
+    ):
+        image = axis.imshow(
+            values.to_numpy(dtype=float),
+            cmap=cmap,
+            vmin=0.0,
+            vmax=1.0,
+            aspect="auto",
+        )
+        _heatmap_axes(axis, q_order, h_order, title)
+        for row, h_name in enumerate(h_order):
+            for column, q_name in enumerate(q_order):
+                value = values.loc[h_name, q_name]
+                axis.text(
+                    column,
+                    row,
+                    _plain_percent(value),
+                    ha="center",
+                    va="center",
+                    fontsize=8,
+                    color="white" if value < 0.45 else "black",
+                )
+        colorbar = figure.colorbar(image, ax=axis, label=colorbar_label)
+        colorbar.ax.yaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
+        colorbar.update_ticks()
+    return figure
 
 
 def render_macros(
@@ -437,7 +763,7 @@ def render_frontier_table(frontier: pd.DataFrame, certificate: pd.DataFrame) -> 
         ]
         rows.append(
             "{} & {} & {} ({}) & {} ({}) \\\\".format(
-                f"{alpha:.2f}",
+                f"{100.0 * alpha:.0f}\\%",
                 _format_percent(target["frontier_coverage"]),
                 _format_percent(comparative["frontier_coverage"]),
                 _format_observed_error(comparative["frontier_conditional_error"]),
@@ -448,10 +774,10 @@ def render_frontier_table(frontier: pd.DataFrame, certificate: pd.DataFrame) -> 
     del channels
     return "\n".join(
         [
-            r"\begin{table}[tbp]",
+            r"\begin{table}[!ht]",
             r"\centering",
             r"\caption{Frozen finite-policy scope-answerability envelope on the",
-            r"held-out v0.5 evaluation components. Parentheses give observed",
+            r"held-out target-fixed evaluation components. Parentheses give observed",
             r"conditional scope error for the policy attaining the displayed coverage;",
             r"\texttt{--} means no positive-coverage candidate qualified. The",
             r"certificate-assisted channel uses synthetic design information and is not",
@@ -482,7 +808,7 @@ def render_certificate_table(certificate: pd.DataFrame) -> str:
     selected = selected.set_index("group_value").reindex(order)
     rows = [
         "{} & {} & {} & {} \\\\".format(
-            f"$q={float(value[1:]):.2f}$",
+            f"$q={int(round(float(value[1:]) * 100))}\\%$",
             _format_percent(row["certificate_pair_coverage"]),
             _format_observed_error(row["certificate_conditional_error"]),
             _format_percent(row["certificate_efficiency"]),
@@ -491,10 +817,10 @@ def render_certificate_table(certificate: pd.DataFrame) -> str:
     ]
     return "\n".join(
         [
-            r"\begin{table}[tbp]",
+            r"\begin{table}[!ht]",
             r"\centering",
             r"\caption{Certificate behavior by nominal donor participation on held-out",
-            r"v0.5 pairs. Oracle-region recovery is the share of predeclared",
+            r"target-fixed pairs. Oracle-region recovery is the share of predeclared",
             r"simulation-information-oracle answerable pairs recovered by the",
             r"certificate; it is undefined at $q=0$ because that negative-control",
             r"stratum has no oracle-answerable pairs. Across these strata, 0 observed",
@@ -560,11 +886,14 @@ def render_failure_table(failure: pd.DataFrame, receipt: dict[str, Any]) -> str:
     ]
     return "\n".join(
         [
-            r"\begin{table}[tbp]",
+            r"\begin{table}[!ht]",
             r"\centering",
             r"\caption{Predeclared failure and abstention accounting on",
-            rf"{total_pairs:,} held-out v0.5 matched pairs. These rows are retained",
-            r"rather than converted into a favorable single score.}",
+            rf"{total_pairs:,} held-out target-fixed matched pairs. These rows are",
+            r"retained rather than converted into a favorable single score. The rows",
+            r"overlap and must not be summed: the $q=0$ row is a subset of the",
+            r"nonpositive-margin row, while arm-level error rows use a different",
+            r"denominator from pair-level rows.}",
             r"\label{tab:v05-failure-accounting}",
             r"\small",
             r"\begin{tabularx}{\linewidth}{@{}p{0.42\linewidth}rX@{}}",
@@ -814,22 +1143,20 @@ def load_verified_inputs() -> tuple[dict[str, Any], dict[str, Path], dict[str, p
     receipt["receipt_sha256_short"] = sha256(
         paths["v05_execution_receipt.json"]
     )[:16] + r"\ldots"
-    figure_manifest = json.loads(SOURCE_FIGURE_MANIFEST.read_text(encoding="utf-8"))
-    if figure_manifest.get("source_receipt_sha256") != sha256(
-        paths["v05_execution_receipt.json"]
-    ):
-        raise ValueError("The source figure manifest is not bound to the frozen receipt.")
-    declared_figures = figure_manifest.get("figures")
-    if not isinstance(declared_figures, dict) or set(declared_figures) != set(FIGURE_NAMES):
-        raise ValueError("The source figure manifest has an unexpected figure inventory.")
-    for name in FIGURE_NAMES:
-        figure_path = SOURCE_FIGURE_DIRECTORY / name
-        record = declared_figures[name]
-        if not figure_path.is_file() or record.get("sha256") != sha256(figure_path):
-            raise ValueError(f"Frozen source figure differs from its manifest: {name}")
-        if record.get("bytes") != figure_path.stat().st_size:
-            raise ValueError(f"Frozen source figure byte count differs: {name}")
     results = {
+        "pairs": pd.read_csv(
+            paths["v05_scope_pair_results.csv"],
+            usecols=[
+                "split",
+                "nominal_q_name",
+                "signal_h_name",
+                "q_effective_min",
+                "h_min",
+                "local_error_bound",
+                "shared_error_bound",
+                "certificate_answered",
+            ],
+        ),
         "frontier": pd.read_csv(paths["v05_answerability_frontier.csv"]),
         "certificate": pd.read_csv(paths["v05_certificate_validity.csv"]),
         "failure": pd.read_csv(paths["v05_failure_mode_map.csv"]),
@@ -876,19 +1203,39 @@ def build_assets() -> dict[str, Any]:
     }
     for path, content in outputs.items():
         write_text_atomic(path, content)
+    figure_builders = {
+        "fig_v05_answerability_frontier.png": lambda: render_answerability_frontier_figure(
+            results["frontier"]
+        ),
+        "fig_v05_structural_margin.png": lambda: render_structural_margin_figure(
+            results["pairs"]
+        ),
+        "fig_v05_risk_coverage.png": lambda: render_risk_coverage_figure(
+            results["policy"]
+        ),
+        "fig_v05_certificate_validity.png": lambda: render_certificate_validity_figure(
+            results["certificate"]
+        ),
+        "fig_v05_failure_mode_map.png": lambda: render_failure_mode_figure(
+            results["failure"]
+        ),
+    }
+    if set(figure_builders) != set(FIGURE_INPUT_FILES):
+        raise RuntimeError("Figure rendering inventory differs from its input contract.")
     figure_outputs: list[Path] = []
-    for source_name, output_name in FIGURE_OUTPUTS.items():
+    for output_name, builder in figure_builders.items():
         destination = FIGURE_DIRECTORY / output_name
-        copy_verified_figure(SOURCE_FIGURE_DIRECTORY / source_name, destination)
+        save_presentation_figure(builder(), destination)
         figure_outputs.append(destination)
     layout = {
         "schema_version": 1,
         "protocol_id": protocol["protocol_id"],
         "source_receipt_sha256": sha256(paths["v05_execution_receipt.json"]),
-        "required_figure_count": len(FIGURE_OUTPUTS),
+        "presentation_renderer": PRESENTATION_RENDERER,
+        "required_figure_count": len(FIGURE_INPUT_FILES),
         "figures": [
-            figure_layout_record(source_name, output_name)
-            for source_name, output_name in FIGURE_OUTPUTS.items()
+            figure_layout_record(output_name, input_names, paths)
+            for output_name, input_names in FIGURE_INPUT_FILES.items()
         ],
     }
     layout["all_checks_passed"] = all(
@@ -911,9 +1258,10 @@ def build_assets() -> dict[str, Any]:
             ),
             "sha256": sha256(paths["v05_execution_receipt.json"]),
         },
-        "source_figure_manifest": {
-            "path": str(SOURCE_FIGURE_MANIFEST.relative_to(ROOT)).replace("\\", "/"),
-            "sha256": sha256(SOURCE_FIGURE_MANIFEST),
+        "presentation_renderer": PRESENTATION_RENDERER,
+        "presentation_figure_inputs": {
+            output_name: _result_input_records(input_names, paths)
+            for output_name, input_names in FIGURE_INPUT_FILES.items()
         },
         "outputs": [
             {

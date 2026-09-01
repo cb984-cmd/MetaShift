@@ -5,44 +5,44 @@
   "generator": "paper/latex/scripts/generate_v05_answerability_assets.py",
   "outputs": [
     {
-      "bytes": 72334,
+      "bytes": 107533,
       "path": "generated/figures/fig_v05_answerability_frontier.png",
-      "sha256": "db39ebf71705d3e30cba8285f5df07096dbef14ee5276557fe2d262092e4d1b5"
+      "sha256": "cb735a022657524cdc6f1c5bd376a929c4a790d214cfa347da8a12e36768b0ce"
     },
     {
-      "bytes": 54133,
+      "bytes": 109746,
       "path": "generated/figures/fig_v05_certificate_validity.png",
-      "sha256": "eb717f72922763b66fd94b0907f4c8ccb8cd099a96d2bc3f29b6f67506fbb64c"
+      "sha256": "4413ee2bc4b94d2f8c36ef37414888e854e00eaffc25755a9fe281a4a3fdf1e1"
     },
     {
-      "bytes": 132631,
+      "bytes": 237250,
       "path": "generated/figures/fig_v05_failure_mode_map.png",
-      "sha256": "62e646bccb947c17b1ff5b7266c862381cda4e86b452dda5872e9d89b60cbc7f"
+      "sha256": "ba2124cb125f2560799314b3e547b8f4811682612e7cb26cd44971ca704100b1"
     },
     {
-      "bytes": 50082,
+      "bytes": 86957,
       "path": "generated/figures/fig_v05_risk_coverage.png",
-      "sha256": "7f6f9e44001865c137566837de585192cfcbc829c52aafc4a95b0ad4ad480675"
+      "sha256": "f11a07ae41bd3bbbd1623957d7f2b3e9ccbc8e8838e2eb0dcc7a17fa980384db"
     },
     {
-      "bytes": 150455,
+      "bytes": 237262,
       "path": "generated/figures/fig_v05_structural_margin.png",
-      "sha256": "a63b9bee081ff2ea898c436020d17a243141c879f2e7c7acbedf1d2676b29668"
+      "sha256": "0e4408350412ee44a95214c9b9fa9965b233e0990ffcc290fc4ca4c37208c183"
     },
     {
-      "bytes": 854,
+      "bytes": 862,
       "path": "generated/tables/table_v05_certificate.tex",
-      "sha256": "33e0aa3f838a538158122a6ed4ea43170a08d58f607950cbaf8b2ee763bbc87a"
+      "sha256": "23d2e80c133dc771172632e33ff7f02784ce1f66580de467505d5eda955c30bd"
     },
     {
-      "bytes": 830,
+      "bytes": 1013,
       "path": "generated/tables/table_v05_failure_accounting.tex",
-      "sha256": "ef97276d4061756a8caf23c9a46d35755d2a3b45a5dbb21571c385789c517343"
+      "sha256": "b393924ad26800962fe2de4b0470ca51298942d60df7a2e6f371e8098bf9dc23"
     },
     {
-      "bytes": 912,
+      "bytes": 918,
       "path": "generated/tables/table_v05_frontier.tex",
-      "sha256": "f6abbaa7e2a7f4d3404fdcd60c2e0ccc18abf0a2c50c1a92aeb1f722d934ff6a"
+      "sha256": "b4b9ebf0713c032af94737efd02a8540e4139260232a2f150186655a5b7d38b1"
     },
     {
       "bytes": 2305,
@@ -55,17 +55,55 @@
       "sha256": "4dadb6af4a3991972573080daecb6b05490ffba38634514a21372911188fa48c"
     },
     {
-      "bytes": 3081,
+      "bytes": 4516,
       "path": "generated/v05_figure_layout_qa.json",
-      "sha256": "7e0a55628140c2f91313c0065077ae0cbc82b29202e837b3dffb56218bb9e398"
+      "sha256": "d9a921d9922673a4d7849e6d7faa6d29771fce005a47b071c9ae29a1ab7c9fca"
     }
   ],
+  "presentation_figure_inputs": {
+    "fig_v05_answerability_frontier.png": [
+      {
+        "bytes": 27119,
+        "path": "artifacts/v05_answerability_frontier/v05_answerability_frontier.csv",
+        "sha256": "76246d55b061d979a8df8852d66e228e1d951f0e3260f5c4a4fa89060cc91eaa"
+      }
+    ],
+    "fig_v05_certificate_validity.png": [
+      {
+        "bytes": 4499,
+        "path": "artifacts/v05_answerability_frontier/v05_certificate_validity.csv",
+        "sha256": "a6f36119f4964f82c8f8c907126cf3d7b88ace627ff920d5a60a3196a672fcd7"
+      }
+    ],
+    "fig_v05_failure_mode_map.png": [
+      {
+        "bytes": 401049,
+        "path": "artifacts/v05_answerability_frontier/v05_failure_mode_map.csv",
+        "sha256": "69ba2d10d5281eec04cd77e1d2d8a7a52f7dbfcd51b5655a4f509e82f6b3bdc1"
+      }
+    ],
+    "fig_v05_risk_coverage.png": [
+      {
+        "bytes": 27402,
+        "path": "artifacts/v05_answerability_frontier/v05_policy_metrics.csv",
+        "sha256": "9996a3a51cb57cbbf53867b6a74a8d9e3c93ce760862c7d03761ef81ece3b6ea"
+      }
+    ],
+    "fig_v05_structural_margin.png": [
+      {
+        "bytes": 392650382,
+        "path": "artifacts/v05_answerability_frontier/v05_scope_pair_results.csv",
+        "sha256": "36649ebe9d1b91927a95766a5757a715cb53f657295fa3471ccf83303c225ede"
+      }
+    ]
+  },
+  "presentation_renderer": {
+    "kind": "deterministic_csv_presentation_renderer",
+    "scope": "Presentation-only visual derivatives from receipt-verified frozen result CSVs; no experiment execution, retuning, or outcome-dependent selection.",
+    "source": "paper/latex/scripts/generate_v05_answerability_assets.py"
+  },
   "protocol_id": "v0.5-answerability-frontier",
   "schema_version": 1,
-  "source_figure_manifest": {
-    "path": "figures/v05_answerability_frontier/v05_figure_manifest.json",
-    "sha256": "2ea55d9476a08f147ca96d4dbf022cb5f733fcb29f02cda11d2bfad2e80290de"
-  },
   "source_receipt": {
     "path": "artifacts/v05_answerability_frontier/v05_execution_receipt.json",
     "sha256": "954fc9b56a8f526644320aa7b1b15ed76844e400e1394ffd8f733729996a87c9"

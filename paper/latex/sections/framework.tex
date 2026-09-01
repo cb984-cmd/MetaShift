@@ -1,95 +1,70 @@
-\section{MetaShift-Bench audit framework}
+\section{Selective audit methods}
+\suppressfloats[t]
+\label{sec:selective-methods}
 
-\subsection{Channel-specific selective scope audit}
+\subsection{Policies for a specified information channel}
 
-The primary benchmark workflow is fixed before evaluation and does not read AQS
-data, v0.3.2 evidence, v0.4 outputs, or taxonomy decisions. It generates
-bounded synthetic target-and-donor panels in memory, assigns calibration and
-evaluation by independent component identifier and seed stream, then applies
-the complete Cartesian product of seven declared factors. Each local/shared
-pair reuses the same target path, target noise, component seed, base panel, and
-non-scope stress factors. The paired arms differ only in how much of the target
-schedule reaches available donors.
+Section~\ref{sec:synthetic-benchmark} defines paired worlds; the policies here
+define what an auditor may do with each allowed channel. The target-only forced
+policy receives a signed target-change score and always predicts local. The
+comparative forced policy receives a target-minus-availability-normalized-donor
+residual score and uses a calibration-selected threshold. Four
+confidence-selective policies use the same comparative prediction with
+separate, calibration-chosen cutoffs for $\alpha=.01,.05,.10,.20$. The
+certificate policy is different: it answers only when the structural margin
+$\kappa$ in Section~2 is strictly positive.
 
-The target-only forced policy receives a signed target-change score and always
-predicts local. The comparative forced policy receives the signed
-target-minus-availability-normalized-donor residual score and a threshold
-selected on calibration components only. Four confidence-selective policies
-use the same frozen prediction with separately calibration-chosen cutoffs for
-$\alpha=.01,.05,.10,.20$. The certificate-assisted policy is not a fitted
-confidence rule: it answers only when the declared structural margin is
-strictly positive. All thresholds, policy definitions, groupings, error
-tolerances, seeds, output schemas, and tests were fixed before the evaluation
-directory existed.
+\subsection{AQS comparison workflow}
 
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_v05_answerability_frontier.png}
-\caption{Receipt-verified v0.5 finite-policy Scope Answerability Frontier.
-Target-only and comparative policies have no positive-coverage qualifying rule
-through $\alpha=.10$. The comparative channel reaches coverage
-\VFiveComparativeFrontierTwentyPercent{} only at $\alpha=.20$, with observed
-conditional error \VFiveComparativeRiskTwentyPercent{}. The certificate-assisted
-policy uses synthetic design information and is displayed separately rather
-than treated as a deployable external-evidence channel.}
-\label{fig:v05-frontier}
-\end{figure}
-
-The complete held-out finite-policy envelope is reported in
-Table~\ref{tab:v05-frontier}; its strict-tolerance failures remain part of the
-primary result rather than being hidden by the displayed comparative endpoint.
-
-\subsection{Partial-scope continuum and structural abstention}
-
-The five nominal $q$ levels sample a partial-participation continuum rather
-than form a binary convenience sample. At $q=0$, both donor and target
-observations are identical across local/shared arms and the stratum is a
-required comparative-channel negative control. At $q=1$, every available donor
-receives the target schedule. For intermediate $q$, the fixed participation
-vector is renormalized over the actually available donor weights on each date.
-The design makes no claim that these five values are physical scope fractions
-in AQS data.
-
-The structural margin aggregates a lower bound on the realized score gap and
-upper bounds for donor mismatch, bounded pre/post noise, nonlinear raw-scale
-leakage, and donor contamination. A nonpositive margin is an explicit
-structural abstention, not a confidence score rounded down after results are
-seen. The raw-field factor is intentionally outside the exact analysis-scale
-identity and is evaluated only through the clipping-aware bound.
-
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_v05_structural_margin.png}
-\caption{Normalized structural-margin phase diagram from the complete frozen
-v0.5 grid. The reference boundary at one separates declared interval
-separation from required certificate abstention. This is a property of the
-stipulated bounded generator and certificate inputs, not a map of real sensor
-network identifiability.}
-\label{fig:v05-structural-margin}
-\end{figure}
-
-\subsection{Deployment audit framework}
+The independent AQS audit follows a parallel but more limited workflow. Shared
+preprocessing turns public archives into canonical daily series and metadata
+anchors. Stable-window synthetic cases have constructed truth; observational
+anchors instead produce an audit disposition and diagnostic context. This
+separation prevents the real-data metadata from becoming an unobserved scope
+label.
 
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_audit_pipeline.pdf}
-\caption{Frozen v0.3.2 deployment-evidence workflow. Shared preprocessing
-turns public archives into canonical daily series and persistent metadata
-anchors, then feeds separate stable-window synthetic and observational-audit
-lanes. The synthetic lane has labels known by construction and
-component-disjoint calibration/evaluation partitions; the observational lane
-records bounded audit dispositions and diagnostic context only. The diagram
-does not infer physical mechanism from metadata.}
+\caption{AQS deployment-audit workflow. Shared preprocessing produces
+canonical daily series and metadata anchors, then feeds a stable-window
+synthetic lane with constructed labels and an observational lane with audit
+dispositions. The observational lane supplies diagnostic context, not
+mechanism labels.}
 \label{fig:audit-pipeline}
 \end{figure}
 
-\subsection{Counterfactual construction}
+\subsection{Cross-site comparison methods}
+
+\begin{table}[tbp]
+\centering
+\caption{Method roles in the independent stable-regime benchmark and AQS
+deployment audit.}
+\label{tab:method-roles}
+\small
+\begin{tabularx}{\linewidth}{@{}p{0.22\linewidth}p{0.24\linewidth}p{0.25\linewidth}X@{}}
+\toprule
+Method & Main input and fit & Metadata prior & Role \\
+\midrule
+Standard synthetic control & Target and donor paths; nonnegative pre-anchor
+fit. & None. & Cross-site reference method in benchmark and AQS audit. \\
+Fixed MetaShift & Target and donor paths; regularized pre-anchor fit. &
+Correlation--distance reliability prior. & Cross-site comparator in benchmark
+and AQS audit. \\
+Cross-validated MetaShift & Same fit family with pre-period penalty selection. &
+Correlation--distance reliability prior. & Benchmark-only comparator; not
+introduced into the AQS audit after inspection. \\
+Nearest-neighbor DiD & Target and highest-ranked donor. & Donor ranking only. &
+Cross-site benchmark comparator. \\
+Single-series baselines & Target path alone. & None. & Detection contrast; no
+qualified regional counterfactual. \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 For a complete anchor, the donor pool is ranked by pre-event correlation,
-distance, paired days, and POC only after physical-site deduplication. The
-nearest-neighbor difference-in-differences baseline places unit weight on the
-top-ranked donor. Standard synthetic control solves the nonnegative simplex
-problem
+distance, paired days, and POC after physical-site deduplication. Standard
+synthetic control solves the nonnegative simplex problem
 \[
   \min_{\substack{w_j\geq0\\\sum_jw_j=1}}
   \frac{1}{|T_{\mathrm{cal}}|}
@@ -97,101 +72,75 @@ problem
   \left(z_{i,t}-\sum_{j\in N_a}w_jz_{j,t}\right)^2.
 \]
 The intercept is represented by calibration centering in the residual
-definition of Section~2. No post-anchor outcome is supplied to either method.
+definition of Section~2; no post-anchor outcome is supplied to the fit.
 
-Fixed-weight MetaShift with a reliability-prior penalty starts from the
-pre-event reliability preference
+Fixed-weight MetaShift begins from the pre-event reliability preference
 \[
   \pi_{ij}\propto
   \max(\rho_{ij},0)^2\exp(-d_{ij}/50),
 \]
-where $\rho_{ij}$ is the pre-event log-scale correlation and $d_{ij}$ is
-distance in km. Its frozen real-audit objective is
+where $\rho_{ij}$ is pre-event log-scale correlation and $d_{ij}$ is distance
+in km. Its real-audit objective is
 \[
   \min_{\substack{w_j\geq0\\\sum_jw_j=1}}
   \operatorname{MSE}_{T_{\mathrm{cal}}}(z_i,Z_Nw)
   +0.1\sum_jw_j^2+0.1\sum_j(w_j-\pi_{ij})^2.
 \]
-This is a reproducible regularized weighting rule, not a learned instrument
-taxonomy. In the synthetic benchmark only, cross-validated MetaShift tests a
-frozen set of penalty pairs on the final 45 pre-event days, chooses the
-smallest validation RMSE, and refits the selected pair on the supplied
-pre-event calibration table. It never sees anchor-post data during selection.
+In the benchmark, cross-validated MetaShift chooses from a frozen penalty grid
+using the final 45 pre-event days and refits on the supplied calibration
+period. It never sees post-anchor data during selection.
 
-\subsection{Two-level donor rule, algorithm, and computational scope}
+\subsection{Two-level donor rule}
 
-The audit uses two intentionally different donor conditions. An anchor is
-eligible for a common cross-site comparison only when at least three
-\emph{distinct physical sites} pass the frozen geographic, stability, paired
-pre-event, and correlation screens. This protects against treating multiple
-POCs at a single location as independent geographic evidence. After dates are
-retained, a complete numerical comparison requires at least two available
-donors on a date and at least 30 retained observations in every required
-window. The latter condition protects calculation feasibility; it does not
-weaken the three-physical-donor eligibility rule.
+The AQS protocol distinguishes event eligibility from date-level calculation
+feasibility (Table~\ref{tab:donor-levels}). This preserves the meaning of a
+cross-site comparison even when a small number of otherwise eligible donors
+are temporarily missing.
 
-For each anchor, the implementation follows the fixed sequence below:
-\begin{enumerate}
-  \item identify and physically deduplicate prequalified donor candidates;
-  \item retain one deterministically ranked POC per donor site and abstain if
-  fewer than three sites remain;
-  \item fit fixed cross-site weights using only the inclusive calibration
-  slice, then center residuals on that same slice;
-  \item verify retained-date availability in calibration, pre, and post
-  windows, recording an input-window failure when it is insufficient; and
-  \item compute the protocol-defined effect and diagnostic outputs only for a
-  complete comparison.
-\end{enumerate}
+\begin{table}[tbp]
+\centering
+\caption{Two-level donor rule in the AQS deployment audit.}
+\label{tab:donor-levels}
+\small
+\begin{tabularx}{\linewidth}{@{}p{0.27\linewidth}p{0.31\linewidth}X@{}}
+\toprule
+Stage & Requirement & Purpose \\
+\midrule
+Event eligibility & At least three distinct physical donor sites pass the
+geographic, stability, paired-day, and correlation screens. & Avoids counting
+multiple POCs from one site as independent geographic evidence. \\
+Date-level calculation & At least two eligible donor sites are observed, with
+at least 30 retained observations in every required window. & Ensures a
+numerical residual can be calculated after date-level availability filtering. \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
-If $D$ candidates have $T_{\mathrm{pre}}$ paired pre-event records, screening
-and correlation assembly scale with the available paired data (on the order of
-$D T_{\mathrm{pre}}$), and deterministic ranking adds $O(D\log D)$. The
-retained donor set is capped at three to five sites; residual assembly therefore
-scales linearly in the retained window length and this small set size. The
-constrained numerical fit has solver-dependent iteration cost, so the report
-does not claim a hardware-independent closed-form runtime. The complete audit
-ledger reports failures rather than treating an optimization or input failure
-as a negative physical finding.
+Screening and correlation assembly scale with the available pre-event
+target--donor pairs, with deterministic donor ranking adding
+$O(D\log D)$. The retained donor set is capped at three to five sites.
 
-\subsection{Single-series comparators}
-
-The benchmark includes five transparent single-series baselines:
-before-after median, Bayesian mean shift, CUSUM, rolling-MAD, and PELT.
-Before-after median and Bayesian mean shift estimate a known-date 60-day
-level change. CUSUM, rolling-MAD, and PELT score or locate changes in the
-single target series \citep{killick2012,truong2020,fryzlewicz2014}. They
-serve a necessary contrast: a method can detect an abrupt time-series pattern
-without establishing that the pattern is local rather than regional.
-
-\subsection{Interval and falsification diagnostics}
+\subsection{Intervals, falsification, and audit dispositions}
 
 For fixed donor weights, the primary interval resamples pre- and post-anchor
-residuals using circular moving blocks of seven days, with 1,000 fixed-seed
-repetitions. It is conditional on previously chosen donors and weights; it
-does not include selection uncertainty. The selection-aware nested procedure
-re-block-resamples the calibration matrix, recomputes correlation eligibility,
-selects three to five donors from the fixed candidate pool, refits the
-nonnegative MetaShift weights, and separately resamples the pre/post residual
-windows. It preserves temporal ordering and reports failed reselection or
-effect replicates rather than silently replacing them.
+residuals using circular moving blocks of seven days and 1,000 fixed-seed
+repetitions. It is conditional on previously chosen donors and weights. The
+selection-aware nested procedure re-block-resamples the calibration matrix,
+recomputes eligibility, selects donors from the fixed candidate pool, refits
+weights, and resamples the pre/post residual windows. Both are diagnostic
+intervals in the real audit, not calibrated estimates of physical bias.
 
 The audit also computes stable post-transition time placebos,
 donor-as-treated placebos, a date-resampling comparison, and
-leave-one-donor-out refits. These procedures are falsification and robustness
-diagnostics. They do not create random assignment, prove a physical mechanism,
-or make a residual effect a measured instrument bias.
-
-\subsection{Rule-based evidence synthesis and abstention}
+leave-one-donor-out refits. These are falsification and robustness diagnostics;
+they neither create random assignment nor identify a physical mechanism.
 
 \input{generated/tables/table_evidence_tier_rules}
 
-The tier logic distinguishes unavailable evidence from failed available
-diagnostics. An event is inconclusive if it lacks a common comparison,
-selection-aware interval, sufficient time placebos, an adjusted placebo
-quantity, or donor sensitivity. It is not supported when those required
-inputs are available but a pre-event fit, fixed diagnostic interval, placebo
-screen, or donor-direction condition fails. A supported candidate satisfies
-all available required conditions. Benjamini--Hochberg adjustment is used
-only as an exploratory multiple-screening quantity \citep{benjamini1995};
-the resulting tiers are observational audit summaries, not labels for
-instrument failure, replacement, bias, or pollution correction.
+An event is inconclusive if a required comparative or diagnostic input is
+unavailable. It is not supported when all required diagnostics are available
+but at least one fails. A supported candidate satisfies every required
+diagnostic. Benjamini--Hochberg adjustment is only an exploratory
+multiple-screening quantity \citep{benjamini1995}; the resulting tiers are
+observational audit summaries rather than labels for instrument failure,
+replacement, bias, or pollution correction.

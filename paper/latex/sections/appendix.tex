@@ -1,136 +1,271 @@
 \appendix
-\section{Supplementary protocol details}
+\section{Supplementary evidence and protocols}
+\suppressfloats[t]
+\label{sec:appendix}
 
-\subsection{Anchor-level audit pseudocode}
+\subsection{Complete method comparisons}
+\label{sec:appendix-methods}
 
-For each primary-parameter anchor $a=(s,p,t_0,m^-,m^+)$, the frozen workflow
-executes the following pseudocode:
-\begin{enumerate}[label=\textbf{\arabic*.}]
-  \item validate canonical daily observations and identify a persistent
-  reported Method Code transition;
-  \item construct a geographic candidate pool at distinct physical sites,
-  retaining at most one POC per site by the pre-event ranking rule;
-  \item record an explicit donor-insufficient disposition if fewer than three
-  qualified physical donors exist;
-  \item fit cross-site weights and residual center only on the inclusive
-  $t_0-180$ through $t_0-15$ calibration slice;
-  \item require at least two available donors and at least 30 retained
-  observations in each calibration, pre-anchor, and post-anchor residual
-  window;
-  \item record an explicit input-window failure if those common conditions do
-  not hold;
-  \item for complete cases, compute fixed and nested diagnostic intervals,
-  placebo diagnostics, donor sensitivity, and the rule-based evidence tier;
-  \item preserve every row, including all failures and unavailable
-  diagnostics, in the audit tables.
-\end{enumerate}
+Table~\ref{tab:all-methods} restores all nine frozen stable-regime benchmark
+methods. The five target-only methods remain near chance on the constructed
+local-versus-regional ranking task; this does not mean they are unusable for
+ordinary single-series change detection. N/A local-effect MAE means that a
+method does not estimate the level-effect target for that perturbation design.
 
-This sequence is an implementation specification for the frozen audit. It
-does not claim that any step confirms a physical mechanism.
+\input{generated/tables/table_all_methods}
 
-\subsection{Case-study reconstruction contract}
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_stable_synthetic_example.pdf}
+\caption{A deterministic stable-regime synthetic illustration. The injected
+effect and paired local/regional scope labels are known by construction; the
+underlying AQS paths do not supply physical mechanism labels.}
+\label{fig:stable-synthetic-example}
+\end{figure}
 
-The representative-case configuration is a display contract rather than a new
-experiment. It fixes selection rules before rendering, binds public source
-archives by their saved SHA-256 values, uses the frozen data-cleaning and
-reliability-prior weight rule, and records the selected donor physical sites and
-reconstruction tolerance. If a required archive is unavailable or mismatched,
-the renderer fails rather than silently substituting a current public download.
-No raw archive is distributed with this paper.
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.88\linewidth]{fig_split_integrity.pdf}
+\caption{Connected-component split integrity for the stable-regime benchmark.
+No physical input site is shared between calibration and held-out evaluation.}
+\label{fig:split-integrity}
+\end{figure}
 
-\subsection{Full perturbation-family matrix}
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_synthetic_metrics.pdf}
+\caption{Held-out stable-regime comparison for the four cross-site methods.
+Dots show local-effect MAE, macro-F1, and regional false-positive rate. These
+panels do not form a composite ranking.}
+\label{fig:synthetic-metrics}
+\end{figure}
 
-Table~\ref{tab:perturbation-metrics} contains every frozen method, metric, and
-paired local/regional perturbation family. It is placed in the appendix for
-readability; Figure~\ref{fig:perturbation-metrics} gives a deliberately
-simplified main-text comparison while preserving the complete matrix here.
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_perturbation_metrics.pdf}
+\caption{Perturbation-family comparison. The left panel gives local-effect MAE
+differences from standard synthetic control for cross-site comparators; the
+right panel gives aggregate macro-F1 for all nine methods. Variance-only
+local-effect MAE is undefined by design.}
+\label{fig:perturbation-metrics}
+\end{figure}
 
 \begin{landscape}
 \input{generated/tables/table_perturbation_metrics}
 \end{landscape}
 
-\subsection{Descriptive concentration of reported anchors in 2023}
+The reliability-prior ablations share the standard-control rows exactly to the
+configured numerical tolerance. They do not establish a stable MetaShift
+advantage, but make the frozen design variants available for inspection.
+\input{generated/tables/table_ablation}
 
-The frozen inventory has 393 of 563 anchors (69.8\%) dated in 2023. Two named
-reported code-pair transitions, 236 to 636 and 238 to 638, account for
-354 of those 393 anchors (90.1\%). Their new Method Name strings include
-``Network Data Alignment enabled.'' Figure~\ref{fig:anchor-concentration} and
-Table~\ref{tab:anchor-concentration} make that concentration visible because
-it is relevant to interpretation and possible future records requests.
+\subsection{Historical endpoint and supplementary answerability diagnostics}
 
-This pattern is descriptive only. A code-pair label, a temporal cluster, or an
-EPA method-context document does not establish an administrative, software,
-hardware, policy, calibration, or data-processing cause for any site-level
-record. The human-blocked taxonomy review remains outside this report's
-stratified analysis.
+The immutable v0.4 construction is retained only as an endpoint sanity check.
+When its local and regional worlds hold the target sequence fixed, target-only
+classification has observed error $0.5$, and its constructed comparative rule
+has zero observed error on that finite endpoint evaluation. It does not
+measure a risk--coverage frontier, calibration-selected abstention, partial
+scope, a failure boundary, or real measurement mechanisms.
+
+Figure~\ref{fig:v05-certificate-validity} gives the full frozen
+certificate-validity summary. Its reader-facing zero-error labels are observed
+finite-grid values, not population-risk estimates.
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_v05_certificate_validity.png}
+\caption{Supplementary certificate-validity summary. ``0 observed errors''
+denotes a finite-grid observation under the bounded generator, not a
+population-risk estimate.}
+\label{fig:v05-certificate-validity}
+\end{figure}
+
+\subsection{AQS audit protocol}
+
+For each primary-parameter anchor $a=(s,p,t_0,m^-,m^+)$, the audit:
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item validates canonical daily observations and identifies a persistent
+  reported Method Code transition;
+  \item constructs a geographic candidate pool at distinct physical sites,
+  retaining at most one POC per site by the pre-event ranking rule;
+  \item records donor insufficiency if fewer than three qualified physical
+  donors exist;
+  \item fits cross-site weights and the residual center only on the inclusive
+  $t_0-180$ through $t_0-15$ calibration slice;
+  \item requires at least two available donors and 30 retained observations in
+  each required residual window;
+  \item records an input-window failure if those calculation conditions fail;
+  \item computes diagnostic intervals, placebos, donor sensitivity, and
+  protocol evidence tiers for complete cases; and
+  \item preserves complete cases, failures, and unavailable diagnostics.
+\end{enumerate}
+This is an implementation specification for a metadata-anchored audit; it does
+not identify a physical mechanism.
+
+\paragraph{Deployment residual.}
+For a qualified target $i=(s,p)$ and donors $j\in N_a$, the AQS audit uses
+\[
+  r_{i,t}=z_{i,t}-\sum_{j\in N_a}w_{ij}z_{j,t}
+  -\operatorname{median}_{u\in T_{\mathrm{cal}}}
+  \left(z_{i,u}-\sum_{j\in N_a}w_{ij}z_{j,u}\right).
+\]
+Its displayed effect is the post-minus-pre median residual on the log scale.
+It is a diagnostic local residual discontinuity, not a causal physical-bias
+estimate or a corrected concentration.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_window_protocol.pdf}
+\caption{Calibration and displayed pre-anchor windows in the AQS audit. They
+overlap by 46 calendar dates, so displayed pre-anchor residuals are not an
+independent validation set. No post-anchor outcome enters fitting.}
+\label{fig:window-protocol}
+\end{figure}
+
+\input{generated/tables/table_window_scale_sensitivity}
+\input{generated/tables/table_screening_sensitivity}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_screening_sensitivity.pdf}
+\caption{Predeclared evidence-tier and geographic-screening sensitivity.
+Changes describe availability and rule dependence, not physical causality or a
+search for a favorable specification.}
+\label{fig:screening-sensitivity}
+\end{figure}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_interval_coverage.pdf}
+\caption{Supplementary empirical held-out synthetic interval coverage and mean
+width. Fixed conditional intervals under-cover nominal 95\% coverage, whereas
+split-conformal intervals over-cover nominal 90\% coverage.}
+\label{fig:interval-coverage}
+\end{figure}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_placebos.pdf}
+\caption{Supplementary time-placebo availability and raw within-event
+placebo-score distribution. These are diagnostic falsification quantities, not
+causal probabilities.}
+\label{fig:placebos}
+\end{figure}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_external_evidence.pdf}
+\caption{Supplementary contextual-evidence ladders for same-site POC,
+QA-collocation, targeted document review, and the separate 88502 pipeline.
+Unavailable evidence remains visible.}
+\label{fig:external-evidence}
+\end{figure}
+
+\input{generated/tables/table_claim_boundaries}
+
+\input{sections/case_studies}
+
+\subsection{Applicability and anchor concentration}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_applicability_map.pdf}
+\caption{Claim-boundary matrix for the AQS audit. Rows partition all
+\TotalAnchors{} primary anchors into donor-insufficient, input-window-failure,
+and complete-comparison states; the complete row separately reports
+observational evidence tiers. Every row excludes a physical-mechanism
+conclusion.}
+\label{fig:applicability-map}
+\end{figure}
+
+The frozen inventory has 393 of 563 anchors (69.8\%) dated in 2023. Two
+reported code-pair transitions, 236 to 636 and 238 to 638, account for 354 of
+these 393 anchors (90.1\%). This concentration is descriptive only: a code
+pair, time cluster, or method-context document does not establish an
+administrative, software, hardware, policy, calibration, or data-processing
+cause for an individual site record.
 
 \input{generated/tables/table_anchor_concentration}
 
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_anchor_concentration.pdf}
-\caption{Appendix-only descriptive concentration of reported 88101 metadata
-anchors. The left panel shows the frozen date distribution; the right panel
-shows the two named code-pair counts within 2023. The association between
-labels and dates is not evidence of a physical or administrative cause.}
+\caption{Descriptive concentration of reported 88101 metadata anchors. The
+association between code-pair labels and dates is not evidence of cause.}
 \label{fig:anchor-concentration}
 \end{figure}
 
 \clearpage
-\subsection{v0.5 answerability protocol and claim classification}
-
-The primary v0.5 design is frozen under
-\texttt{\VFiveFreezeTag{}} and uses a single preauthorized execution. It
-constructs a complete 640-cell grid for each component; no v0.3.2/v0.4
-artifact, external file, taxonomy decision, or AQS record is an input. The
-following table classifies the claims used in the main text so that the
-theoretical boundary is not conflated with an empirical observation.
+\subsection{Claim classification and threats to validity}
 
 \begin{table}[tbp]
 \centering
-\caption{v0.5 claim classification and evidence boundary.}
+\caption{Classification and boundary of the principal claims.}
 \label{tab:v05-claim-classification}
 \small
-\begin{tabularx}{\linewidth}{@{}p{0.31\linewidth}p{0.23\linewidth}X@{}}
+\begin{tabularx}{\linewidth}{@{}p{0.34\linewidth}p{0.24\linewidth}X@{}}
 \toprule
 Statement & Status & Boundary \\
 \midrule
-Information refinement and reject-option/risk--coverage principles &
-Established theory & Cited background; not claimed as a MetaShift-Bench
-invention. \\
+Information refinement and risk--coverage principles & Established theory &
+Cited background, not a MetaShift-Bench invention. \\
 \addlinespace
-Target-only impossibility and nested-channel monotonicity under the stipulated
-law & Established theory specialized to v0.5 & Requires balanced matched
-target laws and no target-side leakage. \\
+Target-only impossibility under the stipulated paired law & Established theory
+specialized to this construction & Requires balanced matched target laws and
+no target-side leakage. \\
 \addlinespace
-Availability-normalized $\overline{q_th_t}$ identity and bounded
-interval-separation condition & Newly derived construction-specific result &
-Requires analysis-scale intervention and stated finite envelopes. \\
+Availability-normalized partial-scope identity and interval separation &
+New construction-specific derivation & Requires analysis-scale intervention
+and stated finite envelopes. \\
 \addlinespace
-Held-out frontiers, gain, risk--coverage, bootstrap interval, and certificate
-behavior & Frozen empirical observation & Applies only to the finite
-predeclared policies and generator. \\
+Held-out frontiers, gain, and certificate behavior & Frozen empirical
+observation & Applies only to the finite predeclared policies and generator. \\
 \addlinespace
-Real AQS scope accuracy, mechanism, sensor diagnosis, or causal physical bias
-& Explicit nonclaim & Requires independent records, labels, and human review. \\
+Real AQS scope accuracy or physical mechanism & Explicit nonclaim & Requires
+independent labels, records, and human review. \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\subsection{v0.5 artifact and figure chain}
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_v05_failure_mode_map.png}
+\caption{Supplementary failure-mode map. Low signal and adverse comparison
+conditions remain visible as forced-comparative errors or certificate
+abstentions; $q=0$ is an observational-identity negative control.}
+\label{fig:v05-failure-mode-map-supplement}
+\end{figure}
 
-The immutable execution receipt records the exact protocol and execution
-manifest hashes, source-freeze tag, remote claim tag, runtime lock, row
-accounting, and output hashes. The raw result bundle contains the
-pair-level rows, calibration policy, policy metrics, finite-policy frontier,
-certificate validity, failure map, and component bootstrap. Its figures are
-rendered only after the result verifier succeeds and carry the receipt hash in
-their figure manifest. The formal-report asset generator verifies that receipt
-binding and copies the five source figures byte-for-byte into the manuscript
-asset directory. It does not rerun the generator or recompute any outcome.
-
-The full post-execution audit and frozen-result manifest retain the result
-paths, byte counts, SHA-256 values, tag bindings, verifier status, and
-unfavorable outcomes. These records are intentionally distinct from the
-v0.3.2 evidence ledger because v0.5 is an independent synthetic experiment
-with a one-time execution contract.
+\begin{table}[tbp]
+\centering
+\caption{Threats to validity, current boundary, and needed future evidence.}
+\label{tab:threats-validity}
+\small
+\begin{tabularx}{\linewidth}{@{}p{0.17\linewidth}p{0.43\linewidth}X@{}}
+\toprule
+Validity class & Current boundary & Needed future evidence \\
+\midrule
+Construct & Method Code and POC records are anchors, not physical device,
+calibration, siting, or maintenance ground truth. & Dated station histories,
+calibration records, deployment logs, and independently reviewed taxonomy. \\
+\addlinespace
+Synthetic scope & Target-fixed labels and bounded panels may not represent
+operational networks; certificate inputs are known only to the generator. &
+Independent blind generators, naturally occurring labeled scope events, and
+admissible external records. \\
+\addlinespace
+Internal & Weather, emissions, processing, and donor instability can make a
+target-reference residual; diagnostics constrain but do not identify cause. &
+Meteorological covariates, emissions records, network operations logs, and
+prospective comparator studies. \\
+\addlinespace
+Statistical & Selection, serial dependence, multiplicity, and incomplete
+resampling limit real-event interval interpretation. & A computationally
+feasible predeclared full selection-aware coverage study on a new blind set. \\
+\addlinespace
+External & The U.S. PM$_{2.5}$ archive, availability rules, radius, and
+intervention families limit transfer. & Independent footprint-disjoint
+benchmarks from other networks, eras, and pollutant parameters. \\
+\bottomrule
+\end{tabularx}
+\end{table}

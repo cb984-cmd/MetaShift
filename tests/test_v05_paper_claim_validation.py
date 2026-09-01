@@ -119,15 +119,14 @@ class V05PaperClaimValidationTests(unittest.TestCase):
         rows = [
             {
                 "claim_id": "V05-03",
-                "manuscript_section": "Results RQ0",
+                "manuscript_section": "Results RQ1",
                 "manuscript_file": (
                     "sections/results.tex||"
                     "generated/tables/table_v05_failure_accounting.tex"
                 ),
                 "manuscript_assertion": (
-                    r"The comparative forced policy also answers every arm "
-                    r"(coverage \VFiveComparativeForcedCoveragePercent{}) but has "
-                    r"observed error \VFiveComparativeForcedRiskPercent{}||"
+                    r"comparative forced policy also answered every arm but had "
+                    r"\VFiveComparativeForcedRiskPercent{} observed error.||"
                     r"Comparative-forced errors & 126,764 & among 460,800 "
                     r"forced scope arms \\"
                 ),
@@ -149,6 +148,12 @@ class V05PaperClaimValidationTests(unittest.TestCase):
         self.assertEqual(
             "0 observed errors", generator._format_observed_error(0.0)
         )
+
+    def test_presentation_figure_labels_use_reader_facing_percentages(self) -> None:
+        self.assertEqual("39.1%", generator._plain_percent(0.3906119792))
+        self.assertEqual("0%", generator._plain_percent(0.0))
+        self.assertEqual("0 observed errors", generator._plain_observed_error(0.0))
+        self.assertEqual("0.18", generator._compact_decimal(0.18))
 
     def test_generated_macro_validation_detects_frozen_value_mismatch(self) -> None:
         violations = ledger.check_generated_macros(
@@ -175,9 +180,37 @@ class V05PaperClaimValidationTests(unittest.TestCase):
             rows,
             {"VFiveComparativeForcedErrors": "126,764"},
             {"V05-03": ["126,764"]},
+            {"20"},
         )
 
         self.assertEqual(1, len(violations))
         self.assertEqual(
             "generated_table_assertion_uses_unbound_number", violations[0]["issue"]
+        )
+
+    def test_generated_table_assertion_allows_frozen_protocol_labels(self) -> None:
+        rows = [
+            {
+                "claim_id": "V05-11",
+                "manuscript_file": "generated/tables/table_v05_certificate.tex",
+                "manuscript_assertion": r"$q=25\%$ & 10.9\%",
+            }
+        ]
+
+        violations = ledger.check_generated_table_assertion_values(
+            rows,
+            {},
+            {"V05-11": ["0.109375"]},
+            {"25"},
+        )
+
+        self.assertEqual([], violations)
+
+    def test_receipt_bound_labels_include_protocol_percentages(self) -> None:
+        _, _, labels = ledger.receipt_bound_display_values()
+
+        self.assertTrue(
+            {"0", "1", "5", "10", "20", "25", "50", "75", "100"}.issubset(
+                labels
+            )
         )

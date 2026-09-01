@@ -1634,7 +1634,7 @@
       "grayscale_passed": true,
       "strict_node_geometry_checked": false,
       "strict_node_geometry_passed": true,
-      "grayscale_luminance_contrast": 231.72,
+      "grayscale_luminance_contrast": 231.0,
       "visual_inspection": {
         "source_rendered_geometry": "passed",
         "final_page_crop_review": "pending_final_build"
@@ -1668,7 +1668,7 @@
           }
         },
         {
-          "identifier": "annotation:delta_0_00361____0_00401__0_01163:1",
+          "identifier": "annotation:delta_0_004____0_004__0_012:1",
           "category": "annotation",
           "font_size_source_pt": 9.0,
           "font_size_print_pt": 9.0,
@@ -1676,12 +1676,12 @@
           "bounds": {
             "x0_px": 198.34,
             "y0_px": 288.25,
-            "x1_px": 568.34,
+            "x1_px": 490.34,
             "y1_px": 308.25
           }
         },
         {
-          "identifier": "annotation:delta__0_00240____0_00772__0_00347:1",
+          "identifier": "annotation:delta__0_002____0_008__0_003:1",
           "category": "annotation",
           "font_size_source_pt": 9.0,
           "font_size_print_pt": 9.0,
@@ -1689,7 +1689,7 @@
           "bounds": {
             "x0_px": 198.34,
             "y0_px": 130.29,
-            "x1_px": 575.34,
+            "x1_px": 497.34,
             "y1_px": 150.29
           }
         },

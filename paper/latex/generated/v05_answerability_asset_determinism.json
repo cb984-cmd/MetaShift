@@ -3,8 +3,8 @@
   "generator": "paper/latex/scripts/generate_v05_answerability_assets.py",
   "output_count": 11,
   "manifest_hashes": {
-    "first": "f610a1529bd0f744edf1ed453c4f7a074c08361eee78a360e60a3b952431172c",
-    "second": "f610a1529bd0f744edf1ed453c4f7a074c08361eee78a360e60a3b952431172c",
+    "first": "7339a5a6e641c2cf60226939688d47ac45cb4d4faafccbbfd8cd66b1b88b116f",
+    "second": "7339a5a6e641c2cf60226939688d47ac45cb4d4faafccbbfd8cd66b1b88b116f",
     "match": true
   },
   "changed_outputs": {},

@@ -277,8 +277,8 @@
       "sources": [
         "configs/current_evidence_summary_v2.json"
       ],
-      "bytes": 753,
-      "sha256": "82a94a08bb843678ada1088156945c189c2e45077979f341a3a06eb37a7e873d"
+      "bytes": 729,
+      "sha256": "615e5678b75026ff12802307d8ebc93ff8b72725cf7cefbb41c2f783e33f89bd"
     },
     {
       "path": "generated/tables/table_paired_bootstrap.tex",
@@ -286,8 +286,8 @@
       "sources": [
         "configs/current_evidence_summary_v2.json"
       ],
-      "bytes": 657,
-      "sha256": "7e15df37670fe76cea16f578256219989181db9ce3fa49a61ceea07901698fa6"
+      "bytes": 645,
+      "sha256": "67b3d08333884ce4cf4cf9a139dce6c0ce961a960a3b357ec757c3e322cfa628"
     },
     {
       "path": "generated/tables/table_ablation.tex",
@@ -304,8 +304,8 @@
       "sources": [
         "configs/current_evidence_summary_v2.json"
       ],
-      "bytes": 1130,
-      "sha256": "65693845df2588e7c8bc5231329685c38019ea28c629659a06905533060b0104"
+      "bytes": 1120,
+      "sha256": "7e9c5edee2c8a20accf35481abed604f87bb5339e4e873c36ae31a585acbbb46"
     },
     {
       "path": "generated/tables/table_interval_coverage.tex",
@@ -313,8 +313,8 @@
       "sources": [
         "configs/current_evidence_summary_v2.json"
       ],
-      "bytes": 823,
-      "sha256": "4cbb01c27b8a0c2c84ee8ca65499001519d27901934d88581efb4eb862aca653"
+      "bytes": 803,
+      "sha256": "764a2dcb892ca17a0494b12610dc92b8077c760661eba1307534ddbac18600c4"
     },
     {
       "path": "generated/tables/table_window_scale_sensitivity.tex",
@@ -359,7 +359,7 @@
         "configs/current_evidence_summary_v2.json"
       ],
       "bytes": 1182,
-      "sha256": "79405423dc4d172e063060325fc8ab2fc976201cfde28cf064e147a2ae87a492"
+      "sha256": "1d350dcd22a43369b823a7efc2357973ba879a797368df636ddb4daf523b1ca4"
     },
     {
       "path": "generated/tables/table_perturbation_metrics.tex",
@@ -2108,7 +2108,7 @@
         "grayscale_passed": true,
         "strict_node_geometry_checked": false,
         "strict_node_geometry_passed": true,
-        "grayscale_luminance_contrast": 231.72,
+        "grayscale_luminance_contrast": 231.0,
         "visual_inspection": {
           "source_rendered_geometry": "passed",
           "final_page_crop_review": "pending_final_build"
@@ -2142,7 +2142,7 @@
             }
           },
           {
-            "identifier": "annotation:delta_0_00361____0_00401__0_01163:1",
+            "identifier": "annotation:delta_0_004____0_004__0_012:1",
             "category": "annotation",
             "font_size_source_pt": 9.0,
             "font_size_print_pt": 9.0,
@@ -2150,12 +2150,12 @@
             "bounds": {
               "x0_px": 198.34,
               "y0_px": 288.25,
-              "x1_px": 568.34,
+              "x1_px": 490.34,
               "y1_px": 308.25
             }
           },
           {
-            "identifier": "annotation:delta__0_00240____0_00772__0_00347:1",
+            "identifier": "annotation:delta__0_002____0_008__0_003:1",
             "category": "annotation",
             "font_size_source_pt": 9.0,
             "font_size_print_pt": 9.0,
@@ -2163,7 +2163,7 @@
             "bounds": {
               "x0_px": 198.34,
               "y0_px": 130.29,
-              "x1_px": 575.34,
+              "x1_px": 497.34,
               "y1_px": 150.29
             }
           },
@@ -2198,8 +2198,8 @@
         "violations": [],
         "all_checks_passed": true
       },
-      "bytes": 25206,
-      "sha256": "9314e11f28360083262c879ecf94bc2fddf963b4bcd6c2b19ac1450aab1ad771"
+      "bytes": 25076,
+      "sha256": "265c5ca3c57cfe6bf480251f654f743a37cab57675e207651be5af8feb182713"
     },
     {
       "path": "generated/figures/fig_event_accounting.pdf",
@@ -4587,8 +4587,8 @@
       "sources": [
         "configs/current_evidence_summary_v2.json"
       ],
-      "bytes": 114843,
-      "sha256": "cfa49858d67ebb5cc58c4be35ab367e763f4900b4c730cab0f6d49939147eab4"
+      "bytes": 114830,
+      "sha256": "26944fac77757c6968111e0e28ef27d5a31ca51e513c804c044e678cd5a35a85"
     }
   ]
 }

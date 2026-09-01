@@ -24,33 +24,33 @@ REQUIRED_INPUTS = (
     "sections/introduction",
     "sections/problem",
     "sections/related_work",
+    "sections/synthetic_benchmark",
     "sections/data",
     "sections/framework",
     "sections/experiments",
     "sections/results",
-    "sections/case_studies",
     "sections/discussion",
     "sections/limitations",
-    "sections/reproducibility",
     "sections/conclusion",
     "sections/appendix",
+    "sections/reproducibility",
     "sections/acknowledgements",
 )
 REQUIRED_SECTION_TITLES = (
     "Introduction",
-    "Problem formulation and claim boundaries",
-    "Background and related work",
-    "Data and benchmark construction",
-    "MetaShift-Bench audit framework",
+    "Problem formulation",
+    "Related work",
+    "Synthetic benchmark construction",
+    "AQS deployment audit data",
+    "Selective audit methods",
     "Experimental design",
     "Results",
-    "Representative case studies",
     "Discussion",
-    "Limitations and threats to validity",
-    "Reproducibility, integrity, and contributions",
+    "Limitations",
     "Conclusion",
-    "Supplementary protocol details",
-    "Case-study reconstruction contract",
+    "Supplementary evidence and protocols",
+    "Representative AQS cases",
+    "Reproducibility package",
     "Acknowledgements, contribution statement, and required disclosures",
 )
 REQUIRED_GENERATED_INPUTS = (
@@ -259,13 +259,16 @@ def main() -> None:
     conclusion_position = main_source.find(r"\input{sections/conclusion}")
     bibliography_position = main_source.find(r"\bibliography{references}")
     appendix_position = main_source.find(r"\input{sections/appendix}")
+    reproducibility_position = main_source.find(r"\input{sections/reproducibility}")
     acknowledgements_position = main_source.find(r"\input{sections/acknowledgements}")
     if bibliography_position <= conclusion_position:
         violations.append({"issue": "references_do_not_follow_main_text"})
     if appendix_position <= bibliography_position:
         violations.append({"issue": "appendices_do_not_follow_references"})
-    if acknowledgements_position <= appendix_position:
-        violations.append({"issue": "acknowledgements_do_not_follow_appendices"})
+    if reproducibility_position <= appendix_position:
+        violations.append({"issue": "reproducibility_does_not_follow_appendices"})
+    if acknowledgements_position <= reproducibility_position:
+        violations.append({"issue": "acknowledgements_do_not_follow_reproducibility"})
 
     for title in REQUIRED_SECTION_TITLES:
         heading_pattern = rf"\\(?:section|subsection|subsubsection)\*?\{{{re.escape(title)}\}}"
@@ -312,7 +315,7 @@ def main() -> None:
         violations.append({"issue": "taxonomy_human_block_missing"})
     metadata_checks = {
         "pdf_title": (
-            "pdftitle={MetaShift-Bench: A Target-Fixed Benchmark for Selective Scope Answerability}"
+            "pdftitle={When Is a Time-Series Change Local? MetaShift-Bench for Selective Scope Auditing}"
             in metadata
         ),
         "pdf_author_placeholder": "pdfauthor={Human completion required}" in metadata,

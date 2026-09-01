@@ -1,167 +1,107 @@
-\section{Background and related work}
+\section{Related work}
+\suppressfloats[t]
 
-\subsection{Information, selective prediction, and answerability}
+\subsection{Information and selective prediction}
 
 Blackwell's comparison of statistical experiments formalizes when one
 observation can reproduce another decision problem by discarding or garbling
-information \citep{blackwell1951,blackwell1953}. The nested-channel
-monotonicity in this report is a direct policy-set specialization of that
-established idea. It does not imply that a fitted rule benefits from more
-features, that a finite sample achieves the population frontier, or that
-comparative records are trustworthy in a real monitoring network.
+information \citep{blackwell1951,blackwell1953}. The nested-channel observation
+used here is a direct specialization: a comparative policy can always discard
+donor information and imitate a target-only policy. It does not imply that any
+fitted rule improves in a finite sample or that comparative records are valid in
+an operational network.
 
 Selective classification and reject-option learning already study the
-risk--coverage trade-off, optimal coverage subject to a desired risk, and the
-cost of abstention \citep{chow1970,elyaniv2010,bartlett2008,geifman2017,franc2023}.
-Hierarchical selective classification further permits a less-specific answer
-when a fine label is not justified \citep{goren2024}. These are important
-precedents, not contributions claimed here. MetaShift-Bench specializes the
-object being selected: the answer is a synthetic local-versus-shared
-\emph{scope} judgment under explicitly contrasting information channels.
-The held-out envelope is deliberately descriptive. Calibration-selected
-confidence does not itself provide a distribution-free conditional-risk
-guarantee \citep{barberlimits2021}.
+risk--coverage trade-off, optimal coverage at a chosen risk, and the cost of
+abstention \citep{chow1970,elyaniv2010,bartlett2008,geifman2017,franc2023}.
+Hierarchical selective classification permits a less-specific answer when a
+fine label is unjustified \citep{goren2024}. Conformal and predictive-inference
+work clarifies which assumptions are needed before interval statements are
+calibrated \citep{vovk2005,lei2018,romano2019,barber2021,barberlimits2021}.
+MetaShift-Bench uses these established ideas for a different selected object:
+a local-versus-shared scope judgment under explicitly contrasting observation
+channels.
 
-\subsection{Common, idiosyncratic, and weakly labelled changes}
+\subsection{Local/shared changes, residual signatures, and weak labels}
 
-Multivariate change-point work distinguishes common and idiosyncratic
-components or tests common breaks in panels \citep{bai1998,barigozzi2018}.
-Those methods motivate the scope distinction, but they do not make an
-availability-normalized donor-participation continuum or this benchmark's
-target-fixed paired design standard. Conversely, weak-supervision research
-studies inference with partial or proxy labels \citep{ratner2016,cauchois2024}.
-The v0.5 scope labels are generator-defined gold labels, whereas a real AQS
-Method Code remains only a weak metadata anchor. Neither form of evidence
-identifies a physical mechanism.
+Multivariate change-point work separates common and idiosyncratic components or
+tests common breaks in panels \citep{bai1998,barigozzi2018}. Single-series
+procedures such as CUSUM, PELT, and multiscale segmentation remain useful for
+detecting a break, but cannot alone establish whether it is target-local or
+shared \citep{killick2012,truong2020,fryzlewicz2014}. Weak-supervision research
+likewise distinguishes proxy labels from known truth
+\citep{ratner2016,cauchois2024,liu2016,frenay2014}. The synthetic scope labels
+in this report are defined by construction; a reported AQS Method Code is only
+a metadata anchor.
 
-\subsection{Residual signatures, fault diagnosis, and sensor placement}
-
-Analytical redundancy, residual signatures, fault distinguishability, and
+Residual signatures, analytical redundancy, fault distinguishability, and
 sensor placement are established in model-based diagnosis
-\citep{chowwillsky1984,krysander2008,taiebat2017}. They require physical
-relations, fault models, or sensor-network assumptions that this project does
-not possess. The structural certificate is therefore not claimed as a new
-fault-diagnosis method, a sensor-observability result, or a real-device
-isolation procedure. It is a bounded sufficient condition for abstention in
-the stipulated synthetic score construction.
+\citep{chowwillsky1984,krysander2008,taiebat2017}. Climate-record
+homogenization similarly uses pairwise references and station histories to
+identify inhomogeneities \citep{menne2009,williams2012}. These literatures
+motivate the comparison logic, but their physical models and documented
+mechanisms are not assumed by this benchmark.
 
-\subsection{Monitoring comparability and public metadata}
+\subsection{Counterfactual monitoring and public metadata}
 
-Monitoring comparability is an empirical property rather than a label inferred
-from one administrative field. EPA publishes AQS file formats, Method Code and
-POC references, and continuous-monitor comparability resources
-\citep{epa_airdata_formats,epa_method_code,epa_poc,epa_pm25_comparability}.
-Collocated Federal Reference Method and Federal Equivalent Method studies show
-why configuration-specific comparison matters \citep{khan2024}. They do not,
-however, provide dated physical-change ground truth for every historical AQS
-Method Code transition.
+Synthetic control supplies donor-weighted counterfactuals and in-space placebo
+logic \citep{abadie2010,abadie2015,abadie2021}. Generalized, augmented, and
+synthetic difference-in-differences variants address other panel structures and
+regularization choices \citep{xu2017,benmichael2021,arkhangelsky2021}; modern
+difference-in-differences also emphasizes assumptions and treatment-timing
+heterogeneity \citep{callaway2021,goodmanbacon2021}. Moving-block bootstrap
+methods address serial dependence in time-series resampling
+\citep{kuensch1989}, while multiple-testing and post-selection literature
+warns against overinterpreting screened findings
+\citep{benjamini1995,berk2013}.
 
-The climate-record homogenization literature offers a useful structural
-analogy: pairwise comparisons and station histories can expose
-inhomogeneities, while the cause remains conditional on the available
-documentation \citep{menne2009}. Air-pollution analyses similarly use
-meteorological normalization to distinguish interventions or trends from
-changing weather \citep{gagliardi2022,grange2019,zheng2023}. Low-cost PM2.5
-sensor studies further motivate calibration and reference comparison
-\citep{clements2017,barkjohn2021,chu2020}. Their instruments, target
-populations, and calibration goals differ from a retrospective audit of
-regulatory-monitor metadata. MetaShift-Bench uses this literature as
-measurement-quality context, not as evidence that a particular AQS transition
-has a particular physical cause.
-
-\subsection{Reference series, counterfactuals, and change points}
-
-Single-series change-point procedures include cumulative-sum monitoring,
-segmentation methods such as PELT, and multiscale approaches
-\citep{killick2012,truong2020,fryzlewicz2014}. These methods are valuable
-baselines because they find patterns in one sequence; they cannot by
-themselves determine whether a break is monitor-local or shared across a
-region. The difference motivates matched regional variants in this
-benchmark.
-
-Synthetic control provides donor-weighted counterfactuals and in-space placebo
-logic \citep{abadie2010,abadie2015}. Generalized, augmented, and synthetic
-difference-in-differences extensions address other panel structures and
-regularization choices \citep{xu2017,benmichael2021,arkhangelsky2021}.
-The modern synthetic-control overview emphasizes that data requirements and
-failure conditions remain substantive \citep{abadie2021}.
-Modern difference-in-differences work also emphasizes assumptions and
-heterogeneity under varied treatment timing \citep{callaway2021,goodmanbacon2021}.
-MetaShift-Bench adopts the computational ideas of pre-event fitting and
-reference comparison, but does not claim that the causal identification
-assumptions of a policy study apply to a reported monitoring-method transition.
-
-\subsection{Uncertainty, selection, and abstention}
-
-Time-series resampling must respect serial dependence; circular moving-block
-bootstrap methods are a natural descriptive tool for this purpose
-\citep{kuensch1989}. Distribution-free predictive and conformal methods offer
-another way to assess interval behavior when exchangeability assumptions are
-made explicit \citep{vovk2005,lei2018,romano2019,barber2021}. In this report,
-these methods motivate synthetic coverage evaluation rather than a claim that
-real monitoring events enjoy generic calibration.
-
-The evidence-tier task is also related to multiple testing, selection, and
-abstention. Benjamini--Hochberg adjustment organizes an exploratory family of
-screening quantities \citep{benjamini1995}; it does not turn those quantities
-into causal probabilities. Post-selection inference highlights why selection
-can invalidate naive uncertainty statements \citep{berk2013}. Research on
-noisy labels underscores that observed proxies are not ground truth
-\citep{liu2016,frenay2014}. MetaShift-Bench consequently records an
-inconclusive tier when required comparative evidence is unavailable instead of
-forcing a positive or negative physical diagnosis.
-
-\subsection{Contribution boundary}
-
-Table~\ref{tab:related-work-boundary} locates the benchmark relative to its
-component literatures. The comparison concerns the scope of the reported
-workflow, not a claim that MetaShift-Bench improves the underlying methods.
+EPA publishes AQS file formats, Method Code and POC references, and monitoring
+comparability resources
+\citep{epa_obtaining_aqs,epa_airdata_formats,epa_method_code,epa_poc,epa_pm25_comparability}.
+Collocated-monitor studies show why configuration-specific comparison matters
+\citep{khan2024}. Meteorological-normalization and low-cost sensor studies give
+additional context for air-quality comparison
+\citep{gagliardi2022,grange2019,zheng2023,clements2017,barkjohn2021,chu2020}.
+They do not provide dated, site-level physical-change labels for the public AQS
+metadata anchors used here.
 
 \begin{table}[tbp]
 \centering
-\caption{Relationship between MetaShift-Bench and contributing research
-traditions.}
+\caption{Research traditions that inform the benchmark and the role retained
+here.}
 \label{tab:related-work-boundary}
 \small
-\begin{tabularx}{\linewidth}{@{}p{0.22\linewidth}X X@{}}
+\begin{tabularx}{\linewidth}{@{}p{0.24\linewidth}p{0.31\linewidth}X@{}}
 \toprule
-Research tradition & Typical object and evidence & MetaShift-Bench boundary \\
+Research tradition & Established object & Role in MetaShift-Bench \\
 \midrule
-Synthetic control and DiD \citep{abadie2010,arkhangelsky2021} &
-Pre-intervention panel outcomes and comparison units for an estimand under
-explicit assumptions. &
-Uses pre-anchor donor fitting and placebos as diagnostics; does not assert
-policy-style causal identification for metadata transitions. \\
+Selective prediction \citep{chow1970,geifman2017} & Risk--coverage and
+reject-option policies. & Measures answered-case coverage for a scope
+question; does not rename the generic objective. \\
 \addlinespace
-Single-series change points \citep{killick2012,truong2020} &
-One sequence and a change statistic or estimated break. &
-Retains these methods as baselines but separates a target-local pattern from a
-matched regional movement only when a qualified reference is available. \\
+Common/idiosyncratic change analysis \citep{bai1998,barigozzi2018} & Shared
+and unit-specific movement in multivariate series. & Holds the target fixed
+while varying donor participation in paired worlds. \\
 \addlinespace
-Monitoring comparability and collocation \citep{khan2024,epa_pm25_comparability} &
-Configuration-specific technical comparisons, collocation, and station
-documentation. &
-Treats auxiliary POC, QA, and document records as contextual evidence; no
-metadata field is promoted to physical-device ground truth. \\
+Synthetic control and DiD \citep{abadie2010,arkhangelsky2021} & Donor-weighted
+comparisons under explicit assumptions. & Uses pre-anchor fitting and
+falsification diagnostics, not policy-style causal identification. \\
 \addlinespace
-Climate-record homogenization \citep{menne2009} &
-Station histories plus pairwise evidence for record inhomogeneities. &
-Adopts the audit logic of preserving candidate discontinuities and requiring
-records for mechanism; it does not claim a homogenized corrected PM2.5 series. \\
+Residual diagnosis and homogenization \citep{chowwillsky1984,menne2009} &
+Signatures, reference series, and documented records. & Uses a bounded
+synthetic separation condition and keeps mechanism interpretation external. \\
+\addlinespace
+Monitoring metadata \citep{epa_method_code,epa_poc} & Administrative fields
+and technical documentation. & Uses Method Code as a reproducible audit anchor,
+not physical ground truth. \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-The bounded joint contribution is a target-fixed donor-participation continuum
-that evaluates channel-specific selective scope answerability and a
-bounded-error structural abstention condition in a synthetic audit setting.
-It combines established ingredients rather than claiming their invention:
-information refinement, selective risk--coverage, common/idiosyncratic
-changes, donor-weighted comparisons, pairwise monitoring comparisons, and
-residual diagnosis are all prior work. Pairwise homogenization in particular
-has long used reference comparisons and controlled simulations
-\citep{menne2009,williams2012}. We did not identify, in a focused
-primary-source audit, a source stating this complete joint construction. That
-absence is not proof of priority. The report makes no ``first ever'' claim,
-no generic risk--coverage claim, no estimator-superiority claim, and no real
-monitoring-mechanism identification claim.
+\paragraph{Bounded gap.}
+Among the reviewed literature, we found no benchmark that jointly fixes the
+target path, varies donor participation, evaluates selective risk--coverage,
+and requires structural abstention when the comparison is insufficient. This is
+a bounded literature statement, not a claim of universal priority. The
+contribution is the target-fixed evaluation construction, its
+availability-normalized residual identity, and its audited abstention boundary.

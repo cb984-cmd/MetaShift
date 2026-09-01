@@ -1,336 +1,202 @@
 \section{Results}
+\suppressfloats[t]
+\label{sec:results}
 
-\subsection{RQ0: Scope Answerability Frontier and information gain}
+\subsection{RQ1: Comparative information expands answerability only at a relaxed tolerance}
+\label{sec:rq1-answerability}
 
-\textbf{Answer.} The frozen v0.5 finite-policy results support the stipulated
-target-only impossibility endpoint and show that comparative answerability is
-not uniformly available at strict error tolerances. The target-only forced
-policy answers every held-out arm (coverage
-\VFiveTargetForcedCoveragePercent{}) and has observed conditional scope error
-\VFiveTargetForcedRiskPercent{}; accordingly, no positive-coverage target-only
-policy qualifies for any reported $\alpha<.5$.
-The comparative forced policy also answers every arm (coverage
-\VFiveComparativeForcedCoveragePercent{}) but has observed error
-\VFiveComparativeForcedRiskPercent{}. Its confidence-selective policies
-calibrated at $.01$, $.05$, and $.10$ answer
-\VFiveStrictConfidenceAnsweredArms{} evaluation arms. Only the policy
-calibrated at $.20$ reaches a positive comparative envelope: coverage
-\VFiveComparativeFrontierTwentyPercent{} at observed error
-\VFiveComparativeRiskTwentyPercent{}.
+\textbf{Answer.} On the target-fixed held-out grid, the target-only forced
+policy answered every scope arm but had \VFiveTargetForcedRiskPercent{} observed
+conditional scope error. Thus no predeclared target-only policy had positive
+finite-policy coverage at any reported tolerance below $0.5$. The comparative
+forced policy also answered every arm but had
+\VFiveComparativeForcedRiskPercent{} observed error. Its confidence-selective
+policies calibrated at $.01$, $.05$, and $.10$ answered
+\VFiveStrictConfidenceAnsweredArms{} held-out arms. Only the policy calibrated
+at $.20$ reached a positive comparative envelope:
+\VFiveComparativeFrontierTwentyPercent{} coverage at
+\VFiveComparativeRiskTwentyPercent{} observed conditional error.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.88\linewidth]{fig_v05_answerability_frontier.png}
+\caption{Held-out finite-policy answerability frontiers by information
+channel. Target-only policies do not reach positive coverage at the four
+reported tolerances. Comparative coverage emerges only at $\alpha=.20$.
+The certificate-assisted policy is plotted separately because it uses bounded
+synthetic-design information, not a real-network deployment channel.}
+\label{fig:v05-answerability-frontier}
+\end{figure}
 
 \input{generated/tables/table_v05_frontier}
 
 At $\alpha=.20$, the achieved finite-policy Scope Answerability Gain from the
-target-only to comparative channel is therefore
-\VFiveComparativeFrontierTwentyPercent{}. Its 95\% component-bootstrap interval
-is $[\VFiveComparativeGainLowerPercent{},\VFiveComparativeGainUpperPercent{}]$.
-At $.01$, $.05$, and $.10$, both finite-policy frontiers are zero. These values
-compare frozen policies on held-out synthetic components; they do not estimate
-a universal optimum or guarantee future conditional scope risk.
+target-only to comparative channel is
+\VFiveComparativeFrontierTwentyPercent{}. Its component-bootstrap interval is
+$[\VFiveComparativeGainLowerPercent{},\VFiveComparativeGainUpperPercent{}]$.
+This is a comparison among frozen policies on held-out synthetic components,
+not an estimate of a universal optimum or future population risk.
 
 \begin{figure}[tbp]
 \centering
-\includegraphics[width=\linewidth]{fig_v05_risk_coverage.png}
-\caption{Receipt-verified held-out v0.5 risk--coverage comparison for all
-predeclared policies. Forced comparative classification has full coverage but
-substantial error. Strict confidence policies abstain entirely; the least
-strict frozen confidence policy answers at its calibration target but remains
-above the stricter reporting tolerances. The certificate is shown separately
-because it uses synthetic design information.}
+\includegraphics[width=0.88\linewidth]{fig_v05_risk_coverage.png}
+\caption{Risk--coverage positions of the predeclared held-out policies.
+Forced comparative classification has full coverage but high error; strict
+confidence policies abstain completely. The certificate has lower coverage
+than forced comparison but no observed errors under its bounded construction.}
 \label{fig:v05-risk-coverage}
 \end{figure}
 
-\subsection{RQ0a: Structural certificate and retained failure boundary}
+\FloatBarrier
 
-\textbf{Answer.} The bounded certificate is internally valid within its
-declared synthetic contract, but it is intentionally incomplete. It answered
+\subsection{RQ2: The structural certificate delineates a retained abstention boundary}
+\label{sec:rq2-certificate}
+
+\textbf{Answer.} The structural interval-separation certificate answered
 \VFiveCertificateAnsweredPairs{} of \VFiveEvaluationPairs{} matched pairs
 (\VFiveCertificateCoveragePercent{}), with
 \VFiveCertificateObservedErrorDisplay{} among
 \VFiveCertificateAnsweredArms{} answered scope arms. It recovered
-\VFiveCertificateEfficiencyPercent{} of the pairs deemed answerable by the
-predeclared simulation-information oracle and abstained on the remaining
-\VFiveNonpositiveMarginPairs{} pairs
-(\VFiveCertificateAbstentionPercent{}), including all \VFiveQZeroPairs{}
-observationally indistinguishable $q=0$ negative controls. It has
-\VFiveEnvelopeViolations{} observed envelope violations. These finite-grid
-observations hold only under the bounded generator; they are neither evidence
-of zero population risk nor a deployable real-network certificate.
-
-\input{generated/tables/table_v05_certificate}
-
-The $q=0$ stratum contains \VFiveQZeroPairs{} matched pairs with exactly
-identical target and donor observations in both scope arms. It produces
-\VFiveQZeroCertificateAnsweredPairs{} certificate answers and no
-oracle-answerable pair, as required by the negative-control contract. For
-$q>0$, the certificate coverage rises with nominal participation but decreases
-under contamination, nonlinear raw fields, and heteroskedastic noise. The
-result does not imply that all real partial scope is objectively ambiguous; it
-shows where this particular structural bound refuses to answer.
+\VFiveCertificateEfficiencyPercent{} of pairs in the predeclared
+simulation-information oracle region and abstained on the remaining
+\VFiveNonpositiveMarginPairs{} pairs (\VFiveCertificateAbstentionPercent{}),
+including all \VFiveQZeroPairs{} observationally indistinguishable $q=0$
+negative controls. It had \VFiveEnvelopeViolations{} observed envelope
+violations. These finite-grid observations hold only for the bounded generator:
+they neither establish zero population risk nor yield a deployable
+real-network certificate.
 
 \begin{figure}[tbp]
 \centering
-\includegraphics[width=\linewidth]{fig_v05_certificate_validity.png}
-\caption{Certificate validity summary from receipt-verified v0.5 outputs.
-The certificate has no observed envelope violations under the stipulated
-bounded construction, but its coverage and oracle efficiency remain
-condition-dependent. It is a synthetic-design-assisted sufficient condition,
-not an empirical external-evidence policy.}
-\label{fig:v05-certificate-validity}
+\includegraphics[width=\linewidth]{fig_v05_structural_margin.png}
+\caption{Normalized structural-margin phase diagram from the held-out grid.
+The left panel shows median $q_{\min}H_{\min}/(B_L+B_S)$; values above one
+meet the sufficient interval-separation threshold. The right panel shows
+certificate answered-pair coverage. Both panels average over the five adverse
+comparison factors and describe the bounded synthetic construction only.}
+\label{fig:v05-structural-margin}
 \end{figure}
+
+\input{generated/tables/table_v05_certificate}
+
+The certificate coverage increases with nominal donor participation and signal,
+but it is intentionally incomplete under contamination, nonlinear raw fields,
+and heteroskedastic noise. In particular, the $q=0$ stratum contains
+\VFiveQZeroPairs{} matched pairs with identical target and donor observations
+in both arms, produces \VFiveQZeroCertificateAnsweredPairs{} certificate
+answers, and has no oracle-answerable pair. The result does not declare all
+real partial scope objectively ambiguous; it marks where this sufficient bound
+does not authorize an answer.
 
 \input{generated/tables/table_v05_failure_accounting}
 
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_v05_failure_mode_map.png}
-\caption{Complete v0.5 failure-mode map. Low signal and adverse comparison
-conditions retain forced-comparative errors or certificate abstentions instead
-of being excluded. The $q=0$ row is an observational-identity negative
-control, not comparative success.}
+\caption{Retained failure map across signal and nominal donor participation.
+The left panel gives certificate coverage; the right panel gives
+comparative-forced error. Low signal and adverse comparison conditions remain
+in the evaluation rather than being filtered away. The $q=0$ column is an
+observational-identity negative control.}
 \label{fig:v05-failure-mode-map}
 \end{figure}
 
-\subsection{Historical v0.4 endpoint sanity check}
+\FloatBarrier
 
-The immutable v0.4 construction supplies only an endpoint check: when matched
-local and regional worlds hold the target sequence fixed, target-only
-classification has observed error $0.5$, while its constructed comparative
-rule has zero observed error on that finite endpoint evaluation. It does not
-measure a risk--coverage frontier, calibration-selected abstention, partial
-scope, a failure boundary, or real measurement mechanisms. The v0.5
-continuum is therefore the primary scope evidence; v0.4 is retained as an
-historical sanity check and is not rerun or reinterpreted.
+\subsection{RQ3: Cross-site comparison helps, but MetaShift has no supported aggregate advantage}
+\label{sec:rq3-methods}
 
-\subsection{RQ1: Stable-window synthetic comparison}
-
-\textbf{Historical answer.} The frozen v0.3.2 benchmark distinguishes cross-site methods from
-single-series baselines, but no method is uniformly best across all metrics and
-paired perturbation families. Table~\ref{tab:synthetic-metrics} reports the
-four cross-site methods used for the primary comparison, while
-Table~\ref{tab:all-methods} restores all nine frozen methods.
-Figure~\ref{fig:synthetic-metrics} visualizes the main cross-site trade-offs
-without collapsing them into a post-hoc composite score.
+\textbf{Answer.} In the independent stable-regime benchmark, all four
+cross-site methods have aggregate AUPRC between 0.884 and 0.915, whereas the
+five target-only methods are near 0.50
+(Table~\ref{tab:all-methods} in Appendix~\ref{sec:appendix-methods}). This
+illustrates the value of comparative information for the constructed
+local-versus-regional task, rather than a generic change-detection claim.
 
 \input{generated/tables/table_synthetic_metrics}
 
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_synthetic_metrics.pdf}
-\caption{Held-out stable-regime synthetic comparison for the four cross-site
-methods. Dots show local-effect MAE, macro-F1, and regional false-positive
-rate on the frozen 80-site complete-input-disjoint partition; AUPRC is retained
-in Table~\ref{tab:synthetic-metrics}. Lower MAE and regional false-positive
-rate are preferable, whereas higher macro-F1 is preferable. The panels do not
-form a post-hoc composite ranking; all values originate in the saved
-\texttt{stable\_full\_v2} metrics table.}
-\label{fig:synthetic-metrics}
-\end{figure}
-
-Standard synthetic control has stronger aggregate attribution ranking and
-macro-F1 than both MetaShift variants, while cross-validated MetaShift has the
-smallest aggregate local-effect MAE. Nearest-neighbor difference-in-differences
-has the lowest regional false-positive rate among these four methods but weaker
-effect error and attribution metrics. These are benchmark-specific trade-offs,
-not a ranking for every monitoring network.
-
-\input{generated/tables/table_all_methods}
-
-The single-series methods remain in the complete comparison because an anchor
-date alone can make a time-series break appear compelling. Their inclusion
-shows what is lost when a method does not ask whether target and donors moved
-together. N/A local-effect MAE cells are retained rather than replaced by a
-surrogate metric: CUSUM, PELT, and rolling-MAD supply change evidence but no
-protocol-defined level-effect estimator for the variance-only condition.
-
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_perturbation_metrics.pdf}
-\caption{Main-text perturbation comparison. The left panel gives each
-non-variance perturbation family's local-effect MAE difference from standard
-synthetic control for the three cross-site comparators; negative values favor
-the comparator on that metric. The right panel retains aggregate macro-F1 for
-all nine frozen methods, separated by cross-site versus single-series status.
-The complete five-family, all-metric matrix remains in
-Table~\ref{tab:perturbation-metrics}; variance-only local-effect MAE is N/A by
-definition, not an exclusion.}
-\label{fig:perturbation-metrics}
-\end{figure}
-
-The perturbation matrix makes the scope of the aggregate result visible.
-Cross-site methods distinguish additive and gradual target-local changes much
-better than the single-series baselines under this design, whereas
-proportional, temporary, and variance conditions expose different
-false-positive and ranking trade-offs. Because each row aggregates a paired
-local and regional condition, it tests local-versus-regional discrimination
-rather than a generic detection-rate claim.
-
-\subsection{RQ2: Bound on a MetaShift superiority claim}
-
-\textbf{Answer.} Neither MetaShift variant has a confidence-supported aggregate
-MAE advantage over standard synthetic control. The paired bootstrap intervals
-cross zero for both frozen variants, including cross-validated MetaShift's
-\CVPairedMAEDifference{} difference with interval
-[\CVPairedMALower{}, \CVPairedMAEUpper{}].
+Standard synthetic control has the strongest aggregate AUPRC and macro-F1.
+Cross-validated MetaShift has the smallest aggregate local-effect MAE, while
+nearest-neighbor difference-in-differences has the lowest regional false-positive
+rate. No method wins every metric. Most importantly, neither MetaShift variant
+has a confidence-supported aggregate MAE advantage over standard synthetic
+control: both paired component-bootstrap intervals include zero
+(Table~\ref{tab:paired-bootstrap}).
 
 \input{generated/tables/table_paired_bootstrap}
 
 \begin{figure}[tbp]
 \centering
-\includegraphics[width=\linewidth]{fig_paired_bootstrap.pdf}
+\includegraphics[width=0.88\linewidth]{fig_paired_bootstrap.pdf}
 \caption{Paired event-cluster bootstrap intervals for MetaShift minus standard
-synthetic-control local-effect MAE on matched held-out synthetic instances.
-The dashed vertical line is no difference; negative values favor MetaShift on
-MAE. Both frozen intervals cross zero, so the figure does not support a
-confidence-supported aggregate superiority claim.}
+synthetic-control local-effect MAE. Negative values favor MetaShift; both
+intervals cross zero. The frozen evidence therefore does not support an
+aggregate MetaShift-superiority claim.}
 \label{fig:paired-bootstrap}
 \end{figure}
 
-The main and ablation experiments share \SharedStandardRows{} standard
-synthetic-control records exactly to the configured numerical tolerance.
-Table~\ref{tab:ablations} therefore compares reliability-prior variants without
-changing the standard-control reference rows. The ablations do not establish a
-stable overall MetaShift advantage; this negative result closes the
-model-superiority route for the frozen benchmark.
+\FloatBarrier
 
-\input{generated/tables/table_ablation}
+\subsection{RQ4: A qualified AQS comparison is available for 228 of 563 anchors}
+\label{sec:rq4-deployment}
 
-\subsection{RQ3: Complete real-anchor audit}
-
-\textbf{Answer.} Only \CompleteComparisons{} of \TotalAnchors{} anchors support
-a complete common cross-site comparison under the distinct-physical-donor
-rule. The remaining \InsufficientDonorAnchors{} donor-insufficient and
-\InputFailureAnchors{} input-window events are retained as applicability
-boundaries rather than removed.
+\textbf{Answer.} The distinct-physical-donor rule permits a complete common
+cross-site comparison for \CompleteComparisons{} of \TotalAnchors{} anchors
+(40.5\%). The other \InsufficientDonorAnchors{} donor-insufficient and
+\InputFailureAnchors{} input-window failures are retained as abstentions, not
+dropped observations. This availability result is the AQS audit's primary
+deployment finding.
 
 \input{generated/tables/table_real_audit}
 
 \begin{figure}[tbp]
 \centering
-\includegraphics[width=\linewidth]{fig_event_accounting.pdf}
-\caption{Complete count partitions for all \TotalAnchors{} primary metadata
-anchors. Panel (a) divides every anchor into donor-insufficient,
-input-window-failure, and complete-comparison outcomes. Panel (b) divides only
-the \CompleteComparisons{} complete comparisons into supported-candidate,
-not-supported, and complete-but-inconclusive audit tiers. The reconciliation
-band states how the overall \InconclusiveEvents{} inconclusive outcomes arise.
-These are audit dispositions, not physical monitoring diagnoses.}
+\includegraphics[width=0.88\linewidth]{fig_event_accounting.pdf}
+\caption{AQS audit accounting. Panel (a) partitions all \TotalAnchors{}
+metadata anchors into donor-insufficient, input-window-failure, and complete
+comparison dispositions. Panel (b) partitions complete comparisons into
+protocol evidence tiers. These are audit dispositions, not diagnoses of
+physical monitor changes.}
 \label{fig:event-accounting}
 \end{figure}
 
 The exploratory evidence synthesis assigns \SupportedCandidates{} supported
 candidates, \NotSupportedEvents{} not-supported events, and
-\InconclusiveEvents{} inconclusive events. The supported label means that
-predeclared diagnostic conditions were jointly met; it does not confirm a
-physical failure, replacement, or causal bias.
+\InconclusiveEvents{} inconclusive events. ``Supported'' means that all
+predeclared diagnostic conditions were available and passed; it does not
+confirm a physical failure, replacement, measurement bias, or pollution
+correction.
 
-Time-placebo coverage is available for \TimePlaceboEvents{} complete events
-with at least 50 dates, including \FullTimePlaceboEvents{} with 100 dates.
-The donor-as-treated table contains \DonorPlaceboRecords{} rows, and the
-200-resample date comparison has upper-tail probability \DateResamplingP{}.
-These are diagnostic falsifications rather than causal probabilities.
+\FloatBarrier
 
-\input{generated/tables/table_placebo_external}
+\subsection{RQ5: Calibration and contextual checks limit, rather than validate, real-data interpretation}
+\label{sec:rq5-limits}
 
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_placebos.pdf}
-\caption{Time-placebo availability partition and raw within-event
-placebo-probability distribution among the \CompleteComparisons{} complete
-comparisons. The left panel shows 71 with fewer than 50 dates, 29 with 50--99
-dates, and 128 with at least 100 dates; its brackets identify the
-\TimePlaceboEvents{} with at least 50 dates. The right-panel histogram uses
-that 157-event eligible subset, and its vertical line marks the frozen
-exploratory 0.10 screen. Raw probabilities are diagnostic falsification
-quantities, not causal probabilities.}
-\label{fig:placebos}
-\end{figure}
-
-\subsection{RQ4: Interval coverage and sensitivity}
-
-\textbf{Answer.} The two available fixed-protocol interval constructions do not
-support a generic calibration claim. At nominal 95\%, fixed-weight conditional
-block-bootstrap coverage ranges from \ConditionalCoverageLow{} to
-\ConditionalCoverageHigh{} over \CoverageInstancesPerMethod{} held-out effect
-instances per method. At nominal 90\%, split-conformal coverage ranges from
-\ConformalCoverageLow{} to \ConformalCoverageHigh{} and is highly
-conservative.
+\textbf{Answer.} The fixed-protocol interval constructions do not support a
+generic calibration claim. On the held-out synthetic effects, nominal 95\%
+fixed-weight coverage ranges from 63.9\% to 67.3\% over
+\CoverageInstancesPerMethod{} instances per method, while nominal 90\%
+split-conformal coverage ranges from 98.8\% to 99.6\% and is conservative.
 
 \input{generated/tables/table_interval_coverage}
 
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_interval_coverage.pdf}
-\caption{Empirical held-out synthetic coverage and mean interval width for
-four cross-site methods. Circles are fixed-weight conditional moving-block
-intervals at nominal 95\%; diamonds are split-conformal intervals at nominal
-90\%. The coverage panel intentionally uses the full 0--100\% scale, and
-paired width values show the cost of conservative coverage. Dashed reference
-lines identify nominal targets. Undercoverage and overcoverage are negative
-calibration findings, not parameters tuned after inspection.}
-\label{fig:interval-coverage}
-\end{figure}
+The real-data date-resampling diagnostic holds each event's pre-transition
+donor weights fixed and compares the mean standardized score at the metadata
+anchor with one randomly selected stable post-transition date per eligible
+event. Under the within-event exchangeability diagnostic null, its statistic is
+the difference between the anchor mean and sampled-placebo mean; the reported
+one-sided tail probability is
+$(1+\#\{\text{sampled placebo mean}\geq\text{anchor mean}\})/201 =
+\DateResamplingP{}$. It is a comparison with stable dates, not a causal
+probability or a physical-mechanism test.
 
-Selection-aware nested intervals exist for \NestedIntervalEvents{} complete
-real events and exclude zero for \NestedExcludesZero{}. Each requested 1,000
-repetitions and retained at least \NestedIntervalValidMinimum{} valid
-repetitions. This result does not validate their coverage: the frozen full
-selection-aware synthetic coverage protocol is infeasible within the deadline.
-The intervals are therefore reported as conditional diagnostics.
+\input{generated/tables/table_placebo_external}
 
-Table~\ref{tab:window-scale-sensitivity} reports predeclared effect-window and
-reporting-scale sensitivity; Table~\ref{tab:screening-sensitivity} reports
-one-factor screening availability. The geographic donor radius visibly changes
-how many anchors can be analyzed, so these settings are documented rather than
-optimized after viewing results.
-
-\input{generated/tables/table_window_scale_sensitivity}
-\input{generated/tables/table_screening_sensitivity}
-
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_screening_sensitivity.pdf}
-\caption{Predeclared evidence-tier and geographic-screening sensitivity. The
-left panel normalizes tier composition to all anchors while retaining counts in
-the bars; the right panel shows how the three-donor availability boundary
-changes with the predeclared radius. These describe rule dependence and data
-availability, not physical causality or a search for a favorable
-specification.}
-\label{fig:screening-sensitivity}
-\end{figure}
-
-\subsection{RQ5: External context and transfer boundary}
-
-\textbf{Answer.} External evidence supplies limited contextual support, not
-ground truth. Of \POCCandidates{} same-site POC candidates,
-\POCUsablePairs{} have usable paired hourly windows and
-\POCDirectionAgreements{} agree in daily/hourly direction. The targeted
-official-document review found \ExternalReviewConfirmations{}/\ExternalReviewEvents{}
-dated site-specific confirmations. A missing public notice is unavailable
-evidence, not evidence that no physical change occurred.
-
-The separately pinned QA-collocation review contains 12 candidate records, of
-which 2 match the target POC and 0 provide adequate matched pre/post windows.
-It is therefore an evidence-availability result, not a validation of a
-measurement-bias hypothesis.
-
-The independent 88502 pipeline has \SecondaryAnchors{} eligible metadata
-anchors and only \SecondaryComplete{} complete common-method comparisons. It
-demonstrates separate-pipeline feasibility but is too sparse to support broad
-generalization. EPA documentation about network data alignment provides useful
-method context \citep{epa_t640_alignment}; it is not a dated site-specific
-confirmation for the reviewed anchors.
-
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_external_evidence.pdf}
-\caption{Four contextual-evidence ladders: same-site POC, QA collocation,
-targeted official-document review, and the separate 88502 pipeline. Each
-ladder visibly retains unavailable evidence, including zero adequate QA
-matched pre/post windows and zero dated site-specific confirmations. Neither a
-POC agreement nor an unlocated document supplies universal physical-instrument
-ground truth.}
-\label{fig:external-evidence}
-\end{figure}
+Of \POCCandidates{} same-site POC candidates, \POCUsablePairs{} have usable
+paired hourly windows and \POCDirectionAgreements{} agree in daily/hourly
+direction. Targeted official-document review finds
+\ExternalReviewConfirmations{}/\ExternalReviewEvents{} dated site-specific
+confirmations. Missing documentation and unavailable POC data remain
+unavailable evidence; they are not evidence that nothing changed.
 
 \FloatBarrier

@@ -1650,7 +1650,7 @@ def _paired_bootstrap_figure(
         axis.text(
             -extent * 0.97,
             position - 0.19,
-            f"Delta={format_decimal(center, 5)}  [{format_decimal(lower, 5)}, {format_decimal(upper, 5)}]",
+            f"Delta={format_decimal(center, 3)}  [{format_decimal(lower, 3)}, {format_decimal(upper, 3)}]",
             fontsize=9,
             ha="left",
         )

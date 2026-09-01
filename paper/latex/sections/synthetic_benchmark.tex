@@ -1,0 +1,41 @@
+\section{Synthetic benchmark construction}
+\suppressfloats[t]
+\label{sec:synthetic-benchmark}
+
+\subsection{Target-fixed paired worlds}
+
+The primary benchmark is a constructed experiment, not a model of PM$_{2.5}$
+transport or monitoring hardware. It generates bounded target-and-donor panels
+in memory from independent seed streams. Component, target, donor, and date
+identifiers have no physical-site identity and no relation to AQS data. This
+deliberate separation lets the experiment isolate one question: what additional
+scope information is carried by a comparison channel after the target
+observation has been held fixed?
+
+Each matched pair contains a local arm and a shared arm with identical target
+arrays, target noise, base panel, and non-scope stress conditions. The arms
+differ only in the fraction of the injected target schedule received by
+available donors. At $q=0$, donor arrays are also identical, creating an
+observationally indistinguishable negative control. At $q=1$, all available
+donors receive the schedule. Intermediate values implement partial sharing
+after availability-normalized weights are applied on each retained date.
+
+\subsection{Predeclared stress grid}
+
+For every component, the complete $5\times4\times2^5=640$ grid crosses nominal
+donor participation, signal strength, donor mismatch, availability loss,
+one-donor contamination, nonlinear raw-scale leakage, and bounded noise. The
+raw-scale field is an adversarial transformation test; it is not a claim about
+the frequency of such processes in an operational monitoring network. The
+construction requires exact target identity, complete grid cells, disjoint
+calibration and evaluation component sets, and no outcome-dependent
+configuration changes.
+
+\subsection{Relation to the AQS audit}
+
+The synthetic benchmark supplies constructed scope labels and therefore
+supports controlled scope-answerability evaluation. The AQS audit in
+Section~\ref{sec:aqs-data} serves a different purpose: it measures whether a
+qualified comparison can be formed in public records and whether the protocol
+must abstain. It neither supplies labels for the synthetic experiment nor
+validates a real measurement mechanism.

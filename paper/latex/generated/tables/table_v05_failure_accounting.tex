@@ -1,8 +1,11 @@
-\begin{table}[tbp]
+\begin{table}[!ht]
 \centering
 \caption{Predeclared failure and abstention accounting on
-230,400 held-out v0.5 matched pairs. These rows are retained
-rather than converted into a favorable single score.}
+230,400 held-out target-fixed matched pairs. These rows are
+retained rather than converted into a favorable single score. The rows
+overlap and must not be summed: the $q=0$ row is a subset of the
+nonpositive-margin row, while arm-level error rows use a different
+denominator from pair-level rows.}
 \label{tab:v05-failure-accounting}
 \small
 \begin{tabularx}{\linewidth}{@{}p{0.42\linewidth}rX@{}}

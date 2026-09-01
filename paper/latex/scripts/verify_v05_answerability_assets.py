@@ -14,8 +14,7 @@ GENERATED = LATEX_ROOT / "generated"
 MANIFEST_PATH = GENERATED / "v05_answerability_asset_manifest.json"
 LAYOUT_PATH = GENERATED / "v05_figure_layout_qa.json"
 SOURCE_RECEIPT_PATH = ROOT / "artifacts" / "v05_answerability_frontier" / "v05_execution_receipt.json"
-SOURCE_FIGURE_DIRECTORY = ROOT / "figures" / "v05_answerability_frontier"
-SOURCE_FIGURE_MANIFEST = SOURCE_FIGURE_DIRECTORY / "v05_figure_manifest.json"
+FROZEN_OUTPUT_DIRECTORY = ROOT / "artifacts" / "v05_answerability_frontier"
 FROZEN_RESULT_MANIFEST = ROOT / "configs" / "v05_frozen_result_manifest.json"
 OUTPUT_PATH = GENERATED / "v05_answerability_asset_validation.json"
 
@@ -32,12 +31,21 @@ EXPECTED_OUTPUTS = {
     "generated/figures/fig_v05_failure_mode_map.png",
     "generated/v05_figure_layout_qa.json",
 }
-EXPECTED_FIGURES = {
-    "fig_v05_answerability_frontier.png": "v05_answerability_frontier.png",
-    "fig_v05_structural_margin.png": "v05_structural_margin_phase_diagram.png",
-    "fig_v05_risk_coverage.png": "v05_risk_coverage.png",
-    "fig_v05_certificate_validity.png": "v05_certificate_validity_table.png",
-    "fig_v05_failure_mode_map.png": "v05_failure_mode_map.png",
+PRESENTATION_SOURCE_TYPE = "deterministic_receipt_bound_csv_presentation"
+PRESENTATION_RENDERER = {
+    "kind": "deterministic_csv_presentation_renderer",
+    "source": "paper/latex/scripts/generate_v05_answerability_assets.py",
+    "scope": (
+        "Presentation-only visual derivatives from receipt-verified frozen result "
+        "CSVs; no experiment execution, retuning, or outcome-dependent selection."
+    ),
+}
+EXPECTED_FIGURE_INPUTS = {
+    "fig_v05_answerability_frontier.png": ("v05_answerability_frontier.csv",),
+    "fig_v05_structural_margin.png": ("v05_scope_pair_results.csv",),
+    "fig_v05_risk_coverage.png": ("v05_policy_metrics.csv",),
+    "fig_v05_certificate_validity.png": ("v05_certificate_validity.csv",),
+    "fig_v05_failure_mode_map.png": ("v05_failure_mode_map.csv",),
 }
 
 
@@ -148,35 +156,50 @@ def main() -> None:
         )
     )
 
-    source_figure_manifest = load_json(SOURCE_FIGURE_MANIFEST)
-    source_figure_record = manifest.get("source_figure_manifest", {})
-    figures = source_figure_manifest.get("figures", {})
-    source_figure_ok = (
-        source_figure_record
-        == {
-            "path": "figures/v05_answerability_frontier/v05_figure_manifest.json",
-            "sha256": sha256(SOURCE_FIGURE_MANIFEST),
-        }
-        and source_figure_manifest.get("source_receipt_sha256") == receipt_hash
-        and isinstance(figures, dict)
+    receipt = load_json(SOURCE_RECEIPT_PATH)
+    receipt_output_hashes = receipt.get("output_hashes", {})
+    expected_figure_input_records: dict[str, list[dict[str, object]]] = {}
+    presentation_figure_inputs = manifest.get("presentation_figure_inputs")
+    if not isinstance(presentation_figure_inputs, dict):
+        presentation_figure_inputs = {}
+    presentation_inputs_ok = (
+        manifest.get("presentation_renderer") == PRESENTATION_RENDERER
+        and set(presentation_figure_inputs) == set(EXPECTED_FIGURE_INPUTS)
     )
-    for output_name, source_name in EXPECTED_FIGURES.items():
-        source = SOURCE_FIGURE_DIRECTORY / source_name
+    for output_name, input_names in EXPECTED_FIGURE_INPUTS.items():
+        expected_records: list[dict[str, object]] = []
+        for input_name in input_names:
+            source = FROZEN_OUTPUT_DIRECTORY / input_name
+            receipt_record = (
+                receipt_output_hashes.get(input_name, {})
+                if isinstance(receipt_output_hashes, dict)
+                else {}
+            )
+            expected_records.append(
+                {
+                    "path": str(source.relative_to(ROOT)).replace("\\", "/"),
+                    "sha256": sha256(source) if source.is_file() else "",
+                    "bytes": source.stat().st_size if source.is_file() else 0,
+                }
+            )
+            if (
+                not source.is_file()
+                or receipt_record.get("sha256") != sha256(source)
+                or receipt_record.get("bytes") != source.stat().st_size
+            ):
+                presentation_inputs_ok = False
+        expected_figure_input_records[output_name] = expected_records
         destination = GENERATED / "figures" / output_name
-        declared = figures.get(source_name, {}) if isinstance(figures, dict) else {}
         if (
-            not source.is_file()
-            or not destination.is_file()
-            or declared.get("sha256") != sha256(source)
-            or declared.get("bytes") != source.stat().st_size
-            or sha256(source) != sha256(destination)
+            not destination.is_file()
+            or presentation_figure_inputs.get(output_name) != expected_records
         ):
-            source_figure_ok = False
+            presentation_inputs_ok = False
     checks.append(
         check(
-            "source_figure_manifest_and_copy_binding",
-            source_figure_ok,
-            "Every manuscript figure is byte-identical to a receipt-bound source figure.",
+            "receipt_bound_csv_presentation_inputs",
+            presentation_inputs_ok,
+            "Every manuscript figure is a deterministic presentation derivative of receipt-bound frozen result CSVs.",
         )
     )
 
@@ -190,21 +213,25 @@ def main() -> None:
         layout.get("schema_version") == 1
         and layout.get("protocol_id") == "v0.5-answerability-frontier"
         and layout.get("source_receipt_sha256") == receipt_hash
-        and layout.get("required_figure_count") == len(EXPECTED_FIGURES)
+        and layout.get("presentation_renderer") == PRESENTATION_RENDERER
+        and layout.get("required_figure_count") == len(EXPECTED_FIGURE_INPUTS)
         and layout.get("all_checks_passed") is True
-        and set(layout_figures) == set(EXPECTED_FIGURES)
+        and set(layout_figures) == set(EXPECTED_FIGURE_INPUTS)
         and all(
             record.get("all_checks_passed") is True
+            and record.get("source_type") == PRESENTATION_SOURCE_TYPE
+            and record.get("input_artifacts")
+            == expected_figure_input_records[figure]
             and float(record.get("effective_print_ppi", 0)) >= 200.0
             and float(record.get("final_print_width_pt", 0)) >= 450.0
-            for record in layout_figures.values()
+            for figure, record in layout_figures.items()
         )
     )
     checks.append(
         check(
             "raster_figure_resolution_and_layout",
             layout_ok,
-            "All five receipt-verified raster figures meet the predeclared print-resolution contract.",
+            "All five receipt-bound presentation figures meet the print-resolution and source-layout contract.",
         )
     )
 

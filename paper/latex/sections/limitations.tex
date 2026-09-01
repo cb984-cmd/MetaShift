@@ -1,182 +1,74 @@
-\section{Limitations and threats to validity}
+\section{Limitations}
+\suppressfloats[t]
+\label{sec:limitations}
 
-The benchmark is intentionally designed to expose limitations rather than to
-hide them behind a binary classifier. Table~\ref{tab:threats-validity}
-organizes the residual risks by construct, internal, statistical, and external
-validity. The mitigations constrain interpretation, but none turns the audit
-into a physical instrument diagnosis.
+\subsection{Scope of the answerability claims}
 
-\subsection{Scope-answerability assumptions}
-
-Table~\ref{tab:v05-theory-assumptions} separates the assumptions used by the
-v0.5 statements from claims that they do not support. A violation of the
-certificate contract is not a low-confidence answer: it invalidates the
-certificate for that pair and requires abstention. In particular, bounded
-innovations and known synthetic error terms are design choices; they cannot be
-silently replaced by unbounded real-world noise models.
+Table~\ref{tab:v05-theory-assumptions} separates the assumptions supporting
+the target-fixed answerability statements from claims they do not support. The
+certificate relies on declared bounded generator quantities, including
+participation, mismatch, leakage, and noise envelopes. It is therefore a
+synthetic-design-assisted sufficient condition, not a confidence guarantee, an
+empirical $O_E$ evidence channel, or a deployable sensor-network rule.
 
 \begin{table}[tbp]
 \centering
-\caption{Assumptions and boundaries for v0.5 scope-answerability claims.}
+\caption{Assumptions and claim boundaries for the target-fixed
+scope-answerability experiment.}
 \label{tab:v05-theory-assumptions}
 \small
-\begin{tabularx}{\linewidth}{@{}p{0.30\linewidth}X X@{}}
+\begin{tabularx}{\linewidth}{@{}p{0.31\linewidth}p{0.31\linewidth}X@{}}
 \toprule
 Assumption & Supports & Does not support \\
 \midrule
-Balanced labels, matched target laws, and no label-dependent target side
-channel & Target-only impossibility in the stipulated synthetic experiment. &
-Target-only impossibility for arbitrary priors, leaked features, or real AQS
+Balanced labels, matched target laws, and no target-side leakage &
+Target-only impossibility in the stipulated paired worlds. &
+Target-only impossibility for arbitrary priors, leaked features, or AQS
 records. \\
 \addlinespace
-Nested target-only and comparative channels under the same law & Policy-set
-monotonicity of the population frontier. & Strict empirical improvement by a
-particular finite-sample classifier. \\
+Nested target-only and comparative channels under one law &
+Policy-set monotonicity under information refinement. &
+Improvement by every finite-sample classifier. \\
 \addlinespace
-Analysis-scale interventions, fixed weights, and arm-invariant retained dates
-& Exact $\overline{q_th_t}$ score separation. & Exact raw-scale algebra after
-nonlinear transformation or clipping. \\
+Analysis-scale intervention, fixed weights, and arm-invariant retained dates &
+The exact construction-specific residual identity. &
+Exact raw-scale algebra after nonlinear transformation or clipping. \\
 \addlinespace
 Declared bounded mismatch, noise, leakage, and contamination envelopes &
-Sufficient interval separation when $\kappa>0$. & A confidence guarantee,
-unbounded-noise result, or real sensor certificate. \\
+Interval separation when $\kappa>0$. &
+Unbounded-noise, population-risk, or real-network guarantees. \\
 \addlinespace
-Synthetic design information for participation and bounds & Certificate
-coverage and oracle-efficiency diagnostics. & An empirical $O_E$ external
-evidence channel or a deployable policy. \\
+Known synthetic participation and bounds &
+Certificate coverage and oracle-region recovery. &
+An operational external-evidence policy. \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\linewidth]{fig_applicability_map.pdf}
-\caption{Claim-boundary matrix for the frozen audit. Its rows partition all
-\TotalAnchors{} primary anchors into \InsufficientDonorAnchors{}
-donor-insufficient, \InputFailureAnchors{} input-window-failure, and
-\CompleteComparisons{} complete-comparison states; the complete row separately
-reports the three observational audit tiers. Every row limits the permitted
-output and excludes a physical-mechanism conclusion. Station histories,
-technical records, and human review remain required for any equipment-level
-hypothesis.}
-\label{fig:applicability-map}
-\end{figure}
+\subsection{Limits of the AQS audit}
 
-\FloatBarrier
-\clearpage
-\begin{center}
-\small
-\setlength{\tabcolsep}{3pt}
-\renewcommand{\arraystretch}{1.06}
-\captionof{table}{Threats to validity, mitigation, residual consequence, and needed
-future evidence.}\label{tab:threats-validity}
-\begin{tabular}{@{}p{0.14\textwidth}p{0.33\textwidth}p{0.25\textwidth}p{0.23\textwidth}@{}}
-\toprule
-Validity class & Risk and current mitigation & Residual consequence & Needed future evidence \\
-\midrule
-Construct &
-\textbf{Risk.} A Method Code or POC may not encode a physical device, calibration, siting, or maintenance event.\newline
-\textbf{Mitigation.} Treat records as metadata anchors; prohibit fault, replacement, bias, and correction claims. &
-Residual effects cannot identify a physical mechanism. &
-Dated station histories, calibration records, deployment logs, and independently reviewed taxonomy. \\
-\addlinespace
-Synthetic scope &
-\textbf{Risk.} The v0.5 local/shared labels, bounded panel model, and
-synthetic design-information certificate may not represent operational
-networks.\newline
-\textbf{Mitigation.} Target-fixed pairing, complete-grid accounting, separate
-negative controls, and explicit certificate nonclaims. &
-Finite-policy frontiers and zero observed certificate error do not establish
-population or real-network scope accuracy. &
-Independent blind generators, naturally occurring labeled scope events, and
-admissible external records. \\
-\addlinespace
-Internal &
-\textbf{Risk.} Weather, smoke, emissions, processing, or donor instability can create a target-reference residual.\newline
-\textbf{Mitigation.} Pre-event matching, distinct physical donors, time and donor placebos, and leave-one-donor-out checks. &
-Diagnostics can reject some explanations but do not establish randomized causal attribution. &
-Meteorological covariates, emissions records, network operations logs, and prospective comparator studies. \\
-\addlinespace
-Statistical &
-\textbf{Risk.} Donor selection, serial dependence, multiplicity, and incomplete resampling can invalidate naive uncertainty.\newline
-\textbf{Mitigation.} Fixed conditional and nested intervals, moving blocks, exploratory BH screening, and reported coverage failures. &
-Real-event intervals are diagnostic rather than calibrated estimates of physical bias: they are not an estimate of a causal physical bias or coverage-calibrated physical-bias confidence intervals. &
-A computationally feasible, predeclared full selection-aware synthetic coverage study on a new blind set. \\
-\addlinespace
-External &
-\textbf{Risk.} The 2019--2025 U.S. primary parameter, availability rules, stable perturbations, and donor radius may not transfer.\newline
-\textbf{Mitigation.} Separate 88502 pipeline, complete event accounting, and parameter-specific reporting. &
-Results do not establish performance for other pollutants, countries, networks, eras, or perturbation mechanisms. &
-Independent publicly reproducible benchmarks with precommitted footprint-disjoint evaluation. \\
-\bottomrule
-\end{tabular}
-\end{center}
-\clearpage
+AQS Method Code transitions are metadata anchors, not physical ground truth.
+Pre-event matching, distinct physical donors, time and donor placebos, and
+leave-one-donor-out checks constrain obvious comparison failures, but do not
+identify a unique cause of a residual. The $t_0-180$ through $t_0-15$
+calibration slice overlaps the displayed $t_0-60$ through $t_0-1$ pre-anchor
+slice by 46 days. No post-anchor outcome enters fitting, but the displayed
+pre-anchor residuals are consequently not an independent validation sample.
 
-\subsection{Construct validity}
+Fixed-weight moving-block intervals under-cover known synthetic effects, and
+split-conformal intervals over-cover them. The unexecuted full
+selection-aware synthetic coverage study was outside the fixed computational
+budget. Thus real-event intervals remain diagnostic descriptions, not
+coverage-calibrated confidence intervals for physical measurement bias.
 
-The primary construct is a reported metadata transition paired with a
-protocol-defined local residual, not a physical monitoring event. Method names
-may contain useful contextual descriptions, but they do not substitute for
-technical records. The benchmark therefore cannot determine whether a change
-reflects hardware, configuration, quality assurance, a reporting convention,
-or another process. The human-blocked taxonomy remains excluded from all
-stratified results because a row-by-row interpretation has not been completed
-by students and supervising teacher.
+\subsection{Transfer and human-review requirements}
 
-The v0.5 construct is even narrower: a synthetic local/shared scope label
-under a target-fixed generator. It is deliberately detached from AQS physical
-sites and uses no AQS inputs. The partial participation values are comparison
-design parameters, not measurements of how a regional event propagates. The
-certificate receives known generator quantities unavailable in a real audit.
-Accordingly, its result is a test of a structural abstention condition, not
-external validation of an operational decision system.
-
-\subsection{Internal validity}
-
-Cross-site counterfactuals require an assumption that qualified donors offer a
-useful pre-event reference. Physical-site deduplication, correlation, distance,
-method stability, and paired-data checks reduce obvious violations, but cannot
-ensure that the target and donor network remain comparable after an anchor.
-Regional events may be imperfectly shared, and a local residual may have
-non-instrument causes. Placebos and sensitivity analyses therefore constrain
-interpretation; they do not identify a unique mechanism.
-
-\subsection{Statistical validity}
-
-The fixed-weight interval omits uncertainty from donor selection and model
-selection by construction. The nested interval expands that scope inside a
-fixed observed candidate pool, yet the evaluation does not include a full
-selection-aware synthetic coverage result. The observed undercoverage and
-overcoverage are negative results, not defects repaired by changing
-confidence levels or block lengths after inspection. Multiple-screening
-quantities remain exploratory and do not transform all audit rows into formal
-causal hypothesis tests.
-
-The v0.5 frontier is an empirical maximum over a finite predeclared policy
-set, calculated on one held-out synthetic generator. The component bootstrap
-accounts for repeated scope arms within a component but does not expand the
-policy class, prove conditional calibration, or establish an unrestricted
-population supremum. Confidence policies that answer no cases at strict
-calibration targets are retained rather than treated as missing values. Zero
-observed certificate error is likewise an observation conditioned on the
-bounded contract, not proof of zero future error.
-
-The implementation also centers residuals with the inclusive $t_0-180$ through
-$t_0-15$ calibration slice while displaying a $t_0-60$ through $t_0-1$
-pre-anchor comparison, producing a 46-calendar-date overlap. This does not
-leak post-anchor outcomes into fitting, but it prevents the displayed
-pre-anchor residuals from serving as an independent validation sample. The
-frozen evidence is reported as implemented; no post-hoc non-overlap result is
-substituted for it.
-
-\subsection{External validity}
-
-The study's archive years, PM2.5 parameter, daily summary, U.S. network, and
-synthetic perturbation generators limit generalization. The benchmark also
-requires sufficiently dense, nearby, stable, and correlated donor records;
-its applicability will be lower in sparse networks. A separate 88502 pipeline
-demonstrates only limited transfer feasibility, not a broad replication.
-Future work should pre-register independent sources, station footprints,
-metrics, and external documentation before testing any newly proposed
-algorithmic claim.
+The archive years, PM$_{2.5}$ parameter, U.S. network, availability rules,
+donor radius, and synthetic intervention families constrain transfer. The
+secondary 88502 pipeline demonstrates only sparse separate-pipeline
+feasibility. A physical mechanism, equipment diagnosis, or causal
+measurement-bias claim would require dated station histories, calibration and
+maintenance records, independently reviewed taxonomy, and human domain
+judgment. The complete threats-to-validity table and applicability map are
+retained in the appendix rather than omitted. No taxonomy-stratified analysis
+is reported.

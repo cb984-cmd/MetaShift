@@ -199,16 +199,16 @@ def main() -> None:
         "sections/introduction",
         "sections/problem",
         "sections/related_work",
+        "sections/synthetic_benchmark",
         "sections/data",
         "sections/framework",
         "sections/experiments",
         "sections/results",
-        "sections/case_studies",
         "sections/discussion",
         "sections/limitations",
-        "sections/reproducibility",
         "sections/conclusion",
         "sections/appendix",
+        "sections/reproducibility",
         "sections/acknowledgements",
     )
     input_positions = [
@@ -222,8 +222,9 @@ def main() -> None:
         and r"\textbf{Keywords:}" in frontmatter
         and all(position >= 0 for position in input_positions)
         and input_positions == sorted(input_positions)
-        and bibliography_position > input_positions[13]
-        and input_positions[14] > bibliography_position
+        and bibliography_position > input_positions[12]
+        and input_positions[13] > bibliography_position
+        and input_positions[14] > input_positions[13]
         and input_positions[15] > input_positions[14]
     )
     add_check(
@@ -243,7 +244,7 @@ def main() -> None:
                 r"\ReportDate",
             )
         )
-        and "HUMAN COMPLETION REQUIRED" in cover
+        and "Before submission, replace the bracketed fields" in cover
         and "HUMAN COMPLETION REQUIRED" in acknowledgements
         and "HUMAN REVIEW REQUIRED" in human_checklist
     )
@@ -404,10 +405,12 @@ def main() -> None:
     normalized_sections = normalized(all_sections)
     taxonomy_and_boundary_ok = (
         "no taxonomy-stratified analysis is reported" in normalized_sections.lower()
-        and "does not support a general MetaShift superiority claim" in normalized(frontmatter)
-        and "diagnostic rather than calibrated" in normalized_sections
-        and "not a verified intervention" in normalized_sections
-        and "not an estimate of a causal physical bias" in normalized_sections
+        and "no confidence-supported aggregate advantage over standard synthetic control"
+        in normalized(frontmatter)
+        and "diagnostic descriptions, not coverage-calibrated confidence intervals"
+        in normalized_sections
+        and "not physical ground truth" in normalized_sections
+        and "not a causal physical-bias estimate" in normalized_sections
     )
     add_check(
         checks,
@@ -449,7 +452,7 @@ def main() -> None:
         and len(pages) > 1
         and build.get("overfull_hbox_warnings") == 0
         and build.get("pdf_metadata", {}).get("Title")
-        == "MetaShift-Bench: A Target-Fixed Benchmark for Selective Scope Answerability"
+        == "When Is a Time-Series Change Local? MetaShift-Bench for Selective Scope Auditing"
         and build.get("pdf_metadata", {}).get("Author") == "Human completion required"
         and candidate_contract_ok
     )

@@ -509,9 +509,10 @@ def latex_table(
     note: str,
     size: str = r"\small",
     scale_to_width: bool = False,
+    placement: str = "tbp",
 ) -> str:
     lines = [
-        r"\begin{table}[tbp]",
+        rf"\begin{{table}}[{placement}]",
         r"\centering",
         f"\\caption{{{caption}}}",
         f"\\label{{tab:{label}}}",
@@ -1598,9 +1599,9 @@ def create_tables(
         metric_rows.append(
             [
                 METHOD_LABELS[method],
-                format_decimal(row["local_effect_mae_log"], 5),
-                format_decimal(row["average_precision"], 5),
-                format_decimal(row["macro_f1"], 5),
+                format_decimal(row["local_effect_mae_log"], 3),
+                format_decimal(row["average_precision"], 3),
+                format_decimal(row["macro_f1"], 3),
                 format_decimal(row["false_positive_rate"], 3),
             ]
         )
@@ -1613,6 +1614,7 @@ def create_tables(
         "Metrics are aggregates over the frozen \\texttt{stable\\_full\\_v2} evaluation set. "
         "Lower MAE and regional false-positive rate are preferable; higher AUPRC "
         "and macro-F1 are preferable.",
+        placement="!ht",
     )
     paired_rows = []
     for comparison, label in (
@@ -1629,11 +1631,11 @@ def create_tables(
         paired_rows.append(
             [
                 label,
-                format_decimal(row["mae_difference_log"], 5),
+                format_decimal(row["mae_difference_log"], 3),
                 "["
-                + format_decimal(row["bootstrap_95ci_lower"], 5)
+                + format_decimal(row["bootstrap_95ci_lower"], 3)
                 + ", "
-                + format_decimal(row["bootstrap_95ci_upper"], 5)
+                + format_decimal(row["bootstrap_95ci_upper"], 3)
                 + "]",
                 str(int(row["clusters"])),
             ]
@@ -1646,6 +1648,7 @@ def create_tables(
         paired_rows,
         "Difference is MetaShift minus standard synthetic control; negative values "
         "favor MetaShift on MAE. Both bootstrap intervals include zero.",
+        placement="!ht",
     )
     ablation_rows = []
     for _, row in ablation.sort_values("local_effect_mae_log").iterrows():
@@ -1694,11 +1697,11 @@ def create_tables(
                 METHOD_LABELS[method],
                 str(len(group)),
                 str(int(group["ci_excludes_zero"].sum())),
-                format_decimal(complete_method[method], 5),
+                format_decimal(complete_method[method], 3),
             ]
         )
     real_audit_lines = [
-        r"\begin{table}[tbp]",
+        r"\begin{table}[!ht]",
         r"\centering",
         r"\caption{Complete 88101 event audit and real-event diagnostics.}",
         r"\label{tab:real-audit}",
@@ -1725,8 +1728,8 @@ def create_tables(
         r"\footnotesize\textit{Note.} Nested selection-aware intervals are available for "
         + f"{len(nested)}/{int(audit_counts['complete'])} complete events; "
         + f"{int(nested['selection_ci_excludes_zero'].sum())} exclude zero. Their mean "
-        + f"width is {format_decimal((nested['selection_ci95_upper'] - nested['selection_ci95_lower']).mean(), 5)} "
-        + f"log units versus {format_decimal(fixed_width, 5)} for fixed-weight MetaShift intervals. "
+        + f"width is {format_decimal((nested['selection_ci95_upper'] - nested['selection_ci95_lower']).mean(), 3)} "
+        + f"log units versus {format_decimal(fixed_width, 3)} for fixed-weight MetaShift intervals. "
         + f"Leave-one-donor-out refits complete for {int((loo['summary_status'] == 'complete').sum())} "
         + f"events, with {int(loo.loc[loo['summary_status'] == 'complete', 'direction_stable_all_donors'].sum())} "
         + "retaining direction under every donor removal. All intervals are diagnostic, not "
@@ -1753,9 +1756,9 @@ def create_tables(
         coverage_rows.append(
             [
                 METHOD_LABELS[method],
-                percent(conditional_row["empirical_coverage"], 3),
+                percent(conditional_row["empirical_coverage"], 1),
                 format_decimal(conditional_row["mean_interval_width_log"], 3),
-                percent(conformal_row["empirical_coverage"], 4),
+                percent(conformal_row["empirical_coverage"], 1),
                 format_decimal(conformal_row["mean_interval_width_log"], 3),
             ]
         )
@@ -1776,6 +1779,7 @@ def create_tables(
         "intervals over-cover under this frozen synthetic design.",
         size=r"\scriptsize",
         scale_to_width=True,
+        placement="!ht",
     )
     complete_windows = windows.loc[
         (windows["method"] == "metashift_v1_fixed") & (windows["status"] == "complete")
@@ -1947,6 +1951,7 @@ def create_tables(
         "the method was omitted.",
         size=r"\scriptsize",
         scale_to_width=True,
+        placement="!ht",
     )
     family_metrics = metrics.loc[metrics["perturbation_family"].notna()].set_index(
         ["perturbation_family", "method"]

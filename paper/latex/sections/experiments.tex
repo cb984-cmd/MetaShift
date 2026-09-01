@@ -1,158 +1,98 @@
 \section{Experimental design}
+\suppressfloats[t]
 \label{sec:experimental-design}
 
-\subsection{v0.5 preregistered answerability-frontier experiment}
+\subsection{Primary target-fixed evaluation}
 
-The primary experiment is \texttt{v0.5-answerability-frontier}. It was
-implemented, tested, source-frozen, and independently protocol-verified before
-any evaluation output was created. It uses newly generated bounded synthetic
-panels only; AQS data and metadata, v0.3.2 evidence, v0.4 evidence, and the
-taxonomy review are forbidden inputs. Each component has 300 dates, one target,
-four donors, a fixed anchor day, fixed equal donor weights, and independently
-generated bounded common and idiosyncratic innovations. Calibration has
-\VFiveCalibrationComponents{} components, and evaluation has
-\VFiveEvaluationComponents{} components with \VFiveEvaluationPairs{} matched
-pairs and \VFiveEvaluationArms{} scope arms; their identifiers and seed streams
-are disjoint.
+The primary answerability experiment was implemented and protocol-checked before
+evaluation outputs were created. It uses bounded synthetic panels only; AQS
+data, AQS metadata, earlier evidence releases, and taxonomy decisions are not
+inputs. Each component has 300 dates, one target, four donors, a fixed anchor
+day, equal donor weights, and independently generated bounded common and
+idiosyncratic innovations.
 
-For every component, the full $5\times4\times2^5=640$ Cartesian grid crosses
-nominal donor participation $q\in\{0,.25,.50,.75,1\}$, signal strength
-$H\in\{.04,.08,.12,.20\}$, donor mismatch, availability loss, one-donor
-contamination, a common nonlinear raw-scale field, and bounded noise. Every
-cell produces one local and one shared arm. The target arrays are required to
-be exactly identical between the pair; at $q=0$, donor arrays must also be
-identical. The protocol fails closed on target-identity violations, footprint
-leakage, stale hashes, incomplete cells, calibration/evaluation mixing, or
-outcome-dependent configuration changes.
+Calibration contains \VFiveCalibrationComponents{} components and evaluation
+contains \VFiveEvaluationComponents{} disjoint components. The complete design
+has \VFiveCalibrationPairs{} calibration pairs and \VFiveEvaluationPairs{}
+evaluation pairs. Each component contributes 640 matched pairs, and each pair
+contains two scope arms:
+\begin{center}
+\fbox{\begin{minipage}{0.88\linewidth}
+\centering
+\textbf{Sample accounting.}\quad
+\VFiveCalibrationComponents{} calibration components $\rightarrow$
+\VFiveCalibrationPairs{} pairs;\qquad
+\VFiveEvaluationComponents{} held-out components $\rightarrow$
+\VFiveEvaluationPairs{} pairs $\rightarrow$ \VFiveEvaluationArms{}
+scope arms. Uncertainty is resampled at the component level because pairs and
+arms within a component share its generated panel.
+\end{minipage}}
+\end{center}
 
-The frozen design yields \VFiveCalibrationPairs{} calibration pairs and
-\VFiveEvaluationPairs{} evaluation pairs, with \VFiveEvaluationArms{}
-evaluation scope arms and \VFiveTotalArms{} total scope arms. A
-calibration-only threshold selects the comparative forced policy. Confidence
+The $5\times4\times2^5=640$ grid crosses nominal participation
+$q\in\{0,.25,.50,.75,1\}$, signal strength $H\in\{.04,.08,.12,.20\}$, donor
+mismatch, availability loss, one-donor contamination, a common nonlinear
+raw-scale field, and bounded noise. Every cell produces one local and one
+shared arm. The target arrays must be exactly identical within a pair; at
+$q=0$, donor arrays must be identical as well. The protocol fails closed on
+target-identity violations, footprint leakage, stale hashes, incomplete cells,
+calibration/evaluation mixing, or outcome-dependent configuration changes.
+
+\subsection{Policies, thresholds, and uncertainty}
+
+A calibration-only threshold selects the comparative forced policy. Confidence
 cutoffs are selected from 101 calibration quantiles separately for each
-predeclared calibration tolerance. Evaluation then reports every frozen policy
-at every reporting tolerance; it does not select a different policy or retune
-a cutoff after outcomes. The certificate threshold is analytic and uses frozen
-synthetic-design inputs: the declared bounds plus the realized retained-date
-availability and panel values required by the clipping-aware raw-field bound.
-The ambiguous partial region consists of all $q>0$ pairs with nonpositive
-structural margin, where the certificate must abstain; $q=0$ is recorded
-separately as observationally unanswerable.
+predeclared tolerance. Evaluation reports every policy at every reporting
+tolerance; it does not select a new policy or retune a cutoff after outcomes.
+The certificate threshold is analytic and uses the declared bounds plus
+realized retained-date availability and panel values required by the
+clipping-aware raw-field bound. The ambiguous partial-scope region consists of
+all $q>0$ pairs with nonpositive structural margin; the certificate must
+abstain there. The $q=0$ stratum is retained separately as observationally
+unanswerable.
 
-The unit of uncertainty is the evaluation component, not a scope arm, date, or
-grid row. The protocol uses a 1,000-repetition percentile component bootstrap
-with prespecified seed and reports full policy risk--coverage, envelope,
-certificate, and subgroup results without collapsing them into a favorable
-score. The source freeze tag, remote execution-claim tag, manifest hashes, and
-receipt are described in Section~\ref{sec:reproducibility}. The single
-authorized execution is not retuned or rerun after its results are inspected.
+The unit of uncertainty is the evaluation component rather than a scope arm,
+date, or grid row. A 1,000-repetition percentile component bootstrap with a
+prespecified seed reports policy risk--coverage, finite-policy envelopes,
+certificate behavior, and subgroups without collapsing them into one favorable
+score.
 
-\subsection{Historical v0.3.2 stable-regime synthetic benchmark}
+\subsection{Independent stable-regime benchmark}
 
-Real metadata anchors have no physical-bias ground truth. Known-effect
-evaluation therefore uses only stable target and donor regimes separated from
-nearby reported transitions. The frozen \texttt{stable\_full\_v2} manifest
-contains \SyntheticCases{} physical target sites. Whole connected components of
-the complete target-plus-donor physical input graph were assigned to the
-\CalibrationCases{}-site calibration subset or the \EvaluationCases{}-site
-held-out evaluation subset, so no physical input site crosses the split.
-
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_stable_synthetic_example.pdf}
-\caption{Data-derived stable-window illustration for the lexicographically
-first held-out v0.3.2 case fixed in the display contract. The same frozen
-additive injection is applied to the target alone (left) or to the target and
-donor composite (right). The illustration is historical endpoint context, not
-the v0.5 partial-scope continuum or a model of a real Method Code transition.}
-\label{fig:stable-synthetic-example}
-\end{figure}
-
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_split_integrity.pdf}
-\caption{Leakage-resistant stable-case split, including the complete
-target-plus-donor physical input footprint rather than target sites alone.
-Whole connected components are assigned to calibration or held-out evaluation
-before metrics are computed; the frozen split audit records zero shared
-physical inputs. The small networks are explanatory insets, not a geographic
-map. This controls physical-input reuse across partitions; it does not make
-the synthetic perturbations a model of every real monitoring process.}
-\label{fig:split-integrity}
-\end{figure}
+The AQS-based stable-regime benchmark supplies a separate, known-effect
+comparison of cross-site and single-series methods. It contains
+\SyntheticCases{} physical target sites: \CalibrationCases{} for calibration
+and \EvaluationCases{} for held-out evaluation. Whole connected components of
+the complete target-plus-donor physical-input graph are assigned to one split,
+so no physical input site crosses calibration and evaluation.
 
 The benchmark injects target-only additive, proportional, gradual-drift,
 temporary-step, and variance changes, together with matched target-and-donor
-regional variants. Each perturbation variant contains \SamplesPerVariant{}
-held-out evaluation samples. Each family therefore combines a local condition
-and a matched regional condition; the family rows in the results are not
-local-only effect estimates. Five frozen magnitude multipliers
-(0.5, 1.0, 1.5, 2.0, and 3.0) scale an additive step, proportional step,
-gradual drift, temporary step, or variance increase. The variance-only
-condition has no defined level-effect truth, so local-effect MAE is correctly
-reported as N/A for that condition.
+regional variants. Each variant has \SamplesPerVariant{} held-out samples.
+Ranking thresholds are selected only on calibration cases. Local-effect MAE,
+AUPRC, macro-F1, precision, recall, and regional false-positive rate are
+reported as complementary metrics; the variance-only condition has no
+defined level-effect truth and therefore no MAE.
 
-The effect shape, magnitudes, seeds, candidate rule, model settings, and
-metrics were frozen before evaluation. For every method, a ranking threshold
-is selected only by macro-F1 on the calibration partition and then applied
-unchanged to the evaluation partition. The viewed evaluation partition is not
-used for model, threshold, donor-weight, quality-gate, or taxonomy adjustment.
-This is a protocol safeguard, not a claim that one finite split eliminates all
-future generalization uncertainty.
+\subsection{AQS deployment audit and interval protocol}
 
-\subsection{Benchmark metrics and uncertainty}
+The AQS audit applies the distinct-physical-donor construction, pre-event
+fitting boundaries, and effect windows to all \TotalAnchors{} metadata anchors.
+Cross-validated MetaShift is benchmark-only and is not introduced into the
+real audit after its outcomes are known. Predeclared sensitivity analyses vary
+one factor at a time and record availability and interpretation dependence,
+not a search for a favorable setting.
 
-For target-only non-variance perturbations, local-effect MAE is the mean
-absolute difference between the estimated and injected 60-day median log
-effect. AUPRC measures ranking of local against matched regional variants;
-macro-F1, precision, recall, and regional false-positive rate use the
-calibration-only threshold. CUSUM, PELT, and rolling-MAD have no
-protocol-defined effect-magnitude estimate, so their MAE cells are N/A while
-their ranking metrics remain observable.
+Fixed-weight interval coverage is evaluated on held-out synthetic effects with
+fixed confidence level, seven-day blocks, perturbations, and 1,000
+repetitions. The prespecified full nested protocol exceeded the fixed
+computational budget and was not executed; consequently, no selection-aware
+coverage claim is made. In the real audit, the calibration slice
+$t_0-180$ through $t_0-15$ overlaps the displayed pre-anchor slice
+$t_0-60$ through $t_0-1$ by 46 days. No post-anchor data enter the fit, but
+the displayed pre-anchor residuals are not an independent validation sample.
 
-The MetaShift-versus-standard-MAE comparison uses a paired cluster bootstrap
-over stable case IDs with 1,000 repetitions and fixed seed 20260830. Pairing
-keeps a method comparison tied to the same pseudo-anchor, perturbation,
-magnitude, and injected seed. It reports uncertainty for the frozen benchmark
-comparison, rather than a universal probability that one method dominates
-another.
-
-\subsection{Real-anchor audit and sensitivity}
-
-The real-anchor workflow uses the same distinct-physical-donor construction,
-pre-event fitting boundaries, and effect window across the three common
-cross-site methods. The five single-series baselines use the same 60-day
-before/after window but do not receive a geographic counterfactual. The audit
-records complete comparisons and explicit non-complete dispositions for all
-\TotalAnchors{} anchors. Cross-validated MetaShift is evaluated only in the
-synthetic benchmark; it is not introduced into the real-audit comparison after
-observing those events.
-
-Predeclared sensitivity analyses vary one factor at a time: donor-screening
-rules, 45/60/90-day effect windows, raw versus log reporting scale, and
-evidence-tier thresholds. The sensitivity rows reveal availability and
-interpretation dependence; they are not a search for the setting with the most
-favorable residual pattern. The standard synthetic-control rows in the main
-and reliability-ablation experiments are checked for exact alignment to
-tolerance $10^{-10}$, preventing a seed or input mismatch from masquerading
-as an ablation finding.
-
-\subsection{Interval coverage protocol}
-
-Fixed-weight interval coverage is evaluated on held-out synthetic effects. The
-confidence level, seven-day block length, perturbation types, and 1,000
-repetitions are fixed in the frozen configuration. The separate full
-selection-aware synthetic coverage protocol was frozen before outcomes. Its
-feasibility assessment records that full donor re-screening and weight
-refitting at the specified nested scale is infeasible within the submission
-deadline. The report therefore does not convert real-event selection-aware
-intervals into coverage-calibrated physical-bias intervals.
-
-\subsection{External context and reproducibility}
-
-Same-site alternate-POC records, narrow hourly POC windows, QA availability,
-and targeted official-document review supply contextual checks with known
-limitations. A separate parameter-88502 pipeline uses its own scan and audit;
-it is never pooled with 88101. The frozen release records the exact source
-commit, locked Python environment, source manifests, machine-readable checks,
-and a two-environment comparison of designated core artifact hashes.
+Same-site POC records, narrow hourly windows, QA availability, and targeted
+official-document review provide contextual checks with known limits. A
+separate parameter-88502 pipeline uses its own scan and audit; it is never
+pooled with the primary 88101 results.

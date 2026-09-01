@@ -1,10 +1,10 @@
 {
-  "generated_at_utc": "2026-09-01T19:38:39.953696+00:00",
+  "generated_at_utc": "2026-09-01T22:02:54.964359+00:00",
   "generator": "paper/latex/scripts/generate_paper_assets.py",
   "output_count": 38,
   "manifest_hashes": {
-    "first": "140962835ce015da9f1855be80beeb41818587af621ca2076fb77acd919d36d7",
-    "second": "140962835ce015da9f1855be80beeb41818587af621ca2076fb77acd919d36d7",
+    "first": "4e577ffb91ba4ee7dd61d9a21edb5a589c441341d1403c207a8919c0b60786b9",
+    "second": "4e577ffb91ba4ee7dd61d9a21edb5a589c441341d1403c207a8919c0b60786b9",
     "match": true
   },
   "all_hashes_match": true,

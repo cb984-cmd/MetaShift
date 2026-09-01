@@ -6,87 +6,122 @@
       "checks": {
         "minimum_effective_print_resolution": true,
         "nontrivial_dimensions": true,
-        "source_and_copy_match": true,
+        "receipt_verified_csv_inputs": true,
         "valid_png": true
       },
-      "effective_print_ppi": 220.03,
+      "effective_print_ppi": 338.14,
       "figure": "fig_v05_answerability_frontier.png",
       "final_print_width_pt": 453.54,
+      "input_artifacts": [
+        {
+          "bytes": 27119,
+          "path": "artifacts/v05_answerability_frontier/v05_answerability_frontier.csv",
+          "sha256": "76246d55b061d979a8df8852d66e228e1d951f0e3260f5c4a4fa89060cc91eaa"
+        }
+      ],
       "minimum_effective_print_ppi": 200.0,
-      "source_figure": "v05_answerability_frontier.png",
-      "source_height_px": 850,
-      "source_type": "receipt_verified_raster_png",
-      "source_width_px": 1386
+      "output_height_px": 1229,
+      "output_width_px": 2130,
+      "source_type": "deterministic_receipt_bound_csv_presentation"
     },
     {
       "all_checks_passed": true,
       "checks": {
         "minimum_effective_print_resolution": true,
         "nontrivial_dimensions": true,
-        "source_and_copy_match": true,
+        "receipt_verified_csv_inputs": true,
         "valid_png": true
       },
-      "effective_print_ppi": 352.9,
+      "effective_print_ppi": 481.33,
       "figure": "fig_v05_structural_margin.png",
       "final_print_width_pt": 453.54,
+      "input_artifacts": [
+        {
+          "bytes": 392650382,
+          "path": "artifacts/v05_answerability_frontier/v05_scope_pair_results.csv",
+          "sha256": "36649ebe9d1b91927a95766a5757a715cb53f657295fa3471ccf83303c225ede"
+        }
+      ],
       "minimum_effective_print_ppi": 200.0,
-      "source_figure": "v05_structural_margin_phase_diagram.png",
-      "source_height_px": 927,
-      "source_type": "receipt_verified_raster_png",
-      "source_width_px": 2223
+      "output_height_px": 1264,
+      "output_width_px": 3032,
+      "source_type": "deterministic_receipt_bound_csv_presentation"
     },
     {
       "all_checks_passed": true,
       "checks": {
         "minimum_effective_print_resolution": true,
         "nontrivial_dimensions": true,
-        "source_and_copy_match": true,
+        "receipt_verified_csv_inputs": true,
         "valid_png": true
       },
-      "effective_print_ppi": 219.87,
+      "effective_print_ppi": 338.3,
       "figure": "fig_v05_risk_coverage.png",
       "final_print_width_pt": 453.54,
+      "input_artifacts": [
+        {
+          "bytes": 27402,
+          "path": "artifacts/v05_answerability_frontier/v05_policy_metrics.csv",
+          "sha256": "9996a3a51cb57cbbf53867b6a74a8d9e3c93ce760862c7d03761ef81ece3b6ea"
+        }
+      ],
       "minimum_effective_print_ppi": 200.0,
-      "source_figure": "v05_risk_coverage.png",
-      "source_height_px": 850,
-      "source_type": "receipt_verified_raster_png",
-      "source_width_px": 1385
+      "output_height_px": 1229,
+      "output_width_px": 2131,
+      "source_type": "deterministic_receipt_bound_csv_presentation"
     },
     {
       "all_checks_passed": true,
       "checks": {
         "minimum_effective_print_resolution": true,
         "nontrivial_dimensions": true,
-        "source_and_copy_match": true,
+        "receipt_verified_csv_inputs": true,
         "valid_png": true
       },
-      "effective_print_ppi": 237.02,
+      "effective_print_ppi": 400.05,
       "figure": "fig_v05_certificate_validity.png",
       "final_print_width_pt": 453.54,
+      "input_artifacts": [
+        {
+          "bytes": 4499,
+          "path": "artifacts/v05_answerability_frontier/v05_certificate_validity.csv",
+          "sha256": "a6f36119f4964f82c8f8c907126cf3d7b88ace627ff920d5a60a3196a672fcd7"
+        }
+      ],
       "minimum_effective_print_ppi": 200.0,
-      "source_figure": "v05_certificate_validity_table.png",
-      "source_height_px": 526,
-      "source_type": "receipt_verified_raster_png",
-      "source_width_px": 1493
+      "output_height_px": 749,
+      "output_width_px": 2520,
+      "source_type": "deterministic_receipt_bound_csv_presentation"
     },
     {
       "all_checks_passed": true,
       "checks": {
         "minimum_effective_print_resolution": true,
         "nontrivial_dimensions": true,
-        "source_and_copy_match": true,
+        "receipt_verified_csv_inputs": true,
         "valid_png": true
       },
-      "effective_print_ppi": 352.9,
+      "effective_print_ppi": 481.33,
       "figure": "fig_v05_failure_mode_map.png",
       "final_print_width_pt": 453.54,
+      "input_artifacts": [
+        {
+          "bytes": 401049,
+          "path": "artifacts/v05_answerability_frontier/v05_failure_mode_map.csv",
+          "sha256": "69ba2d10d5281eec04cd77e1d2d8a7a52f7dbfcd51b5655a4f509e82f6b3bdc1"
+        }
+      ],
       "minimum_effective_print_ppi": 200.0,
-      "source_figure": "v05_failure_mode_map.png",
-      "source_height_px": 927,
-      "source_type": "receipt_verified_raster_png",
-      "source_width_px": 2223
+      "output_height_px": 1264,
+      "output_width_px": 3032,
+      "source_type": "deterministic_receipt_bound_csv_presentation"
     }
   ],
+  "presentation_renderer": {
+    "kind": "deterministic_csv_presentation_renderer",
+    "scope": "Presentation-only visual derivatives from receipt-verified frozen result CSVs; no experiment execution, retuning, or outcome-dependent selection.",
+    "source": "paper/latex/scripts/generate_v05_answerability_assets.py"
+  },
   "protocol_id": "v0.5-answerability-frontier",
   "required_figure_count": 5,
   "schema_version": 1,

@@ -19,6 +19,7 @@ LEDGER_PATH = LATEX_ROOT / "V05_CLAIM_EVIDENCE_LEDGER.csv"
 VALUE_MANIFEST_PATH = LATEX_ROOT / "generated" / "v05_claim_value_manifest.json"
 ASSET_MANIFEST_PATH = LATEX_ROOT / "generated" / "v05_answerability_asset_manifest.json"
 FROZEN_MANIFEST_PATH = ROOT / "configs" / "v05_frozen_result_manifest.json"
+PROTOCOL_PATH = ROOT / "configs" / "v05_answerability_protocol.json"
 FROZEN_OUTPUT_DIRECTORY = ROOT / "artifacts" / "v05_answerability_frontier"
 DEFAULT_OUTPUT = LATEX_ROOT / "generated" / "v05_claim_ledger_validation.json"
 VERIFIED_STATUS = "verified_frozen_v05_evidence"
@@ -40,23 +41,23 @@ MANUSCRIPT_LOCATIONS = {
     "Experiments": ("sections/experiments.tex", r"\section{Experimental design}"),
     "Framework": (
         "sections/framework.tex",
-        r"\section{MetaShift-Bench audit framework}",
+        r"\section{Selective audit methods}",
     ),
-    "Results RQ0": (
+    "Results RQ1": (
         "sections/results.tex",
-        r"\subsection{RQ0: Scope Answerability Frontier and information gain}",
+        r"\subsection{RQ1: Comparative information expands answerability only at a relaxed tolerance}",
     ),
-    "Results RQ0a": (
+    "Results RQ2": (
         "sections/results.tex",
-        r"\subsection{RQ0a: Structural certificate and retained failure boundary}",
+        r"\subsection{RQ2: The structural certificate delineates a retained abstention boundary}",
     ),
     "Reproducibility": (
         "sections/reproducibility.tex",
-        r"\section{Reproducibility, integrity, and contributions}",
+        r"\section{Reproducibility package}",
     ),
     "Appendix": (
         "sections/appendix.tex",
-        r"\section{Supplementary protocol details}",
+        r"\section{Supplementary evidence and protocols}",
     ),
 }
 
@@ -89,6 +90,12 @@ def sha256(path: Path) -> str:
         for block in iter(lambda: source.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def source_sha256(path: Path) -> str:
+    """Match the LF-normalized source hash recorded by the frozen protocol."""
+
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def normalize(text: str) -> str:
@@ -156,11 +163,16 @@ def _frozen_single_row(
     return selected[0]
 
 
-def receipt_bound_display_values() -> tuple[dict[str, str], dict[str, list[str]]]:
+def receipt_bound_display_values() -> tuple[
+    dict[str, str], dict[str, list[str]], set[str]
+]:
     """Independently derive every generated display value from frozen inputs."""
 
     receipt_path = FROZEN_OUTPUT_DIRECTORY / "v05_execution_receipt.json"
     receipt = load_json(receipt_path)
+    if source_sha256(PROTOCOL_PATH) != str(receipt.get("protocol_sha256", "")):
+        raise ValueError("Current v0.5 protocol does not match the execution receipt.")
+    protocol = load_json(PROTOCOL_PATH)
     policy = _frozen_csv_rows("v05_policy_metrics.csv")
     frontier = _frozen_csv_rows("v05_answerability_frontier.csv")
     certificate = _frozen_csv_rows("v05_certificate_validity.csv")
@@ -357,6 +369,29 @@ def receipt_bound_display_values() -> tuple[dict[str, str], dict[str, list[str]]
     q_groups = ("q0.00", "q0.25", "q0.50", "q0.75", "q1.00")
     if set(q_certificate_rows) != set(q_groups):
         raise ValueError("Frozen certificate participation rows are incomplete.")
+    try:
+        protocol_tolerances = protocol["answerability_definition"]["error_tolerances"]
+        protocol_participation = [
+            row["value"]
+            for row in protocol["full_cartesian_grid"][
+                "nominal_donor_participation"
+            ]
+        ]
+    except (KeyError, TypeError) as error:
+        raise ValueError("Frozen v0.5 protocol lacks table-label definitions.") from error
+    protocol_table_labels: set[str] = set()
+    for value in [*protocol_tolerances, *protocol_participation]:
+        if not isinstance(value, (int, float)) or not 0.0 <= float(value) <= 1.0:
+            raise ValueError("Frozen v0.5 table label is not a probability.")
+        numeric = float(value)
+        protocol_table_labels.update(
+            {
+                _format_probability(numeric),
+                f"{numeric:.2f}",
+                f"{numeric:.1f}",
+                _format_percent(numeric).removesuffix(r"\%"),
+            }
+        )
     claim_fragments = {
         "V05-01": [
             macro_values["VFiveEvaluationPairs"],
@@ -415,7 +450,7 @@ def receipt_bound_display_values() -> tuple[dict[str, str], dict[str, list[str]]
             sha256(receipt_path),
         ],
     }
-    return macro_values, claim_fragments
+    return macro_values, claim_fragments, protocol_table_labels
 
 
 def macro_definitions(source: str) -> tuple[dict[str, str], bool]:
@@ -727,8 +762,9 @@ def check_generated_table_assertion_values(
     rows: list[dict[str, str]],
     expected_macros: dict[str, str],
     expected_claim_fragments: dict[str, list[str]],
+    protocol_table_labels: set[str],
 ) -> list[dict[str, object]]:
-    """Require every ledger-bound generated-table number to be receipt-derived."""
+    """Require table numbers to be receipt-derived or frozen-protocol labels."""
 
     receipt_bound_values = {
         value
@@ -746,20 +782,7 @@ def check_generated_table_assertion_values(
         for value in tuple(receipt_bound_values)
         if 0.0 <= float(value.replace(",", "")) <= 1.0
     )
-    receipt_bound_values.update(
-        {
-            "0",
-            "0.00",
-            "0.01",
-            "0.05",
-            "0.10",
-            "0.20",
-            "0.25",
-            "0.50",
-            "0.75",
-            "1.00",
-        }
-    )
+    receipt_bound_values.update(protocol_table_labels)
     violations: list[dict[str, object]] = []
     numeric_token = re.compile(r"(?<![\w.,])(?:\d{1,3}(?:,\d{3})+|\d+\.\d+|\d+)(?![\w.,])")
     for line_number, row in enumerate(rows, start=2):
@@ -955,7 +978,11 @@ def main() -> None:
     macro_source = (
         LATEX_ROOT / "generated" / "v05_answerability_macros.tex"
     ).read_text(encoding="utf-8")
-    expected_macros, expected_claim_fragments = receipt_bound_display_values()
+    (
+        expected_macros,
+        expected_claim_fragments,
+        protocol_table_labels,
+    ) = receipt_bound_display_values()
     location_violations = check_manuscript_locations_and_assertions(
         rows, macro_source
     )
@@ -965,7 +992,10 @@ def main() -> None:
         value_manifest, expected_claim_fragments
     )
     table_value_violations = check_generated_table_assertion_values(
-        rows, expected_macros, expected_claim_fragments
+        rows,
+        expected_macros,
+        expected_claim_fragments,
+        protocol_table_labels,
     )
     manual_number_violations = check_no_manual_frozen_result_numbers(
         rows, expected_macros

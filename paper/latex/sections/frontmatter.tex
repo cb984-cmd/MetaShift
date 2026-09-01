@@ -9,50 +9,45 @@
 \end{center}
 
 \section*{Abstract}
-\noindent A time-series change is not automatically a scope conclusion. A
-target-only observation can reveal that a constructed target path changed, but
-cannot by itself determine whether the change is local to that target or shared
-with a comparison network. This report introduces MetaShift-Bench as an
-information-constrained selective scope-auditing benchmark. It holds the target
-path exactly fixed across paired local and shared synthetic worlds, varies only
-the donor-side scope information, and asks which fraction of scope questions a
-frozen policy may answer at a stated error tolerance. The contribution is an
-evaluation problem and evidence architecture, not an estimator-superiority or
-physical-monitoring diagnosis claim.
+\noindent When a monitored time series changes, a target-only detector can
+identify the break but cannot determine whether it is local to that target or
+shared with a comparison network. This distinction matters because a local
+anomaly and a regional common shock call for different follow-up actions, while
+many real monitoring records lack reliable scope labels. We formulate selective
+scope auditing as an information-constrained problem: at a stated error
+tolerance, which cases can an observation channel answer, and when should it
+abstain?
 
-\noindent The preregistered v0.5 experiment uses \VFiveEvaluationComponents{}
-independent held-out synthetic components, \VFiveEvaluationPairs{} matched
-pairs, and a complete 640-cell design crossing donor participation, signal
-strength, mismatch, availability, contamination, nonlinear raw-scale leakage,
-and bounded noise. For the finite predeclared policy set, the target-only
-answerability envelope is zero at all four reported tolerances
-($\alpha\in\{.01,.05,.10,.20\}$), while the comparative envelope is also zero
-through $\alpha=.10$ and reaches \VFiveComparativeFrontierTwentyPercent{}
-at $\alpha=.20$ with observed conditional error
-\VFiveComparativeRiskTwentyPercent{}. A structural interval-separation
-certificate answered \VFiveCertificateAnsweredPairs{} of
+\noindent MetaShift-Bench holds the target path exactly fixed across paired
+local and shared synthetic worlds and varies only donor-side participation. Its
+primary target-fixed experiment contains \VFiveEvaluationComponents{} held-out
+components, \VFiveEvaluationPairs{} matched pairs, and a complete
+$5\times4\times2^5$ adverse-condition grid. In the finite predeclared policy
+set, target-only information answers no held-out cases below 50\% tolerated
+error. Comparative information also answers none through $\alpha=.10$, then
+reaches \VFiveComparativeFrontierTwentyPercent{} coverage at $\alpha=.20$ with
+\VFiveComparativeRiskTwentyPercent{} observed conditional error. A structural
+interval-separation certificate answered \VFiveCertificateAnsweredPairs{} of
 \VFiveEvaluationPairs{} matched pairs (\VFiveCertificateCoveragePercent{}),
-with \VFiveCertificateObservedErrorDisplay{} among
-\VFiveCertificateAnsweredArms{} answered scope arms. It recovered
-\VFiveCertificateEfficiencyPercent{} of the pairs deemed answerable by the
-predeclared simulation-information oracle and abstained on the remaining
-\VFiveNonpositiveMarginPairs{} pairs (\VFiveCertificateAbstentionPercent{}),
-including all \VFiveQZeroPairs{} observationally indistinguishable $q=0$
-negative controls. These finite-grid results hold only under the bounded
-synthetic generator and do not constitute a population-risk guarantee or a
-deployable real-network certificate.
+with no observed errors among \VFiveCertificateAnsweredArms{} answered scope
+arms. It recovered \VFiveCertificateEfficiencyPercent{} of the pairs deemed
+answerable by the predeclared simulation-information oracle and abstained on
+the remaining \VFiveNonpositiveMarginPairs{} pairs
+(\VFiveCertificateAbstentionPercent{}), including all \VFiveQZeroPairs{}
+observationally indistinguishable $q=0$ negative controls. These finite-grid
+results hold only under the bounded synthetic generator and do not constitute
+a population-risk guarantee or a deployable real-network certificate.
 
-\noindent The report proves the target-only impossibility statement under
-matched balanced target laws, specializes information-refinement monotonicity,
-derives the exact availability-normalized partial-scope residual gap, and gives
-a bounded-error sufficient condition for structural abstention. The older
-v0.4 construction is retained only as an endpoint sanity check; the frozen
-v0.3.2 AQS audit remains deployment and abstention context, not scope-label
-accuracy evidence. Its negative MetaShift-versus-standard-synthetic-control
-result is preserved: it does not support a general MetaShift superiority claim.
-No taxonomy-stratified analysis is reported, and no result
-identifies a real measurement mechanism, device state, causal bias, or
-corrected concentration.
+\noindent We prove the target-only impossibility statement under matched,
+balanced target laws, derive the availability-normalized partial-scope residual
+gap, and give a sufficient condition for structural abstention. A separate AQS
+deployment audit measures comparison availability and abstention in real public
+records; it supplies neither scope labels nor mechanism truth. In its
+independent stable-regime benchmark, cross-site methods substantially exceed
+single-series baselines in local-versus-shared ranking, but MetaShift shows no
+confidence-supported aggregate advantage over standard synthetic control. The
+central result is therefore an evaluation framework for answering only
+information-supported scope questions.
 
-\noindent\textbf{Keywords:} selective classification; information-constrained
-inference; scope auditing; abstention; synthetic evaluation; reproducibility.
+\noindent\textbf{Keywords:} local-versus-shared change; time-series auditing;
+selective prediction; cross-site comparison; structural abstention.

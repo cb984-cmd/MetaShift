@@ -35,52 +35,52 @@ REQUIRED_COLUMNS = (
 )
 MANUSCRIPT_LOCATIONS = {
     "Abstract": ("sections/frontmatter.tex", r"\section*{Abstract}"),
-    "Data": ("sections/data.tex", r"\section{Data and benchmark construction}"),
+    "Data": ("sections/data.tex", r"\section{AQS deployment audit data}"),
     "Problem": (
         "sections/problem.tex",
-        r"\section{Problem formulation and claim boundaries}",
+        r"\section{Problem formulation}",
     ),
     "Experiments": ("sections/experiments.tex", r"\section{Experimental design}"),
     "Framework": (
         "sections/framework.tex",
-        r"\section{MetaShift-Bench audit framework}",
+        r"\section{Selective audit methods}",
     ),
     "Results RQ1": (
         "sections/results.tex",
-        r"\subsection{RQ1: Stable-window synthetic comparison}",
+        r"\subsection{RQ3: Cross-site comparison helps, but MetaShift has no supported aggregate advantage}",
     ),
     "Results RQ2": (
         "sections/results.tex",
-        r"\subsection{RQ2: Bound on a MetaShift superiority claim}",
+        r"\subsection{RQ3: Cross-site comparison helps, but MetaShift has no supported aggregate advantage}",
     ),
     "Results RQ3": (
         "sections/results.tex",
-        r"\subsection{RQ3: Complete real-anchor audit}",
+        r"\subsection{RQ4: A qualified AQS comparison is available for 228 of 563 anchors}",
     ),
     "Results RQ4": (
         "sections/results.tex",
-        r"\subsection{RQ4: Interval coverage and sensitivity}",
+        r"\subsection{RQ5: Calibration and contextual checks limit, rather than validate, real-data interpretation}",
     ),
     "Results RQ5": (
         "sections/results.tex",
-        r"\subsection{RQ5: External context and transfer boundary}",
+        r"\subsection{RQ5: Calibration and contextual checks limit, rather than validate, real-data interpretation}",
     ),
     "Case studies": (
         "sections/case_studies.tex",
-        r"\section{Representative case studies}",
+        r"\subsection{Representative AQS cases}",
     ),
     "Limitations": (
         "sections/limitations.tex",
-        r"\section{Limitations and threats to validity}",
+        r"\section{Limitations}",
     ),
     "Reproducibility": (
         "sections/reproducibility.tex",
-        r"\section{Reproducibility, integrity, and contributions}",
+        r"\section{Reproducibility package}",
     ),
     "Conclusion": ("sections/conclusion.tex", r"\section{Conclusion}"),
     "Appendix": (
         "sections/appendix.tex",
-        r"\section{Supplementary protocol details}",
+        r"\section{Supplementary evidence and protocols}",
     ),
 }
 REQUIRED_CLAIM_IDS = frozenset(f"Q{index:02d}" for index in range(1, 40))

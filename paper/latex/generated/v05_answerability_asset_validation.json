@@ -19,14 +19,14 @@
       "detail": "The manuscript asset chain is bound to the frozen result receipt."
     },
     {
-      "name": "source_figure_manifest_and_copy_binding",
+      "name": "receipt_bound_csv_presentation_inputs",
       "passed": true,
-      "detail": "Every manuscript figure is byte-identical to a receipt-bound source figure."
+      "detail": "Every manuscript figure is a deterministic presentation derivative of receipt-bound frozen result CSVs."
     },
     {
       "name": "raster_figure_resolution_and_layout",
       "passed": true,
-      "detail": "All five receipt-verified raster figures meet the predeclared print-resolution contract."
+      "detail": "All five receipt-bound presentation figures meet the print-resolution and source-layout contract."
     },
     {
       "name": "expected_frozen_result_values_rendered",

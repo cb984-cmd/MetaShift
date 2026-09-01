@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-09-01T03:12:19.722271+00:00",
-  "source_git_commit": "e9ddf054f0ce59a1793041108be69414de044cf4",
+  "generated_at_utc": "2026-09-01T03:14:09.368064+00:00",
+  "source_git_commit": "a3bc8e6accf28b58b90c09e49cf98d9417d8ea5b",
   "source_worktree_clean_at_start": true,
   "source_worktree_status_at_start": [],
   "build_directory": "paper/latex/build",

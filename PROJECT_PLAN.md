@@ -52,15 +52,26 @@ replacement or measurement bias.
   and [`paper/upgrade/GATE_A_RECOVERY_LOG.md`](paper/upgrade/GATE_A_RECOVERY_LOG.md).
 - [~] **P3 -- Pre-outcome v0.4 protocol freeze.** The tracked independent
   synthetic-core protocol is specified before any full v0.4 outcomes exist,
-  but it is honestly marked as protocol-only until the runner is implemented
-  and execution-frozen.
+  and `v0.4.0-protocol-freeze` preserves its initial protocol-only revision.
+  Pre-execution audit corrections were made before any output, and the current
+  revision is an execution-freeze candidate until its runner, input manifest,
+  full CI, and separate immutable tag bind it.
   It specifies component splits, matched schedules, no-change construction,
   calibration-only thresholds, risk/coverage operating points, stress cases,
   bootstrap, expected counts, one-time output behavior, and failure rules. It
-  excludes all AQS candidate outcomes. Gate B requires its verifier, full CI,
-  and an immutable protocol tag before implementation or execution.
-- [ ] **P4/P5 -- Implementation and one-time evaluation.** These phases may
-  start only after the theory/novelty gate and pre-outcome freeze pass.
+  excludes all AQS candidate outcomes. To bind outcome-affecting choices, the
+  runner was implemented and tested before the final execution freeze; Gate B
+  requires its verifier, full CI, a source-hash manifest, and an immutable
+  locally and remotely annotated `v0.4.0-execution-freeze` tag resolving to
+  the same commit before execution.
+- [~] **P4 -- Frozen-protocol implementation.** The runner and in-memory
+  contract tests now exist but have not produced a full result or an attempt
+  record. It is an execution-freeze candidate only; no implementation change
+  may follow the final source-hash manifest and tag except a transparently
+  documented defect response.
+- [ ] **P5 -- One-time evaluation.** This may start only from a clean,
+  CI-passing `v0.4.0-execution-freeze` commit after its tag is visible on
+  `origin`; its atomic attempt receipt permanently blocks reruns.
 - [ ] **P6-P8 -- Manuscript, figures, and adversarial review.** These phases
   remain blocked until v0.4 evidence supports them.
 

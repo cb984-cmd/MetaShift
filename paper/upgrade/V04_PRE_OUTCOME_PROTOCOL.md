@@ -1,7 +1,12 @@
 # v0.4 Pre-Outcome Protocol: Identifiability Core and Stress Suite
 
-**Status:** Protocol-only specification complete; it is not an execution freeze
-until the runner is implemented, tested, committed, and separately tagged.
+**Status:** The initial `v0.4.0-protocol-freeze` tag is retained as a
+protocol-only historical record. Its pre-execution audit identified missing
+implementation-binding details before any result existed; it is superseded by
+the corrected execution manifest and future `v0.4.0-execution-freeze` tag.
+The current protocol state is `execution_freeze_candidate`: it is not an
+execution freeze until the runner is implemented, tested, committed, and
+separately tagged.
 **Machine-readable authority:**
 [`configs/v04_identifiability_protocol.json`](../../configs/v04_identifiability_protocol.json).
 
@@ -29,6 +34,15 @@ physical-site identifiers or observations and cannot overlap the v0.3.2
 observations, and a fixed anchor at day 180. The component generator, seed
 offsets, analysis-scale parameters, raw conversion, and donor-missingness
 rule are all fixed in the JSON authority.
+
+The authoritative generator starts at 2030-01-01. It initializes the common
+AR(1) process from its stated stationary normal distribution, draws its
+chronological innovations first, then target innovations, then the
+row-major donor innovation array. A separate deterministic availability seed
+draws one uniform per date and, only when it falls below 0.10, one uniform
+integer identifying the single missing donor. The complete numerical rules,
+including stress seeds, raw-variance MAD definition, and interval endpoints,
+are machine-readable in the protocol configuration.
 
 No candidate AQS signal array, post-window observation, residual, fitted
 weight, score, classification, tier, or forward-time data is accessed by this
@@ -77,8 +91,17 @@ handling, and linear quantile interpolation are fixed in the machine-readable
 authority. They are recorded once and transferred unchanged to evaluation. Evaluation
 reports complete N/L/R accounting, target-only L/R score identity, detection
 metrics, forced-answer scope metrics, and answered-case risk/coverage with
-machine-readable abstention reasons. Bootstrap intervals resample synthetic
+machine-readable abstention reasons. Scope selection is based only on
+comparative scope confidence: detection is deliberately reported as a separate
+task and is not a scope-selection gate. Bootstrap intervals resample synthetic
 component IDs, never individual correlated event rows.
+
+If an operating point answers no evaluation cases, the output must report
+coverage zero, a null answered-case error, and status `no_answered_cases`; it
+must not call that zero risk. For bootstrap answered-case risk, only
+replications with at least one answered case are eligible. The output records
+their count and reports `insufficient_valid_repetitions` instead of fabricating
+an interval if fewer than 950 of 1,000 are valid.
 
 The expected totals are 720 calibration events, 1,440 evaluation events, and
 1,440 L/R scope events overall. A mismatch, a violation of paired target
@@ -100,12 +123,21 @@ The protocol-only specification may be tagged
 `v0.4.0-protocol-freeze`, but that tag alone cannot authorize execution. Before
 the benchmark is generated, the complete runner and all its contract tests
 must be implemented, committed, verified, and tagged
-`v0.4.0-execution-freeze`. The runner must verify a clean worktree and that
-HEAD equals the resolved execution-tag commit. It will atomically acquire a
+`v0.4.0-execution-freeze`. An execution manifest will bind the corrected
+protocol SHA-256 and hashes of every allowlisted source file at that tag. The
+runner must verify a clean worktree, that HEAD equals the resolved
+execution-tag commit through a local annotated tag, that `origin` exposes the
+same peeled annotated tag commit, and that current input hashes match the tag.
+It will
+atomically acquire a
 durable attempt record and refuse every later attempt, even after a partial
 failure. Its started, failed, or completed receipt must bind the protocol
 SHA-256, execution commit and tag, input-allowlist hashes, complete event
-accounting, and every output SHA-256.
+accounting, and every non-self payload output SHA-256; the durable attempt
+record records the final receipt hash to avoid a self-referential checksum.
+Source hashes use UTF-8 text bytes with CRLF normalized to LF, matching Git
+blob content across Windows and non-Windows worktrees; generated output hashes
+remain hashes of their exact written bytes.
 
 Only pre-outcome unit and protocol-contract tests may run before the execution
 freeze tag.

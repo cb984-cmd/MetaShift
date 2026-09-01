@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "manifest_id": "v0.4.0-identifiability-execution-manifest",
+  "execution_state": "ready_for_execution_freeze",
+  "protocol_id": "v0.4.0-identifiability-core",
+  "protocol_sha256": "03c09e87028a2e61fec2f7ab72c67954765a4a58d1a962f2333d77e5e0624660",
+  "hash_semantics": "SHA-256 of UTF-8 tracked text after CRLF line endings are normalized to LF, matching the Git blob representation.",
+  "protocol_only_predecessor": {
+    "tag": "v0.4.0-protocol-freeze",
+    "commit": "37e5bde5949018789e439d27ee2ac444f7b2e45d",
+    "disposition": "Superseded before any v0.4 output or attempt record existed because the pre-execution audit found unbound implementation, leakage-audit, randomization, threshold, and receipt details."
+  },
+  "execution_freeze_tag": "v0.4.0-execution-freeze",
+  "bound_input_sha256": {
+    "configs/v04_identifiability_protocol.json": "03c09e87028a2e61fec2f7ab72c67954765a4a58d1a962f2333d77e5e0624660",
+    "metashift/counterfactual.py": "d95df9426e1627a3b879ea468fb7239b6fd5a747d7d57d79210cc9e89d7e0ab0",
+    "metashift/identifiability.py": "f2d633ab66486905524c18fba3261bfa56075b639b6edd17eb627d3782c254dd",
+    "metashift/metrics.py": "ad62b2af389fad5e097a4556a3757d947181cbb6089b37a5a712e3f224c6d2c9",
+    "metashift/synthetic.py": "f7af805db68debcc5025b74e6b78217c787456a808b24b909d4f23a428e4cda7",
+    "scripts/run_v04_identifiability_benchmark.py": "a99d1d12ba53e02a70c0e6c7247b89065fbe1b7783ca6c9bca991438c0579c88"
+  },
+  "outcome_access_status": "No full v0.4 core result, stress result, output directory, or durable attempt record existed when this manifest was created.",
+  "execution_rule": "Create and push v0.4.0-execution-freeze only after the manifest, runner, all contract tests, and CI pass. Execute only from that clean tagged commit; any prior attempt record or output directory permanently blocks rerun."
+}

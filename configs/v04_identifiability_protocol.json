@@ -1,7 +1,12 @@
 {
   "schema_version": 1,
   "protocol_id": "v0.4.0-identifiability-core",
-  "protocol_state": "protocol_only_freeze",
+  "protocol_state": "execution_freeze_candidate",
+  "protocol_only_predecessor": {
+    "tag": "v0.4.0-protocol-freeze",
+    "commit": "37e5bde5949018789e439d27ee2ac444f7b2e45d",
+    "disposition": "Superseded before any v0.4 output or attempt record existed because the pre-execution audit found unbound implementation, leakage-audit, randomization, threshold, and receipt details."
+  },
   "purpose": "Test a theorem-aligned distinction between target-only change detection and cross-site change-scope auditing. This is not an algorithm-superiority, causal, instrument-failure, or external monitoring-network validation study.",
   "immutable_baseline": {
     "evidence_tag": "v0.3.2-evidence-final",
@@ -20,6 +25,7 @@
     ],
     "physical_footprint": "Synthetic component, target, and donor identifiers are generated from this protocol and have no physical-site identity or overlap with the v0.3.2 294-site footprint.",
     "execution_input_allowlist": [
+      "configs/v04_identifiability_execution_manifest.json",
       "configs/v04_identifiability_protocol.json",
       "metashift/counterfactual.py",
       "metashift/identifiability.py",
@@ -43,6 +49,7 @@
       "evaluation": 240
     },
     "component_id_template": "v04-{split}-component-{index:03d}",
+    "start_date": "2030-01-01",
     "days": 300,
     "anchor_day_index": 180,
     "donor_count": 4,
@@ -68,6 +75,7 @@
     },
     "donor_availability": {
       "target_missingness": "none",
+      "single_missing_probability": 0.1,
       "rule": "On each date in chronological order, draw Uniform(0,1). If it is less than 0.10, draw one uniform integer in {0,1,2,3} and mark only that donor missing; otherwise mark none missing.",
       "random_generator": "numpy.random.default_rng(availability_seed_rule)",
       "minimum_available_donors_guaranteed": 3,
@@ -90,10 +98,17 @@
   "schedule_families": [
     {
       "name": "constant_step",
+      "parameters": {
+        "post_increment": 0.12
+      },
       "rule": "Record the pair-derived seed without consuming it. Set schedule[t]=0 for t<anchor and schedule[t]=0.12 for t>=anchor."
     },
     {
       "name": "bounded_stochastic_step",
+      "parameters": {
+        "post_center": 0.12,
+        "uniform_half_width": 0.02
+      },
       "rule": "Set schedule[t]=0 for t<anchor. Initialize numpy.random.default_rng(pair_seed), draw one chronological length-120 Uniform(-0.02,0.02) vector, and set schedule[t]=0.12+draw[t-anchor] for t>=anchor. Reuse this exact vector in L and R."
     }
   ],
@@ -111,7 +126,7 @@
   "evaluation": {
     "target_only_detection_score": "absolute(median(post target analysis scale) - median(pre target analysis scale))",
     "comparative_scope_score": "absolute estimate_metadata_anchor log_effect",
-    "target_only_scope_policy": "For L/R scope evaluation, always predict local after a target-only change decision. This deterministic tie rule operationalizes the information limit; it is not optimized.",
+    "target_only_scope_policy": "For L/R scope evaluation, always predict local. This deterministic tie rule operationalizes the information limit; it is not optimized.",
     "comparative_scope_policy": "Predict local when the comparative scope score is at least the calibration-selected scope threshold; otherwise predict regional.",
     "detection_threshold_selection": "Use metashift.metrics.select_macro_f1_threshold on all finite calibration target-only scores with label 1 for L/R and 0 for N. Its candidates are the sorted unique finite scores plus numpy.nextafter(minimum,-infinity) and numpy.nextafter(maximum,+infinity); maximize binary macro-F1 and choose the numerically higher threshold on an exact tie. Scores at least the threshold are positive.",
     "scope_threshold_selection": "Use the same metashift.metrics.select_macro_f1_threshold algorithm on all finite calibration L/R comparative scope scores with label 1 for L and 0 for R.",
@@ -120,7 +135,7 @@
       "confidence": "absolute(comparative scope score - calibration-selected scope threshold)",
       "operating_quantiles": [0.0, 0.25, 0.5, 0.75],
       "cutoff_selection": "Compute each quantile only from finite calibration L/R confidences with numpy.quantile(method='linear') and apply the unchanged numeric cutoff to evaluation L/R cases.",
-      "answer_rule": "Answer only if the target-only detection score reaches its calibration threshold and confidence reaches the selected cutoff. Otherwise emit below_detection_threshold or below_scope_confidence_cutoff; both reasons must be counted."
+      "answer_rule": "Because detection and scope attribution are evaluated separately, answer the L/R scope task if and only if confidence reaches the selected cutoff. Otherwise emit below_scope_confidence_cutoff. Report the target-only detection decision separately rather than using it as a scope-selection gate."
     },
     "reported_metrics": [
       "complete N/L/R event accounting",
@@ -134,7 +149,9 @@
       "cluster": "synthetic component_id; resample complete component records with replacement",
       "repetitions": 1000,
       "seed": 20260901,
-      "interval": "Percentile 95% using numpy.quantile(method='linear')"
+      "interval": "Percentile 95% using numpy.quantile(method='linear')",
+      "minimum_valid_repetitions_per_answered_risk": 950,
+      "zero_answer_rule": "Report coverage=0 and answered_case_error=null with status no_answered_cases. For bootstrap answered-case risk, report valid repetition count; if it is below the declared minimum, report status insufficient_valid_repetitions rather than manufacture an interval."
     }
   },
   "raw_scale_stress_suite": {
@@ -144,26 +161,45 @@
     "families": [
       {
         "name": "raw_additive_step",
+        "parameters": {
+          "magnitude": 2.0
+        },
         "regional_rule": "For every t>=anchor, add exactly 2.0 raw units to target and all available or missing donor storage values; missing values remain missing.",
         "bound": "Use the sharp nonnegative-domain additive increment bound."
       },
       {
         "name": "raw_proportional_step",
+        "parameters": {
+          "proportion": 0.15
+        },
         "regional_rule": "For every t>=anchor, multiply target and all available or missing donor storage values by exactly 1.15; missing values remain missing.",
         "bound": "Use the global proportional increment Lipschitz bound with a=0.15."
       },
       {
         "name": "raw_gradual_drift",
+        "parameters": {
+          "magnitude": 2.0,
+          "drift_days": 30
+        },
         "regional_rule": "For t>=anchor, add 2.0*minimum((t-anchor)/30,1) raw units to target and all donors; the anchor-day increment is zero and the full increment begins 30 days after anchor.",
         "bound": "Use the sharp nonnegative-domain additive bound pointwise."
       },
       {
         "name": "raw_temporary_step",
+        "parameters": {
+          "magnitude": 2.0,
+          "duration_days": 30
+        },
         "regional_rule": "For anchor<=t<anchor+30, add exactly 2.0 raw units to target and all donors; all other dates have zero increment.",
         "bound": "Use the sharp nonnegative-domain additive bound on affected dates."
       },
       {
         "name": "raw_variance_increase",
+        "parameters": {
+          "magnitude_multiplier": 0.5,
+          "mad_consistency_constant": 1.4826,
+          "pre_anchor_days": 180
+        },
         "regional_rule": "Let MAD be median(abs(y_t-median(y))) over all 180 pre-anchor target raw values. Initialize numpy.random.default_rng(stress_seed), draw 120 chronological Normal(0, 0.5*1.4826*MAD) innovations, and add the same innovation to target and every donor on each t>=anchor.",
         "bound": "Use only the clipping-aware global one-Lipschitz signed-increment bound."
       }
@@ -197,13 +233,16 @@
   },
   "output_contract": {
     "directory": "artifacts/v04_identifiability_core",
+    "execution_manifest": "configs/v04_identifiability_execution_manifest.json",
+    "source_hash_semantics": "SHA-256 of UTF-8 tracked text after CRLF line endings are normalized to LF, matching the Git blob representation.",
     "protocol_freeze_tag": "v0.4.0-protocol-freeze",
     "execution_freeze_tag": "v0.4.0-execution-freeze",
     "attempt_record": "artifacts/.v04_identifiability_core_attempt.json",
     "overwrite_rule": "The execution entrypoint must atomically create the attempt record with exclusive creation, refuse every later attempt if that record or output directory exists, and write durable started, failed, or completed state.",
     "execution_preconditions": [
       "git status --porcelain is empty",
-      "HEAD equals execution_freeze_tag resolved commit",
+      "execution_freeze_tag is a local annotated tag resolving to HEAD",
+      "origin exposes the peeled annotated execution_freeze_tag commit equal to HEAD",
       "the protocol hash at HEAD equals the protocol hash at execution_freeze_tag",
       "all allowlisted input files are tracked and hashed in the receipt",
       "no declared output file, output directory, or prior attempt record exists"
@@ -224,6 +263,7 @@
       "per-file SHA-256",
       "failure count"
     ],
+    "receipt_hash_rule": "The final receipt contains SHA-256 values for every preceding non-self payload file. The durable attempt record stores the final receipt SHA-256, avoiding a self-referential hash.",
     "schemas": {
       "v04_core_event_results.csv": [
         "protocol_id",

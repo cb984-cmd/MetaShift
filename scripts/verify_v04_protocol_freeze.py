@@ -24,11 +24,9 @@ def parse_args() -> argparse.Namespace:
 
 
 def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as source:
-        for block in iter(lambda: source.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
+    """Hash tracked protocol text with CRLF normalized to Git's LF representation."""
+
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def check(name: str, passed: bool, detail: str) -> dict[str, object]:
@@ -54,8 +52,10 @@ def build_report() -> dict[str, object]:
             "pre_outcome_identity",
             protocol.get("protocol_id") == "v0.4.0-identifiability-core"
             and protocol.get("protocol_state")
-            == "protocol_only_freeze",
-            "The protocol has the declared v0.4 identity and honest pre-execution state.",
+            == "execution_freeze_candidate"
+            and protocol.get("protocol_only_predecessor", {}).get("tag")
+            == "v0.4.0-protocol-freeze",
+            "The protocol has the declared v0.4 identity, predecessor, and honest pre-execution state.",
         ),
         check(
             "independent_source_and_protected_baseline",
@@ -117,6 +117,7 @@ def build_report() -> dict[str, object]:
             "execution_input_allowlist_is_enforced_by_contract",
             protocol.get("data_access", {}).get("execution_input_allowlist")
             == [
+                "configs/v04_identifiability_execution_manifest.json",
                 "configs/v04_identifiability_protocol.json",
                 "metashift/counterfactual.py",
                 "metashift/identifiability.py",
@@ -133,6 +134,8 @@ def build_report() -> dict[str, object]:
             output.get("overwrite_rule", "").startswith("The execution entrypoint must atomically")
             and len(output_files) == 6
             and output.get("execution_freeze_tag") == "v0.4.0-execution-freeze"
+            and output.get("execution_manifest")
+            == "configs/v04_identifiability_execution_manifest.json"
             and output.get("attempt_record")
             == "artifacts/.v04_identifiability_core_attempt.json"
             and not declared_output_exists,

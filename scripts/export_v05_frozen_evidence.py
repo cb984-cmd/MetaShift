@@ -15,6 +15,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+AUDIT_PATH = ROOT / "paper" / "upgrade" / "V05_EXECUTION_AUDIT.md"
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
@@ -69,6 +70,8 @@ def main() -> None:
         raise RuntimeError("Frozen-result provenance failed; refusing export.")
     archival = manifest["archival_plan"]
     authority = manifest["execution_authority"]
+    if not AUDIT_PATH.is_file():
+        raise FileNotFoundError("Tracked v0.5 post-execution audit is absent.")
     output_dir = (ROOT / args.output_dir).resolve()
     if output_dir != (ROOT / "evidence_bundle").resolve():
         raise ValueError("The v0.5 archive must use the declared evidence_bundle directory.")
@@ -100,6 +103,8 @@ def main() -> None:
         "source_snapshot_sha256": hashlib.sha256(source_archive).hexdigest(),
         "tracked_provenance_manifest": MANIFEST_PATH.relative_to(ROOT).as_posix(),
         "tracked_provenance_manifest_sha256": sha256(MANIFEST_PATH),
+        "tracked_execution_audit": AUDIT_PATH.relative_to(ROOT).as_posix(),
+        "tracked_execution_audit_sha256": sha256(AUDIT_PATH),
         "files": [
             {"path": item["path"], "bytes": item["bytes"], "sha256": item["sha256"],
              "evidence_role": item["evidence_role"]}
@@ -130,6 +135,7 @@ def main() -> None:
             )
             archive.writestr(source_entry, source_archive)
             archive.writestr("provenance/v05_frozen_result_manifest.json", MANIFEST_PATH.read_bytes())
+            archive.writestr("provenance/V05_EXECUTION_AUDIT.md", AUDIT_PATH.read_bytes())
             archive.writestr("archive_manifest.json", json.dumps(archive_manifest, indent=2))
             for item in manifest["artifacts"]:
                 payload = (ROOT / item["path"]).read_bytes()

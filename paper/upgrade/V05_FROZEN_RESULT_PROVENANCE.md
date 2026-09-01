@@ -9,6 +9,8 @@ one-time claim is `v0.5.0-answerability-execution-claim`.
 attempt record by exact byte count, SHA-256, CSV schema, and row count.  It also
 pins receipt/attempt linkage, both annotated tag objects and peeled remote refs,
 and every Git-blob hash in the execution input allowlist.
+`V05_EXECUTION_AUDIT.md` records the frozen favorable and unfavorable outcomes,
+q=0 negative control, certificate boundaries, and verifier-status limits.
 
 Run `python scripts\verify_v05_frozen_result_provenance.py` for a read-only
 byte/provenance audit. Add `--verify-results` in the receipt-pinned CPython 3.13

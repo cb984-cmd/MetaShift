@@ -37,9 +37,14 @@ replacement or measurement bias.
   proposed contribution. The bounded, joint problem formulation survives the
   comparison; no component method is claimed as new. See
   [`paper/upgrade/NOVELTY_AUDIT.md`](paper/upgrade/NOVELTY_AUDIT.md).
-- [ ] **P2 -- Theory and task specification.** Define observational
-  equivalence, selective-audit scope, residual assumptions, and truth-regime
-  separation before any new experiment.
+- [!] **P2 -- Theory and task specification.** **Blocked by a
+  theory-to-implementation scope defect.** In v0.3.2, four deterministic
+  local/regional pairs have identical target arrays, but the variance pair uses
+  different seeds; the main residual is on the log scale, so its cancellation
+  is not exact for raw-scale shared additive or proportional injections. The
+  frozen evidence remains intact, but Gate A cannot pass until v0.4 specifies
+  exact paired constructions and transformed-scale assumptions. See
+  [`paper/upgrade/PROOF_AND_ASSUMPTION_AUDIT.md`](paper/upgrade/PROOF_AND_ASSUMPTION_AUDIT.md).
 - [ ] **P3 -- Pre-outcome v0.4 protocol freeze.** Freeze a physically
   disjoint candidate manifest, thresholds, perturbations, and checks before
   accessing any candidate post-window outcome.

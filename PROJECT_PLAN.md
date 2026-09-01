@@ -32,19 +32,24 @@ replacement or measurement bias.
   input footprint. This establishes candidate availability, not eligibility or
   blindness. See
   [`paper/upgrade/PHASE_0_EVIDENCE_AND_CONTAMINATION_AUDIT.md`](paper/upgrade/PHASE_0_EVIDENCE_AND_CONTAMINATION_AUDIT.md).
-- [x] **P1 -- Closest-work and novelty audit.** Twelve primary or official
+- [x] **P1 -- Closest-work and novelty audit.** Thirteen primary or official
   sources, including six direct closest works, were checked against the
   proposed contribution. The bounded, joint problem formulation survives the
   comparison; no component method is claimed as new. See
   [`paper/upgrade/NOVELTY_AUDIT.md`](paper/upgrade/NOVELTY_AUDIT.md).
-- [!] **P2 -- Theory and task specification.** **Blocked by a
-  theory-to-implementation scope defect.** In v0.3.2, four deterministic
-  local/regional pairs have identical target arrays, but the variance pair uses
-  different seeds; the main residual is on the log scale, so its cancellation
-  is not exact for raw-scale shared additive or proportional injections. The
-  frozen evidence remains intact, but Gate A cannot pass until v0.4 specifies
-  exact paired constructions and transformed-scale assumptions. See
-  [`paper/upgrade/PROOF_AND_ASSUMPTION_AUDIT.md`](paper/upgrade/PROOF_AND_ASSUMPTION_AUDIT.md).
+- [x] **P2 -- Theory and task specification.** **Gate A passed through a
+  scoped Route 2 recovery.** Four deterministic v0.3.2 pairs have exact target
+  identity; fixed-seed variance does not and has no frozen-record
+  distributional claim. Raw-scale shared perturbations have clipping-aware
+  residual bounds rather than exact primary-score cancellation. A separate
+  v0.4 analysis-scale pair contract is implemented with pair-specific schedule
+  provenance and numerical verification. The only selected confirmatory source
+  is a pre-outcome independently generated synthetic core; six isolated AQS
+  components are non-confirmatory stress feasibility only. See
+  [`paper/upgrade/PERTURBATION_EQUIVALENCE_MATRIX.csv`](paper/upgrade/PERTURBATION_EQUIVALENCE_MATRIX.csv),
+  [`paper/upgrade/THEORY_SPECIFICATION.md`](paper/upgrade/THEORY_SPECIFICATION.md),
+  [`paper/upgrade/THEORY_ROUTE_DECISION.md`](paper/upgrade/THEORY_ROUTE_DECISION.md),
+  and [`paper/upgrade/GATE_A_RECOVERY_LOG.md`](paper/upgrade/GATE_A_RECOVERY_LOG.md).
 - [ ] **P3 -- Pre-outcome v0.4 protocol freeze.** Freeze a physically
   disjoint candidate manifest, thresholds, perturbations, and checks before
   accessing any candidate post-window outcome.

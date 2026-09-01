@@ -130,11 +130,13 @@ def audit_candidate_components(
 
     site_to_anchors: dict[tuple[str, str, str], list[str]] = defaultdict(list)
     anchor_to_sites: dict[str, set[tuple[str, str, str]]] = defaultdict(set)
+    anchor_to_target_site: dict[str, tuple[str, str, str]] = {}
     for _, row in eligible.iterrows():
         anchor_id = str(row["anchor_id"])
         site = physical_site_key(row, TARGET_SITE_COLUMNS)
         site_to_anchors[site].append(anchor_id)
         anchor_to_sites[anchor_id].add(site)
+        anchor_to_target_site[anchor_id] = site
 
     eligible_controls = controls.loc[
         controls["anchor_id"].astype(str).isin(eligible_ids)
@@ -171,6 +173,7 @@ def audit_candidate_components(
     rows: list[dict[str, object]] = []
     available_anchor_count = 0
     available_site_count = 0
+    available_target_sites: set[tuple[str, str, str]] = set()
     for index, anchor_ids in enumerate(
         sorted((sorted(ids) for ids in components.values()), key=lambda ids: tuple(ids)),
         start=1,
@@ -178,15 +181,20 @@ def audit_candidate_components(
         component_sites = set().union(
             *(anchor_to_sites[anchor_id] for anchor_id in anchor_ids)
         )
+        component_target_sites = {
+            anchor_to_target_site[anchor_id] for anchor_id in anchor_ids
+        }
         overlaps_prior_input = bool(component_sites.intersection(prior_input_sites))
         if not overlaps_prior_input:
             available_anchor_count += len(anchor_ids)
             available_site_count += len(component_sites)
+            available_target_sites.update(component_target_sites)
         rows.append(
             {
                 "component_id": f"metadata-component-{index:03d}",
                 "anchor_count": len(anchor_ids),
                 "physical_site_count": len(component_sites),
+                "target_physical_site_count": len(component_target_sites),
                 "anchor_id_sha256": digest_lines(anchor_ids),
                 "physical_site_sha256": digest_lines(
                     ["-".join(site) for site in sorted(component_sites)]
@@ -214,6 +222,7 @@ def audit_candidate_components(
         "components_disjoint_from_prior_stable_input": len(available_components),
         "anchors_in_disjoint_components": available_anchor_count,
         "physical_sites_in_disjoint_components": available_site_count,
+        "target_physical_sites_in_disjoint_components": len(available_target_sites),
         "all_eligible_anchors_accounted_for": True,
         "components": rows,
     }

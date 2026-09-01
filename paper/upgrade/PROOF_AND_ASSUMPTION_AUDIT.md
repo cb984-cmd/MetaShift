@@ -1,7 +1,10 @@
 # Phase 2: Proof and Assumption Audit
 
-**Phase 2 status: BLOCKED.** Gate A has not been evaluated and no v0.4
-experiment, protocol freeze, or manuscript rewrite is authorized.
+**Phase 2 status: RESOLVED BY A SCOPED ROUTE 2.** The initial broad claim is
+invalid, but Gate A now passes for the bounded theory contract in
+[`THEORY_SPECIFICATION.md`](THEORY_SPECIFICATION.md). No v0.4 experiment,
+protocol freeze, or manuscript rewrite was authorized while this initial
+counterexample was investigated.
 
 ## Finding
 
@@ -102,3 +105,22 @@ benchmark; it says nothing about all real-world single-series methods.
 
 No frozen v0.3.2 artifact was edited, regenerated, or reinterpreted while
 performing this audit.
+
+## Recovery disposition
+
+The required repair has been implemented separately from the frozen
+v0.3.2 generator:
+
+1. `PERTURBATION_EQUIVALENCE_MATRIX.csv` classifies every frozen family and
+   limits exact target identity to the four verified deterministic pairs.
+2. `THEORY_SPECIFICATION.md` distinguishes algebraic transformed-scale
+   invariance from raw floating-point verification within \(10^{-12}\), and
+   gives clipping-aware approximate bounds for raw-scale stress cases.
+3. `metashift/identifiability.py` requires a pair identifier, validates any
+   recorded pair-derived seed, and records a canonical schedule hash.
+4. `BLIND_SET_POWER_AND_FEASIBILITY.md` limits the isolated AQS source to
+   non-confirmatory stress feasibility; it selects only a newly generated
+   analysis-scale core for a later pre-outcome synthetic contract.
+
+`THEORY_ROUTE_DECISION.md` selects Route 2. The tracked Gate A verifier and
+theory-to-code tests must pass before the separate Phase 3 protocol is frozen.

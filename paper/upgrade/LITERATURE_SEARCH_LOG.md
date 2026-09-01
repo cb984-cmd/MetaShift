@@ -29,6 +29,7 @@ EPA. This is a focused closest-work audit, not a systematic review.
 | `Conformal Risk Control Angelopoulos Bates Fisch Lei Schuster` | ICLR/OpenReview metadata | Included AR24. |
 | `benchmark design real ground truth unavailable change point detection` | arXiv, Alan Turing Institute | Included VW20. |
 | `site:epa.gov AQS monitor metadata comparability siting method equivalency` | EPA AQS and regulatory documentation | Included EPA-AQS context. |
+| `Le Cam asymptotic methods observational equivalence identical distributions hypothesis testing DOI` | Crossref and Springer DOI record | Included LC86 as a limiting decision-theoretic reference. It supports only the general statistical-experiment vocabulary; the benchmark propositions are proved directly and are not claimed as new theory. |
 
 ## Inclusion criteria
 

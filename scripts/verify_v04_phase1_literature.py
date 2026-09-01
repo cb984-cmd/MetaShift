@@ -28,6 +28,7 @@ REQUIRED_WORK_IDS = {
     "JR25",
     "VW20",
     "EPA-AQS",
+    "LC86",
 }
 REQUIRED_COLUMNS = {
     "work_id",

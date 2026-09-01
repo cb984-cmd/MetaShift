@@ -7,5 +7,5 @@
 *.yml text eol=lf
 *.yaml text eol=lf
 
-*.pdf -text
-*.png -text
+*.pdf binary
+*.png binary

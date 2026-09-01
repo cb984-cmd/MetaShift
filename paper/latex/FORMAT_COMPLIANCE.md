@@ -23,9 +23,12 @@ receipt-bound renderings rather than screenshots.
   source-layout QA records for both sets.
 - [x] Citation links remain restrained for print.
 - [x] Human-only fields remain visibly incomplete.
-- [ ] A clean final-mode build must regenerate the canonical PDF, rendered
-  pages, combined 22-figure crop record, font audit, and exact compliance
-  statistics from the committed source.
+- [x] A clean final-mode build from
+  `61186839aefa3b7780134cf7936c5424dd39b1e6` regenerated the canonical
+  57-page PDF (1,569,094 bytes; SHA-256
+  `399334fee9a19954e4b37c6f5d84aa2efa048899a5816ab7fe061415f62797c5`),
+  44 combined 150/300-DPI figure crops, and the font audit with zero overfull,
+  Type 3, or unembedded-font violations.
 
-**Status: source integration is complete pending clean final-build validation.
-No competition-submission completion is claimed.**
+**Status: all 18 technical formal-compliance checks passed on the clean
+final-mode build. No competition-submission completion is claimed.**

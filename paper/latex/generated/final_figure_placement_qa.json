@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "source_pdf": "paper/latex/build/MetaShift_Bench_Yau_2026.pdf",
-  "source_pdf_sha256": "641f95fa2d5a8d55466b320f6631f8f4082afeafde45c73f4615d214149a79d9",
+  "source_pdf_sha256": "399334fee9a19954e4b37c6f5d84aa2efa048899a5816ab7fe061415f62797c5",
   "required_figure_count": 22,
   "crop_dpi": [
     150,

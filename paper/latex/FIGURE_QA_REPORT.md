@@ -33,7 +33,13 @@ titles below 10 pt at final print width.
 
 ## Status
 
-The prior v0.3.2-only visual sign-off is superseded. The v0.5 figures have
-receipt-bound generation and source-layout records, but combined final-PDF
-page rendering, 44 150/300-DPI figure crops, visual inspection, and the
-canonical font audit are pending the clean committed-worktree build.
+The prior v0.3.2-only visual sign-off is superseded. The clean final-mode
+build from `61186839aefa3b7780134cf7936c5424dd39b1e6` produced the 57-page
+canonical PDF (SHA-256
+`399334fee9a19954e4b37c6f5d84aa2efa048899a5816ab7fe061415f62797c5`). Its
+combined validator located and rendered all 22 placements into all 44 required
+150/300-DPI crops; source-layout, crop, and print-resolution checks passed.
+The canonical font audit covered 18 PDFs and 127 font entries with no Type 3
+or unembedded-font violation. A page-level review of all rendered pages and a
+detailed 300-DPI review of the five v0.5 figure placements found no clipping,
+collision, missing placement, or unreadable v0.5 label.

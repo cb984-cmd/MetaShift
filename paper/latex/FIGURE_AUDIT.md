@@ -82,7 +82,9 @@ signed off, every figure must have:
 
 **Status: the historical v0.3.2-only visual sign-off is superseded.** The
 current report has 17 legacy vector figures and five v0.5 receipt-bound raster
-figures. The final source gate must generate a combined 22-figure,
-150/300-DPI crop record and a new canonical PDF from a clean committed
-worktree. This presentation work does not complete any human-only submission
-item.
+figures. The clean final source gate at
+`61186839aefa3b7780134cf7936c5424dd39b1e6` generated the combined 22-figure,
+44-crop 150/300-DPI record and canonical 57-page PDF (SHA-256
+`399334fee9a19954e4b37c6f5d84aa2efa048899a5816ab7fe061415f62797c5`).
+The visual and font gates passed. This presentation work does not complete any
+human-only submission item.

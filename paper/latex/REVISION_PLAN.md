@@ -41,12 +41,15 @@ data, binds every report-facing v0.5 macro use to a concrete manuscript
 assertion, and rejects raw frozen output literals in report prose.
 
 The source QA has 17 legacy vector figures and five v0.5 receipt-bound raster
-figures. The next final build must begin from a clean committed worktree,
-recreate the combined 22-figure crop record, and supply the new page count,
-PDF hash, font audit, and formal-compliance record. No new data, analysis,
-tuning, taxonomy work, or evidence-release change is permitted during this
-revision. The CI-safe public-document checker writes to an ignored transient
-artifact by default, leaving the frozen release
+figures. The completed final build began from the clean committed worktree at
+`61186839aefa3b7780134cf7936c5424dd39b1e6`, produced a 57-page canonical PDF
+(1,569,094 bytes; SHA-256
+`399334fee9a19954e4b37c6f5d84aa2efa048899a5816ab7fe061415f62797c5`), and
+passed the 22-figure/44-crop, font, and 18-check formal-compliance gates. No
+new data, analysis, tuning, taxonomy work, or evidence-release change is
+permitted during this revision. Any future report-source change requires a new
+clean final build. The CI-safe public-document checker writes to an ignored
+transient artifact by default, leaving the frozen release
 `results/document_consistency.json` unchanged.
 
 All contribution, identity, taxonomy, advisor, AI-use, signature, stamp,

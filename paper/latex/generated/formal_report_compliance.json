@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-09-01T16:02:45.295077+00:00",
+  "generated_at_utc": "2026-09-01T16:35:57.147730+00:00",
   "formal_report": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
-  "verification_mode": "candidate",
-  "verified_pdf": "paper/latex/build/MetaShift_Bench_Yau_2026.pdf",
+  "verification_mode": "canonical",
+  "verified_pdf": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
   "frozen_evidence": {
     "tag": "v0.3.2-evidence-final",
     "commit": "57d678ecabebff724d898abe626c9ef80538775b",
@@ -14,8 +14,8 @@
   },
   "source_word_count_estimate": 13342,
   "compiled_pdf": {
-    "bytes": 1568994,
-    "sha256": "641f95fa2d5a8d55466b320f6631f8f4082afeafde45c73f4615d214149a79d9",
+    "bytes": 1569094,
+    "sha256": "399334fee9a19954e4b37c6f5d84aa2efa048899a5816ab7fe061415f62797c5",
     "rendered_page_count": 57
   },
   "human_completion_status": "required",

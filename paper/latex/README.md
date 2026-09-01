@@ -27,12 +27,13 @@ $py = 'C:\Users\marco\.copilot\session-state\863d8d39-4e41-4fe4-9ac9-3b3055a632d
 & $py scripts\verify_paper_asset_determinism.py
 ```
 
-After committing all report sources and generated assets, run
-`& $py scripts\build_paper.py` from a clean worktree. Final mode transactionally
-publishes `MetaShift_Bench_Yau_2026.pdf` only after source, evidence,
-determinism, geometry, rendered-page, font, and formal-compliance checks pass.
-The canonical final-build record is intentionally pending that clean build;
-do not cite the superseded v0.3.2-only PDF record.
+The canonical final build was produced from clean source commit
+`61186839aefa3b7780134cf7936c5424dd39b1e6`. It transactionally published the
+57-page `MetaShift_Bench_Yau_2026.pdf` (1,569,094 bytes; SHA-256
+`399334fee9a19954e4b37c6f5d84aa2efa048899a5816ab7fe061415f62797c5`) with
+zero overfull boxes and all 18 formal-compliance checks passing. Future
+report-source edits require another clean final-mode build; do not cite the
+superseded v0.3.2-only PDF record.
 
 `generated/` holds 38 legacy presentation assets and 11 receipt-bound v0.5
 assets, including 17 legacy vector figures and five v0.5 raster figures.

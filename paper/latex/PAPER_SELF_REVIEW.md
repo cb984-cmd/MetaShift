@@ -3,9 +3,11 @@
 ## Scope and current status
 
 This is a technical review of the answerability-first report source. The prior
-v0.3.2-only PDF sign-off is superseded. The current integration has not yet
-received a clean final build, so it makes no canonical page-count, PDF-hash, or
-final-compliance claim.
+v0.3.2-only PDF sign-off is superseded. A clean final build from
+`61186839aefa3b7780134cf7936c5424dd39b1e6` produced a 57-page canonical PDF
+(1,569,094 bytes; SHA-256
+`399334fee9a19954e4b37c6f5d84aa2efa048899a5816ab7fe061415f62797c5`) and
+passed all 18 formal-compliance checks.
 
 The real-data release remains `v0.3.2-evidence-final`; the independent
 synthetic scope release is `v0.5-answerability-frontier`.
@@ -30,8 +32,10 @@ synthetic scope release is `v0.5-answerability-frontier`.
   receipt-bound generated assets, and an exact assertion in its declared
   manuscript file; it rejects manually written protected frozen result values.
 - Presentation source includes 17 legacy vector figures and five receipt-bound
-  v0.5 raster figures. The clean final-build gate must regenerate the combined
-  22-figure rendered-page and crop record.
+  v0.5 raster figures. The clean final build regenerated the combined
+  22-figure record with all 44 required 150/300-DPI crops; page-level visual
+  review found no clipping, collision, missing placement, or unreadable v0.5
+  label.
 - The taxonomy status remains `human_blocked`. It blocks only taxonomy-based
   mechanism interpretation, not the synthetic scope theory or frozen v0.5
   evidence.

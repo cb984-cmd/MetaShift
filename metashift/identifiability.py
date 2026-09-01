@@ -11,6 +11,7 @@ from dataclasses import dataclass
 import hashlib
 
 import numpy as np
+from numpy.typing import ArrayLike
 import pandas as pd
 
 
@@ -92,6 +93,72 @@ def shared_analysis_scale_noise(
         0.0, standard_deviation, int(post_mask.sum())
     )
     return schedule, seed
+
+
+def _probability_mass_function(probabilities: ArrayLike, name: str) -> np.ndarray:
+    values = np.asarray(probabilities, dtype=float)
+    if values.ndim != 1 or values.size == 0:
+        raise ValueError(f"{name} must be a nonempty one-dimensional PMF.")
+    if not np.isfinite(values).all() or (values < 0.0).any():
+        raise ValueError(f"{name} must contain finite, nonnegative values.")
+    if not np.isclose(float(values.sum()), 1.0, rtol=0.0, atol=1e-12):
+        raise ValueError(f"{name} must sum to one.")
+    return values
+
+
+def _local_prior(local_prior: float) -> float:
+    if not np.isfinite(local_prior) or not 0.0 < local_prior < 1.0:
+        raise ValueError("local_prior must be finite and strictly between zero and one.")
+    return float(local_prior)
+
+
+def discrete_binary_bayes_error(
+    local_pmf: ArrayLike, regional_pmf: ArrayLike, local_prior: float
+) -> float:
+    """Return zero-one Bayes error for two discrete feature laws and a prior."""
+
+    local = _probability_mass_function(local_pmf, "local_pmf")
+    regional = _probability_mass_function(regional_pmf, "regional_pmf")
+    if local.shape != regional.shape:
+        raise ValueError("local_pmf and regional_pmf must have matching support.")
+    prior = _local_prior(local_prior)
+    return float(np.minimum(prior * local, (1.0 - prior) * regional).sum())
+
+
+def discrete_total_variation_distance(
+    first_pmf: ArrayLike, second_pmf: ArrayLike
+) -> float:
+    """Return total variation distance between two discrete probability laws."""
+
+    first = _probability_mass_function(first_pmf, "first_pmf")
+    second = _probability_mass_function(second_pmf, "second_pmf")
+    if first.shape != second.shape:
+        raise ValueError("PMFs must have matching support.")
+    return float(0.5 * np.abs(first - second).sum())
+
+
+def label_blind_accepted_local_prior(
+    common_pmf: ArrayLike,
+    acceptance_probabilities: ArrayLike,
+    local_prior: float,
+) -> float:
+    """Return the accepted-set local prior for a label-blind discrete selector."""
+
+    common = _probability_mass_function(common_pmf, "common_pmf")
+    acceptance = np.asarray(acceptance_probabilities, dtype=float)
+    if acceptance.shape != common.shape:
+        raise ValueError("acceptance_probabilities must match common_pmf.")
+    if (
+        not np.isfinite(acceptance).all()
+        or (acceptance < 0.0).any()
+        or (acceptance > 1.0).any()
+    ):
+        raise ValueError("acceptance_probabilities must be finite values in [0, 1].")
+    prior = _local_prior(local_prior)
+    coverage = float(np.dot(common, acceptance))
+    if coverage <= 0.0:
+        raise ValueError("The label-blind selector must have positive coverage.")
+    return float((prior * coverage) / coverage)
 
 
 def clipped_log(values: pd.Series | pd.DataFrame | np.ndarray) -> object:

@@ -224,3 +224,10 @@ raw-scale v0.3.2 generator. The tests enforce:
 
 See `tests/test_v04_theory_scope.py` and
 `tests/test_v04_identifiability_core.py`.
+
+The completed bounded Bayes-risk and label-blind-selection formalization,
+assumption ledger, adversarial proof audit, and symbol-level implementation
+crosswalk are in
+[`IDENTIFIABILITY_THEORY.md`](IDENTIFIABILITY_THEORY.md),
+[`THEOREM_ASSUMPTION_TABLE.csv`](THEOREM_ASSUMPTION_TABLE.csv), and
+[`THEOREM_TO_CODE_CORRESPONDENCE.csv`](THEOREM_TO_CODE_CORRESPONDENCE.csv).

@@ -52,6 +52,7 @@ replacement or measurement bias.
   components are non-confirmatory stress feasibility only. See
   [`paper/upgrade/PERTURBATION_EQUIVALENCE_MATRIX.csv`](paper/upgrade/PERTURBATION_EQUIVALENCE_MATRIX.csv),
   [`paper/upgrade/THEORY_SPECIFICATION.md`](paper/upgrade/THEORY_SPECIFICATION.md),
+  [`paper/upgrade/IDENTIFIABILITY_THEORY.md`](paper/upgrade/IDENTIFIABILITY_THEORY.md),
   [`paper/upgrade/THEORY_ROUTE_DECISION.md`](paper/upgrade/THEORY_ROUTE_DECISION.md),
   and [`paper/upgrade/GATE_A_RECOVERY_LOG.md`](paper/upgrade/GATE_A_RECOVERY_LOG.md).
 - [x] **P3 -- Pre-outcome v0.4 protocol freeze.** The initial

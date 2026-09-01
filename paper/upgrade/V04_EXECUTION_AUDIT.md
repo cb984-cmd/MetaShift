@@ -84,7 +84,8 @@ support a separately evaluated scope decision. It does not establish causal
 identification, physical-instrument truth, AQS generalization, external
 monitoring validity, or superiority over standard synthetic control.
 
-No taxonomy stratification, real-anchor analysis, formal manuscript, figure,
-or release-writing task is authorized by this audit. Those workstreams remain
-paused pending the user's explicit direction and, where applicable, independent
-human taxonomy review.
+The audit does not authorize taxonomy stratification, real-anchor analysis, a
+final manuscript, a final figure set, or external release publication.
+Taxonomy-independent theory, metric, stress, novelty, crosswalk, and
+preliminary manuscript/figure architecture work may proceed under their stated
+gates. Taxonomy-dependent conclusions still require independent human review.

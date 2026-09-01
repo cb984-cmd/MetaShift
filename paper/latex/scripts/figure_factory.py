@@ -298,7 +298,7 @@ def _donor_construction_figure(
     _box(
         schematic,
         0.14,
-        0.25,
+        0.28,
         0.22,
         0.18,
         "Same-site POC\nnot a donor",
@@ -306,7 +306,7 @@ def _donor_construction_figure(
         edgecolor="#B91C1C",
         hatch="//",
     )
-    _arrow(schematic, (0.14, 0.52), (0.14, 0.36), color="#B91C1C", style="--")
+    _arrow(schematic, (0.14, 0.52), (0.14, 0.39), color="#B91C1C", style="--")
     for x, label in (
         (0.43, "Donor A\nranked POC"),
         (0.66, "Donor B\nranked POC"),
@@ -317,12 +317,12 @@ def _donor_construction_figure(
         )
         _arrow(schematic, (0.25, 0.64), (x - 0.09, 0.64))
     schematic.text(
-        0.53,
-        0.16,
-        "Physical identity = State + County + Site.\nAt most one POC is retained per donor site.",
+        0.58,
+        0.065,
+        "Physical identity = State + County + Site.\nOne retained POC per donor site.",
         ha="center",
         va="center",
-        fontsize=8,
+        fontsize=7.5,
         transform=schematic.transAxes,
     )
     schematic.set_title("Distinct physical-donor construction", fontweight="bold")

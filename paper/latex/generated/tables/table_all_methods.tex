@@ -1,0 +1,27 @@
+\begin{table}[tbp]
+\centering
+\caption{Complete frozen aggregate comparison of all benchmark methods.}
+\label{tab:all-methods}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrr}
+\toprule
+Method & Local-effect MAE & AUPRC & Macro-F1 & Regional FPR \\
+\midrule
+Standard SC & 0.09983 & 0.91476 & 0.81641 & 0.140 \\
+MetaShift fixed & 0.10344 & 0.89832 & 0.79515 & 0.150 \\
+MetaShift CV & 0.09742 & 0.90178 & 0.80916 & 0.135 \\
+Nearest-neighbor DiD & 0.11150 & 0.88443 & 0.78852 & 0.075 \\
+Bayesian mean shift & 0.24672 & 0.50116 & 0.49962 & 0.542 \\
+Before-after median & 0.25330 & 0.50125 & 0.50024 & 0.505 \\
+CUSUM & N/A & 0.50117 & 0.49720 & 0.581 \\
+Rolling MAD & N/A & 0.50112 & 0.49427 & 0.402 \\
+PELT & N/A & 0.50025 & 0.49976 & 0.522 \\
+\bottomrule
+\end{tabular}
+}
+\par\smallskip
+\begin{minipage}{0.94\linewidth}
+\footnotesize\textit{Note.} All values are aggregates over the held-out stable-regime evaluation partition. Lower MAE and regional FPR are preferable; higher AUPRC and macro-F1 are preferable. N/A means that the method supplies no local-effect magnitude estimate for that perturbation design, not that the method was omitted.
+\end{minipage}
+\end{table}

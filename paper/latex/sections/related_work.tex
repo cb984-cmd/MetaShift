@@ -2,39 +2,67 @@
 
 \subsection{Monitoring comparability and public metadata}
 
-Monitoring comparability is an empirical problem rather than a label inferred
-from a single administrative field. EPA publishes AQS file formats, a Method
-Code reference, and continuous-monitor comparability resources
-\citep{epa_airdata_formats,epa_method_code,epa_pm25_comparability}. Collocated
-Federal Reference Method and Federal Equivalent Method studies show why
-configuration-specific comparison is important \citep{khan2024}. They do not,
-however, supply a dated physical-change ground truth for every historical AQS
+Monitoring comparability is an empirical property rather than a label inferred
+from one administrative field. EPA publishes AQS file formats, Method Code and
+POC references, and continuous-monitor comparability resources
+\citep{epa_airdata_formats,epa_method_code,epa_poc,epa_pm25_comparability}.
+Collocated Federal Reference Method and Federal Equivalent Method studies show
+why configuration-specific comparison matters \citep{khan2024}. They do not,
+however, provide dated physical-change ground truth for every historical AQS
 Method Code transition.
 
-Low-cost PM2.5 sensor studies similarly motivate careful calibration and
-reference comparison \citep{clements2017,barkjohn2021,chu2020}. Their
-calibration settings, instruments, and outcomes differ from a retrospective
-audit of reported regulatory-monitor metadata. MetaShift-Bench uses these works
-as measurement-quality context, not as evidence that an AQS transition has a
-particular physical cause.
+The climate-record homogenization literature offers a useful structural
+analogy: pairwise comparisons and station histories can expose
+inhomogeneities, while the cause remains conditional on the available
+documentation \citep{menne2009}. Air-pollution analyses similarly use
+meteorological normalization to distinguish interventions or trends from
+changing weather \citep{gagliardi2022,grange2019,zheng2023}. Low-cost PM2.5
+sensor studies further motivate calibration and reference comparison
+\citep{clements2017,barkjohn2021,chu2020}. Their instruments, target
+populations, and calibration goals differ from a retrospective audit of
+regulatory-monitor metadata. MetaShift-Bench uses this literature as
+measurement-quality context, not as evidence that a particular AQS transition
+has a particular physical cause.
 
 \subsection{Reference series, counterfactuals, and change points}
 
-Single-series change-point methods such as PELT identify changes in a sequence
-efficiently \citep{killick2012}. Environmental analyses can combine
-change-point tests with meteorological normalization
-\citep{gagliardi2022}. Such methods remain valuable baselines, but a
-single series cannot determine whether a discontinuity is local to the monitor
-or shared across a region.
+Single-series change-point procedures include cumulative-sum monitoring,
+segmentation methods such as PELT, and multiscale approaches
+\citep{killick2012,truong2020,fryzlewicz2014}. These methods are valuable
+baselines because they find patterns in one sequence; they cannot by
+themselves determine whether a break is monitor-local or shared across a
+region. The difference motivates matched regional variants in this
+benchmark.
 
-Pairwise homogenization of climate records is a closer design analogue:
-reference stations and station histories can expose inhomogeneity while leaving
-causal interpretation conditional on assumptions \citep{menne2009}. Synthetic
-control provides donor-weighted counterfactuals and in-space placebo logic
-\citep{abadie2010}; difference-in-differences formalizes stronger treatment
-identification assumptions \citep{callaway2021}. This study adapts those
-ideas as diagnostics, not as proof that the causal assumptions of a policy
-intervention apply to a reported monitoring-method transition.
+Synthetic control provides donor-weighted counterfactuals and in-space placebo
+logic \citep{abadie2010,abadie2015}. Generalized, augmented, and synthetic
+difference-in-differences extensions address other panel structures and
+regularization choices \citep{xu2017,benmichael2021,arkhangelsky2021}.
+Modern difference-in-differences work also emphasizes assumptions and
+heterogeneity under varied treatment timing \citep{callaway2021,goodmanbacon2021}.
+MetaShift-Bench adopts the computational ideas of pre-event fitting and
+reference comparison, but does not claim that the causal identification
+assumptions of a policy study apply to a reported monitoring-method transition.
+
+\subsection{Uncertainty, selection, and abstention}
+
+Time-series resampling must respect serial dependence; circular moving-block
+bootstrap methods are a natural descriptive tool for this purpose
+\citep{kuensch1989}. Distribution-free predictive and conformal methods offer
+another way to assess interval behavior when exchangeability assumptions are
+made explicit \citep{vovk2005,lei2018,romano2019,barber2021}. In this report,
+these methods motivate synthetic coverage evaluation rather than a claim that
+real monitoring events enjoy generic calibration.
+
+The evidence-tier task is also related to multiple testing, selection, and
+abstention. Benjamini--Hochberg adjustment organizes an exploratory family of
+screening quantities \citep{benjamini1995}; it does not turn those quantities
+into causal probabilities. Post-selection inference highlights why selection
+can invalidate naive uncertainty statements \citep{berk2013}. Research on
+noisy labels underscores that observed proxies are not ground truth
+\citep{liu2016,frenay2014}. MetaShift-Bench consequently records an
+inconclusive tier when required comparative evidence is unavailable instead of
+forcing a positive or negative physical diagnosis.
 
 \subsection{Contribution boundary}
 

@@ -221,6 +221,32 @@
         "same",
         "confidence-supported"
       ]
+    },
+    "Q33": {
+      "expected_ledger_fragments": [
+        "9",
+        "N/A"
+      ]
+    },
+    "Q34": {
+      "expected_ledger_fragments": [
+        "5",
+        "800"
+      ]
+    },
+    "Q35": {
+      "expected_ledger_fragments": [
+        "124",
+        "22"
+      ]
+    },
+    "Q36": {
+      "expected_ledger_fragments": [
+        "12-057-0113-poc1-2023-12-01",
+        "06-031-0004-poc8-2021-01-12",
+        "01-103-0011-poc3-2023-02-01",
+        "1e-9"
+      ]
     }
   }
 }

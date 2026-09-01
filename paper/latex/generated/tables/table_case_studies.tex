@@ -1,0 +1,21 @@
+\begin{table}[tbp]
+\centering
+\caption{Deterministically selected representative audit cases.}
+\label{tab:case-studies}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llrrrr}
+\toprule
+Case type & Metadata anchor & Audit disposition & Log effect & Fixed interval & Nested interval \\
+\midrule
+Supported candidate & \texttt{12-057-0113-poc1-2023-12-01} & complete & -0.12777 & [-0.17258, -0.10511] & [-0.17399, -0.10560] \\
+Not supported & \texttt{06-031-0004-poc8-2021-01-12} & complete & -0.08240 & [-0.21609, 0.03012] & [-0.24309, 0.03662] \\
+Inconclusive & \texttt{01-103-0011-poc3-2023-02-01} & insufficient\_geographic\_donors & N/A & N/A & N/A \\
+\bottomrule
+\end{tabular}
+}
+\par\smallskip
+\begin{minipage}{0.94\linewidth}
+\footnotesize\textit{Note.} Supported and not-supported cases minimize absolute distance to their within-tier median standardized score, with anchor ID tie-breaking. The inconclusive case is the lexicographically first donor-insufficient anchor and deliberately has no counterfactual or interval. Intervals are diagnostic, not calibrated physical-bias confidence intervals.
+\end{minipage}
+\end{table}

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "evidence_version": "v0.3.2",
+  "evidence_tag": "v0.3.2-evidence-final",
+  "purpose": "Deterministic display-only reconstruction of three representative MetaShift-Bench event cases. This configuration does not change any frozen estimator, threshold, donor rule, or scientific result.",
+  "source_manifest": {
+    "path": "artifacts/data_gate/source_manifest.json",
+    "sha256": "ae1c39a600d80f84b7d63101c1f2752a5fbfe0e3ef364e8b1b645effbaf27f3f"
+  },
+  "geographic_controls": {
+    "path": "artifacts/data_gate/geographic_controls.csv",
+    "sha256": "2002782a8026db2095d060825271a7f4795d801ece96c3b05b68d21bf0a7a717"
+  },
+  "selection": {
+    "supported_candidate": {
+      "evidence_tier": "supported_candidate_discontinuity",
+      "required_audit_status": "complete",
+      "rule": "Select the anchor minimizing absolute distance between standardized_score and the within-tier median standardized_score; break ties by anchor_id ascending."
+    },
+    "not_supported": {
+      "evidence_tier": "not_supported_by_available_evidence",
+      "required_audit_status": "complete",
+      "rule": "Select the anchor minimizing absolute distance between standardized_score and the within-tier median standardized_score; break ties by anchor_id ascending."
+    },
+    "inconclusive_missing_counterfactual": {
+      "evidence_tier": "inconclusive_insufficient_evidence",
+      "required_audit_status": "insufficient_geographic_donors",
+      "rule": "Select the lexicographically first anchor_id. The panel must show the target series and the machine-readable abstention reason without imputing a counterfactual."
+    }
+  },
+  "reconstruction": {
+    "parameter_code": "88101",
+    "visible_days_before_anchor": 120,
+    "visible_days_after_anchor": 120,
+    "maximum_ranked_donors": 5,
+    "cross_site_method": "metashift_v1_fixed",
+    "weight_fit": "Use the frozen 180-day calibration interval ending 15 days before the anchor and the fixed 0.1 ridge plus 0.1 prior penalties.",
+    "effect_check": "Recomputed log_effect must match the saved metashift_v1_fixed result within absolute tolerance 1e-9."
+  }
+}

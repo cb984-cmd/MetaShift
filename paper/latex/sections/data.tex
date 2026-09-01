@@ -1,32 +1,55 @@
-\section{Data and event construction}
+\section{Data and benchmark construction}
 
 \subsection{Primary public-data corpus}
 
-The primary corpus comprises EPA AirData daily archives for parameter 88101,
-PM2.5 local conditions, for 2019--2025
-\citep{epa_obtaining_aqs,epa_airdata_formats}. The canonical signal is the
-\texttt{Arithmetic Mean} for \texttt{24-HR BLK AVG} observations. The
-predeclared cleaning rule retains nonempty Method Code records with observation
-percent at least 75 and an Event Type other than \texttt{Excluded}. It prevents
-alternative daily summaries for the same monitor-day from being treated as
-independent observations.
+The primary corpus comprises the seven annual EPA AirData daily archives for
+parameter 88101, PM2.5 local conditions, spanning 2019--2025
+\citep{epa_obtaining_aqs,epa_airdata_formats}. The data gate records the
+official download URL, archive bytes, archive SHA-256, selected CSV member,
+retained CSV row count, and acquisition-time modification field for every
+archive. This provenance record permits reconstruction without versioning the
+large raw archives or any API response in the repository.
+
+The canonical signal is the reported \texttt{Arithmetic Mean} for
+\texttt{24-HR BLK AVG} observations. The predeclared cleaning rule keeps
+finite values with observation percent at least 75, a non-excluded Event Type,
+and a nonempty Method Code. It then refuses duplicate records with the same
+state, county, site, POC, and date key.
+Thus alternative daily summaries cannot be treated as independent
+observations. The retained primary inventory is a frozen snapshot; it is not a
+claim that the public source is immutable or complete for all later AQS
+updates.
 
 \input{generated/tables/table_data_summary}
 
-The source files, archive size, checksum, selected CSV member, and retained row
-count are preserved in the frozen data manifest. The daily data are public, but
-raw downloads and API responses are not included in this manuscript repository
-or its paper assets. That separation keeps the report reproducible without
-placing raw files or local credentials under version control.
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_data_construction.pdf}
+\caption{Metadata-anchor dates and prequalified distinct-donor availability in
+the frozen 88101 inventory. The left panel counts anchors by reported date; the
+right panel counts anchors by their number of distinct physical donor
+candidates before the common-method input check. The figure documents
+availability in the audited snapshot, not a frequency of physical monitoring
+changes.}
+\label{fig:data-construction}
+\end{figure}
+
+The daily data are public, but raw archives and API responses are not included
+in this manuscript repository or its paper assets. The display-only case-study
+renderer verifies archive checksums locally before reading the same source
+files. That separation supplies a reproducible source chain without placing
+raw data, credentials, or local cache files under version control.
 
 \subsection{Metadata anchors and distinct physical donors}
 
 An anchor is a persistent reported Method Code transition with at least 60
 calendar days on each side, at least 45 retained observations in each adjacent
-method run, and no more than a seven-day transition gap. An eligible geographic
-donor is at a different physical site, within the predeclared distance limit,
-method-stable in the target window, sufficiently paired in the pre-event
-period, and sufficiently correlated before the anchor.
+method run, and no more than a seven-day transition gap. Its fields preserve
+the old and new reported codes and method names, but neither field establishes
+why the record changed. An eligible geographic donor must be at a different
+physical site, within the predeclared 100-km radius, method-stable over the
+target window, observed on at least 60 paired pre-event days, and correlated
+at least 0.60 on the log scale before the anchor.
 
 Physical donor identity is State Code + County Code + Site Number. A target's
 candidate donor list can contain multiple POCs for one physical site, but the
@@ -37,10 +60,28 @@ multiple POCs could be treated as independent geographic donors. Same-site
 alternate POCs are excluded from geographic donor construction and reserved for
 contextual consistency analysis.
 
-\subsection{Audit disposition}
+\subsection{Stable-regime synthetic cases}
+
+Real anchors do not provide known physical-bias truth. The benchmark therefore
+constructs pseudo-anchors only inside stable target and donor method regimes,
+at least 60 days away from a reported target or donor transition. The frozen
+case manifest contains 124 method-transition stable regimes and 22
+all-monitor stable regimes. Both sources are retained because the target is a
+known, stable measurement record at the pseudo-anchor; neither is used as a
+real-event causal label. Section~\ref{sec:experimental-design} explains how
+the target-plus-donor footprints are split before any held-out metric is
+calculated.
+
+\subsection{Audit disposition and parameter separation}
 
 Every anchor is retained in the event audit. A complete comparison means that
 the required common cross-site inputs exist; donor insufficiency and
 input-window failure are explicit machine-readable outcomes rather than omitted
 rows. This complete accounting is necessary because a result on only the
 well-matched subset would overstate the scope of cross-site inference.
+
+Parameter 88502 is processed through a separate data gate, anchor inventory,
+and audit table. It is neither appended to nor pooled with the primary 88101
+results. This separation prevents an apparent replication from being created by
+mixing parameter-specific reporting conventions, availability, or eligible
+event populations.

@@ -1,0 +1,61 @@
+\section{Representative case studies}
+\label{sec:case-studies}
+
+\subsection{Selection policy and source provenance}
+
+Examples can make an audit readable, but selected examples can also conceal a
+failure mode or overstate a method's scope. The three cases in this section
+are therefore not hand-picked for their visual contrast or effect magnitude.
+The display configuration selects one complete supported-candidate anchor and
+one complete not-supported anchor by minimum distance to the within-tier median
+standardized score, with anchor-ID tie-breaking. It selects the
+lexicographically first donor-insufficient inconclusive anchor to make the
+absence of a qualified counterfactual visible. The configuration, selected
+donors, archive manifest checksum, donor-table checksum, fitted weights, and
+reconstruction error are stored in the generated case-study manifest.
+
+For the two complete cases, the renderer reads only the checksum-pinned public
+EPA archives, applies the frozen cleaning rule, reconstructs the fixed-prior
+MetaShift weights from pre-anchor data, and fails if the reconstructed saved
+log effect differs by more than $10^{-9}$. The raw archives remain outside
+version control. The third case intentionally has no reconstructed
+counterfactual: its audit disposition is that fewer than three qualified
+distinct physical donors were available.
+
+\input{generated/tables/table_case_studies}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_case_studies.pdf}
+\caption{Deterministically selected representative cases. Top row: retained
+daily target values and, for complete cases only, the pre-anchor-fitted
+fixed-prior MetaShift counterfactual in $\mu$g/m$^3$. Middle row: calibrated
+log residuals for complete cases; the inconclusive case instead states why no
+counterfactual is constructed. Bottom row: protocol-defined fixed and nested
+diagnostic intervals for complete cases; no effect or interval is imputed for
+the donor-insufficient anchor. Blue and yellow shading mark the 60-day pre-
+and post-anchor comparison windows. All raw display inputs are checksum-pinned
+locally; the figure is not evidence of a physical instrument event.}
+\label{fig:case-studies}
+\end{figure}
+
+\subsection{Interpretation boundaries}
+
+The supported-candidate panel illustrates a case in which the predeclared
+diagnostic conditions jointly hold. That status prioritizes the anchor for
+further station-history and technical-record review; it does not identify a
+device, a maintenance action, a calibration change, or a measurement bias. The
+not-supported panel illustrates the opposite distinction: a visible target
+series and a complete counterfactual are not sufficient when available
+diagnostics fail the frozen evidence rules. It would be misleading to discard
+that case merely because its residual plot is less dramatic.
+
+The inconclusive panel is equally important. A target series may have an
+apparent before/after pattern, yet the protocol cannot form the common
+cross-site comparison if the distinct-donor requirement fails. MetaShift-Bench
+therefore abstains rather than borrowing a same-site POC, relaxing the donor
+rule after inspection, or assigning a physical explanation. This case makes
+the audit's coverage boundary concrete: lack of a qualified comparison is
+lack of evidence for this protocol, not evidence that nothing happened.
+
+\FloatBarrier

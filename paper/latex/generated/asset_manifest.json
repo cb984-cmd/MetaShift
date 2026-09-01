@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "generator": "paper/latex/scripts/generate_paper_assets.py",
   "frozen_evidence": {
     "tag": "v0.3.2-evidence-final",
@@ -150,6 +150,28 @@
       "sha256": "cf5ff2fd0f263c570d301adfc3a871df25630305e52cf880615333e403b8d068"
     }
   ],
+  "presentation_input_sources": [
+    {
+      "path": "paper/latex/configs/case_study_rendering_v1.json",
+      "sha256": "11df7ecc1adbd2aedf8854f778982ca243e3427f6931b355327156a5386eaab4"
+    },
+    {
+      "path": "configs/benchmark_release_v2.json",
+      "sha256": "510fca2c90f858e7a40af9c27962a0af02305e837a4edfb55fa90ddabb6e6f64"
+    },
+    {
+      "path": "configs/evidence_tier_primary_v1.json",
+      "sha256": "921d92c30eb5ae8de430f6ffb027a0191ea72fe51c239864eb63547cae2c0e07"
+    },
+    {
+      "path": "artifacts/data_gate/source_manifest.json",
+      "sha256": "ae1c39a600d80f84b7d63101c1f2752a5fbfe0e3ef364e8b1b645effbaf27f3f"
+    },
+    {
+      "path": "artifacts/data_gate/geographic_controls.csv",
+      "sha256": "2002782a8026db2095d060825271a7f4795d801ece96c3b05b68d21bf0a7a717"
+    }
+  ],
   "outputs": [
     {
       "path": "generated/evidence_macros.tex",
@@ -164,10 +186,27 @@
       "path": "generated/claim_value_manifest.json",
       "kind": "claim_value_manifest",
       "sources": [
-        "configs/current_evidence_summary_v2.json"
+        "configs/current_evidence_summary_v2.json",
+        "artifacts/stable_synthetic_case_manifest.json",
+        "artifacts/real_transition_88101_evidence_tiers.csv",
+        "artifacts/real_transition_88101_method_results.csv",
+        "paper/latex/configs/case_study_rendering_v1.json"
       ],
-      "bytes": 3870,
-      "sha256": "530278e46a13dbc6ee8ef927ab2c9f688c0231e3bf8668051ca1f3baa3493027"
+      "bytes": 4344,
+      "sha256": "64f719a1485d39debb141b5e6753002ea0e3a87484e0507dc995642bbcdf1914"
+    },
+    {
+      "path": "generated/case_study_manifest.json",
+      "kind": "case_study_manifest",
+      "sources": [
+        "artifacts/real_transition_88101_evidence_tiers.csv",
+        "artifacts/real_transition_88101_method_results.csv",
+        "paper/latex/configs/case_study_rendering_v1.json",
+        "artifacts/data_gate/source_manifest.json",
+        "artifacts/data_gate/geographic_controls.csv"
+      ],
+      "bytes": 6260,
+      "sha256": "fe95216d8a4ebb761b6784d86b3ba7bdf11afe62a624aca66807faa7b9cfa5e6"
     },
     {
       "path": "generated/tables/table_data_summary.tex",
@@ -175,8 +214,8 @@
       "sources": [
         "configs/current_evidence_summary_v2.json"
       ],
-      "bytes": 773,
-      "sha256": "a9125f367cc123dfb0c0f93d8c776891833b28077c105a1e59b7e4341767f9e2"
+      "bytes": 884,
+      "sha256": "5e7198cc8dd638f7ba30201c0c07850ac75607c2eb2a97e9c01d60bddeb2da2a"
     },
     {
       "path": "generated/tables/table_synthetic_metrics.tex",
@@ -193,8 +232,8 @@
       "sources": [
         "configs/current_evidence_summary_v2.json"
       ],
-      "bytes": 631,
-      "sha256": "f0d38686a75a3e22e20da8da8251ea4a1eab2ef2a990fa955e9aea10ba92c7a8"
+      "bytes": 657,
+      "sha256": "7e15df37670fe76cea16f578256219989181db9ce3fa49a61ceea07901698fa6"
     },
     {
       "path": "generated/tables/table_ablation.tex",
@@ -211,8 +250,8 @@
       "sources": [
         "configs/current_evidence_summary_v2.json"
       ],
-      "bytes": 1112,
-      "sha256": "387ff1e8276a8362566b4b325b42cfded4cb320395adc419bed73a8f11e9d850"
+      "bytes": 1130,
+      "sha256": "65693845df2588e7c8bc5231329685c38019ea28c629659a06905533060b0104"
     },
     {
       "path": "generated/tables/table_interval_coverage.tex",
@@ -260,13 +299,106 @@
       "sha256": "ea29e0a885bbc3ab145af92892456b3b4e4fd69910269b5c33fb100ed88d89d7"
     },
     {
+      "path": "generated/tables/table_all_methods.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 1182,
+      "sha256": "79405423dc4d172e063060325fc8ab2fc976201cfde28cf064e147a2ae87a492"
+    },
+    {
+      "path": "generated/tables/table_perturbation_metrics.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 4136,
+      "sha256": "6d1ad7c6114bf9b303e5c9598b55063b34ba8a0cd10b19efbdd2f723de075810"
+    },
+    {
+      "path": "generated/tables/table_evidence_tier_rules.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 1413,
+      "sha256": "ce3242d4144603ddfc40d0e1064e3a869f7f811638d6e8fcffe2ea59617f3074"
+    },
+    {
+      "path": "generated/tables/table_claim_boundaries.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 1226,
+      "sha256": "da95d009a4c75353a02e3aa062f0842921f9a5f7207d0be00aeab4449d2a53a3"
+    },
+    {
+      "path": "generated/tables/table_case_studies.tex",
+      "kind": "latex_table",
+      "sources": [
+        "configs/current_evidence_summary_v2.json"
+      ],
+      "bytes": 1138,
+      "sha256": "8ee2709e13ac2b5bbc9ff86dd1dae595e559f487264f67fba7df5c2697ee36ae"
+    },
+    {
+      "path": "generated/figures/fig_local_regional_schematic.pdf",
+      "kind": "vector_figure",
+      "sources": [
+        "configs/benchmark_release_v2.json"
+      ],
+      "bytes": 17915,
+      "sha256": "fc287a7d9dd48fd791d027fb8a0c43ea425108b8f57c0215f8f8c29e52b611a1"
+    },
+    {
+      "path": "generated/figures/fig_audit_pipeline.pdf",
+      "kind": "vector_figure",
+      "sources": [
+        "configs/benchmark_release_v2.json",
+        "configs/evidence_tier_primary_v1.json",
+        "artifacts/real_transition_88101_event_audit.csv"
+      ],
+      "bytes": 16872,
+      "sha256": "5cf52718ff82fa3bfa6d8a78f94a2a7231adddef3cd3570c8d66ce69620b716f"
+    },
+    {
+      "path": "generated/figures/fig_data_construction.pdf",
+      "kind": "vector_figure",
+      "sources": [
+        "artifacts/real_transition_88101_event_audit.csv"
+      ],
+      "bytes": 16889,
+      "sha256": "2deede75bf25d364b3c811f9be8c5b0e76a631a6f432ab55b9f4de45965ba7bc"
+    },
+    {
+      "path": "generated/figures/fig_split_integrity.pdf",
+      "kind": "vector_figure",
+      "sources": [
+        "artifacts/stable_synthetic_case_manifest.json",
+        "artifacts/stable_synthetic_case_split_audit.json"
+      ],
+      "bytes": 18162,
+      "sha256": "8fe1ad9ef8f15d1fcc86bb10ed42a65bde2f827f332111d7c235bc8ec9802ebd"
+    },
+    {
+      "path": "generated/figures/fig_perturbation_metrics.pdf",
+      "kind": "vector_figure",
+      "sources": [
+        "artifacts/stable_synthetic_stable_full_v2_metrics.csv"
+      ],
+      "bytes": 38629,
+      "sha256": "45ee36cd31357d71a1a3b2a8eb7415f886bb3ce8e71e1f90453b9ddc70ea7e42"
+    },
+    {
       "path": "generated/figures/fig_event_flow.pdf",
       "kind": "vector_figure",
       "sources": [
         "artifacts/real_transition_88101_event_audit.csv"
       ],
-      "bytes": 12492,
-      "sha256": "5a33f9e9bf50f9228a51e62f8da786d505636c54579d582478346045bfbfcf58"
+      "bytes": 11414,
+      "sha256": "489aafd554941ba058db3bb79f7f69953db3c9067917843fa7e64f0bb1892292"
     },
     {
       "path": "generated/figures/fig_synthetic_metrics.pdf",
@@ -274,8 +406,8 @@
       "sources": [
         "artifacts/stable_synthetic_stable_full_v2_metrics.csv"
       ],
-      "bytes": 20689,
-      "sha256": "431d25d8bd3f38a2bc72ba16d6e2d931e9677c192c5c69410e8059b4ea26e85c"
+      "bytes": 19861,
+      "sha256": "1d2631b17b38e7a243856bddf129c3891d19766f58a4f4c7f88fb2b38af029aa"
     },
     {
       "path": "generated/figures/fig_paired_bootstrap.pdf",
@@ -283,8 +415,8 @@
       "sources": [
         "artifacts/stable_synthetic_stable_full_v2_bootstrap.csv"
       ],
-      "bytes": 15422,
-      "sha256": "d48f368fd3130c91cd42e7dc52debb5d597ff6e03efda32a299f7230c9245315"
+      "bytes": 16656,
+      "sha256": "df1b6b1a7dd9e062f23f3dff9a2400e4a1f69c3372eb8891d41ef38b0d3409c0"
     },
     {
       "path": "generated/figures/fig_evidence_tiers.pdf",
@@ -292,8 +424,8 @@
       "sources": [
         "artifacts/real_transition_88101_evidence_tier_summary.json"
       ],
-      "bytes": 12687,
-      "sha256": "9f5df3a3d49a50c5660d48728d85ad344806a05142efd9b6b7030787428d6b6f"
+      "bytes": 12028,
+      "sha256": "3edccc9acf5070496c7ba858fd2487dc9018b75f21fbcdd17a96172c37473506"
     },
     {
       "path": "generated/figures/fig_placebos.pdf",
@@ -301,8 +433,8 @@
       "sources": [
         "artifacts/time_placebo_summary.csv"
       ],
-      "bytes": 14495,
-      "sha256": "5e3ec7c106197a56461f95bac9bc79443e1dad0d799613038e7b8fe93e69cf70"
+      "bytes": 12675,
+      "sha256": "c59d7b9ec3bd8fa4a1ea5b1b599f1a79c63a8df44b6b04cbb5469a1c809f080e"
     },
     {
       "path": "generated/figures/fig_interval_coverage.pdf",
@@ -310,8 +442,8 @@
       "sources": [
         "artifacts/synthetic_interval_coverage_v2_summary.csv"
       ],
-      "bytes": 18327,
-      "sha256": "be77b166aefb9e34d46c6d4dfd94a35944d1d90377b82061ac9d51aa4d657203"
+      "bytes": 18088,
+      "sha256": "3388289983d064e2cca8157c3661de50c4dab9bb0334a6f96275bb32b01449ec"
     },
     {
       "path": "generated/figures/fig_screening_sensitivity.pdf",
@@ -320,8 +452,8 @@
         "artifacts/screening_sensitivity_summary.csv",
         "artifacts/evidence_tier_sensitivity_v2_summary.csv"
       ],
-      "bytes": 16022,
-      "sha256": "431d17045506029fff62dfd20b33aae47ceba84acaf88ab2b00ad7f5aabe731b"
+      "bytes": 13578,
+      "sha256": "73ab68e9ef4c2b60dd89d94be46f9b20504eaf607eb4dac9db1c652acd6be947"
     },
     {
       "path": "generated/figures/fig_external_evidence.pdf",
@@ -330,8 +462,22 @@
         "artifacts/hourly_poc_validation_summary.csv",
         "artifacts/external_document_review_summary.json"
       ],
-      "bytes": 17588,
-      "sha256": "03b5e452d1bed25adcbd2b29211713be97cffec23ab68ff3b2523a9e0d604059"
+      "bytes": 16960,
+      "sha256": "4bff3494e4d14759bcdd7720f6b8bec0440dad3dba3c94450e4f2de30c845689"
+    },
+    {
+      "path": "generated/figures/fig_case_studies.pdf",
+      "kind": "vector_figure",
+      "sources": [
+        "artifacts/real_transition_88101_evidence_tiers.csv",
+        "artifacts/real_transition_88101_method_results.csv",
+        "artifacts/real_transition_88101_event_intervals.csv",
+        "paper/latex/configs/case_study_rendering_v1.json",
+        "artifacts/data_gate/source_manifest.json",
+        "artifacts/data_gate/geographic_controls.csv"
+      ],
+      "bytes": 55128,
+      "sha256": "1c6a33b1e6a0653ffc4291a5a8f8d8a68ca308ec91a7cf62525294bf8158e4bc"
     }
   ]
 }

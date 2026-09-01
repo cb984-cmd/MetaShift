@@ -2,18 +2,25 @@
 
 \subsection{RQ1: Stable-window synthetic comparison}
 
-\textbf{Answer.} The synthetic benchmark differentiates cross-site methods, but
-no method is uniformly best across all metrics and perturbation families.
-Table~\ref{tab:synthetic-metrics} reports the held-out aggregate results, and
-Figure~\ref{fig:synthetic-metrics} visualizes the primary trade-offs.
+\textbf{Answer.} The frozen benchmark distinguishes cross-site methods from
+single-series baselines, but no method is uniformly best across all metrics and
+paired perturbation families. Table~\ref{tab:synthetic-metrics} reports the
+four cross-site methods used for the primary comparison, while
+Table~\ref{tab:all-methods} restores all nine frozen methods.
+Figure~\ref{fig:synthetic-metrics} visualizes the main cross-site trade-offs
+without collapsing them into a post-hoc composite score.
 
 \input{generated/tables/table_synthetic_metrics}
 
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_synthetic_metrics.pdf}
-\caption{Held-out stable-regime synthetic metrics generated from the frozen
-stable synthetic metrics table.}
+\caption{Held-out stable-regime synthetic metrics for the four cross-site
+methods. Each metric is evaluated on the frozen 80-site complete-input-disjoint
+partition: lower local-effect MAE and regional false-positive rate are
+preferable, whereas higher macro-F1 is preferable. Bars compare different
+criteria, not a universal ranking; all numerical values originate in the saved
+\texttt{stable\_full\_v2} metrics table.}
 \label{fig:synthetic-metrics}
 \end{figure}
 
@@ -24,11 +31,42 @@ has the lowest regional false-positive rate among these four methods but weaker
 effect error and attribution metrics. These are benchmark-specific trade-offs,
 not a ranking for every monitoring network.
 
+\input{generated/tables/table_all_methods}
+
+The single-series methods remain in the complete comparison because an anchor
+date alone can make a time-series break appear compelling. Their inclusion
+shows what is lost when a method does not ask whether target and donors moved
+together. N/A local-effect MAE cells are retained rather than replaced by a
+surrogate metric: CUSUM, PELT, and rolling-MAD supply change evidence but no
+protocol-defined level-effect estimator for the variance-only condition.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_perturbation_metrics.pdf}
+\caption{All nine frozen methods across the five paired local/regional
+perturbation families. Each cell aggregates 800 evaluation instances: a
+target-only local variant and a matched target-and-donor regional variant.
+Values are local-effect MAE, AUPRC, macro-F1, and regional false-positive rate,
+as labeled. N/A means that a method or variance-only condition has no defined
+local-effect magnitude estimate; it does not denote exclusion.}
+\label{fig:perturbation-metrics}
+\end{figure}
+
+The perturbation matrix makes the scope of the aggregate result visible.
+Cross-site methods distinguish additive and gradual target-local changes much
+better than the single-series baselines under this design, whereas
+proportional, temporary, and variance conditions expose different
+false-positive and ranking trade-offs. Because each row aggregates a paired
+local and regional condition, it tests local-versus-regional discrimination
+rather than a generic detection-rate claim.
+
 \subsection{RQ2: Bound on a MetaShift superiority claim}
 
 \textbf{Answer.} Neither MetaShift variant has a confidence-supported aggregate
 MAE advantage over standard synthetic control. The paired bootstrap intervals
-in Table~\ref{tab:paired-bootstrap} cross zero for both frozen variants.
+cross zero for both frozen variants, including cross-validated MetaShift's
+\CVPairedMAEDifference{} difference with interval
+[\CVPairedMALower{}, \CVPairedMAEUpper{}].
 
 \input{generated/tables/table_paired_bootstrap}
 
@@ -36,7 +74,10 @@ in Table~\ref{tab:paired-bootstrap} cross zero for both frozen variants.
 \centering
 \includegraphics[width=0.84\linewidth]{fig_paired_bootstrap.pdf}
 \caption{Paired event-cluster bootstrap intervals for MetaShift minus standard
-synthetic-control local-effect MAE. The dashed line is no difference.}
+synthetic-control local-effect MAE on matched held-out synthetic instances.
+The dashed vertical line is no difference; negative values favor MetaShift on
+MAE. Both frozen intervals cross zero, so the figure does not support a
+confidence-supported aggregate superiority claim.}
 \label{fig:paired-bootstrap}
 \end{figure}
 
@@ -62,7 +103,11 @@ boundaries rather than removed.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=0.82\linewidth]{fig_event_flow.pdf}
-\caption{Complete disposition of all 88101 metadata anchors.}
+\caption{Complete disposition of all 563 primary-parameter metadata anchors.
+``Complete comparison'' requires the common cross-site inputs under the
+distinct-physical-donor rule. ``Fewer than three donors'' and
+``input-window failure'' are retained audit dispositions, not deleted events
+or evidence that no monitoring change occurred.}
 \label{fig:event-flow}
 \end{figure}
 
@@ -75,7 +120,10 @@ physical failure, replacement, or causal bias.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=0.76\linewidth]{fig_evidence_tiers.pdf}
-\caption{Exploratory evidence tiers for the full anchor inventory.}
+\caption{Exploratory evidence tiers for the full 88101 anchor inventory.
+Supported, not-supported, and inconclusive are rule-based observational audit
+outcomes. They do not diagnose instrument failure, physical replacement,
+measurement bias, or a true pollution correction.}
 \label{fig:evidence-tiers}
 \end{figure}
 
@@ -90,9 +138,10 @@ These are diagnostic falsifications rather than causal probabilities.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_placebos.pdf}
-\caption{Time-placebo availability and raw within-event probability
-distribution. The vertical line marks the exploratory 0.10 screening
-threshold.}
+\caption{Time-placebo availability and raw within-event placebo-probability
+distribution. The vertical line marks the frozen exploratory 0.10 screening
+threshold. These values are diagnostic falsification quantities, not causal
+probabilities; incomplete placebo sets remain visible in the left panel.}
 \label{fig:placebos}
 \end{figure}
 
@@ -111,8 +160,11 @@ conservative.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{fig_interval_coverage.pdf}
-\caption{Empirical held-out synthetic coverage. Dashed lines show nominal
-coverage levels for each construction.}
+\caption{Empirical held-out synthetic interval coverage for four cross-site
+methods. Blue bars are fixed-weight conditional moving-block intervals at
+nominal 95\%; purple bars are split-conformal intervals at nominal 90\%.
+Dashed lines mark the corresponding nominal targets. Undercoverage and
+overcoverage are reported as negative calibration findings, not tuned away.}
 \label{fig:interval-coverage}
 \end{figure}
 
@@ -136,8 +188,10 @@ optimized after viewing results.
 \centering
 \includegraphics[width=\linewidth]{fig_screening_sensitivity.pdf}
 \caption{Predeclared geographic screening and evidence-tier threshold
-sensitivity. These describe availability and exploratory tiers, not physical
-causality.}
+sensitivity. The left panel counts anchors meeting the three-donor requirement
+under different radius rules; the right panel shows the resulting exploratory
+tier counts. These describe availability and rule dependence, not physical
+causality or a search for a favorable specification.}
 \label{fig:screening-sensitivity}
 \end{figure}
 
@@ -151,18 +205,21 @@ official-document review found \ExternalReviewConfirmations{}/\ExternalReviewEve
 dated site-specific confirmations. A missing public notice is unavailable
 evidence, not evidence that no physical change occurred.
 
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_external_evidence.pdf}
-\caption{Availability of same-site POC and targeted official-document context.}
-\label{fig:external-evidence}
-\end{figure}
-
 The independent 88502 pipeline has \SecondaryAnchors{} eligible metadata
 anchors and only \SecondaryComplete{} complete common-method comparisons. It
 demonstrates separate-pipeline feasibility but is too sparse to support broad
 generalization. EPA documentation about network data alignment provides useful
 method context \citep{epa_t640_alignment}; it is not a dated site-specific
 confirmation for the reviewed anchors.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_external_evidence.pdf}
+\caption{Availability of same-site POC and targeted official-document context.
+Counts describe available auxiliary evidence in the frozen review population.
+Neither a POC agreement nor an unlocated document supplies universal
+physical-instrument ground truth.}
+\label{fig:external-evidence}
+\end{figure}
 
 \FloatBarrier

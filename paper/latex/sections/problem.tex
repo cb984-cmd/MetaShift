@@ -1,0 +1,74 @@
+\section{Problem formulation and claim boundaries}
+
+\subsection{Objects, metadata anchors, and the target question}
+
+Let $s=(\text{state},\text{county},\text{site})$ denote a physical monitoring
+site, let $p$ denote its reported POC, and let $y_{s,p,t}$ be the retained
+daily concentration at date $t$. A monitor \emph{series} is the ordered pair
+$(s,p)$; a physical site is $s$ alone. This distinction is essential because
+different POCs can occur at the same location without furnishing independent
+geographic information. For the primary parameter, an anchor is
+\[
+  a=(s,p,t_0,m^-,m^+),
+\]
+where $t_0$ is a persistent reported Method Code transition from $m^-$ to
+$m^+$. The anchor is observable metadata, not a verified intervention.
+
+For each anchor, the computational question is whether a pre-specified
+cross-site residual changes around $t_0$ more than would be expected from the
+benchmark's comparison procedures. It is \emph{not} ``did a device change?''
+or ``what was the true pollution concentration?'' These questions would
+require station histories, calibration records, deployment information, and
+possibly meteorological and emissions evidence that do not follow from an AQS
+Method Code field alone.
+
+\subsection{Time-respecting residual estimand}
+
+For a target series $i=(s,p)$ and qualified donor series $j\in N_a$, the
+analysis uses the fixed transformation
+\[
+  z_{i,t}=\log(1+\max(y_{i,t},0)).
+\]
+With nonnegative donor weights $w_{ij}$ that sum to one, define the
+calibration-centered residual
+\[
+ r_{i,t}=z_{i,t}-\sum_{j\in N_a}w_{ij}z_{j,t}
+ -\operatorname{median}_{u\in T_{\mathrm{cal}}}
+ \left(z_{i,u}-\sum_{j\in N_a}w_{ij}z_{j,u}\right).
+\]
+The protocol uses a 180-day calibration interval ending 15 days before the
+anchor, a 60-day pre-anchor comparison interval, and a 60-day post-anchor
+interval. It requires at least 30 retained observations in each required
+window and at least two available donors on retained dates. The displayed
+protocol-defined effect is
+\[
+  \widehat{\Delta}_a =
+  \operatorname{median}_{t\in T_{\mathrm{post}}}r_{i,t}
+  -\operatorname{median}_{t\in T_{\mathrm{pre}}}r_{i,t}.
+\]
+It is a local residual discontinuity on the log scale. It is not an estimate
+of a causal physical bias or a corrected concentration.
+
+\subsection{Claim boundaries}
+
+\input{generated/tables/table_claim_boundaries}
+
+The benchmark's core logic is comparable to weakly labelled audit problems:
+an observed administrative marker gives a reproducible condition to inspect,
+but not a ground-truth class \citep{liu2016,frenay2014}. Accordingly, the
+protocol makes three commitments. First, it fixes the anchor and the
+time-respecting donor construction before the local residual is measured.
+Second, it uses synthetic perturbations in stable regimes whenever an outcome
+requires known truth. Third, it preserves non-complete cases as abstentions
+rather than treating missing evidence as a negative result.
+
+\subsection{What a negative model result means}
+
+MetaShift is evaluated as a metadata-informed weighting hypothesis alongside
+standard synthetic control, nearest-neighbor difference-in-differences, and
+single-series change-point baselines. The benchmark permits a benchmark-specific
+performance comparison, including paired uncertainty for local-effect error.
+It does not permit a conclusion of robust superiority from a favorable point
+estimate whose paired uncertainty interval crosses zero. This boundary protects
+against selection after inspecting the held-out partition and keeps the paper's
+main contribution focused on auditable benchmark construction.

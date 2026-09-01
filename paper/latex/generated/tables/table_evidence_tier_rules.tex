@@ -1,0 +1,24 @@
+\begin{table}[tbp]
+\centering
+\caption{Predeclared primary evidence-tier rules and abstention outcomes.}
+\label{tab:evidence-tier-rules}
+\scriptsize
+\begin{tabular}{p{0.39\linewidth}rp{0.40\linewidth}}
+\toprule
+Required diagnostic or condition & Threshold & Audit outcome \\
+\midrule
+Complete common-method comparison & required & Missing input $\Rightarrow$ inconclusive \\
+Selection-aware nested interval & required & Unavailable $\Rightarrow$ inconclusive \\
+Unique stable post-transition time placebos & 50 & Fewer dates $\Rightarrow$ inconclusive \\
+Raw time-placebo probability & 0.10 & Above cutoff $\Rightarrow$ not supported \\
+BH-adjusted time-placebo q value & 0.10 & Unavailable $\Rightarrow$ inconclusive; above cutoff $\Rightarrow$ not supported \\
+Fixed-weight conditional diagnostic interval & exclude 0 & Otherwise $\Rightarrow$ not supported \\
+Leave-one-donor-out direction fraction & 0.90 & Below cutoff $\Rightarrow$ not supported \\
+All available required conditions & pass & Supported candidate discontinuity \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+\begin{minipage}{0.94\linewidth}
+\footnotesize\textit{Note.} The rules synthesize observational diagnostics; they are not a supervised classifier, instrument-fault label, or physical-causality test. The nested interval is required for tier assignment but is not claimed to have synthetic coverage calibration.
+\end{minipage}
+\end{table}

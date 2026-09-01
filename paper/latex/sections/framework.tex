@@ -1,0 +1,91 @@
+\section{MetaShift-Bench audit framework}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_audit_pipeline.pdf}
+\caption{MetaShift-Bench evidence workflow. Public archives are canonicalized
+before persistent metadata anchors and distinct physical donor candidates are
+constructed. Stable regimes supply known synthetic truth, while every real
+anchor receives a common comparison or a recorded failure reason. The diagram
+is a workflow schematic; its arrows do not assert that metadata reveals a
+physical instrument state.}
+\label{fig:audit-pipeline}
+\end{figure}
+
+\subsection{Counterfactual construction}
+
+For a complete anchor, the donor pool is ranked by pre-event correlation,
+distance, paired days, and POC only after physical-site deduplication. The
+nearest-neighbor difference-in-differences baseline places unit weight on the
+top-ranked donor. Standard synthetic control solves the nonnegative simplex
+problem
+\[
+  \min_{\substack{w_j\geq0\\\sum_jw_j=1}}
+  \frac{1}{|T_{\mathrm{cal}}|}
+  \sum_{t\in T_{\mathrm{cal}}}
+  \left(z_{i,t}-\sum_{j\in N_a}w_jz_{j,t}\right)^2.
+\]
+The intercept is represented by calibration centering in the residual
+definition of Section~2. All fitting data end before the 15-day buffer; no
+post-anchor outcome is supplied to either method.
+
+Fixed-prior MetaShift starts from the pre-event reliability preference
+\[
+  \pi_{ij}\propto
+  \max(\rho_{ij},0)^2\exp(-d_{ij}/50),
+\]
+where $\rho_{ij}$ is the pre-event log-scale correlation and $d_{ij}$ is
+distance in km. Its frozen real-audit objective is
+\[
+  \min_{\substack{w_j\geq0\\\sum_jw_j=1}}
+  \operatorname{MSE}_{T_{\mathrm{cal}}}(z_i,Z_Nw)
+  +0.1\sum_jw_j^2+0.1\sum_j(w_j-\pi_{ij})^2.
+\]
+This is a reproducible regularized weighting rule, not a learned instrument
+taxonomy. In the synthetic benchmark only, cross-validated MetaShift tests a
+frozen set of penalty pairs on the final 45 pre-event days, chooses the
+smallest validation RMSE, and refits the selected pair on the supplied
+pre-event calibration table. It never sees anchor-post data during selection.
+
+\subsection{Single-series comparators}
+
+The benchmark includes five transparent single-series baselines:
+before-after median, Bayesian mean shift, CUSUM, rolling-MAD, and PELT.
+Before-after median and Bayesian mean shift estimate a known-date 60-day
+level change. CUSUM, rolling-MAD, and PELT score or locate changes in the
+single target series \citep{killick2012,truong2020,fryzlewicz2014}. They
+serve a necessary contrast: a method can detect an abrupt time-series pattern
+without establishing that the pattern is local rather than regional.
+
+\subsection{Interval and falsification diagnostics}
+
+For fixed donor weights, the primary interval resamples pre- and post-anchor
+residuals using circular moving blocks of seven days, with 1,000 fixed-seed
+repetitions. It is conditional on previously chosen donors and weights; it
+does not include selection uncertainty. The selection-aware nested procedure
+re-block-resamples the calibration matrix, recomputes correlation eligibility,
+selects three to five donors from the fixed candidate pool, refits the
+nonnegative MetaShift weights, and separately resamples the pre/post residual
+windows. It preserves temporal ordering and reports failed reselection or
+effect replicates rather than silently replacing them.
+
+The audit also computes stable post-transition time placebos,
+donor-as-treated placebos, a date-resampling comparison, and
+leave-one-donor-out refits. These procedures are falsification and robustness
+diagnostics. They do not create random assignment, prove a physical mechanism,
+or make a residual effect a measured instrument bias.
+
+\subsection{Rule-based evidence synthesis and abstention}
+
+\input{generated/tables/table_evidence_tier_rules}
+
+The tier logic distinguishes unavailable evidence from failed available
+diagnostics. An event is inconclusive if it lacks a common comparison,
+selection-aware interval, sufficient time placebos, an adjusted placebo
+quantity, or donor sensitivity. It is not supported when those required
+inputs are available but a pre-event fit, fixed diagnostic interval, placebo
+screen, or donor-direction condition fails. A supported candidate satisfies
+all available required conditions. Benjamini--Hochberg adjustment is used
+only as an exploratory multiple-screening quantity \citep{benjamini1995};
+the resulting tiers are observational audit summaries, not labels for
+instrument failure, replacement, bias, or pollution correction.

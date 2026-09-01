@@ -9,36 +9,50 @@
 \end{center}
 
 \section*{Abstract}
-Regulatory monitoring records can exhibit discontinuities caused by changing
-environmental conditions, data processing, or a reported measurement method.
-An isolated time series cannot distinguish a station-specific discontinuity from
-a regional pattern. This report presents MetaShift-Bench, a reproducible
-metadata-anchored audit benchmark for reported United States Environmental
-Protection Agency (EPA) Air Quality System (AQS) PM2.5 Method Code
-transitions. A Method Code transition is treated as a reproducible event anchor,
-not as proof of physical instrument replacement, fault, or causal measurement
-bias. The protocol constructs pre-transition geographically constrained
-counterfactuals, compares cross-site and single-series methods under known
-synthetic perturbations, and preserves every eligible real event with its
-diagnostics or explicit failure reason.
+\noindent Air-quality records are used for regulation, public communication,
+exposure assessment, and scientific analysis, yet their time series can display
+breaks for many reasons. An abrupt shift near a reported measurement-method
+transition may reflect a station-specific monitoring discontinuity, but it may
+also coincide with weather, smoke, emissions, data processing, or a broader
+regional movement. A single monitor cannot distinguish these explanations. This
+report introduces MetaShift-Bench, a reproducible audit benchmark for reported
+United States Environmental Protection Agency Air Quality System (AQS) PM2.5
+Method Code transitions. A transition is treated as a pre-observation metadata
+anchor, never as proof of a physical replacement, instrument failure, or causal
+measurement bias. The protocol builds geographically constrained
+counterfactuals using distinct physical donor sites, tests cross-site and
+single-series methods under known synthetic perturbations, and retains every
+eligible real anchor with either diagnostics or an explicit machine-readable
+failure reason.
 
-The frozen evidence inventory contains \CanonicalRecords{} canonical daily
+\noindent The frozen inventory contains \CanonicalRecords{} canonical daily
 observations from \MonitorSeries{} monitor time series and \TotalAnchors{}
-persistent anchors. Only \ThreeDonorAnchors{} anchors retain at least three
-distinct physical donors; \CompleteComparisons{} receive complete common-method
-comparisons, while \InsufficientDonorAnchors{} are donor-insufficient and
-\InputFailureAnchors{} have estimator input-window failures. The
-stable-regime benchmark uses \SyntheticCases{} physical target sites split into
-\CalibrationCases{} calibration and \EvaluationCases{} evaluation sites with
-disjoint complete target-plus-donor footprints. Standard synthetic control has
-aggregate local-effect MAE \StdSCMAE{}, AUPRC \StdSCAUPRC{}, and macro-F1
-\StdSCFOne{}. Cross-validated MetaShift has lower point-estimate MAE
-(\CVMAE{}) but its paired difference versus standard synthetic control is
-\CVPairedMAEDifference{} (95\% CI [\CVPairedMALower{},
-\CVPairedMAEUpper{}]). Thus the evidence does not support a general MetaShift
-superiority claim. The contribution is instead a transparent benchmark,
-complete event audit, layered diagnostics, and a reproducible account of
-applicability limits.
+persistent anchors. Only \ThreeDonorAnchors{} anchors have at least three
+distinct physical donors. Of all anchors, \CompleteComparisons{} receive the
+common cross-site comparison, while \InsufficientDonorAnchors{} are
+donor-insufficient and \InputFailureAnchors{} have input-window failures. The
+stable-regime synthetic benchmark uses \SyntheticCases{} physical target sites:
+\CalibrationCases{} calibration sites select frozen decision thresholds, and
+\EvaluationCases{} complete-input-disjoint sites supply held-out results.
+Standard synthetic control has local-effect MAE \StdSCMAE{}, AUPRC
+\StdSCAUPRC{}, macro-F1 \StdSCFOne{}, and regional false-positive rate
+\StdSCFPR{}. Cross-validated MetaShift has a lower MAE point estimate
+(\CVMAE{}) but lower AUPRC and macro-F1 than standard synthetic control; its
+paired MAE difference is \CVPairedMAEDifference{} with 95\% bootstrap interval
+[\CVPairedMALower{}, \CVPairedMAEUpper{}].
+
+\noindent The paired interval crosses zero, so the frozen evidence does not
+support a general MetaShift superiority claim. On the same held-out design,
+fixed-weight conditional bootstrap intervals under-cover at nominal 95\%, while
+split-conformal intervals over-cover at nominal 90\%; real-event intervals are
+therefore diagnostic rather than calibrated physical-bias confidence intervals.
+The audit reports \SupportedCandidates{} supported candidates,
+\NotSupportedEvents{} not-supported events, and \InconclusiveEvents{}
+inconclusive events under predeclared observational rules. These are not
+instrument-fault labels. MetaShift-Bench's contribution is a complete,
+metadata-anchored evidence record that distinguishes an analyzable local
+residual pattern from unavailable evidence, preserves negative findings, and
+makes the limits of a cross-site audit reproducible.
 
 \noindent\textbf{Keywords:} air-quality monitoring; PM2.5; metadata anchors;
 synthetic control; change-point attribution; reproducible audit.
@@ -48,5 +62,5 @@ All quantitative findings in this report are generated from the
 \EvidenceTag{} evidence release at commit \texttt{\EvidenceCommit{}}; see the
 \href{\EvidenceReleaseURL}{official frozen evidence release}. The full
 case-manifest SHA-256 is recorded in the frozen evidence configuration and
-reproducibility table. This document does not modify the frozen study protocol
-or reopen model tuning.
+reproducibility table. This document does not modify the frozen study protocol,
+change a held-out result, or reopen model tuning.

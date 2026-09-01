@@ -1,0 +1,53 @@
+\section{Reproducibility, integrity, and contributions}
+\label{sec:reproducibility}
+
+\subsection{Frozen evidence and computational handoff}
+
+All reported numerical evidence remains bound to the
+\EvidenceTag{} release and commit \texttt{\EvidenceCommit{}}. The tracked
+evidence summary names every required scientific artifact, records its
+SHA-256, and specifies the \texttt{stable\_full\_v2} case-manifest checksum.
+The paper asset generator refuses a missing, changed, non-v0.3.2, or
+non-\texttt{stable\_full\_v2} source. It writes every displayed numeric table,
+vector figure, evidence macro, case-study manifest, and asset checksum into a
+paper-local manifest. The generator does not run the scientific pipeline or
+alter the frozen analysis artifacts.
+
+\input{generated/tables/table_reproducibility}
+
+The display-only representative-case renderer adds a second provenance layer.
+It checks the case-selection configuration, geographic-donor table, and public
+archive source manifest before locally reconstructing the two complete cases.
+It then compares each recomputed fixed-MetaShift effect against the saved
+frozen method result and fails on an absolute mismatch above $10^{-9}$. This
+allows visual inspection of the underlying time series without committing raw
+EPA archives, raw API responses, credentials, virtual environments, or cache
+directories.
+
+\subsection{Build and review procedure}
+
+The formal-paper build invokes, in order, frozen-asset generation,
+claim-ledger validation, source-structure validation, reference validation,
+asset determinism validation, a clean LaTeX build, a font audit, and
+page-by-page rendering for visual review. Generated assets are deterministic;
+timestamps are confined to validation records rather than used as scientific
+inputs. The final build record reports the exact source commit, PDF SHA-256,
+page count, overfull-box result, font report, and visual-review result.
+
+Reproduction claims are deliberately scoped. The two-environment comparison
+means that the 34 designated core artifacts listed in the frozen comparison
+matched by SHA-256 under the locked requirements file. It does not assert that
+every local file, renderer output, timestamp, or untracked raw archive is
+byte-identical across all systems.
+
+\subsection{Student contribution and integrity boundary}
+
+The formal report is a technical draft, not a completed competition
+submission. Identity, authorship, school affiliation, advisor relationship,
+compensation disclosure, student understanding, accurate AI-use disclosure,
+Method Code taxonomy review, signatures, stamps, plagiarism report, and final
+truthfulness attestation remain explicitly human-only. The required handoff
+appears in \texttt{HUMAN\_COMPLETION\_CHECKLIST.md} and the closing disclosure
+template. No automated process may mark these items complete or create a
+taxonomy-stratified claim before independent student and supervising-teacher
+review.

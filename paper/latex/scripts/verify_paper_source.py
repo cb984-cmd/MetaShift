@@ -7,47 +7,84 @@ import json
 import re
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 
 LATEX_ROOT = Path(__file__).resolve().parents[1]
 ROOT = LATEX_ROOT.parents[1]
 MAIN_PATH = LATEX_ROOT / "main.tex"
+METADATA_PATH = LATEX_ROOT / "metadata.tex"
 BIB_PATH = LATEX_ROOT / "references.bib"
+ASSET_MANIFEST_PATH = LATEX_ROOT / "generated" / "asset_manifest.json"
 DEFAULT_OUTPUT = LATEX_ROOT / "generated" / "paper_source_validation.json"
 REQUIRED_INPUTS = (
     "sections/cover",
     "sections/frontmatter",
     "sections/introduction",
+    "sections/problem",
     "sections/related_work",
     "sections/data",
-    "sections/methods",
+    "sections/framework",
     "sections/experiments",
     "sections/results",
+    "sections/case_studies",
     "sections/discussion",
     "sections/limitations",
+    "sections/reproducibility",
     "sections/conclusion",
+    "sections/appendix",
     "sections/acknowledgements",
 )
 REQUIRED_SECTION_TITLES = (
     "Introduction",
+    "Problem formulation and claim boundaries",
     "Background and related work",
-    "Data and event construction",
-    "Methods",
+    "Data and benchmark construction",
+    "MetaShift-Bench audit framework",
     "Experimental design",
     "Results",
+    "Representative case studies",
     "Discussion",
     "Limitations and threats to validity",
+    "Reproducibility, integrity, and contributions",
     "Conclusion",
+    "Supplementary protocol details",
+    "Case-study reconstruction contract",
     "Acknowledgements, contribution statement, and required disclosures",
 )
 REQUIRED_GENERATED_INPUTS = (
     "generated/evidence_macros",
     "generated/tables/table_data_summary",
     "generated/tables/table_synthetic_metrics",
+    "generated/tables/table_all_methods",
+    "generated/tables/table_perturbation_metrics",
     "generated/tables/table_paired_bootstrap",
+    "generated/tables/table_ablation",
+    "generated/tables/table_evidence_tier_rules",
+    "generated/tables/table_claim_boundaries",
     "generated/tables/table_real_audit",
+    "generated/tables/table_placebo_external",
     "generated/tables/table_interval_coverage",
+    "generated/tables/table_window_scale_sensitivity",
+    "generated/tables/table_screening_sensitivity",
+    "generated/tables/table_case_studies",
     "generated/tables/table_reproducibility",
+)
+REQUIRED_GENERATED_FIGURES = (
+    "fig_local_regional_schematic.pdf",
+    "fig_audit_pipeline.pdf",
+    "fig_data_construction.pdf",
+    "fig_split_integrity.pdf",
+    "fig_synthetic_metrics.pdf",
+    "fig_perturbation_metrics.pdf",
+    "fig_paired_bootstrap.pdf",
+    "fig_event_flow.pdf",
+    "fig_evidence_tiers.pdf",
+    "fig_placebos.pdf",
+    "fig_interval_coverage.pdf",
+    "fig_screening_sensitivity.pdf",
+    "fig_external_evidence.pdf",
+    "fig_case_studies.pdf",
 )
 REQUIRED_MACRO_USAGES = (
     r"\EvidenceTag",
@@ -60,6 +97,25 @@ REQUIRED_MACRO_USAGES = (
     r"\NotSupportedEvents",
     r"\InconclusiveEvents",
 )
+REQUIRED_CITATION_KEYS = frozenset(
+    {
+        "abadie2010",
+        "arkhangelsky2021",
+        "benjamini1995",
+        "benmichael2021",
+        "berk2013",
+        "callaway2021",
+        "epa_airdata_formats",
+        "fryzlewicz2014",
+        "grange2019",
+        "killick2012",
+        "kuensch1989",
+        "lei2018",
+        "menne2009",
+        "truong2020",
+        "xu2017",
+    }
+)
 FORBIDDEN_PHRASES = (
     "metashift significantly outperforms standard synthetic control",
     "metashift is significantly superior",
@@ -71,6 +127,7 @@ FORBIDDEN_PHRASES = (
     "real-event intervals have calibrated 95% coverage",
     "qa validation confirms measurement bias",
 )
+LEGACY_SECTION_PATHS = (LATEX_ROOT / "sections" / "methods.tex",)
 
 
 def parse_args() -> argparse.Namespace:
@@ -89,8 +146,12 @@ def resolve_from_latex(path: Path) -> Path:
 
 
 def read_tex_sources() -> dict[str, str]:
-    sources = {}
-    for path in [LATEX_ROOT / "metadata.tex", MAIN_PATH, *(LATEX_ROOT / "sections").glob("*.tex")]:
+    sources: dict[str, str] = {}
+    for path in [
+        METADATA_PATH,
+        MAIN_PATH,
+        *(LATEX_ROOT / "sections").glob("*.tex"),
+    ]:
         if path.is_file():
             sources[str(path.relative_to(LATEX_ROOT)).replace("\\", "/")] = path.read_text(
                 encoding="utf-8"
@@ -98,42 +159,75 @@ def read_tex_sources() -> dict[str, str]:
     return sources
 
 
+def load_asset_manifest(violations: list[dict[str, object]]) -> dict[str, Any]:
+    if not ASSET_MANIFEST_PATH.is_file():
+        violations.append({"issue": "missing_asset_manifest"})
+        return {}
+    try:
+        manifest = json.loads(ASSET_MANIFEST_PATH.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        violations.append({"issue": "invalid_asset_manifest", "error": str(error)})
+        return {}
+    if not isinstance(manifest, dict):
+        violations.append({"issue": "asset_manifest_is_not_object"})
+        return {}
+    return manifest
+
+
 def main() -> None:
     args = parse_args()
     output_path = resolve_from_latex(args.output)
     sources = read_tex_sources()
-    main = sources.get("main.tex", "")
+    main_source = sources.get("main.tex", "")
+    metadata = sources.get("metadata.tex", "")
     combined = "\n".join(sources.values())
     violations: list[dict[str, object]] = []
 
-    expected_input_positions = []
+    input_positions: list[tuple[str, int]] = []
     for required in REQUIRED_INPUTS:
         token = rf"\input{{{required}}}"
-        position = main.find(token)
+        position = main_source.find(token)
         if position == -1:
             violations.append({"issue": "missing_required_input", "input": required})
         else:
-            expected_input_positions.append((required, position))
-    if expected_input_positions != sorted(expected_input_positions, key=lambda item: item[1]):
+            input_positions.append((required, position))
+    if input_positions != sorted(input_positions, key=lambda item: item[1]):
         violations.append({"issue": "report_sections_are_out_of_order"})
-    if main.find(r"\bibliography{references}") < main.find(r"\input{sections/conclusion}"):
+
+    conclusion_position = main_source.find(r"\input{sections/conclusion}")
+    bibliography_position = main_source.find(r"\bibliography{references}")
+    appendix_position = main_source.find(r"\input{sections/appendix}")
+    acknowledgements_position = main_source.find(r"\input{sections/acknowledgements}")
+    if bibliography_position <= conclusion_position:
         violations.append({"issue": "references_do_not_follow_main_text"})
-    if main.find(r"\input{sections/acknowledgements}") < main.find(
-        r"\bibliography{references}"
-    ):
-        violations.append({"issue": "acknowledgements_do_not_follow_references"})
+    if appendix_position <= bibliography_position:
+        violations.append({"issue": "appendices_do_not_follow_references"})
+    if acknowledgements_position <= appendix_position:
+        violations.append({"issue": "acknowledgements_do_not_follow_appendices"})
 
     for title in REQUIRED_SECTION_TITLES:
-        if rf"\section{{{title}}}" not in combined:
+        heading_pattern = rf"\\(?:section|subsection|subsubsection)\*?\{{{re.escape(title)}\}}"
+        if re.search(heading_pattern, combined) is None:
             violations.append({"issue": "missing_section_title", "title": title})
     for generated_input in REQUIRED_GENERATED_INPUTS:
         if rf"\input{{{generated_input}}}" not in combined:
             violations.append(
                 {"issue": "missing_generated_input", "input": generated_input}
             )
+    for figure in REQUIRED_GENERATED_FIGURES:
+        if rf"\includegraphics" not in combined or figure not in combined:
+            violations.append({"issue": "missing_generated_figure", "figure": figure})
     for macro in REQUIRED_MACRO_USAGES:
         if macro not in combined:
             violations.append({"issue": "missing_evidence_macro", "macro": macro})
+    for legacy_path in LEGACY_SECTION_PATHS:
+        if legacy_path.is_file():
+            violations.append(
+                {
+                    "issue": "obsolete_unreferenced_section_present",
+                    "path": str(legacy_path.relative_to(LATEX_ROOT)).replace("\\", "/"),
+                }
+            )
 
     lower = combined.lower()
     for phrase in FORBIDDEN_PHRASES:
@@ -141,8 +235,17 @@ def main() -> None:
             violations.append({"issue": "forbidden_claim_phrase", "phrase": phrase})
     if "human completion required" not in lower:
         violations.append({"issue": "human_completion_boundary_missing"})
-    if "no taxonomy-stratified analysis is reported" not in lower:
+    if "no taxonomy-stratified analysis is reported" not in re.sub(r"\s+", " ", lower):
         violations.append({"issue": "taxonomy_human_block_missing"})
+    metadata_checks = {
+        "pdf_title": "pdftitle={MetaShift-Bench:" in metadata,
+        "pdf_author_placeholder": "pdfauthor={Human completion required}" in metadata,
+        "pdf_subject": "pdfsubject={Formal research report" in metadata,
+        "embedded_generated_macros": r"\input{generated/evidence_macros}" in metadata,
+    }
+    for name, passed in metadata_checks.items():
+        if not passed:
+            violations.append({"issue": "missing_pdf_metadata_or_macro", "name": name})
 
     cited = set()
     for cite_group in re.findall(r"\\cite[a-zA-Z*]*\{([^}]+)\}", combined):
@@ -159,36 +262,81 @@ def main() -> None:
         violations.append(
             {"issue": "unused_bibliography_keys", "keys": unused_bibliography_keys}
         )
-    if not cited:
-        violations.append({"issue": "no_citations_found"})
-
-    generated_files = [
-        LATEX_ROOT / "generated" / "evidence_macros.tex",
-        *(LATEX_ROOT / "generated" / "tables").glob("*.tex"),
-        *(LATEX_ROOT / "generated" / "figures").glob("*.pdf"),
-    ]
-    missing_generated_files = [
-        str(path.relative_to(LATEX_ROOT)).replace("\\", "/")
-        for path in generated_files
-        if not path.is_file() or path.stat().st_size == 0
-    ]
-    if missing_generated_files:
+    if len(cited) < 30:
+        violations.append({"issue": "insufficient_citation_breadth", "count": len(cited)})
+    missing_required_citations = sorted(REQUIRED_CITATION_KEYS - cited)
+    if missing_required_citations:
         violations.append(
-            {"issue": "missing_or_empty_generated_file", "files": missing_generated_files}
+            {
+                "issue": "missing_required_citation_categories",
+                "keys": missing_required_citations,
+            }
         )
+
+    asset_manifest = load_asset_manifest(violations)
+    outputs = asset_manifest.get("outputs", [])
+    output_paths = {
+        str(output.get("path"))
+        for output in outputs
+        if isinstance(output, dict) and isinstance(output.get("path"), str)
+    }
+    required_asset_paths = {
+        "generated/evidence_macros.tex",
+        "generated/claim_value_manifest.json",
+        "generated/case_study_manifest.json",
+        *(
+            "generated/tables/" + generated_input.rsplit("/", 1)[-1] + ".tex"
+            for generated_input in REQUIRED_GENERATED_INPUTS
+            if generated_input.startswith("generated/tables/")
+        ),
+        *("generated/figures/" + figure for figure in REQUIRED_GENERATED_FIGURES),
+    }
+    missing_asset_manifest_records = sorted(required_asset_paths - output_paths)
+    if missing_asset_manifest_records:
+        violations.append(
+            {
+                "issue": "required_asset_missing_from_manifest",
+                "paths": missing_asset_manifest_records,
+            }
+        )
+    if asset_manifest.get("schema_version") != 3:
+        violations.append(
+            {
+                "issue": "asset_manifest_schema_version_mismatch",
+                "actual": asset_manifest.get("schema_version"),
+            }
+        )
+    if asset_manifest.get("result_label") != "stable_full_v2":
+        violations.append(
+            {
+                "issue": "asset_manifest_result_label_mismatch",
+                "actual": asset_manifest.get("result_label"),
+            }
+        )
+    if len(outputs) < 32:
+        violations.append(
+            {"issue": "insufficient_generated_assets", "actual": len(outputs), "minimum": 32}
+        )
+    for relative_path in sorted(required_asset_paths):
+        path = LATEX_ROOT / relative_path
+        if not path.is_file() or path.stat().st_size == 0:
+            violations.append(
+                {"issue": "missing_or_empty_required_generated_asset", "path": relative_path}
+            )
 
     report = {
         "generated_at_utc": datetime.now(UTC).isoformat(),
         "source_files": sorted(sources),
         "citation_count": len(cited),
         "bibliography_entry_count": len(defined),
+        "asset_output_count": len(outputs),
         "all_checks_passed": not violations,
         "violations": violations,
     }
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2))
-    raise SystemExit(0 if not violations else 1)
+    raise SystemExit(0 if report["all_checks_passed"] else 1)
 
 
 if __name__ == "__main__":

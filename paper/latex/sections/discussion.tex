@@ -1,31 +1,104 @@
 \section{Discussion}
 
-MetaShift-Bench makes a weakly labelled question auditable rather than
-pretending that it is fully identified. The critical design choice is to retain
-metadata anchors, availability constraints, donor rules, algorithm comparisons,
-and failures in the same evidence chain. A result from a well-matched target is
-useful only when its selection requirements, reference composition, uncertainty
-scope, and external evidence limitations remain visible.
+MetaShift-Bench turns a weakly labelled monitoring question into an auditable
+computer-science benchmark. The key contribution is not an assertion that a
+new weighting method detects more instrument problems than existing methods.
+Rather, it is an evidence architecture that makes the input identity,
+time-respecting computation, known-truth evaluation, full event population,
+and failure paths inspectable together. This matters for public monitoring
+data because a compelling graph can conceal a non-comparable donor, an
+unrecorded selection decision, or an unavailable input window. A useful
+benchmark should make those contingencies visible rather than treating them as
+implementation details.
 
-The synthetic experiment is the source of known truth in this project. It
-shows that cross-site counterfactual construction can separate some local and
-matched regional patterns better than single-series baselines, while also
-showing that MetaShift does not achieve a stable aggregate advantage over
-standard synthetic control. Reporting that negative result prevents the
-benchmark from being reinterpreted as a method-promotion exercise.
+The physical-site/POC distinction is a concrete example. An AQS POC identifies
+a reported occurrence in the data system, not a universally stable physical
+instrument identity. If multiple POCs from one physical site are counted as
+independent donors, a target can appear to have multiple controls while its
+geographic evidence is not genuinely independent. The v0.3.2 donor rule
+therefore chooses at most one POC per physical donor site by a deterministic
+pre-event ranking. This choice reduces nominal availability, but it makes the
+meaning of a ``three-donor'' comparison honest. The many donor-insufficient
+anchors are not a defect to hide: they quantify where a cross-site method is
+not supported by the available data under the chosen independence proxy.
 
-The real-event audit has a complementary role. It asks which metadata anchors
-can be evaluated under transparent, predeclared inputs and which cannot. A
-complete residual comparison is not evidence of a physical measurement error.
-Conversely, a donor-insufficient event is not evidence that no change occurred;
-it is an abstention because the protocol cannot build a qualified geographic
-reference. This distinction makes the full ledger more informative than a
-curated set of striking examples.
+The stable-regime synthetic experiment supplies the one part of the project
+with known injected truth. Its target-only and matched regional perturbations
+directly test the computational distinction that a raw change-point does not:
+is a pattern specific to the target relative to comparable donors, or shared
+with them? The full method table makes clear why a single headline metric would
+be inadequate. Cross-site procedures can exploit reference information, while
+single-series procedures remain useful guards against overclaiming because
+they show what can be detected without a regional comparison. The
+perturbation-family matrix also avoids presenting a favorable aggregate as
+evidence that one method works equally well for additive, proportional,
+temporary, drifting, and variance-only patterns.
 
-The evidence tiers are best understood as a prioritization tool for future
-human review. A supported candidate has a coherent pattern across the
-predefined diagnostics, but contextual review, station history, and direct
-technical records would still be needed before assigning a physical
-explanation. The same caution applies to POC comparisons and public document
-searches: they characterize available context rather than validate an
-instrument-change hypothesis.
+The result for MetaShift is deliberately negative. Cross-validated MetaShift
+has a favorable point estimate for local-effect MAE, but the paired
+event-cluster bootstrap interval against standard synthetic control crosses
+zero. Standard synthetic control also leads the frozen aggregate in attribution
+ranking and macro-F1. It would be scientifically inappropriate to convert one
+point estimate, selected experiment, or visually appealing case into a broad
+algorithm-superiority statement. The report preserves this result in the
+abstract, results, conclusion, source validator, and claim ledger. It also
+avoids further optimization on the already viewed held-out partition. A future
+model proposal would require a new physical-footprint-disjoint blind manifest,
+frozen parameters, and a precommitted metric set before outcomes are viewed.
+
+The real-anchor audit has a different role from the synthetic benchmark. It
+does not validate a model against physical measurement-bias truth, which is
+unavailable from the Method Code field. Instead, it answers a bounded
+operational question: for which reported transitions can the frozen
+counterfactual and diagnostic workflow be executed, and what does each
+available diagnostic say? Complete comparisons, donor insufficiency, and
+input-window failures are all part of the result. This complete accounting
+guards against survivorship bias from reporting only well-matched stations.
+It also separates a necessary computational abstention from a substantive
+claim about the monitoring site.
+
+The evidence tiers implement the same separation at a finer level. A supported
+candidate has passed a conjunction of predeclared observational diagnostics,
+including pre-fit quality, a conditional fixed interval, time-placebo screens,
+and leave-one-donor-out stability. It is not a supervised label and it does
+not prove a physical fault. A not-supported event has the required evidence
+but fails at least one diagnostic; an inconclusive event lacks a required
+comparative or diagnostic input. This three-way output is more informative
+than an all-or-nothing detector because it shows whether a low-confidence
+result comes from contradictory diagnostics or from unavailable data. It is
+also a safer decision interface for follow-up work: only humans with station
+records can decide whether a candidate merits an equipment-level hypothesis.
+
+The interval results are another reason to avoid overly strong language.
+Fixed-weight moving-block intervals under-cover the known synthetic effects at
+their nominal level, while split-conformal intervals over-cover in the same
+frozen design. Neither observation can be corrected by post hoc adjustment
+without invalidating the held-out evaluation. The nested real-event procedure
+does capture some uncertainty from time resampling, donor re-selection, and
+weight refitting inside the observed candidate pool, but full
+selection-aware synthetic coverage at that scale was frozen as infeasible
+within the deadline. Thus real-event intervals are useful protocol-defined
+diagnostics, not calibrated confidence intervals for measurement bias. This
+distinction is important because numerical intervals can otherwise imply more
+physical certainty than their construction supports.
+
+External context adds perspective but not ground truth. Same-site POC and
+hourly comparisons may reveal directional consistency, yet POCs are not
+universal equipment identities and temporal agreement alone cannot establish
+mechanism. The targeted public-document review likewise records an evidence
+shortfall rather than interpreting an unlocated notice as proof that no change
+occurred. The separate 88502 pipeline demonstrates that the machinery can be
+applied without pooling parameter codes, but its sparse complete-comparison
+population limits any transfer conclusion. These results support a workflow in
+which automated evidence synthesis guides a records search rather than
+replaces it.
+
+Finally, reproducibility is part of the scientific result. The frozen release
+binds source artifact hashes, input-footprint checks, document checks,
+claim-to-evidence mappings, and independent environment hashes. The
+presentation layer adds deterministic figures and checksum-pinned case
+reconstruction without modifying the analysis artifacts. These safeguards
+cannot establish biological, engineering, or causal truth. They do make it
+possible for another investigator to distinguish a reproducible computation
+from an unsupported interpretation, which is the appropriate achievement for
+a metadata-anchored audit benchmark.

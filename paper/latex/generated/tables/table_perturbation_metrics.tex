@@ -1,0 +1,64 @@
+{\scriptsize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{0.88}
+\begin{longtable}{@{}p{0.22\linewidth}p{0.17\linewidth}rrrr@{}}
+\caption{Perturbation-family-specific held-out synthetic metrics for all methods.}\label{tab:perturbation-metrics}\\
+\toprule
+Paired perturbation family & Method & MAE & AUPRC & Macro-F1 & Regional FPR \\
+\midrule
+\endfirsthead
+\multicolumn{6}{l}{\small\itshape Table \ref{tab:perturbation-metrics}, continued}\\
+\toprule
+Paired perturbation family & Method & MAE & AUPRC & Macro-F1 & Regional FPR \\
+\midrule
+\endhead
+\bottomrule
+\multicolumn{6}{p{0.92\linewidth}}{\footnotesize\textit{Note.} Each family aggregates its target-only local perturbation and its matched target-and-donor regional variant. Consequently, regional FPR is assessed within the same paired family; the rows are not local-only effect estimates. N/A has the same meaning as in Table~\ref{tab:all-methods}.}\\
+\endfoot
+Additive step & Standard SC & 0.07788 & 0.99946 & 0.93092 & 0.138 \\
+Additive step & MetaShift fixed & 0.08373 & 0.99695 & 0.87969 & 0.233 \\
+Additive step & MetaShift CV & 0.07680 & 0.99801 & 0.90161 & 0.193 \\
+Additive step & Nearest-neighbor DiD & 0.08680 & 0.99210 & 0.93614 & 0.105 \\
+Additive step & Bayesian mean shift & 0.22860 & 0.50497 & 0.41031 & 0.890 \\
+Additive step & Before-after median & 0.22774 & 0.50497 & 0.44778 & 0.808 \\
+Additive step & CUSUM & N/A & 0.50497 & 0.43785 & 0.833 \\
+Additive step & Rolling MAD & N/A & 0.50497 & 0.49862 & 0.553 \\
+Additive step & PELT & N/A & 0.50497 & 0.42673 & 0.858 \\
+Proportional step & Standard SC & 0.07635 & 0.85856 & 0.76319 & 0.188 \\
+Proportional step & MetaShift fixed & 0.08016 & 0.84617 & 0.78293 & 0.090 \\
+Proportional step & MetaShift CV & 0.07457 & 0.84296 & 0.78357 & 0.103 \\
+Proportional step & Nearest-neighbor DiD & 0.08287 & 0.82011 & 0.70938 & 0.065 \\
+Proportional step & Bayesian mean shift & 0.23444 & 0.50497 & 0.48849 & 0.350 \\
+Proportional step & Before-after median & 0.22774 & 0.50497 & 0.46944 & 0.260 \\
+Proportional step & CUSUM & N/A & 0.50497 & 0.48467 & 0.328 \\
+Proportional step & Rolling MAD & N/A & 0.50497 & 0.40894 & 0.108 \\
+Proportional step & PELT & N/A & 0.50497 & 0.48326 & 0.320 \\
+Gradual drift & Standard SC & 0.08321 & 0.99710 & 0.93985 & 0.110 \\
+Gradual drift & MetaShift fixed & 0.08551 & 0.99224 & 0.89419 & 0.193 \\
+Gradual drift & MetaShift CV & 0.07958 & 0.99521 & 0.92082 & 0.153 \\
+Gradual drift & Nearest-neighbor DiD & 0.08746 & 0.98570 & 0.93248 & 0.085 \\
+Gradual drift & Bayesian mean shift & 0.24325 & 0.50497 & 0.45055 & 0.800 \\
+Gradual drift & Before-after median & 0.23075 & 0.50497 & 0.47143 & 0.733 \\
+Gradual drift & CUSUM & N/A & 0.50497 & 0.45322 & 0.793 \\
+Gradual drift & Rolling MAD & N/A & 0.50497 & 0.49969 & 0.475 \\
+Gradual drift & PELT & N/A & 0.50497 & 0.49992 & 0.513 \\
+Temporary step & Standard SC & 0.16187 & 0.98113 & 0.91246 & 0.108 \\
+Temporary step & MetaShift fixed & 0.16436 & 0.96551 & 0.88871 & 0.130 \\
+Temporary step & MetaShift CV & 0.15875 & 0.96994 & 0.90372 & 0.113 \\
+Temporary step & Nearest-neighbor DiD & 0.18885 & 0.93733 & 0.84114 & 0.065 \\
+Temporary step & Bayesian mean shift & 0.28058 & 0.50497 & 0.49930 & 0.463 \\
+Temporary step & Before-after median & 0.32696 & 0.50497 & 0.49614 & 0.588 \\
+Temporary step & CUSUM & N/A & 0.50497 & 0.48686 & 0.660 \\
+Temporary step & Rolling MAD & N/A & 0.50497 & 0.45747 & 0.780 \\
+Temporary step & PELT & N/A & 0.50497 & 0.47750 & 0.708 \\
+Variance increase & Standard SC & N/A & 0.58680 & 0.48825 & 0.158 \\
+Variance increase & MetaShift fixed & N/A & 0.57484 & 0.45372 & 0.105 \\
+Variance increase & MetaShift CV & N/A & 0.57314 & 0.46902 & 0.113 \\
+Variance increase & Nearest-neighbor DiD & N/A & 0.56157 & 0.42775 & 0.055 \\
+Variance increase & Bayesian mean shift & N/A & 0.50056 & 0.45595 & 0.205 \\
+Variance increase & Before-after median & N/A & 0.50741 & 0.42520 & 0.135 \\
+Variance increase & CUSUM & N/A & 0.50470 & 0.48012 & 0.290 \\
+Variance increase & Rolling MAD & N/A & 0.50191 & 0.39371 & 0.093 \\
+Variance increase & PELT & N/A & 0.49172 & 0.45495 & 0.213 \\
+\end{longtable}
+}

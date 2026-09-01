@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "purpose": "Display-only deterministic representative-case reconstruction.",
+  "frozen_evidence": {
+    "tag": "v0.3.2-evidence-final",
+    "commit": "57d678ecabebff724d898abe626c9ef80538775b",
+    "release_url": "https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final",
+    "supersedes": [
+      "v0.3.0-distinct-donors",
+      "v0.3.1-evidence-final"
+    ]
+  },
+  "result_label": "stable_full_v2",
+  "case_rendering_configuration": {
+    "path": "paper/latex/configs/case_study_rendering_v1.json",
+    "sha256": "11df7ecc1adbd2aedf8854f778982ca243e3427f6931b355327156a5386eaab4"
+  },
+  "source_manifest": {
+    "path": "artifacts/data_gate/source_manifest.json",
+    "sha256": "ae1c39a600d80f84b7d63101c1f2752a5fbfe0e3ef364e8b1b645effbaf27f3f"
+  },
+  "geographic_controls": {
+    "path": "artifacts/data_gate/geographic_controls.csv",
+    "sha256": "2002782a8026db2095d060825271a7f4795d801ece96c3b05b68d21bf0a7a717"
+  },
+  "cases": [
+    {
+      "case_group": "Supported candidate",
+      "selection_strategy": "median_standardized_score",
+      "selection_rule": "Select the anchor minimizing absolute distance between standardized_score and the within-tier median standardized_score; break ties by anchor_id ascending.",
+      "within_group_median_standardized_score": -1.3888536650295717,
+      "anchor_id": "12-057-0113-poc1-2023-12-01",
+      "anchor_date": "2023-12-01",
+      "audit_status": "complete",
+      "audit_reason": "",
+      "evidence_tier": "supported_candidate_discontinuity",
+      "evidence_reasons": "",
+      "saved_log_effect": -0.1277650936780553,
+      "reconstructed_log_effect": -0.12776509367805533,
+      "reconstruction_absolute_error": 2.7755575615628914e-17,
+      "fixed_interval": [
+        -0.1725838114488511,
+        -0.1051074352694765
+      ],
+      "nested_interval": [
+        -0.1739932525474893,
+        -0.105596251255994
+      ],
+      "placebo_count": 87.0,
+      "placebo_p_value": 0.0113636363636363,
+      "leave_one_donor_out_direction_fraction": 1.0,
+      "selected_donors": [
+        {
+          "physical_site": "12-103-0018",
+          "poc": "3",
+          "distance_km": 32.21729294067141,
+          "pre_event_log_correlation": 0.9433267663246124
+        },
+        {
+          "physical_site": "12-103-0004",
+          "poc": "3",
+          "distance_km": 26.288419864134788,
+          "pre_event_log_correlation": 0.9420481962307422
+        },
+        {
+          "physical_site": "12-057-3002",
+          "poc": "3",
+          "distance_km": 23.498908832839465,
+          "pre_event_log_correlation": 0.8812400422878548
+        },
+        {
+          "physical_site": "12-105-6006",
+          "poc": "3",
+          "distance_km": 49.51023472957545,
+          "pre_event_log_correlation": 0.8733220630261791
+        },
+        {
+          "physical_site": "12-115-0013",
+          "poc": "3",
+          "distance_km": 74.05083163209274,
+          "pre_event_log_correlation": 0.8616143436526555
+        }
+      ]
+    },
+    {
+      "case_group": "Not supported",
+      "selection_strategy": "median_standardized_score",
+      "selection_rule": "Select the anchor minimizing absolute distance between standardized_score and the within-tier median standardized_score; break ties by anchor_id ascending.",
+      "within_group_median_standardized_score": -0.44402551026266257,
+      "anchor_id": "06-031-0004-poc8-2021-01-12",
+      "anchor_date": "2021-01-12",
+      "audit_status": "complete",
+      "audit_reason": "",
+      "evidence_tier": "not_supported_by_available_evidence",
+      "evidence_reasons": "conditional_interval_includes_zero;placebo_p_value_above_0.10;placebo_q_value_above_0.10",
+      "saved_log_effect": -0.0823969271073509,
+      "reconstructed_log_effect": -0.08239692710735091,
+      "reconstruction_absolute_error": 1.3877787807814457e-17,
+      "fixed_interval": [
+        -0.2160916915804049,
+        0.0301210514418115
+      ],
+      "nested_interval": [
+        -0.2430930557718371,
+        0.0366185888664545
+      ],
+      "placebo_count": 100.0,
+      "placebo_p_value": 0.4356435643564356,
+      "leave_one_donor_out_direction_fraction": 1.0,
+      "selected_donors": [
+        {
+          "physical_site": "06-031-1004",
+          "poc": "3",
+          "distance_km": 24.73657809275697,
+          "pre_event_log_correlation": 0.9823168474414352
+        },
+        {
+          "physical_site": "06-019-2016",
+          "poc": "3",
+          "distance_km": 70.27754431462179,
+          "pre_event_log_correlation": 0.959789653817528
+        },
+        {
+          "physical_site": "06-019-5001",
+          "poc": "3",
+          "distance_km": 80.88143416037349,
+          "pre_event_log_correlation": 0.9345960457390023
+        },
+        {
+          "physical_site": "06-019-0011",
+          "poc": "3",
+          "distance_km": 78.19729625154255,
+          "pre_event_log_correlation": 0.9298048456953788
+        },
+        {
+          "physical_site": "06-019-2009",
+          "poc": "3",
+          "distance_km": 94.0529393619628,
+          "pre_event_log_correlation": 0.7961729137513389
+        }
+      ]
+    },
+    {
+      "case_group": "Inconclusive: no qualified counterfactual",
+      "selection_strategy": "lexicographic_anchor_id",
+      "selection_rule": "Select the lexicographically first anchor_id. The panel must show the target series and the machine-readable abstention reason without imputing a counterfactual.",
+      "within_group_median_standardized_score": null,
+      "anchor_id": "01-103-0011-poc3-2023-02-01",
+      "anchor_date": "2023-02-01",
+      "audit_status": "insufficient_geographic_donors",
+      "audit_reason": "Fewer than three prequalified geographic donors.",
+      "evidence_tier": "inconclusive_insufficient_evidence",
+      "evidence_reasons": "no_common_comparative_estimate",
+      "saved_log_effect": null,
+      "reconstructed_log_effect": null,
+      "reconstruction_absolute_error": null,
+      "fixed_interval": [
+        null,
+        null
+      ],
+      "nested_interval": [
+        null,
+        null
+      ],
+      "placebo_count": null,
+      "placebo_p_value": null,
+      "leave_one_donor_out_direction_fraction": null,
+      "selected_donors": []
+    }
+  ]
+}

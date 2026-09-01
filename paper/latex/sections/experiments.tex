@@ -1,44 +1,94 @@
 \section{Experimental design}
+\label{sec:experimental-design}
 
 \subsection{Stable-regime synthetic benchmark}
 
 Real metadata anchors have no physical-bias ground truth. Known-effect
-evaluation therefore uses only stable target and donor regimes that are
-separated from nearby reported transitions. The frozen
-\texttt{stable\_full\_v2} manifest contains \SyntheticCases{} physical target
-sites. Whole connected components of the complete target-plus-donor physical
-input graph were assigned to the \CalibrationCases{}-site calibration subset or
-the \EvaluationCases{}-site held-out evaluation subset, so no physical input
-site crosses the split.
+evaluation therefore uses only stable target and donor regimes separated from
+nearby reported transitions. The frozen \texttt{stable\_full\_v2} manifest
+contains \SyntheticCases{} physical target sites. Whole connected components of
+the complete target-plus-donor physical input graph were assigned to the
+\CalibrationCases{}-site calibration subset or the \EvaluationCases{}-site
+held-out evaluation subset, so no physical input site crosses the split.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.91\linewidth]{fig_split_integrity.pdf}
+\caption{Leakage-resistant stable-case split. Whole connected components of
+the complete target-plus-donor physical-site graph were assigned to the
+calibration or held-out evaluation partition before metrics were computed.
+The frozen split audit records zero shared physical input sites. This controls
+physical input reuse across partitions; it does not make the synthetic
+perturbations a model of every real monitoring process.}
+\label{fig:split-integrity}
+\end{figure}
 
 The benchmark injects target-only additive, proportional, gradual-drift,
 temporary-step, and variance changes, together with matched target-and-donor
 regional variants. Each perturbation variant contains \SamplesPerVariant{}
-held-out evaluation samples. The effect shape, magnitudes, seeds, candidate
-rule, model settings, and metrics were frozen before evaluation. The viewed
-evaluation partition is not used for model, threshold, donor-weight, gate, or
-taxonomy adjustment.
+held-out evaluation samples. Each family therefore combines a local condition
+and a matched regional condition; the family rows in the results are not
+local-only effect estimates. Five frozen magnitude multipliers
+(0.5, 1.0, 1.5, 2.0, and 3.0) scale an additive step, proportional step,
+gradual drift, temporary step, or variance increase. The variance-only
+condition has no defined level-effect truth, so local-effect MAE is correctly
+reported as N/A for that condition.
+
+The effect shape, magnitudes, seeds, candidate rule, model settings, and
+metrics were frozen before evaluation. For every method, a ranking threshold
+is selected only by macro-F1 on the calibration partition and then applied
+unchanged to the evaluation partition. The viewed evaluation partition is not
+used for model, threshold, donor-weight, quality-gate, or taxonomy adjustment.
+This is a protocol safeguard, not a claim that one finite split eliminates all
+future generalization uncertainty.
+
+\subsection{Benchmark metrics and uncertainty}
+
+For target-only non-variance perturbations, local-effect MAE is the mean
+absolute difference between the estimated and injected 60-day median log
+effect. AUPRC measures ranking of local against matched regional variants;
+macro-F1, precision, recall, and regional false-positive rate use the
+calibration-only threshold. CUSUM, PELT, and rolling-MAD have no
+protocol-defined effect-magnitude estimate, so their MAE cells are N/A while
+their ranking metrics remain observable.
+
+The MetaShift-versus-standard-MAE comparison uses a paired cluster bootstrap
+over stable case IDs with 1,000 repetitions and fixed seed 20260830. Pairing
+keeps a method comparison tied to the same pseudo-anchor, perturbation,
+magnitude, and injected seed. It reports uncertainty for the frozen benchmark
+comparison, rather than a universal probability that one method dominates
+another.
 
 \subsection{Real-anchor audit and sensitivity}
 
 The real-anchor workflow uses the same distinct-physical-donor construction,
-pre-event fitting boundaries, and effect window across methods. It records
-complete comparisons and explicit non-complete dispositions for all
-\TotalAnchors{} anchors. Predeclared sensitivity analyses vary screening rules,
-effect windows, reporting scale, and evidence-tier thresholds one factor at a
-time. Their purpose is to expose dependence and availability boundaries, not to
-select a more favorable specification.
+pre-event fitting boundaries, and effect window across the three common
+cross-site methods. The five single-series baselines use the same 60-day
+before/after window but do not receive a geographic counterfactual. The audit
+records complete comparisons and explicit non-complete dispositions for all
+\TotalAnchors{} anchors. Cross-validated MetaShift is evaluated only in the
+synthetic benchmark; it is not introduced into the real-audit comparison after
+observing those events.
+
+Predeclared sensitivity analyses vary one factor at a time: donor-screening
+rules, 45/60/90-day effect windows, raw versus log reporting scale, and
+evidence-tier thresholds. The sensitivity rows reveal availability and
+interpretation dependence; they are not a search for the setting with the most
+favorable residual pattern. The standard synthetic-control rows in the main
+and reliability-ablation experiments are checked for exact alignment to
+tolerance $10^{-10}$, preventing a seed or input mismatch from masquerading
+as an ablation finding.
 
 \subsection{Interval coverage protocol}
 
-Fixed-weight interval coverage is evaluated on the held-out synthetic effects.
-The confidence level, block length, perturbation types, and repetitions are
-fixed in the frozen configuration. The separate full selection-aware synthetic
-coverage protocol was frozen before outcomes. Its feasibility assessment
-records that full donor re-screening and weight refitting at the specified
-nested scale is infeasible within the submission deadline. The report
-therefore does not convert real-event selection-aware intervals into
-coverage-calibrated physical-bias intervals.
+Fixed-weight interval coverage is evaluated on held-out synthetic effects. The
+confidence level, seven-day block length, perturbation types, and 1,000
+repetitions are fixed in the frozen configuration. The separate full
+selection-aware synthetic coverage protocol was frozen before outcomes. Its
+feasibility assessment records that full donor re-screening and weight
+refitting at the specified nested scale is infeasible within the submission
+deadline. The report therefore does not convert real-event selection-aware
+intervals into coverage-calibrated physical-bias intervals.
 
 \subsection{External context and reproducibility}
 

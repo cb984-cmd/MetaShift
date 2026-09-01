@@ -10,17 +10,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
+import zipfile
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 from typing import Any
-
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-
 
 ROOT = Path(__file__).resolve().parents[3]
 LATEX_ROOT = Path(__file__).resolve().parents[1]
@@ -29,6 +23,25 @@ TABLES = GENERATED / "tables"
 FIGURES = GENERATED / "figures"
 MANIFEST_PATH = GENERATED / "asset_manifest.json"
 SUMMARY_PATH = ROOT / "configs" / "current_evidence_summary_v2.json"
+CASE_RENDERING_CONFIG_PATH = LATEX_ROOT / "configs" / "case_study_rendering_v1.json"
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+from metashift.counterfactual import (
+    donor_weights,
+    estimate_metadata_anchor,
+    reliability_constrained_weights,
+    weighted_donor_series,
+)
 
 REQUIRED_ARTIFACTS = (
     "artifacts/data_gate/summary.json",
@@ -96,6 +109,34 @@ METHOD_ORDER = (
     "nearest_neighbor_did",
 )
 
+ALL_METHOD_ORDER = (
+    "standard_synthetic_control",
+    "metashift_v1_fixed",
+    "metashift_v2_cv",
+    "nearest_neighbor_did",
+    "bayesian_mean_shift",
+    "before_after_median",
+    "cusum",
+    "rolling_mad",
+    "pelt",
+)
+
+FAMILY_ORDER = (
+    "additive_step",
+    "proportional_step",
+    "gradual_drift",
+    "temporary_step",
+    "variance_increase",
+)
+
+FAMILY_LABELS = {
+    "additive_step": "Additive\nstep",
+    "proportional_step": "Proportional\nstep",
+    "gradual_drift": "Gradual\ndrift",
+    "temporary_step": "Temporary\nstep",
+    "variance_increase": "Variance\nincrease",
+}
+
 COLORS = {
     "Standard SC": "#4C566A",
     "MetaShift fixed": "#3B82F6",
@@ -104,6 +145,29 @@ COLORS = {
     "Supported candidate": "#2563EB",
     "Not supported": "#F59E0B",
     "Inconclusive": "#94A3B8",
+}
+
+CASE_COLUMNS = [
+    "State Code",
+    "County Code",
+    "Site Num",
+    "POC",
+    "Sample Duration",
+    "Date Local",
+    "Arithmetic Mean",
+    "Observation Percent",
+    "Event Type",
+]
+
+CASE_DTYPES = {
+    "State Code": "string",
+    "County Code": "string",
+    "Site Num": "string",
+    "POC": "string",
+    "Sample Duration": "category",
+    "Arithmetic Mean": "float64",
+    "Observation Percent": "float64",
+    "Event Type": "category",
 }
 
 
@@ -140,6 +204,10 @@ def percent(value: float, places: int = 1) -> str:
     return f"{format_decimal(100 * value, places)}\\%"
 
 
+def metric_display(value: object, places: int) -> str:
+    return "N/A" if pd.isna(value) else format_decimal(float(value), places)
+
+
 def latex_escape(value: object) -> str:
     text = str(value)
     substitutions = {
@@ -173,6 +241,77 @@ def source_hashes(summary: dict[str, Any]) -> dict[str, str]:
     }
 
 
+def relative_to_root(path: Path) -> str:
+    return str(path.relative_to(ROOT)).replace("\\", "/")
+
+
+def safe_root_path(relative_path: str) -> Path:
+    candidate = ROOT / Path(relative_path)
+    try:
+        candidate.resolve().relative_to(ROOT.resolve())
+    except ValueError as error:
+        raise RuntimeError(f"Presentation input escapes repository root: {relative_path}") from error
+    return candidate
+
+
+def load_case_rendering_config() -> dict[str, Any]:
+    if not CASE_RENDERING_CONFIG_PATH.is_file():
+        raise FileNotFoundError(
+            f"Missing deterministic case-study configuration: {CASE_RENDERING_CONFIG_PATH}"
+        )
+    config = json.loads(CASE_RENDERING_CONFIG_PATH.read_text(encoding="utf-8"))
+    if not isinstance(config, dict):
+        raise RuntimeError("Case-study rendering configuration must be a JSON object.")
+    return config
+
+
+def verify_case_rendering_inputs() -> dict[str, Any]:
+    config = load_case_rendering_config()
+    expected_identity = {
+        "schema_version": 1,
+        "evidence_version": "v0.3.2",
+        "evidence_tag": "v0.3.2-evidence-final",
+    }
+    for field, expected in expected_identity.items():
+        if config.get(field) != expected:
+            raise RuntimeError(
+                f"Case-study rendering configuration has unexpected {field}: "
+                f"{config.get(field)!r}"
+            )
+    for field in ("source_manifest", "geographic_controls"):
+        record = config.get(field)
+        if not isinstance(record, dict):
+            raise RuntimeError(f"Case-study rendering configuration lacks {field}.")
+        relative_path = record.get("path")
+        expected_hash = record.get("sha256")
+        if not isinstance(relative_path, str) or not isinstance(expected_hash, str):
+            raise RuntimeError(f"Case-study rendering {field} must specify path and sha256.")
+        path = safe_root_path(relative_path)
+        if not path.is_file():
+            raise FileNotFoundError(f"Missing case-study input: {path}")
+        if sha256(path) != expected_hash:
+            raise RuntimeError(f"Case-study input checksum mismatch: {relative_path}")
+    if not isinstance(config.get("selection"), dict) or not isinstance(
+        config.get("reconstruction"), dict
+    ):
+        raise RuntimeError("Case-study configuration lacks selection or reconstruction rules.")
+    return config
+
+
+def presentation_input_sources(config: dict[str, Any]) -> list[dict[str, str]]:
+    paths = [
+        CASE_RENDERING_CONFIG_PATH,
+        ROOT / "configs" / "benchmark_release_v2.json",
+        ROOT / "configs" / "evidence_tier_primary_v1.json",
+        safe_root_path(str(config["source_manifest"]["path"])),
+        safe_root_path(str(config["geographic_controls"]["path"])),
+    ]
+    return [
+        {"path": relative_to_root(path), "sha256": sha256(path)}
+        for path in paths
+    ]
+
+
 def verify_frozen_inputs(summary: dict[str, Any]) -> None:
     if summary["evidence_version"] != "v0.3.2":
         raise RuntimeError("Paper assets require v0.3.2 frozen evidence.")
@@ -198,6 +337,7 @@ def verify_frozen_inputs(summary: dict[str, Any]) -> None:
         raise RuntimeError(
             "Frozen source artifact validation failed: " + ", ".join(mismatches)
         )
+    verify_case_rendering_inputs()
 
 
 def latex_table(
@@ -391,8 +531,384 @@ def build_macros(
     )
 
 
+def normalized_code(value: object, width: int) -> str:
+    return str(value).strip().zfill(width)
+
+
+def load_case_series(config: dict[str, Any]) -> dict[tuple[str, str, str, str], pd.Series]:
+    """Load only the checksum-pinned public archives needed for display reconstruction."""
+    source_manifest_path = safe_root_path(str(config["source_manifest"]["path"]))
+    source_manifest = json.loads(source_manifest_path.read_text(encoding="utf-8"))
+    if not isinstance(source_manifest, list) or not source_manifest:
+        raise RuntimeError("Case-study source manifest must contain archive records.")
+    parameter_code = str(config["reconstruction"]["parameter_code"])
+    archive_records = sorted(
+        (
+            record
+            for record in source_manifest
+            if isinstance(record, dict)
+            and str(record.get("parameter_code")) == parameter_code
+        ),
+        key=lambda record: int(record["year"]),
+    )
+    if len(archive_records) != len(source_manifest):
+        raise RuntimeError(
+            "Case-study source manifest contains an unexpected non-primary parameter."
+        )
+    frames: list[pd.DataFrame] = []
+    for record in archive_records:
+        relative_path = str(record.get("path", ""))
+        csv_member = str(record.get("csv_member", ""))
+        expected_hash = str(record.get("sha256", ""))
+        raw_path = safe_root_path(relative_path)
+        if not raw_path.is_file():
+            raise FileNotFoundError(
+                "Case-study reconstruction requires the checksum-pinned public "
+                f"archive: {raw_path}"
+            )
+        if sha256(raw_path) != expected_hash:
+            raise RuntimeError(f"Raw archive checksum mismatch: {relative_path}")
+        with zipfile.ZipFile(raw_path) as archive:
+            if csv_member not in archive.namelist():
+                raise RuntimeError(
+                    f"Expected CSV member {csv_member!r} is absent from {relative_path}"
+                )
+            with archive.open(csv_member) as source:
+                frame = pd.read_csv(
+                    source,
+                    usecols=CASE_COLUMNS,
+                    dtype=CASE_DTYPES,
+                    parse_dates=["Date Local"],
+                    low_memory=False,
+                )
+        included = frame["Event Type"].astype("string").fillna("") != "Excluded"
+        valid = (
+            (frame["Sample Duration"] == "24-HR BLK AVG")
+            & included
+            & frame["Arithmetic Mean"].notna()
+            & np.isfinite(frame["Arithmetic Mean"])
+            & (frame["Observation Percent"] >= 75)
+        )
+        retained = frame.loc[
+            valid,
+            ["State Code", "County Code", "Site Num", "POC", "Date Local", "Arithmetic Mean"],
+        ].copy()
+        retained["State Code"] = retained["State Code"].str.zfill(2)
+        retained["County Code"] = retained["County Code"].str.zfill(3)
+        retained["Site Num"] = retained["Site Num"].str.zfill(4)
+        frames.append(retained)
+    canonical = pd.concat(frames, ignore_index=True)
+    identity = ["State Code", "County Code", "Site Num", "POC", "Date Local"]
+    if canonical.duplicated(identity).any():
+        raise RuntimeError("Checksum-pinned case-study data contain duplicate monitor-days.")
+    return {
+        tuple(str(value) for value in key): group.set_index("Date Local")[
+            "Arithmetic Mean"
+        ].sort_index()
+        for key, group in canonical.groupby(
+            ["State Code", "County Code", "Site Num", "POC"],
+            observed=True,
+            sort=True,
+        )
+    }
+
+
+def select_case_rows(data: dict[str, Any], config: dict[str, Any]) -> list[dict[str, Any]]:
+    tiers = data["tiers"].copy()
+    selection_rules = config["selection"]
+    selections = (
+        (
+            "Supported candidate",
+            selection_rules["supported_candidate"],
+            "median_standardized_score",
+        ),
+        (
+            "Not supported",
+            selection_rules["not_supported"],
+            "median_standardized_score",
+        ),
+        (
+            "Inconclusive: no qualified counterfactual",
+            selection_rules["inconclusive_missing_counterfactual"],
+            "lexicographic_anchor_id",
+        ),
+    )
+    selected: list[dict[str, Any]] = []
+    for label, rule, strategy in selections:
+        candidates = tiers.loc[
+            (tiers["evidence_tier"] == rule["evidence_tier"])
+            & (tiers["audit_status"] == rule["required_audit_status"])
+        ].copy()
+        if candidates.empty:
+            raise RuntimeError(f"No deterministic case candidate is available for {label}.")
+        if strategy == "median_standardized_score":
+            if candidates["standardized_score"].isna().any():
+                raise RuntimeError(f"Case candidates for {label} lack standardized scores.")
+            median_score = float(candidates["standardized_score"].median())
+            candidates["selection_distance"] = (
+                candidates["standardized_score"] - median_score
+            ).abs()
+            row = candidates.sort_values(
+                ["selection_distance", "anchor_id"], kind="stable"
+            ).iloc[0]
+        else:
+            median_score = None
+            row = candidates.sort_values("anchor_id", kind="stable").iloc[0]
+        record = row.to_dict()
+        record["case_group"] = label
+        record["selection_strategy"] = strategy
+        record["selection_rule"] = str(rule["rule"])
+        record["within_group_median_standardized_score"] = median_score
+        selected.append(record)
+    return selected
+
+
+def as_optional_float(value: object) -> float | None:
+    if pd.isna(value):
+        return None
+    return float(value)
+
+
+def as_optional_text(value: object) -> str:
+    return "" if pd.isna(value) else str(value)
+
+
+def build_case_records(
+    data: dict[str, Any], config: dict[str, Any]
+) -> list[dict[str, Any]]:
+    selected_cases = select_case_rows(data, config)
+    series = load_case_series(config)
+    controls = pd.read_csv(
+        safe_root_path(str(config["geographic_controls"]["path"])), dtype="string"
+    )
+    for column in (
+        "distance_km",
+        "pre_transition_paired_days",
+        "pre_transition_log_correlation",
+        "rank",
+    ):
+        controls[column] = pd.to_numeric(controls[column])
+    maximum_donors = int(config["reconstruction"]["maximum_ranked_donors"])
+    method_results = data["method_results"]
+    records: list[dict[str, Any]] = []
+    for selected in selected_cases:
+        target_key = (
+            normalized_code(selected["target_state"], 2),
+            normalized_code(selected["target_county"], 3),
+            normalized_code(selected["target_site"], 4),
+            str(selected["target_poc"]).strip(),
+        )
+        if target_key not in series:
+            raise RuntimeError(
+                "Checksum-pinned source archives lack selected target series: "
+                + "-".join(target_key)
+            )
+        anchor_id = str(selected["anchor_id"])
+        anchor_date = pd.Timestamp(selected["anchor_date"])
+        visible_start = anchor_date - pd.Timedelta(
+            days=int(config["reconstruction"]["visible_days_before_anchor"])
+        )
+        visible_end = anchor_date + pd.Timedelta(
+            days=int(config["reconstruction"]["visible_days_after_anchor"])
+        )
+        record: dict[str, Any] = {
+            "case_group": str(selected["case_group"]),
+            "selection_strategy": str(selected["selection_strategy"]),
+            "selection_rule": str(selected["selection_rule"]),
+            "selection_median_score": selected[
+                "within_group_median_standardized_score"
+            ],
+            "anchor_id": anchor_id,
+            "anchor_date": anchor_date,
+            "audit_status": str(selected["audit_status"]),
+            "audit_reason": as_optional_text(selected.get("audit_reason")),
+            "evidence_tier": str(selected["evidence_tier"]),
+            "evidence_reasons": as_optional_text(selected.get("evidence_reasons")),
+            "target": series[target_key],
+            "visible_start": visible_start,
+            "visible_end": visible_end,
+            "log_effect": as_optional_float(selected.get("log_effect")),
+            "fixed_interval": (
+                as_optional_float(selected.get("ci95_lower")),
+                as_optional_float(selected.get("ci95_upper")),
+            ),
+            "nested_interval": (
+                as_optional_float(selected.get("selection_ci95_lower")),
+                as_optional_float(selected.get("selection_ci95_upper")),
+            ),
+            "placebo_count": as_optional_float(selected.get("placebo_count")),
+            "placebo_p_value": as_optional_float(selected.get("placebo_p_value")),
+            "leave_one_donor_out_fraction": as_optional_float(
+                selected.get("leave_one_donor_out_direction_fraction")
+            ),
+        }
+        if record["audit_status"] != "complete":
+            records.append(record)
+            continue
+        selected_controls = (
+            controls.loc[controls["anchor_id"] == anchor_id]
+            .sort_values("rank", kind="stable")
+            .head(maximum_donors)
+            .copy()
+        )
+        if len(selected_controls) < 3:
+            raise RuntimeError(
+                f"Saved complete case {anchor_id} has fewer than three selected donors."
+            )
+        donor_columns: dict[str, pd.Series] = {}
+        for donor in selected_controls.itertuples(index=False):
+            donor_key = (
+                normalized_code(donor.control_state_code, 2),
+                normalized_code(donor.control_county_code, 3),
+                normalized_code(donor.control_site_num, 4),
+                str(donor.control_poc).strip(),
+            )
+            if donor_key not in series:
+                raise RuntimeError(
+                    "Checksum-pinned source archives lack selected donor series: "
+                    + "-".join(donor_key)
+                )
+            donor_columns["-".join(donor_key)] = series[donor_key]
+        donors = pd.DataFrame(donor_columns)
+        metadata = selected_controls.copy()
+        metadata.index = donors.columns
+        prior = donor_weights(metadata)
+        calibration = slice(
+            anchor_date - pd.Timedelta(days=180),
+            anchor_date - pd.Timedelta(days=15),
+        )
+        weights = reliability_constrained_weights(
+            record["target"].loc[calibration],
+            donors.loc[calibration],
+            prior,
+            ridge_penalty=0.1,
+            prior_penalty=0.1,
+        )
+        estimate = estimate_metadata_anchor(
+            record["target"], donors, weights, anchor_date
+        )
+        saved = method_results.loc[
+            (method_results["anchor_id"] == anchor_id)
+            & (method_results["method"] == "metashift_v1_fixed")
+        ]
+        if len(saved) != 1:
+            raise RuntimeError(
+                f"Expected exactly one saved fixed-MetaShift result for {anchor_id}."
+            )
+        saved_log_effect = float(saved.iloc[0]["log_effect"])
+        reconstructed_log_effect = float(estimate.log_effect)
+        absolute_error = abs(saved_log_effect - reconstructed_log_effect)
+        if absolute_error > 1e-9:
+            raise RuntimeError(
+                f"Case reconstruction does not match frozen effect for {anchor_id}: "
+                f"{absolute_error:.3g}"
+            )
+        raw_donor, _ = weighted_donor_series(donors, weights, logarithmic=False)
+        log_target = np.log1p(record["target"].clip(lower=0))
+        log_donor, _ = weighted_donor_series(donors, weights, logarithmic=True)
+        raw_calibration = pd.concat(
+            [record["target"].rename("target"), raw_donor.rename("donor")],
+            axis="columns",
+            sort=False,
+        ).loc[calibration].dropna()
+        log_calibration = pd.concat(
+            [log_target.rename("target"), log_donor.rename("donor")],
+            axis="columns",
+            sort=False,
+        ).loc[calibration].dropna()
+        if raw_calibration.empty or log_calibration.empty:
+            raise RuntimeError(
+                f"Case reconstruction has no retained calibration overlap for {anchor_id}."
+            )
+        record.update(
+            {
+                "donors": donors,
+                "counterfactual": raw_donor
+                + float(np.median(raw_calibration["target"] - raw_calibration["donor"])),
+                "residual": log_target
+                - log_donor
+                - float(
+                    np.median(log_calibration["target"] - log_calibration["donor"])
+                ),
+                "selected_donors": [
+                    {
+                        "physical_site": "-".join(
+                            [
+                                normalized_code(donor.control_state_code, 2),
+                                normalized_code(donor.control_county_code, 3),
+                                normalized_code(donor.control_site_num, 4),
+                            ]
+                        ),
+                        "poc": str(donor.control_poc).strip(),
+                        "distance_km": float(donor.distance_km),
+                        "pre_event_log_correlation": float(
+                            donor.pre_transition_log_correlation
+                        ),
+                    }
+                    for donor in selected_controls.itertuples(index=False)
+                ],
+                "weights": {key: float(value) for key, value in weights.items()},
+                "saved_log_effect": saved_log_effect,
+                "reconstructed_log_effect": reconstructed_log_effect,
+                "reconstruction_absolute_error": absolute_error,
+            }
+        )
+        records.append(record)
+    return records
+
+
+def case_study_manifest(
+    summary: dict[str, Any], config: dict[str, Any], cases: list[dict[str, Any]]
+) -> dict[str, Any]:
+    compact_cases = []
+    for case in cases:
+        compact_cases.append(
+            {
+                "case_group": case["case_group"],
+                "selection_strategy": case["selection_strategy"],
+                "selection_rule": case["selection_rule"],
+                "within_group_median_standardized_score": case["selection_median_score"],
+                "anchor_id": case["anchor_id"],
+                "anchor_date": case["anchor_date"].date().isoformat(),
+                "audit_status": case["audit_status"],
+                "audit_reason": case["audit_reason"],
+                "evidence_tier": case["evidence_tier"],
+                "evidence_reasons": case["evidence_reasons"],
+                "saved_log_effect": case.get("saved_log_effect"),
+                "reconstructed_log_effect": case.get("reconstructed_log_effect"),
+                "reconstruction_absolute_error": case.get(
+                    "reconstruction_absolute_error"
+                ),
+                "fixed_interval": list(case["fixed_interval"]),
+                "nested_interval": list(case["nested_interval"]),
+                "placebo_count": case["placebo_count"],
+                "placebo_p_value": case["placebo_p_value"],
+                "leave_one_donor_out_direction_fraction": case[
+                    "leave_one_donor_out_fraction"
+                ],
+                "selected_donors": case.get("selected_donors", []),
+            }
+        )
+    return {
+        "schema_version": 1,
+        "purpose": "Display-only deterministic representative-case reconstruction.",
+        "frozen_evidence": summary["frozen_evidence"],
+        "result_label": summary["result_label"],
+        "case_rendering_configuration": {
+            "path": relative_to_root(CASE_RENDERING_CONFIG_PATH),
+            "sha256": sha256(CASE_RENDERING_CONFIG_PATH),
+        },
+        "source_manifest": config["source_manifest"],
+        "geographic_controls": config["geographic_controls"],
+        "cases": compact_cases,
+    }
+
+
 def build_claim_value_manifest(
-    summary: dict[str, Any], data: dict[str, Any]
+    summary: dict[str, Any],
+    data: dict[str, Any],
+    cases: list[dict[str, Any]],
+    case_config: dict[str, Any],
 ) -> dict[str, Any]:
     """Derive the exact display fragments for every formal-paper ledger claim."""
 
@@ -409,6 +925,7 @@ def build_claim_value_manifest(
     screening = data["screening"]
     risk = data["risk"]
     method_results = data["method_results"]
+    stable_manifest = data["stable_manifest"]
     aggregate = metrics.loc[metrics["perturbation_family"].isna()].set_index("method")
     audit_counts = audit["audit_status"].value_counts()
     complete_audit_count = int(audit_counts["complete"])
@@ -611,6 +1128,34 @@ def build_claim_value_manifest(
             format_decimal(standard_full_risk["local_effect_mae_log"], 5),
         ],
         "Q32": ["same", "confidence-supported"],
+        "Q33": [str(len(ALL_METHOD_ORDER)), "N/A"],
+        "Q34": [
+            str(len(FAMILY_ORDER)),
+            str(
+                int(
+                    aggregate.loc[
+                        "standard_synthetic_control", "evaluation_instances"
+                    ]
+                    / len(FAMILY_ORDER)
+                )
+            ),
+        ],
+        "Q35": [
+            str(
+                stable_manifest["case_source_counts"][
+                    "method_transition_stable_regime"
+                ]
+            ),
+            str(
+                stable_manifest["case_source_counts"][
+                    "all_monitor_stable_regime"
+                ]
+            ),
+        ],
+        "Q36": [
+            *(str(case["anchor_id"]) for case in cases),
+            "1e-9",
+        ],
     }
     return {
         "schema_version": 1,
@@ -623,7 +1168,11 @@ def build_claim_value_manifest(
     }
 
 
-def create_tables(summary: dict[str, Any], data: dict[str, Any]) -> dict[Path, str]:
+def create_tables(
+    summary: dict[str, Any],
+    data: dict[str, Any],
+    cases: list[dict[str, Any]],
+) -> dict[Path, str]:
     metrics = data["metrics"]
     bootstrap = data["bootstrap"].set_index("comparison")
     ablation = data["ablation"]
@@ -638,6 +1187,7 @@ def create_tables(summary: dict[str, Any], data: dict[str, Any]) -> dict[Path, s
     reporting = data["reporting"]
     screening = data["screening"]
     risk = data["risk"]
+    stable_manifest = data["stable_manifest"]
 
     aggregate = metrics.loc[metrics["perturbation_family"].isna()].set_index("method")
     tables: dict[Path, str] = {}
@@ -649,6 +1199,22 @@ def create_tables(summary: dict[str, Any], data: dict[str, Any]) -> dict[Path, s
         [
             ["Canonical daily PM2.5 records", f"{summary['data_gate']['canonical_records']:,}"],
             ["Monitor time series", f"{summary['data_gate']['monitor_series']:,}"],
+            [
+                "Stable pseudo-anchors from Method Code regimes",
+                str(
+                    stable_manifest["case_source_counts"][
+                        "method_transition_stable_regime"
+                    ]
+                ),
+            ],
+            [
+                "Stable pseudo-anchors from all-monitor regimes",
+                str(
+                    stable_manifest["case_source_counts"][
+                        "all_monitor_stable_regime"
+                    ]
+                ),
+            ],
             ["Persistent Method Code anchors", str(summary["real_event_audit"]["total_anchors"])],
             ["Anchors with at least one distinct physical donor", str(summary["data_gate"]["anchors_with_one_distinct_physical_donor"])],
             ["Anchors with at least three distinct physical donors", str(summary["data_gate"]["anchors_with_three_distinct_physical_donors"])],
@@ -709,10 +1275,10 @@ def create_tables(summary: dict[str, Any], data: dict[str, Any]) -> dict[Path, s
         "paired-bootstrap",
         "Paired event-cluster bootstrap for local-effect MAE differences.",
         "lrrr",
-        ["Comparison", "Difference", "95\\% CI", "Clusters"],
+        ["Comparison", "Difference", "95\\% bootstrap interval", "Clusters"],
         paired_rows,
         "Difference is MetaShift minus standard synthetic control; negative values "
-        "favor MetaShift on MAE. Both intervals include zero.",
+        "favor MetaShift on MAE. Both bootstrap intervals include zero.",
     )
     ablation_rows = []
     for _, row in ablation.sort_values("local_effect_mae_log").iterrows():
@@ -780,7 +1346,9 @@ def create_tables(summary: dict[str, Any], data: dict[str, Any]) -> dict[Path, s
         r"\par\medskip",
         r"\begin{tabular}{lrrr}",
         r"\toprule",
-        latex_row(["Method", "Events", "Fixed CI excludes 0", "Median log effect"]),
+        latex_row(
+            ["Method", "Events", "Fixed conditional interval excludes 0", "Median log effect"]
+        ),
         r"\midrule",
         *(latex_row(row) for row in interval_rows),
         r"\bottomrule",
@@ -987,6 +1555,227 @@ def create_tables(summary: dict[str, Any], data: dict[str, Any]) -> dict[Path, s
         "The two-environment statement applies only to the listed designated core "
         "artifacts in the frozen reproducibility comparison, not to every local file.",
     )
+    all_method_rows = []
+    for method in ALL_METHOD_ORDER:
+        row = aggregate.loc[method]
+        all_method_rows.append(
+            [
+                METHOD_LABELS[method],
+                metric_display(row["local_effect_mae_log"], 5),
+                metric_display(row["average_precision"], 5),
+                metric_display(row["macro_f1"], 5),
+                metric_display(row["false_positive_rate"], 3),
+            ]
+        )
+    tables[TABLES / "table_all_methods.tex"] = latex_table(
+        "all-methods",
+        "Complete frozen aggregate comparison of all benchmark methods.",
+        "lrrrr",
+        ["Method", "Local-effect MAE", "AUPRC", "Macro-F1", "Regional FPR"],
+        all_method_rows,
+        "All values are aggregates over the held-out stable-regime evaluation "
+        "partition. Lower MAE and regional FPR are preferable; higher AUPRC and "
+        "macro-F1 are preferable. N/A means that the method supplies no "
+        "local-effect magnitude estimate for that perturbation design, not that "
+        "the method was omitted.",
+        size=r"\scriptsize",
+        scale_to_width=True,
+    )
+    family_metrics = metrics.loc[metrics["perturbation_family"].notna()].set_index(
+        ["perturbation_family", "method"]
+    )
+    family_rows = []
+    for family in FAMILY_ORDER:
+        for method in ALL_METHOD_ORDER:
+            row = family_metrics.loc[(family, method)]
+            family_rows.append(
+                [
+                    FAMILY_LABELS[family].replace("\n", " "),
+                    METHOD_LABELS[method],
+                    metric_display(row["local_effect_mae_log"], 5),
+                    metric_display(row["average_precision"], 5),
+                    metric_display(row["macro_f1"], 5),
+                    metric_display(row["false_positive_rate"], 3),
+                ]
+            )
+    perturbation_lines = [
+        r"{\scriptsize",
+        r"\setlength{\tabcolsep}{2pt}",
+        r"\renewcommand{\arraystretch}{0.88}",
+        r"\begin{longtable}{@{}p{0.22\linewidth}p{0.17\linewidth}rrrr@{}}",
+        r"\caption{Perturbation-family-specific held-out synthetic metrics for all methods.}"
+        r"\label{tab:perturbation-metrics}\\",
+        r"\toprule",
+        latex_row(
+            [
+                "Paired perturbation family",
+                "Method",
+                "MAE",
+                "AUPRC",
+                "Macro-F1",
+                "Regional FPR",
+            ]
+        ),
+        r"\midrule",
+        r"\endfirsthead",
+        r"\multicolumn{6}{l}{\small\itshape Table \ref{tab:perturbation-metrics}, continued}\\",
+        r"\toprule",
+        latex_row(
+            [
+                "Paired perturbation family",
+                "Method",
+                "MAE",
+                "AUPRC",
+                "Macro-F1",
+                "Regional FPR",
+            ]
+        ),
+        r"\midrule",
+        r"\endhead",
+        r"\bottomrule",
+        r"\multicolumn{6}{p{0.92\linewidth}}{\footnotesize\textit{Note.} Each family"
+        r" aggregates its target-only local perturbation and its matched target-and-donor"
+        r" regional variant. Consequently, regional FPR is assessed within the same"
+        r" paired family; the rows are not local-only effect estimates. N/A has the"
+        r" same meaning as in Table~\ref{tab:all-methods}.}\\",
+        r"\endfoot",
+        *(latex_row(row) for row in family_rows),
+        r"\end{longtable}",
+        r"}",
+        "",
+    ]
+    tables[TABLES / "table_perturbation_metrics.tex"] = "\n".join(perturbation_lines)
+    tier_rules = json.loads(
+        (ROOT / "configs" / "evidence_tier_primary_v1.json").read_text(encoding="utf-8")
+    )
+    tables[TABLES / "table_evidence_tier_rules.tex"] = latex_table(
+        "evidence-tier-rules",
+        "Predeclared primary evidence-tier rules and abstention outcomes.",
+        r"p{0.39\linewidth}rp{0.40\linewidth}",
+        ["Required diagnostic or condition", "Threshold", "Audit outcome"],
+        [
+            [
+                "Complete common-method comparison",
+                "required",
+                r"Missing input $\Rightarrow$ inconclusive",
+            ],
+            [
+                "Selection-aware nested interval",
+                "required",
+                r"Unavailable $\Rightarrow$ inconclusive",
+            ],
+            [
+                "Unique stable post-transition time placebos",
+                str(tier_rules["minimum_unique_placebos"]),
+                r"Fewer dates $\Rightarrow$ inconclusive",
+            ],
+            [
+                "Raw time-placebo probability",
+                format_decimal(tier_rules["raw_placebo_p_cutoff"], 2),
+                r"Above cutoff $\Rightarrow$ not supported",
+            ],
+            [
+                "BH-adjusted time-placebo q value",
+                format_decimal(tier_rules["bh_q_cutoff"], 2),
+                r"Unavailable $\Rightarrow$ inconclusive; above cutoff $\Rightarrow$ not supported",
+            ],
+            [
+                "Fixed-weight conditional diagnostic interval",
+                "exclude 0",
+                r"Otherwise $\Rightarrow$ not supported",
+            ],
+            [
+                "Leave-one-donor-out direction fraction",
+                format_decimal(tier_rules["donor_direction_fraction_cutoff"], 2),
+                r"Below cutoff $\Rightarrow$ not supported",
+            ],
+            [
+                "All available required conditions",
+                "pass",
+                "Supported candidate discontinuity",
+            ],
+        ],
+        "The rules synthesize observational diagnostics; they are not a supervised "
+        "classifier, instrument-fault label, or physical-causality test. The nested "
+        "interval is required for tier assignment but is not claimed to have "
+        "synthetic coverage calibration.",
+        size=r"\scriptsize",
+    )
+    tables[TABLES / "table_claim_boundaries.tex"] = latex_table(
+        "claim-boundaries",
+        "Claim boundaries imposed by the MetaShift-Bench protocol.",
+        r"p{0.30\linewidth}p{0.30\linewidth}p{0.30\linewidth}",
+        ["The evidence can support", "The evidence does not establish", "Required interpretation"],
+        [
+            [
+                "A reproducible metadata-anchored local residual audit",
+                "That a Method Code transition is a physical replacement or fault",
+                "Treat the transition as an anchor, not physical ground truth.",
+            ],
+            [
+                "Benchmark-specific synthetic trade-offs among frozen methods",
+                "A robust aggregate MetaShift superiority claim",
+                "Report the paired intervals and retain the negative result.",
+            ],
+            [
+                "Protocol-defined evidence tiers and abstentions",
+                "Instrument bias, true pollution correction, or causal attribution",
+                "Use tiers only to prioritize further records-based review.",
+            ],
+            [
+                "Conditional interval behavior on frozen synthetic data",
+                "Coverage-calibrated confidence intervals for real-event physical bias",
+                "Describe real-event intervals as diagnostic.",
+            ],
+        ],
+        "These boundaries are design constraints, not post hoc caveats.",
+        size=r"\scriptsize",
+    )
+
+    def interval_text(interval: tuple[float | None, float | None]) -> str:
+        lower, upper = interval
+        if lower is None or upper is None:
+            return "N/A"
+        return "[" + format_decimal(lower, 5) + ", " + format_decimal(upper, 5) + "]"
+
+    case_rows = []
+    for case in cases:
+        group_label = (
+            "Inconclusive"
+            if case["case_group"].startswith("Inconclusive")
+            else case["case_group"]
+        )
+        case_rows.append(
+            [
+                group_label,
+                r"\texttt{" + latex_escape(case["anchor_id"]) + "}",
+                latex_escape(case["audit_status"]),
+                metric_display(case["log_effect"], 5),
+                interval_text(case["fixed_interval"]),
+                interval_text(case["nested_interval"]),
+            ]
+        )
+    tables[TABLES / "table_case_studies.tex"] = latex_table(
+        "case-studies",
+        "Deterministically selected representative audit cases.",
+        "llrrrr",
+        [
+            "Case type",
+            "Metadata anchor",
+            "Audit disposition",
+            "Log effect",
+            "Fixed interval",
+            "Nested interval",
+        ],
+        case_rows,
+        "Supported and not-supported cases minimize absolute distance to their "
+        "within-tier median standardized score, with anchor ID tie-breaking. The "
+        "inconclusive case is the lexicographically first donor-insufficient "
+        "anchor and deliberately has no counterfactual or interval. Intervals are "
+        "diagnostic, not calibrated physical-bias confidence intervals.",
+        size=r"\scriptsize",
+        scale_to_width=True,
+    )
     return tables
 
 
@@ -1015,15 +1804,486 @@ def save_figure(
     )
 
 
-def create_figures(summary: dict[str, Any], data: dict[str, Any], outputs: list[dict[str, Any]]) -> None:
+def create_case_study_figure(
+    cases: list[dict[str, Any]], outputs: list[dict[str, Any]]
+) -> None:
+    figure, axes = plt.subplots(3, len(cases), figsize=(8.35, 8.8), squeeze=False)
+    for column, case in enumerate(cases):
+        top, middle, bottom = axes[:, column]
+        anchor_date = case["anchor_date"]
+        visible_slice = slice(case["visible_start"], case["visible_end"])
+        target = case["target"].loc[visible_slice]
+        top.plot(target, color="#111827", linewidth=1.2, label="Target")
+        top.axvline(anchor_date, color="#DC2626", linestyle="--", linewidth=1)
+        top.axvspan(
+            anchor_date - pd.Timedelta(days=60),
+            anchor_date - pd.Timedelta(days=1),
+            color="#DBEAFE",
+            alpha=0.42,
+            linewidth=0,
+        )
+        top.axvspan(
+            anchor_date,
+            anchor_date + pd.Timedelta(days=59),
+            color="#FDE68A",
+            alpha=0.36,
+            linewidth=0,
+        )
+        top.set_title(
+            case["case_group"].replace(": no qualified counterfactual", ""),
+            fontsize=9,
+            fontweight="bold",
+        )
+        top.set_ylabel(r"PM$_{2.5}$ ($\mu$g/m$^3$)")
+        top.grid(axis="y", alpha=0.22)
+        if case["audit_status"] == "complete":
+            counterfactual = case["counterfactual"].loc[visible_slice]
+            top.plot(
+                counterfactual,
+                color="#2563EB",
+                linewidth=1.1,
+                label="Fixed-prior counterfactual",
+            )
+            residual = case["residual"].loc[visible_slice]
+            middle.plot(residual, color="#7C3AED", linewidth=1.1)
+            middle.axhline(0, color="#111827", linewidth=0.8)
+            middle.axvline(anchor_date, color="#DC2626", linestyle="--", linewidth=1)
+            middle.axvspan(
+                anchor_date - pd.Timedelta(days=60),
+                anchor_date - pd.Timedelta(days=1),
+                color="#DBEAFE",
+                alpha=0.42,
+                linewidth=0,
+            )
+            middle.axvspan(
+                anchor_date,
+                anchor_date + pd.Timedelta(days=59),
+                color="#FDE68A",
+                alpha=0.36,
+                linewidth=0,
+            )
+            middle.set_ylabel("Centered log residual")
+            middle.grid(axis="y", alpha=0.22)
+            fixed_lower, fixed_upper = case["fixed_interval"]
+            nested_lower, nested_upper = case["nested_interval"]
+            effect = case["log_effect"]
+            bottom.axvline(0, color="#111827", linewidth=0.8)
+            if fixed_lower is not None and fixed_upper is not None:
+                bottom.plot(
+                    [fixed_lower, fixed_upper],
+                    [1, 1],
+                    color="#2563EB",
+                    linewidth=2.2,
+                    solid_capstyle="butt",
+                )
+                bottom.plot(effect, 1, "o", color="#2563EB", markersize=4)
+            if nested_lower is not None and nested_upper is not None:
+                bottom.plot(
+                    [nested_lower, nested_upper],
+                    [0, 0],
+                    color="#7C3AED",
+                    linewidth=2.2,
+                    solid_capstyle="butt",
+                )
+                bottom.plot(effect, 0, "o", color="#7C3AED", markersize=4)
+            bottom.set_yticks([0, 1], ["Nested", "Fixed"])
+            bottom.set_xlabel("Protocol-defined log effect")
+            bottom.grid(axis="x", alpha=0.22)
+            placebo_count = case["placebo_count"]
+            placebo_p_value = case["placebo_p_value"]
+            donor_fraction = case["leave_one_donor_out_fraction"]
+            bottom.text(
+                0.02,
+                0.96,
+                "Time placebos: "
+                + (
+                    "unavailable"
+                    if placebo_count is None
+                    else f"n={int(placebo_count)}, p={placebo_p_value:.3f}"
+                )
+                + "\nLOO direction fraction: "
+                + (
+                    "unavailable"
+                    if donor_fraction is None
+                    else format_decimal(donor_fraction, 2)
+                ),
+                transform=bottom.transAxes,
+                va="top",
+                fontsize=7,
+            )
+        else:
+            middle.axis("off")
+            middle.text(
+                0.5,
+                0.60,
+                "No qualified geographic\ncounterfactual is constructed.",
+                ha="center",
+                va="center",
+                fontsize=9,
+                fontweight="bold",
+                transform=middle.transAxes,
+            )
+            middle.text(
+                0.5,
+                0.29,
+                latex_escape(case["audit_reason"]),
+                ha="center",
+                va="center",
+                fontsize=7,
+                wrap=True,
+                transform=middle.transAxes,
+            )
+            bottom.axis("off")
+            bottom.text(
+                0.5,
+                0.57,
+                "Abstention is an audit result.\n"
+                "No effect estimate or interval is imputed.",
+                ha="center",
+                va="center",
+                fontsize=8.5,
+                transform=bottom.transAxes,
+            )
+        top.xaxis.set_major_locator(mdates.MonthLocator(interval=3))
+        top.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
+        middle.xaxis.set_major_locator(mdates.MonthLocator(interval=3))
+        middle.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
+        for axis in (top, middle):
+            axis.tick_params(axis="x", labelrotation=32, labelsize=7)
+            axis.tick_params(axis="y", labelsize=7)
+        top.text(
+            0.01,
+            1.02,
+            f"{case['anchor_id']} | {anchor_date.date().isoformat()}",
+            transform=top.transAxes,
+            fontsize=6.5,
+            va="bottom",
+        )
+        if column == 0:
+            top.legend(fontsize=6.7, loc="upper left")
+    figure.suptitle(
+        "Deterministic display-only representative cases: target/counterfactual, residual, and diagnostics",
+        y=0.995,
+        fontsize=10,
+    )
+    figure.tight_layout(rect=(0, 0, 1, 0.975))
+    save_figure(
+        figure,
+        FIGURES / "fig_case_studies.pdf",
+        "Deterministic representative MetaShift-Bench cases",
+        [
+            "artifacts/real_transition_88101_evidence_tiers.csv",
+            "artifacts/real_transition_88101_method_results.csv",
+            "artifacts/real_transition_88101_event_intervals.csv",
+            "paper/latex/configs/case_study_rendering_v1.json",
+            "artifacts/data_gate/source_manifest.json",
+            "artifacts/data_gate/geographic_controls.csv",
+        ],
+        outputs,
+    )
+
+
+def create_figures(
+    summary: dict[str, Any],
+    data: dict[str, Any],
+    cases: list[dict[str, Any]],
+    outputs: list[dict[str, Any]],
+) -> None:
     plt.rcParams.update(
         {
             "font.size": 9,
             "axes.titlesize": 10,
             "axes.labelsize": 9,
             "figure.dpi": 160,
+            "font.family": "DejaVu Sans",
+            "pdf.fonttype": 42,
+            "ps.fonttype": 42,
         }
     )
+    x = np.arange(-60, 61)
+    baseline = 0.15 * np.sin(x / 11) + 0.03 * np.cos(x / 5)
+    local_target = baseline + np.where(x >= 0, 0.72, 0.0)
+    local_reference = baseline + 0.03
+    regional_target = baseline + np.where(x >= 0, 0.58, 0.0)
+    regional_reference = baseline + np.where(x >= 0, 0.61, 0.0)
+    figure, axes = plt.subplots(1, 2, figsize=(7.1, 2.65), sharey=True)
+    for axis, target, reference, title in (
+        (
+            axes[0],
+            local_target,
+            local_reference,
+            "Target-local perturbation",
+        ),
+        (
+            axes[1],
+            regional_target,
+            regional_reference,
+            "Matched regional perturbation",
+        ),
+    ):
+        axis.plot(x, target, color="#111827", linewidth=1.6, label="Target")
+        axis.plot(x, reference, color="#2563EB", linewidth=1.4, label="Reference")
+        axis.axvline(0, color="#DC2626", linestyle="--", linewidth=1)
+        axis.set_title(title)
+        axis.set_xlabel("Days relative to pseudo-anchor")
+        axis.grid(axis="y", alpha=0.22)
+    axes[0].set_ylabel("Illustrative normalized signal")
+    axes[0].legend(fontsize=7, loc="upper left")
+    figure.suptitle(
+        "Local-versus-regional discrimination target (schematic, not observed data)",
+        y=1.02,
+        fontsize=10,
+    )
+    figure.tight_layout()
+    save_figure(
+        figure,
+        FIGURES / "fig_local_regional_schematic.pdf",
+        "Local versus regional perturbation schematic",
+        ["configs/benchmark_release_v2.json"],
+        outputs,
+    )
+
+    figure, axis = plt.subplots(figsize=(7.25, 3.25))
+    axis.axis("off")
+    nodes = [
+        (0.07, 0.76, "Public EPA\nbulk archives", "#E0F2FE"),
+        (0.28, 0.76, "Canonical daily\nmonitor series", "#DBEAFE"),
+        (0.49, 0.76, "Persistent\nmetadata anchors", "#EDE9FE"),
+        (0.70, 0.76, "Distinct physical\ndonor screening", "#DCFCE7"),
+        (0.23, 0.26, "Known-truth\nstable synthetic study", "#FEF3C7"),
+        (0.52, 0.26, "Complete real-event audit:\ncomparison or failure reason", "#FEE2E2"),
+        (0.81, 0.26, "Layered diagnostics\nand abstention tiers", "#E2E8F0"),
+    ]
+    for xpos, ypos, label, color in nodes:
+        axis.text(
+            xpos,
+            ypos,
+            label,
+            ha="center",
+            va="center",
+            fontsize=8,
+            bbox={
+                "boxstyle": "round,pad=0.45",
+                "facecolor": color,
+                "edgecolor": "#475569",
+                "linewidth": 0.8,
+            },
+            transform=axis.transAxes,
+        )
+    arrows = [
+        ((0.15, 0.76), (0.20, 0.76)),
+        ((0.36, 0.76), (0.41, 0.76)),
+        ((0.57, 0.76), (0.62, 0.76)),
+        ((0.70, 0.65), (0.52, 0.35)),
+        ((0.69, 0.65), (0.29, 0.35)),
+        ((0.62, 0.26), (0.71, 0.26)),
+    ]
+    for start, end in arrows:
+        axis.annotate(
+            "",
+            xy=end,
+            xytext=start,
+            xycoords="axes fraction",
+            arrowprops={"arrowstyle": "->", "color": "#475569", "lw": 1.0},
+        )
+    axis.text(
+        0.5,
+        0.02,
+        "The arrows describe an evidence workflow; a metadata anchor is not physical-instrument ground truth.",
+        ha="center",
+        va="bottom",
+        fontsize=7.5,
+        transform=axis.transAxes,
+    )
+    save_figure(
+        figure,
+        FIGURES / "fig_audit_pipeline.pdf",
+        "MetaShift-Bench audit pipeline schematic",
+        [
+            "configs/benchmark_release_v2.json",
+            "configs/evidence_tier_primary_v1.json",
+            "artifacts/real_transition_88101_event_audit.csv",
+        ],
+        outputs,
+    )
+
+    audit_dates = pd.to_datetime(data["audit"]["anchor_date"])
+    donor_candidates = pd.to_numeric(
+        data["audit"]["geographic_control_candidates"], errors="raise"
+    )
+    figure, axes = plt.subplots(1, 2, figsize=(7.1, 2.9))
+    years = list(range(2019, 2026))
+    year_counts = audit_dates.dt.year.value_counts().reindex(years, fill_value=0)
+    bars = axes[0].bar(years, year_counts.values, color="#2563EB")
+    axes[0].bar_label(bars, padding=2, fontsize=7)
+    axes[0].set_xticks(years, [str(year) for year in years], rotation=30)
+    axes[0].set_ylabel("Metadata anchors")
+    axes[0].set_title("Anchor dates in the audited snapshot")
+    axes[0].grid(axis="y", alpha=0.22)
+    donor_bins = pd.cut(
+        donor_candidates,
+        bins=[-1, 0, 1, 2, 999],
+        labels=["0", "1", "2", "3+"],
+    ).value_counts().reindex(["0", "1", "2", "3+"], fill_value=0)
+    bars = axes[1].bar(
+        donor_bins.index.astype(str),
+        donor_bins.values,
+        color=["#94A3B8", "#CBD5E1", "#F59E0B", "#0F766E"],
+    )
+    axes[1].bar_label(bars, padding=2, fontsize=7)
+    axes[1].set_ylabel("Metadata anchors")
+    axes[1].set_title("Prequalified distinct-donor candidates")
+    axes[1].set_xlabel("Donors before common-method input checks")
+    axes[1].grid(axis="y", alpha=0.22)
+    figure.tight_layout()
+    save_figure(
+        figure,
+        FIGURES / "fig_data_construction.pdf",
+        "Metadata anchor dates and donor availability",
+        ["artifacts/real_transition_88101_event_audit.csv"],
+        outputs,
+    )
+
+    split = load_json("artifacts/stable_synthetic_case_split_audit.json")
+    figure, axis = plt.subplots(figsize=(7.1, 2.75))
+    axis.axis("off")
+    split_boxes = [
+        (
+            0.25,
+            "Calibration\n"
+            f"{split['calibration_physical_sites']} target sites\n"
+            f"{split['calibration_input_physical_sites']} complete input sites",
+            "#DBEAFE",
+        ),
+        (
+            0.75,
+            "Held-out evaluation\n"
+            f"{split['evaluation_physical_sites']} target sites\n"
+            f"{split['evaluation_input_physical_sites']} complete input sites",
+            "#EDE9FE",
+        ),
+    ]
+    for xpos, label, color in split_boxes:
+        axis.text(
+            xpos,
+            0.55,
+            label,
+            ha="center",
+            va="center",
+            fontsize=10,
+            bbox={
+                "boxstyle": "round,pad=0.7",
+                "facecolor": color,
+                "edgecolor": "#475569",
+                "linewidth": 1.0,
+            },
+            transform=axis.transAxes,
+        )
+    axis.plot(
+        [0.47, 0.53],
+        [0.55, 0.55],
+        transform=axis.transAxes,
+        color="#DC2626",
+        linewidth=2,
+        linestyle="--",
+    )
+    axis.text(
+        0.50,
+        0.34,
+        f"{split['all_input_physical_sites_shared_across_splits']} shared physical input sites",
+        ha="center",
+        va="center",
+        fontsize=9,
+        fontweight="bold",
+        color="#991B1B",
+        transform=axis.transAxes,
+    )
+    axis.text(
+        0.50,
+        0.10,
+        "Whole connected components of the target-plus-donor footprint graph were assigned before evaluation.",
+        ha="center",
+        va="center",
+        fontsize=7.5,
+        transform=axis.transAxes,
+    )
+    save_figure(
+        figure,
+        FIGURES / "fig_split_integrity.pdf",
+        "Complete input-footprint split integrity",
+        [
+            "artifacts/stable_synthetic_case_manifest.json",
+            "artifacts/stable_synthetic_case_split_audit.json",
+        ],
+        outputs,
+    )
+
+    family_metrics = data["metrics"].loc[
+        data["metrics"]["perturbation_family"].notna()
+    ].set_index(["method", "perturbation_family"])
+    metric_specs = (
+        ("local_effect_mae_log", "Local-effect MAE", "viridis_r", 5),
+        ("average_precision", "AUPRC", "viridis", 3),
+        ("macro_f1", "Macro-F1", "viridis", 3),
+        ("false_positive_rate", "Regional FPR", "magma_r", 3),
+    )
+    figure, axes = plt.subplots(2, 2, figsize=(8.0, 7.5))
+    for axis, (column, title, cmap, places) in zip(
+        axes.flat, metric_specs, strict=True
+    ):
+        matrix = np.array(
+            [
+                [
+                    family_metrics.loc[(method, family), column]
+                    for family in FAMILY_ORDER
+                ]
+                for method in ALL_METHOD_ORDER
+            ],
+            dtype=float,
+        )
+        masked = np.ma.masked_invalid(matrix)
+        image = axis.imshow(masked, aspect="auto", cmap=cmap)
+        axis.set_title(title)
+        axis.set_xticks(
+            range(len(FAMILY_ORDER)),
+            [FAMILY_LABELS[family] for family in FAMILY_ORDER],
+            fontsize=7,
+        )
+        axis.set_yticks(
+            range(len(ALL_METHOD_ORDER)),
+            [METHOD_LABELS[method] for method in ALL_METHOD_ORDER],
+            fontsize=7,
+        )
+        for row_index in range(matrix.shape[0]):
+            for column_index in range(matrix.shape[1]):
+                value = matrix[row_index, column_index]
+                label = "N/A" if np.isnan(value) else format_decimal(value, places)
+                text_color = "#111827" if np.isnan(value) or value < 0.55 else "white"
+                axis.text(
+                    column_index,
+                    row_index,
+                    label,
+                    ha="center",
+                    va="center",
+                    fontsize=5.8,
+                    color=text_color,
+                )
+        colorbar = figure.colorbar(image, ax=axis, fraction=0.045, pad=0.03)
+        colorbar.ax.tick_params(labelsize=6)
+    figure.suptitle(
+        "All frozen methods across paired local/regional perturbation families",
+        y=0.995,
+        fontsize=10,
+    )
+    figure.tight_layout(rect=(0, 0, 1, 0.978))
+    save_figure(
+        figure,
+        FIGURES / "fig_perturbation_metrics.pdf",
+        "Perturbation-family synthetic metrics for all methods",
+        ["artifacts/stable_synthetic_stable_full_v2_metrics.csv"],
+        outputs,
+    )
+
     audit = data["audit"]
     counts = audit["audit_status"].value_counts()
     labels = [
@@ -1324,6 +2584,7 @@ def create_figures(summary: dict[str, Any], data: dict[str, Any], outputs: list[
         ],
         outputs,
     )
+    create_case_study_figure(cases, outputs)
 
 
 def load_data() -> dict[str, Any]:
@@ -1356,7 +2617,14 @@ def load_data() -> dict[str, Any]:
             ROOT / "artifacts/donor_as_treated_placebos.csv"
         ),
         "tiers": pd.read_csv(
-            ROOT / "artifacts/real_transition_88101_evidence_tiers.csv"
+            ROOT / "artifacts/real_transition_88101_evidence_tiers.csv",
+            dtype={
+                "anchor_id": "string",
+                "target_state": "string",
+                "target_county": "string",
+                "target_site": "string",
+                "target_poc": "string",
+            },
         ),
         "tier_sensitivity": pd.read_csv(
             ROOT / "artifacts/evidence_tier_sensitivity_v2_summary.csv"
@@ -1376,6 +2644,7 @@ def load_data() -> dict[str, Any]:
         "risk": pd.read_csv(
             ROOT / "artifacts/synthetic_risk_coverage_stable_full_v2.csv"
         ),
+        "stable_manifest": load_json("artifacts/stable_synthetic_case_manifest.json"),
     }
 
 
@@ -1389,7 +2658,9 @@ def add_output_hashes(outputs: list[dict[str, Any]]) -> None:
 def write_assets() -> None:
     summary = json.loads(SUMMARY_PATH.read_text(encoding="utf-8"))
     verify_frozen_inputs(summary)
+    case_config = load_case_rendering_config()
     data = load_data()
+    cases = build_case_records(data, case_config)
     GENERATED.mkdir(parents=True, exist_ok=True)
     TABLES.mkdir(parents=True, exist_ok=True)
     FIGURES.mkdir(parents=True, exist_ok=True)
@@ -1407,16 +2678,43 @@ def write_assets() -> None:
     claim_values_path = GENERATED / "claim_value_manifest.json"
     write_text(
         claim_values_path,
-        json.dumps(build_claim_value_manifest(summary, data), indent=2) + "\n",
+        json.dumps(
+            build_claim_value_manifest(summary, data, cases, case_config), indent=2
+        )
+        + "\n",
     )
     outputs.append(
         {
             "path": str(claim_values_path.relative_to(LATEX_ROOT)).replace("\\", "/"),
             "kind": "claim_value_manifest",
-            "sources": ["configs/current_evidence_summary_v2.json"],
+            "sources": [
+                "configs/current_evidence_summary_v2.json",
+                "artifacts/stable_synthetic_case_manifest.json",
+                "artifacts/real_transition_88101_evidence_tiers.csv",
+                "artifacts/real_transition_88101_method_results.csv",
+                "paper/latex/configs/case_study_rendering_v1.json",
+            ],
         }
     )
-    for path, content in create_tables(summary, data).items():
+    case_manifest_path = GENERATED / "case_study_manifest.json"
+    write_text(
+        case_manifest_path,
+        json.dumps(case_study_manifest(summary, case_config, cases), indent=2) + "\n",
+    )
+    outputs.append(
+        {
+            "path": str(case_manifest_path.relative_to(LATEX_ROOT)).replace("\\", "/"),
+            "kind": "case_study_manifest",
+            "sources": [
+                "artifacts/real_transition_88101_evidence_tiers.csv",
+                "artifacts/real_transition_88101_method_results.csv",
+                "paper/latex/configs/case_study_rendering_v1.json",
+                "artifacts/data_gate/source_manifest.json",
+                "artifacts/data_gate/geographic_controls.csv",
+            ],
+        }
+    )
+    for path, content in create_tables(summary, data, cases).items():
         write_text(path, content)
         outputs.append(
             {
@@ -1425,10 +2723,10 @@ def write_assets() -> None:
                 "sources": ["configs/current_evidence_summary_v2.json"],
             }
         )
-    create_figures(summary, data, outputs)
+    create_figures(summary, data, cases, outputs)
     add_output_hashes(outputs)
     manifest = {
-        "schema_version": 2,
+        "schema_version": 3,
         "generator": "paper/latex/scripts/generate_paper_assets.py",
         "frozen_evidence": summary["frozen_evidence"],
         "result_label": summary["result_label"],
@@ -1437,6 +2735,7 @@ def write_assets() -> None:
             {"path": path, "sha256": source_hashes(summary)[path]}
             for path in REQUIRED_ARTIFACTS
         ],
+        "presentation_input_sources": presentation_input_sources(case_config),
         "outputs": outputs,
     }
     write_text(MANIFEST_PATH, json.dumps(manifest, indent=2) + "\n")
@@ -1454,6 +2753,20 @@ def check_assets() -> None:
     if manifest.get("frozen_evidence") != summary["frozen_evidence"]:
         raise RuntimeError("Paper asset manifest has a different frozen evidence identity.")
     errors = []
+    for record in manifest.get("presentation_input_sources", []):
+        if not isinstance(record, dict):
+            errors.append("presentation_input_sources:invalid_record")
+            continue
+        relative_path = record.get("path")
+        expected_hash = record.get("sha256")
+        if not isinstance(relative_path, str) or not isinstance(expected_hash, str):
+            errors.append("presentation_input_sources:missing_path_or_hash")
+            continue
+        path = safe_root_path(relative_path)
+        if not path.is_file():
+            errors.append(f"{relative_path}:missing_presentation_input")
+        elif sha256(path) != expected_hash:
+            errors.append(f"{relative_path}:presentation_input_sha256_mismatch")
     for output in manifest.get("outputs", []):
         path = LATEX_ROOT / output["path"]
         if not path.is_file():

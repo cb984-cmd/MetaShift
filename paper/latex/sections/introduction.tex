@@ -1,30 +1,55 @@
 \section{Introduction}
 
-Air-quality measurements support public communication, regulatory compliance,
+Air-quality measurements support regulatory compliance, public communication,
 trend analysis, exposure assessment, and health research. A visible break in a
-monitor's PM2.5 series can have multiple explanations. It may reflect
-meteorology, wildfire smoke, local emissions, siting, operational changes, data
-processing, or a change in the reported measurement method. These explanations
-cannot be separated by a numerical change-point alone.
+monitor's PM2.5 series can have several explanations: meteorology, wildfire
+smoke, local emissions, siting, operations, data processing, or a change in
+reported measurement metadata. These explanations cannot be separated by a
+numerical change-point alone. The problem is consequently both scientific and
+computational: an analyst needs a reproducible way to join heterogeneous public
+records, construct time-respecting comparison sets, evaluate algorithms against
+known truth where possible, and record when the inputs do not justify an
+algorithmic answer.
 
-The AQS data model makes it possible to formulate a narrower, auditable
-question. Its daily records expose a reported Method Code, a Method Name, and a
-Parameter Occurrence Code (POC) for each series \citep{epa_airdata_formats,
-epa_method_code,epa_poc}. A Method Code transition can therefore define a
-reproducible candidate date before inspecting local residual effects. It does
-not reveal a physical instrument log: a POC is not a universal
-physical-instrument identifier, and the code transition may have several
-non-hardware explanations.
+Figure~\ref{fig:local-regional-schematic} illustrates the central distinction.
+At a pseudo-anchor, a target-only change creates a target-reference residual;
+a matched target-and-reference regional change should not. The curves are a
+schematic rather than observed data. Their purpose is to make the benchmark
+question precise: can a frozen procedure separate a local perturbation from a
+shared regional pattern without mistaking either for a physical instrument
+diagnosis?
 
-MetaShift-Bench asks whether the target-minus-reference residual near a
-reported transition is unusual relative to stable dates and reference sites.
-The goal is an evidence audit, not an automatic correction of historical
-concentrations. Cross-site counterfactual methods can help isolate
-station-specific departures, but they rely on pre-event agreement and
-geographically plausible reference series. Synthetic control and
-difference-in-differences supply useful counterfactual and placebo precedents
-\citep{abadie2010,callaway2021}; they do not turn a monitoring metadata record
-into a causal intervention.
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_local_regional_schematic.pdf}
+\caption{Conceptual local-versus-regional discrimination target. In the left
+panel a target-only perturbation separates the target from its reference; in
+the right panel a matched regional perturbation moves both together. These
+illustrative normalized curves are a schematic generated from the frozen
+benchmark design, not observations and not a causal model of a Method Code
+transition.}
+\label{fig:local-regional-schematic}
+\end{figure}
+
+The AQS data model provides a narrow and auditable starting point. Its daily
+records expose a reported Method Code, Method Name, and Parameter Occurrence
+Code (POC) for each series \citep{epa_airdata_formats,epa_method_code,epa_poc}.
+A persistent Method Code transition can therefore define a candidate date
+before any local residual has been inspected. It is not an instrument log: a
+POC is not a universal physical-instrument identifier, and a reported code
+transition may have several non-hardware explanations. This report therefore
+uses the term \emph{metadata anchor}, rather than treatment, failure, or
+replacement.
+
+MetaShift-Bench asks whether a target-minus-reference residual near a reported
+anchor is unusual relative to stable dates and reference sites. The intended
+output is an evidence audit, not an automatic correction of historical
+concentrations. Cross-site counterfactual methods can separate some
+station-specific and regional patterns, but their interpretation requires
+pre-event agreement, qualified reference series, and transparent uncertainty
+boundaries. Synthetic control and difference-in-differences provide useful
+counterfactual and placebo precedents \citep{abadie2010,abadie2015,callaway2021};
+they do not convert monitoring metadata into a randomized intervention.
 
 The report addresses five predeclared questions:
 \begin{enumerate}
@@ -41,10 +66,30 @@ The report addresses five predeclared questions:
   records, official documents, and a separate PM2.5 parameter pipeline?
 \end{enumerate}
 
-The central contribution is a measurement-method transition \emph{audit
-benchmark}: public source provenance, a complete eligible-event ledger, a
-distinct-physical-donor rule, synthetic truth, placebos, sensitivity analyses,
-and explicit abstention. No taxonomy-stratified analysis is reported because
-the frozen Method Code taxonomy remains pending independent student and teacher
-review. The benchmark does not claim that a Method Code change proves a device
-replacement, a measurement failure, or a causal measurement bias.
+The contribution is a measurement-method transition \emph{audit benchmark},
+not a promoted estimator. More specifically, this report contributes:
+\begin{enumerate}
+  \item a public-data provenance chain that preserves archive checksums,
+  canonical cleaning rules, and a reproducible primary PM2.5 signal;
+  \item a metadata-anchor definition that is fixed before local-effect
+  inspection and explicitly separates a monitor series from a physical site;
+  \item a distinct-physical-donor rule that prevents multiple POCs at one
+  site from being counted as independent geographic evidence;
+  \item a stable-regime synthetic benchmark with target-only and matched
+  regional perturbations, complete input-footprint split isolation, and
+  frozen evaluation metrics;
+  \item a complete real-anchor ledger with counterfactual diagnostics,
+  placebos, donor sensitivity, rule-based evidence tiers, and explicit
+  abstention; and
+  \item a negative model-comparison result: neither frozen MetaShift variant
+  establishes a confidence-supported aggregate advantage over standard
+  synthetic control.
+\end{enumerate}
+
+This framing is deliberately conservative. No taxonomy-stratified analysis is
+reported because the frozen Method Code taxonomy remains pending independent
+student and teacher review. The benchmark does not claim that a Method Code
+change proves a device replacement, a measurement failure, or a causal
+measurement bias. Instead, it supplies an auditable record of what the
+available public metadata and time series can support, what they cannot
+support, and which questions require records-based human investigation.

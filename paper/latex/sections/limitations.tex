@@ -1,35 +1,90 @@
 \section{Limitations and threats to validity}
 
-\begin{enumerate}
-  \item AQS Method Code is reported metadata, not a verified physical hardware,
-  calibration, maintenance, or siting log.
-  \item A station-local residual can arise from local emissions, meteorology,
-  smoke, network-wide operations, data screening, or other unobserved factors.
-  \item Geographic donors are selected from pre-event agreement and may not
-  remain valid after an anchor; physical-site deduplication does not remove all
-  reference-series uncertainty.
-  \item Complete comparisons apply only to the subset with sufficient
-  qualifying distinct donors and retained input windows. The full event ledger
-  documents this selection boundary but cannot eliminate it.
-  \item Fixed-weight intervals under-cover and split-conformal intervals
-  over-cover on the frozen synthetic evaluation. Neither supports a generic
-  real-event calibration claim.
-  \item Selection-aware nested intervals model only the fixed observed
-  candidate pool. The frozen full selection-aware synthetic coverage study was
-  infeasible within the deadline, so those intervals are not claimed to have
-  calibrated coverage.
-  \item Time, donor-as-treated, and date-resampling placebos are diagnostic
-  falsifications. They are not randomized physical experiments or causal
-  probabilities.
-  \item Same-site POC, QA, and official-document evidence are sparse and
-  contextual. In particular, POC is not a universal physical-instrument
-  identifier, and an unlocated public notice is not evidence of no change.
-  \item The separate 88502 result is sparse and is not pooled with 88101.
-  \item The frozen data snapshot, monitoring network, pollutant parameter,
-  time period, and perturbation model limit generalization to other settings.
-\end{enumerate}
+The benchmark is intentionally designed to expose limitations rather than to
+hide them behind a binary classifier. Table~\ref{tab:threats-validity}
+organizes the residual risks by construct, internal, statistical, and external
+validity. The mitigations constrain interpretation, but none turns the audit
+into a physical instrument diagnosis.
 
-The Method Code taxonomy is intentionally excluded from these results pending
-independent human review. Any future stratified analysis must preserve its
-frozen metadata-only rule, be labelled descriptive, and must not use the
-already viewed evaluation set to select a new model or decision threshold.
+\begin{landscape}
+\begin{longtable}{@{}p{0.10\linewidth}p{0.19\linewidth}p{0.21\linewidth}p{0.20\linewidth}p{0.20\linewidth}@{}}
+\caption{Threats to validity, current mitigation, residual consequence, and
+needed future evidence.}\label{tab:threats-validity}\\
+\toprule
+Validity class & Risk & Current mitigation & Residual consequence & Needed future evidence \\
+\midrule
+\endfirsthead
+\toprule
+Validity class & Risk & Current mitigation & Residual consequence & Needed future evidence \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Construct &
+A Method Code or POC may not encode a physical device, calibration, siting, or maintenance event. &
+Treat records as metadata anchors; prohibit fault, replacement, bias, and correction claims. &
+Residual effects cannot identify a physical mechanism. &
+Dated station histories, calibration records, deployment logs, and independently reviewed taxonomy. \\
+\addlinespace
+Internal &
+Weather, smoke, emissions, processing, or donor instability can create a target-reference residual. &
+Pre-event matching, distinct physical donors, time and donor placebos, and leave-one-donor-out checks. &
+Diagnostics can reject some explanations but do not establish randomized causal attribution. &
+Meteorological covariates, emissions records, network operations logs, and prospective comparator studies. \\
+\addlinespace
+Statistical &
+Donor selection, serial dependence, multiplicity, and incomplete resampling can invalidate naive uncertainty. &
+Fixed conditional and nested intervals, moving blocks, exploratory BH screening, and reported coverage failures. &
+Real-event intervals are diagnostic rather than coverage-calibrated physical-bias confidence intervals. &
+A computationally feasible, predeclared full selection-aware synthetic coverage study on a new blind set. \\
+\addlinespace
+External &
+The 2019--2025 U.S. primary parameter, availability rules, stable perturbations, and donor radius may not transfer. &
+Separate 88502 pipeline, complete event accounting, and parameter-specific reporting. &
+Results do not establish performance for other pollutants, countries, networks, eras, or perturbation mechanisms. &
+Independent publicly reproducible benchmarks with precommitted footprint-disjoint evaluation. \\
+\end{longtable}
+\end{landscape}
+
+\subsection{Construct validity}
+
+The primary construct is a reported metadata transition paired with a
+protocol-defined local residual, not a physical monitoring event. Method names
+may contain useful contextual descriptions, but they do not substitute for
+technical records. The benchmark therefore cannot determine whether a change
+reflects hardware, configuration, quality assurance, a reporting convention,
+or another process. The human-blocked taxonomy remains excluded from all
+stratified results because a row-by-row interpretation has not been completed
+by students and supervising teacher.
+
+\subsection{Internal validity}
+
+Cross-site counterfactuals require an assumption that qualified donors offer a
+useful pre-event reference. Physical-site deduplication, correlation, distance,
+method stability, and paired-data checks reduce obvious violations, but cannot
+ensure that the target and donor network remain comparable after an anchor.
+Regional events may be imperfectly shared, and a local residual may have
+non-instrument causes. Placebos and sensitivity analyses therefore constrain
+interpretation; they do not identify a unique mechanism.
+
+\subsection{Statistical validity}
+
+The fixed-weight interval omits uncertainty from donor selection and model
+selection by construction. The nested interval expands that scope inside a
+fixed observed candidate pool, yet the evaluation does not include a full
+selection-aware synthetic coverage result. The observed undercoverage and
+overcoverage are negative results, not defects repaired by changing
+confidence levels or block lengths after inspection. Multiple-screening
+quantities remain exploratory and do not transform all audit rows into formal
+causal hypothesis tests.
+
+\subsection{External validity}
+
+The study's archive years, PM2.5 parameter, daily summary, U.S. network, and
+synthetic perturbation generators limit generalization. The benchmark also
+requires sufficiently dense, nearby, stable, and correlated donor records;
+its applicability will be lower in sparse networks. A separate 88502 pipeline
+demonstrates only limited transfer feasibility, not a broad replication.
+Future work should pre-register independent sources, station footprints,
+metrics, and external documentation before testing any newly proposed
+algorithmic claim.

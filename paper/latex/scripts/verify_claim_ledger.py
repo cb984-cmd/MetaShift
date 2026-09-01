@@ -35,37 +35,47 @@ REQUIRED_COLUMNS = (
 )
 MANUSCRIPT_LOCATIONS = {
     "Abstract": ("sections/frontmatter.tex", r"\section*{Abstract}"),
-    "Section 3: Data": ("sections/data.tex", r"\section{Data and event construction}"),
-    "Section 5: Experimental design": (
-        "sections/experiments.tex",
-        r"\section{Experimental design}",
+    "Data": ("sections/data.tex", r"\section{Data and benchmark construction}"),
+    "Experiments": ("sections/experiments.tex", r"\section{Experimental design}"),
+    "Framework": (
+        "sections/framework.tex",
+        r"\section{MetaShift-Bench audit framework}",
     ),
-    "Section 6.1: RQ1": (
+    "Results RQ1": (
         "sections/results.tex",
         r"\subsection{RQ1: Stable-window synthetic comparison}",
     ),
-    "Section 6.2: RQ2": (
+    "Results RQ2": (
         "sections/results.tex",
         r"\subsection{RQ2: Bound on a MetaShift superiority claim}",
     ),
-    "Section 6.3: RQ3": (
+    "Results RQ3": (
         "sections/results.tex",
         r"\subsection{RQ3: Complete real-anchor audit}",
     ),
-    "Section 6.4: RQ4": (
+    "Results RQ4": (
         "sections/results.tex",
         r"\subsection{RQ4: Interval coverage and sensitivity}",
     ),
-    "Section 6.5: RQ5": (
+    "Results RQ5": (
         "sections/results.tex",
         r"\subsection{RQ5: External context and transfer boundary}",
     ),
-    "Section 8: Limitations": (
+    "Case studies": (
+        "sections/case_studies.tex",
+        r"\section{Representative case studies}",
+    ),
+    "Limitations": (
         "sections/limitations.tex",
         r"\section{Limitations and threats to validity}",
     ),
-    "Section 9: Conclusion": ("sections/conclusion.tex", r"\section{Conclusion}"),
+    "Reproducibility": (
+        "sections/reproducibility.tex",
+        r"\section{Reproducibility, integrity, and contributions}",
+    ),
+    "Conclusion": ("sections/conclusion.tex", r"\section{Conclusion}"),
 }
+REQUIRED_CLAIM_IDS = frozenset(f"Q{index:02d}" for index in range(1, 37))
 
 
 def parse_args() -> argparse.Namespace:
@@ -152,7 +162,11 @@ def main() -> None:
     summary = json.loads(SUMMARY_PATH.read_text(encoding="utf-8"))
     artifact_hashes = {
         item["path"]: item["sha256"]
-        for record_group in ("artifact_sources", "frozen_protocol_sources")
+        for record_group in (
+            "artifact_sources",
+            "frozen_protocol_sources",
+            "presentation_input_sources",
+        )
         for item in summary.get(record_group, [])
         if isinstance(item, dict) and "path" in item and "sha256" in item
     }
@@ -175,6 +189,14 @@ def main() -> None:
         schema_violations.append({"issue": "empty_ledger"})
     if len(claim_ids) != len(set(claim_ids)) or any(not claim_id for claim_id in claim_ids):
         schema_violations.append({"issue": "claim_ids_not_unique_and_nonempty"})
+    if set(claim_ids) != REQUIRED_CLAIM_IDS:
+        schema_violations.append(
+            {
+                "issue": "required_claim_ids_mismatch",
+                "missing": sorted(REQUIRED_CLAIM_IDS - set(claim_ids)),
+                "unexpected": sorted(set(claim_ids) - REQUIRED_CLAIM_IDS),
+            }
+        )
     missing_fields = [
         {
             "row": index,
@@ -209,7 +231,17 @@ def main() -> None:
                 )
                 continue
             source_path, anchor = location_record
-            if anchor not in (LATEX_ROOT / source_path).read_text(encoding="utf-8"):
+            manuscript_path = LATEX_ROOT / source_path
+            if not manuscript_path.is_file():
+                location_violations.append(
+                    {
+                        "row": index,
+                        "claim_id": row["claim_id"],
+                        "location": location,
+                        "issue": "manuscript_location_file_missing",
+                    }
+                )
+            elif anchor not in manuscript_path.read_text(encoding="utf-8"):
                 location_violations.append(
                     {
                         "row": index,
@@ -257,6 +289,11 @@ def main() -> None:
         asset_manifest = json.loads(ASSET_MANIFEST_PATH.read_text(encoding="utf-8"))
     else:
         asset_manifest = {}
+    for record in asset_manifest.get("presentation_input_sources", []):
+        if isinstance(record, dict) and isinstance(record.get("path"), str) and isinstance(
+            record.get("sha256"), str
+        ):
+            artifact_hashes[record["path"]] = record["sha256"]
 
     evidence_violations = []
     asset_names: list[str] = []

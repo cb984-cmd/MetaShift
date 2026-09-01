@@ -29,6 +29,8 @@ jobs:
           python-version: "3.13"
       - name: Document consistency checks (CI-safe, no local artifacts needed)
         run: python scripts/verify_public_document_consistency.py
+      - name: Unreviewed taxonomy handoff integrity
+        run: python scripts/verify_taxonomy_human_review_packet.py
       - name: Frozen config integrity
         run: |
           python -c "

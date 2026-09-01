@@ -156,6 +156,14 @@ classes. The initial machine-readable table is explicitly pending independent
 student and teacher review; it is not a human-verified equipment-history
 record.
 
+The 34-row
+[`TAXONOMY_HUMAN_REVIEW_PACKET`](../paper/upgrade/TAXONOMY_HUMAN_REVIEW_PACKET.md)
+is an unreviewed handoff template that preserves the frozen source, leaves
+every human decision pending, and leaves all human evidence fields blank. Its
+[`dependency map`](../paper/upgrade/TAXONOMY_DEPENDENCY_MAP.md) prohibits
+taxonomy-stratified work until every row has independently recorded official
+source evidence and explicit student/teacher approval.
+
 Stratified real-event results will be descriptive distributions of residual
 diagnostics by frozen class. They cannot establish a physical instrument
 replacement or causal measurement bias. Groups with fewer than 20 complete

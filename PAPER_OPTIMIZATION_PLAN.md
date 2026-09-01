@@ -66,7 +66,7 @@ tune against the already viewed 80-site synthetic evaluation split.
 
 | Priority | Extension requirement | Status | Evidence / boundary |
 | --- | --- | --- | --- |
-| P0 | Freeze metadata-only Method Code taxonomy | Human-blocked | `configs/method_transition_taxonomy_v1.csv` covers all 34 observed pairs without outcome data; independent student/teacher row-level review remains required before any stratification |
+| P0 | Freeze metadata-only Method Code taxonomy | Human-blocked | `configs/method_transition_taxonomy_v1.csv` and the exact 34-row [human-review packet](paper/upgrade/TAXONOMY_HUMAN_REVIEW_PACKET.md) contain no outcome data; every row remains pending independent student/teacher review before any stratification |
 | P0 | Test fixed-weight synthetic uncertainty calibration | Complete as a negative result | v2 nominal-95% conditional coverage is 63.875%--67.281%; nominal-90% split-conformal coverage is 98.8125%--99.5625%. No post-evaluation adjustment is permitted |
 | P0 | Test selection-aware interval coverage | Frozen infeasibility recorded | `configs/selection_aware_coverage_protocol_v2.json` was frozen before outcomes and records full donor-reselection coverage as infeasible within the deadline; real intervals are not claimed calibrated |
 | P0 | Analyze auditability representativeness | Complete | v2 retains all 563 anchors: 228 complete comparisons, 325 donor-insufficient events, and 10 input-window failures |

@@ -113,6 +113,15 @@ replacement or measurement bias.
   [`paper/upgrade/V04_STRESS_SUITE_AUDIT.md`](paper/upgrade/V04_STRESS_SUITE_AUDIT.md)
   and
   [`paper/upgrade/V04_ASSUMPTION_FAILURE_MATRIX.csv`](paper/upgrade/V04_ASSUMPTION_FAILURE_MATRIX.csv).
+- [x] **P5d -- Prepare the taxonomy human-review packet.** The tracked
+  metadata-only handoff template has exactly 34 frozen transition rows and
+  official-source locators, while every decision remains pending and all human
+  evidence locators, initials, dates, and notes remain blank. Its read-only
+  verifier rejects any automatic completion; see
+  [`paper/upgrade/TAXONOMY_HUMAN_REVIEW_PACKET.md`](paper/upgrade/TAXONOMY_HUMAN_REVIEW_PACKET.md)
+  and
+  [`paper/upgrade/TAXONOMY_DEPENDENCY_MAP.md`](paper/upgrade/TAXONOMY_DEPENDENCY_MAP.md).
+  Taxonomy-stratified analysis remains human-blocked.
 - [ ] **P6-P8 -- Manuscript, figures, and adversarial review.**
   Taxonomy-independent preparation is no longer globally paused, but it remains
   gated on the theory, core-metric, stress-suite, and closest-work audits. P5
@@ -301,7 +310,10 @@ the already viewed 80-site stable-synthetic evaluation set.
   boundaries before reading extension outcomes.
 - [!] **E1 — Freeze and review Method Code taxonomy.** A 34-pair,
   metadata-only table covers all 563 anchors and is validated without outcome
-  data. Student/teacher row-level review is required before stratification.
+  data. The exact 34-row blank
+  [`human-review packet`](paper/upgrade/TAXONOMY_HUMAN_REVIEW_PACKET.md) and
+  its dependency map are prepared, but all rows remain pending independent
+  student/teacher source review; no stratification may begin.
 - [x] **E2 — Calibrate fixed-weight synthetic uncertainty intervals.** The
   frozen v2 66/80 evaluation has 3,200 effect instances per method.
   Conditional nominal-95% intervals under-cover at 63.875%--67.281% across the
@@ -361,6 +373,9 @@ claims.
 
 - [ ] Students and supervising teacher independently reproduce and explain the
   submitted methods, code, data rules, results, and limitations.
+- [ ] Students and supervising teacher independently verify and reconcile all
+  34 Method Code transition rows using the taxonomy human-review packet before
+  authorizing any taxonomy-stratified work.
 - [ ] Complete the author-contribution and AI-assistance records from verified
   project history, then obtain the required signatures and institutional forms.
 - [ ] Replace manuscript identity placeholders and perform the final human

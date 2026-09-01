@@ -130,6 +130,42 @@ class IdentifiabilityCoreTests(unittest.TestCase):
                 random_seed=seed + 1,
             )
 
+    def test_exact_pair_rejects_nonfinite_observed_values(self) -> None:
+        schedule = pd.Series(0.0, index=self.index)
+        for invalid_value in (np.nan, np.inf, -np.inf):
+            target = self.target.copy()
+            target.iloc[0] = invalid_value
+            with self.assertRaisesRegex(ValueError, "target must contain only finite"):
+                build_analysis_scale_scope_pair(
+                    target,
+                    self.donors,
+                    self.anchor,
+                    schedule,
+                    "invalid-target",
+                )
+
+        for invalid_value in (np.inf, -np.inf):
+            donors = self.donors.copy()
+            donors.iloc[0, 0] = invalid_value
+            with self.assertRaisesRegex(ValueError, "donors may be missing"):
+                build_analysis_scale_scope_pair(
+                    self.target,
+                    donors,
+                    self.anchor,
+                    schedule,
+                    "invalid-donor",
+                )
+
+    def test_generic_pair_builder_does_not_claim_protocol_schedule_provenance(self) -> None:
+        schedule = pd.Series(0.0, index=self.index)
+        schedule.loc[self.anchor :] = 0.01
+
+        pair = build_analysis_scale_scope_pair(
+            self.target, self.donors, self.anchor, schedule, "external-schedule"
+        )
+
+        self.assertIsNone(pair.random_seed)
+
     def test_clipping_aware_additive_bound_and_median_stability(self) -> None:
         raw = np.array([-3.0, -0.5, 0.0, 2.0, 8.0, 20.0])
         other = np.array([-2.0, -0.2, 0.5, 3.0, 12.0, 25.0])

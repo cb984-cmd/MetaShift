@@ -144,6 +144,18 @@ def label_blind_accepted_local_prior(
 ) -> float:
     """Return the accepted-set local prior for a label-blind discrete selector."""
 
+    accepted = label_blind_accepted_feature_pmf(
+        common_pmf, acceptance_probabilities
+    )
+    prior = _local_prior(local_prior)
+    return float(prior * accepted.sum())
+
+
+def label_blind_accepted_feature_pmf(
+    common_pmf: ArrayLike, acceptance_probabilities: ArrayLike
+) -> np.ndarray:
+    """Return the common accepted feature law of a label-blind selector."""
+
     common = _probability_mass_function(common_pmf, "common_pmf")
     acceptance = np.asarray(acceptance_probabilities, dtype=float)
     if acceptance.shape != common.shape:
@@ -154,11 +166,10 @@ def label_blind_accepted_local_prior(
         or (acceptance > 1.0).any()
     ):
         raise ValueError("acceptance_probabilities must be finite values in [0, 1].")
-    prior = _local_prior(local_prior)
     coverage = float(np.dot(common, acceptance))
     if coverage <= 0.0:
         raise ValueError("The label-blind selector must have positive coverage.")
-    return float((prior * coverage) / coverage)
+    return common * acceptance / coverage
 
 
 def clipped_log(values: pd.Series | pd.DataFrame | np.ndarray) -> object:
@@ -240,7 +251,14 @@ def _validate_scope_inputs(
     date = pd.Timestamp(anchor_date)
     if date not in target.index:
         raise ValueError("anchor_date must be observed in the target index.")
-    return target.astype(float).copy(), donors.astype(float).copy(), date
+    target_values = target.astype(float).copy()
+    donor_values = donors.astype(float).copy()
+    if not np.isfinite(target_values.to_numpy()).all():
+        raise ValueError("target must contain only finite observed values.")
+    donor_values_array = donor_values.to_numpy()
+    if not (np.isnan(donor_values_array) | np.isfinite(donor_values_array)).all():
+        raise ValueError("donors may be missing but cannot contain infinite values.")
+    return target_values, donor_values, date
 
 
 def build_analysis_scale_scope_pair(
@@ -254,10 +272,12 @@ def build_analysis_scale_scope_pair(
 ) -> AnalysisScaleScopePair:
     """Build a matched local/regional pair with exact log-residual cancellation.
 
-    ``schedule`` is added to the target's analysis-scale path in both arms.  It
+    ``schedule`` is added to the target's analysis-scale path in both arms. It
     is also added to every donor's analysis-scale path in the regional arm.
-    The schedule must be zero before the anchor, and the inverse transform must
-    remain in the valid nonnegative raw domain for every observed affected value.
+    The caller owns schedule provenance; when ``random_seed`` is recorded, this
+    helper verifies only that it is the pair-derived seed. The schedule must be
+    zero before the anchor, and the inverse transform must remain in the valid
+    nonnegative raw domain for every observed affected value.
     """
 
     if not isinstance(pair_id, str) or not pair_id.strip():

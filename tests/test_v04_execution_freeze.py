@@ -6,11 +6,18 @@ from scripts import verify_v04_execution_freeze as verifier
 
 
 class ExecutionFreezeTests(unittest.TestCase):
-    def test_execution_freeze_candidate_remains_bound_after_output(self) -> None:
+    def test_execution_freeze_verifier_rejects_post_execution_source_evolution(self) -> None:
         report = verifier.build_report(require_no_outputs=False)
 
-        self.assertTrue(report["all_checks_passed"])
+        self.assertFalse(report["all_checks_passed"])
         self.assertEqual(11, len(report["checks"]))
+        self.assertFalse(
+            next(
+                item["passed"]
+                for item in report["checks"]
+                if item["name"] == "all_nonself_inputs_are_hashed"
+            )
+        )
         self.assertTrue(
             next(
                 item["passed"]

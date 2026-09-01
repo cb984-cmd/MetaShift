@@ -208,9 +208,11 @@ identification.
 
 ## 5. Theorem-to-code contract
 
-The exact core is implemented only in
-`metashift/identifiability.py`; `metashift/synthetic.py` remains the frozen
-raw-scale v0.3.2 generator. The tests enforce:
+The matched-pair construction is implemented in `metashift/identifiability.py`;
+the frozen runner derives schedules and
+`metashift/counterfactual.py` supplies the availability-normalized residual
+estimation. `metashift/synthetic.py` remains the frozen raw-scale v0.3.2
+generator. The tests enforce:
 
 1. exact target identity in the four valid frozen deterministic pairs;
 2. no frozen distributional claim for the unequal-seed variance record;

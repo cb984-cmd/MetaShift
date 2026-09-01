@@ -55,6 +55,10 @@ replacement or measurement bias.
   [`paper/upgrade/IDENTIFIABILITY_THEORY.md`](paper/upgrade/IDENTIFIABILITY_THEORY.md),
   [`paper/upgrade/THEORY_ROUTE_DECISION.md`](paper/upgrade/THEORY_ROUTE_DECISION.md),
   and [`paper/upgrade/GATE_A_RECOVERY_LOG.md`](paper/upgrade/GATE_A_RECOVERY_LOG.md).
+  The bounded Bayes-risk, balanced-TV, and label-blind-selection statements
+  now have an assumption ledger, adversarial proof audit, theorem-to-code
+  crosswalk, finite-PMF tests, and construction tests. They remain statements
+  only about the stipulated target-only observable and exact synthetic core.
 - [x] **P3 -- Pre-outcome v0.4 protocol freeze.** The initial
   `v0.4.0-protocol-freeze` and the unrun `v0.4.0-execution-freeze` tags remain
   immutable historical records. The latter was superseded before output

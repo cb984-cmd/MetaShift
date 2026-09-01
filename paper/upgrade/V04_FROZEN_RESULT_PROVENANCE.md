@@ -24,6 +24,14 @@ and the receipt/attempt chain. The five payload hashes remain linked to the
 durable execution receipt. The result-verification artifact is separately
 recorded because it is a post-execution deterministic replay check.
 
+The execution source authority is the Git blob at
+`v0.4.1-execution-freeze`, not a later working-tree revision. The historical
+pre-execution verifier deliberately rejects a later revision of any
+allowlisted input; it cannot be reused to bless post-execution source changes.
+The provenance validator instead verifies the tagged blobs, the preserved
+bytes, and the stored 14/14 result-verification artifact without rerunning
+the benchmark.
+
 ## Local verification
 
 No experiment is executed by this command:

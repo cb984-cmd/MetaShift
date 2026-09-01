@@ -139,12 +139,16 @@ r'_t=(z_t+h_t)-\sum_j\widetilde w_{jt}(z_{jt}+h_t)-b=r_t.
 
 The local arm applies the same \(h_t\) to its target only. Therefore the
 construction creates a target-only equivalence while retaining a comparative
-signal. This is an algebraic property conditional on aligned dates, shared
+signal. This is an algebraic property conditional on aligned dates, finite observed
+target and donor values (with donors permitted explicit missingness), shared
 availability, fixed weights, a zero pre-anchor schedule, a valid inverse
-domain, and real arithmetic. The code verifies numerical residual agreement
-within \(10^{-12}\). It is not a universal theorem that comparative data
-identify scope, nor does the observed zero comparative error establish a
-real-world guarantee.
+domain, and real arithmetic. The frozen runner derives and records the
+pair-derived schedule before passing it to the generic pair builder; the
+builder validates a recorded seed when supplied but does not itself claim that
+an arbitrary caller-supplied schedule is protocol-generated. The code verifies
+numerical residual agreement within \(10^{-12}\). It is not a universal theorem
+that comparative data identify scope, nor does the observed zero comparative
+error establish a real-world guarantee.
 
 ## 5. Stress-family boundary
 

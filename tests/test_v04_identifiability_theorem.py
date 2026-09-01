@@ -1,10 +1,12 @@
 import unittest
+from itertools import product
 
 import numpy as np
 
 from metashift.identifiability import (
     discrete_binary_bayes_error,
     discrete_total_variation_distance,
+    label_blind_accepted_feature_pmf,
     label_blind_accepted_local_prior,
 )
 
@@ -42,9 +44,28 @@ class IdentifiabilityTheoremTests(unittest.TestCase):
         acceptance = np.array([0.0, 0.4, 1.0])
 
         accepted_prior = label_blind_accepted_local_prior(common, acceptance, 0.8)
+        accepted_features = label_blind_accepted_feature_pmf(common, acceptance)
 
         self.assertAlmostEqual(0.8, accepted_prior)
         self.assertAlmostEqual(0.2, min(accepted_prior, 1.0 - accepted_prior))
+        np.testing.assert_allclose(accepted_features, [0.0, 0.4, 0.6])
+        self.assertAlmostEqual(
+            0.2, discrete_binary_bayes_error(accepted_features, accepted_features, 0.8)
+        )
+
+    def test_every_balanced_accepted_target_only_classifier_has_half_error(self) -> None:
+        common = np.array([0.2, 0.5, 0.3])
+        accepted_features = label_blind_accepted_feature_pmf(
+            common, np.array([0.0, 0.4, 1.0])
+        )
+
+        for predictions_are_local in product((False, True), repeat=len(common)):
+            predictions = np.asarray(predictions_are_local, dtype=float)
+            error = 0.5 * float(
+                np.dot(accepted_features, 1.0 - predictions)
+                + np.dot(accepted_features, predictions)
+            )
+            self.assertAlmostEqual(0.5, error)
 
     def test_label_dependent_selection_is_not_the_theorem_case(self) -> None:
         local_prior = 0.8

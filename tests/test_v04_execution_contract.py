@@ -88,6 +88,41 @@ class V04ExecutionContractTests(unittest.TestCase):
                 by_state["regional"]["target_only_score"],
             )
 
+    def test_protocol_schedule_generation_is_pair_derived_and_arm_invariant(self) -> None:
+        protocol = miniature_protocol()
+        component = runner.generate_component(protocol, "calibration", 0)
+        schedule_specification = protocol["schedule_families"][1]
+        pair_id = str(protocol["matched_pairs"]["pair_id_template"]).format(
+            split=component.split,
+            component_id=component.component_id,
+            schedule_family=schedule_specification["name"],
+        )
+
+        first, first_seed = runner.schedule_for_pair(
+            protocol,
+            pair_id,
+            schedule_specification,
+            component.target.index,
+            component.anchor_date,
+        )
+        second, second_seed = runner.schedule_for_pair(
+            protocol,
+            pair_id,
+            schedule_specification,
+            component.target.index,
+            component.anchor_date,
+        )
+
+        self.assertEqual(
+            first_seed,
+            runner.paired_schedule_seed(
+                pair_id, base_seed=protocol["synthetic_panel"]["base_seed"]
+            ),
+        )
+        self.assertEqual(first_seed, second_seed)
+        np.testing.assert_array_equal(first.to_numpy(), second.to_numpy())
+        self.assertTrue((first.loc[first.index < component.anchor_date] == 0.0).all())
+
     def test_miniature_calibration_metrics_bootstrap_and_stress_are_complete(self) -> None:
         protocol = miniature_protocol()
         core = runner.generate_core_rows(protocol, "test-tag")

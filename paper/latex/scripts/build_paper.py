@@ -55,7 +55,7 @@ FIGURE_CAPTION_MARKERS = {
     "fig_split_integrity.pdf": ("leakageresistant", "stablecase", "split"),
     "fig_synthetic_metrics.pdf": ("heldout", "stableregime", "synthetic", "comparison"),
     "fig_perturbation_metrics.pdf": ("maintext", "perturbation", "comparison"),
-    "fig_paired_bootstrap.pdf": ("pairedeventcluster", "bootstrap", "intervals"),
+    "fig_paired_bootstrap.pdf": ("paired", "eventcluster", "bootstrap", "intervals"),
     "fig_event_accounting.pdf": ("hierarchical", "accounting", "anchors"),
     "fig_placebos.pdf": ("timeplacebo", "availability", "distribution"),
     "fig_interval_coverage.pdf": ("empirical", "heldout", "coverage", "width"),

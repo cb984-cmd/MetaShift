@@ -19,7 +19,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RESULTS_PATH = ROOT / "results" / "document_consistency.json"
+FROZEN_RESULTS_PATH = ROOT / "results" / "document_consistency.json"
+DEFAULT_OUTPUT_PATH = ROOT / "artifacts" / "document_consistency_ci.json"
 SUMMARY_PATH = ROOT / "configs" / "current_evidence_summary_v2.json"
 
 PUBLIC_DOCUMENTS = [
@@ -140,8 +141,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output",
         type=Path,
-        default=RESULTS_PATH,
-        help="Report path, relative to the repository root by default.",
+        default=DEFAULT_OUTPUT_PATH,
+        help=(
+            "Report path, relative to the repository root by default. The CI-safe "
+            "default is an ignored transient artifact; use results/"
+            "document_consistency.json only when explicitly producing frozen release evidence."
+        ),
     )
     return parser.parse_args()
 

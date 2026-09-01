@@ -2,6 +2,8 @@ import csv
 import hashlib
 import json
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -71,6 +73,18 @@ class FrozenResultProvenanceTests(unittest.TestCase):
 
             with self.assertRaises(ValueError):
                 verifier.root_relative_path(root, "../outside.json")
+
+    def test_exporter_is_directly_invocable(self) -> None:
+        completed = subprocess.run(
+            [sys.executable, "scripts/export_v04_frozen_evidence.py", "--help"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        self.assertIn("Archive existing v0.4.1 frozen evidence", completed.stdout)
 
 
 if __name__ == "__main__":

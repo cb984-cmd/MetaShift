@@ -7,10 +7,16 @@ import hashlib
 import json
 import os
 import subprocess
+import sys
 import tempfile
 import zipfile
 from datetime import UTC, datetime
 from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from scripts.export_complete_public_archive import (
     credential_pattern_name,
@@ -20,9 +26,6 @@ from scripts.verify_v04_frozen_result_provenance import (
     MANIFEST_PATH,
     build_report,
 )
-
-
-ROOT = Path(__file__).resolve().parents[1]
 
 
 def parse_args() -> argparse.Namespace:

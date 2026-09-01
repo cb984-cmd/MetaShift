@@ -80,11 +80,18 @@ replacement or measurement bias.
   error 0.0, and detection macro-F1 0.953125 (95% bootstrap
   0.924833--0.975036). See
   [`paper/upgrade/V04_EXECUTION_AUDIT.md`](paper/upgrade/V04_EXECUTION_AUDIT.md).
-- [~] **P5a -- Frozen evidence packaging.** The active provenance task binds
-  exactly eight ignored one-time output files to a tracked SHA-256, byte-count,
-  schema, row-count, receipt, attempt, replay-verification, and tag-authority
-  manifest. It creates only a non-overwriting ignored `evidence_bundle/`
-  archive after its source commit; it does not rerun the benchmark.
+- [x] **P5a -- Frozen evidence packaging.** A tracked manifest and
+  non-rerunning validator bind exactly eight ignored one-time output files to
+  SHA-256 hashes, byte counts, schemas, row counts, receipt, attempt,
+  replay-verification, and tag authority. The non-overwriting ignored archive
+  `MetaShift-v04-frozen-evidence-b286221f13b5.zip` contains 8 preserved output
+  entries plus the tagged source snapshot and
+  provenance metadata (12 ZIP entries; 2,017,000 bytes; SHA-256
+  `32b12253d67e6c1ddf58cfa0ec41283b23002f32531474facbe083fbfe8e3551`).
+  The source snapshot is SHA-256
+  `0f0c23c7ff2ca31c96768e9e890ccfbea90cd892935efa73e77575cf580d541f`.
+  Packaging did not rerun the benchmark; release-asset publication remains a
+  human decision.
 - [ ] **P6-P8 -- Manuscript, figures, and adversarial review.**
   Taxonomy-independent preparation is no longer globally paused, but it remains
   gated on the theory, core-metric, stress-suite, and closest-work audits. P5

@@ -36,21 +36,32 @@ It fails if any declared byte hash, file size, CSV schema, row count, durable
 receipt chain, result-verifier check count, local annotated tag, or peeled
 `origin` tag differs from the tracked manifest.
 
-## Archival mechanism
+## Archived bundle
 
 The repository's established release-asset location is the ignored
-`evidence_bundle/` directory. After the tracked manifest and verification
-script are committed, create the one non-overwriting content-addressed archive:
+`evidence_bundle/` directory. The one non-overwriting content-addressed archive
+has been created:
 
 ```powershell
-python scripts\export_v04_frozen_evidence.py
+evidence_bundle\MetaShift-v04-frozen-evidence-b286221f13b5.zip
+evidence_bundle\MetaShift-v04-frozen-evidence-b286221f13b5-manifest.json
 ```
 
-It produces exactly these declared paths:
+Its archive SHA-256 is
+`32b12253d67e6c1ddf58cfa0ec41283b23002f32531474facbe083fbfe8e3551`;
+its size is 2,017,000 bytes. The exact
+`v0.4.1-execution-freeze` source snapshot inside the archive has SHA-256
+`0f0c23c7ff2ca31c96768e9e890ccfbea90cd892935efa73e77575cf580d541f`.
+Independent ZIP inspection confirmed all 12 entries: the eight manifest-listed
+output files, the source snapshot, the tracked provenance manifest, the archive
+manifest, and the archive README.
+
+The reproducible command refuses an unclean worktree, overwriting an existing
+archive or sidecar, a source tag that does not match the execution tag and
+commit, and concurrent packaging through exclusive locks:
 
 ```text
-evidence_bundle/MetaShift-v04-frozen-evidence-b286221f13b5.zip
-evidence_bundle/MetaShift-v04-frozen-evidence-b286221f13b5-manifest.json
+python scripts\export_v04_frozen_evidence.py
 ```
 
 The archive contains only the eight frozen v0.4.1 files, the tracked

@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-01T02:25:23.205747+00:00",
+  "generated_at_utc": "2026-09-01T03:05:22.919293+00:00",
   "formal_report": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
   "frozen_evidence": {
     "tag": "v0.3.2-evidence-final",
@@ -10,7 +10,7 @@
       "v0.3.1-evidence-final"
     ]
   },
-  "source_word_count_estimate": 9614,
+  "source_word_count_estimate": 9647,
   "compiled_pdf": {
     "bytes": 1050437,
     "sha256": "efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc",
@@ -18,7 +18,13 @@
   },
   "human_completion_status": "required",
   "taxonomy_status": "human_blocked",
-  "record_violations": [],
+  "record_violations": [
+    {
+      "issue": "missing_json_record",
+      "record": "final_figure_placement_qa",
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\final_figure_placement_qa.json"
+    }
+  ],
   "checks": [
     {
       "name": "official_order_and_required_sections",
@@ -48,12 +54,17 @@
     {
       "name": "generated_asset_determinism",
       "passed": true,
-      "detail": "Two independent paper-asset generations have identical hashes for 36 or more outputs."
+      "detail": "Two independent paper-asset generations have identical hashes for 38 or more outputs."
     },
     {
       "name": "figure_logical_and_vector_validation",
       "passed": true,
-      "detail": "All 16 figures pass source-hash, vector, accounting, isolation, interval, and display-contract checks."
+      "detail": "All 17 figures pass source-hash, vector, accounting, isolation, interval, and display-contract checks."
+    },
+    {
+      "name": "final_print_geometry_and_crop_review",
+      "passed": false,
+      "detail": "All 17 figures have measured source geometry plus 150- and 300-DPI final-page crop records."
     },
     {
       "name": "scientific_and_human_boundaries",
@@ -77,7 +88,7 @@
     },
     {
       "name": "non_type3_embedded_font_audit",
-      "passed": true,
+      "passed": false,
       "detail": "Final PDF and all generated vector figures have no Type 3 or unembedded font."
     },
     {
@@ -91,5 +102,5 @@
       "detail": "The formal report has at least 5,500 source words across its scientific narrative."
     }
   ],
-  "all_checks_passed": true
+  "all_checks_passed": false
 }

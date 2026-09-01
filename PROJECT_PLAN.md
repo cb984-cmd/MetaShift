@@ -238,17 +238,17 @@ the already viewed 80-site stable-synthetic evaluation set.
   evidence. The draft is machine-validated but remains a pre-submission
   document until the human handoff below is complete. Any new learned method
   additionally requires its own blind, input-disjoint test manifest.
-- [x] **E7b — Complete the formal report figure-and-method revision.** The
-  presentation layer now uses 16 source-bound vector figures, an explicit
-  inclusive-window overlap audit, a QA evidence-availability ladder, and
-  appendix-only 2023 descriptive concentration results. It has 39
-  ledger-mapped quantitative claims and 69 evidence-asset references. The
-  clean-source final build at `bd4164242638f723eb6f5aec72c822507e098030`
-  passed figure QA (10/10 across 16 figures), formal-report compliance
-  (14/14), source/reference validation (33/33 citations), asset determinism
-  (36 outputs), and final font review (17 PDFs/120 font records; zero Type 3
-  and zero unembedded), and rendered all 41 final PDF pages. This work does
-  not modify frozen v0.3.2 evidence or lift the human block on taxonomy.
+- [-] **E7b — Complete the stricter formal report figure-and-method
+  remediation.** The prior 16-figure visual sign-off at
+  `bd4164242638f723eb6f5aec72c822507e098030` remains historical but is
+  superseded for the stricter acceptance gate. The active work replaces
+  fixed-size diagram boxes with text-measured layouts, adds geometry,
+  typography, grayscale, final-print-width, and 150/300-DPI page-crop checks,
+  splits the representative complete-case and abstention displays, and
+  corrects constrained tables and float placement. It must finish with zero
+  layout violations before it can be marked complete. This presentation-only
+  task does not modify frozen v0.3.2 evidence or lift the human block on
+  taxonomy.
 
 ## Human submission handoff
 

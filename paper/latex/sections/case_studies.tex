@@ -25,20 +25,31 @@ distinct physical donors were available.
 
 \input{generated/tables/table_case_studies}
 
-\begin{figure}[tbp]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\linewidth]{fig_case_studies.pdf}
-\caption{Deterministically selected representative cases. Row 1 shows retained
-daily target values and, for complete cases only, the pre-anchor-fitted
-reliability-prior MetaShift counterfactual in $\mu$g/m$^3$. Row 2 shows
-calibrated log residuals; Row 3 shows only the saved per-case placebo summary
-and explicitly does not fabricate a per-date distribution; Row 4 shows fixed
-and nested diagnostic intervals. No counterfactual, placebo, effect, or
-interval is imputed for the donor-insufficient anchor. Blue and amber shading
-mark the 60-day pre- and post-anchor comparison windows. All raw display
-inputs are checksum-pinned locally; the figure is not evidence of a physical
-instrument event.}
-\label{fig:case-studies}
+\renewcommand{\thefigure}{\arabic{figure}a}
+\includegraphics[width=\linewidth]{fig_case_studies_complete.pdf}
+\caption{Deterministically selected complete representative cases. The top row
+shows retained daily target values and the pre-anchor-fitted reliability-prior
+MetaShift counterfactual in $\mu$g/m$^3$; the middle row shows calibrated log
+residuals; and the lower row shows saved placebo summaries with fixed and
+nested diagnostic intervals. Blue and amber shading mark the 60-day pre- and
+post-anchor comparison windows. The figure displays saved diagnostic outputs,
+not evidence of a physical instrument event.}
+\label{fig:case-studies-complete}
+\end{figure}
+
+\addtocounter{figure}{-1}
+\begin{figure}[!htbp]
+\centering
+\renewcommand{\thefigure}{\arabic{figure}b}
+\includegraphics[width=\linewidth]{fig_case_studies_abstention.pdf}
+\caption{Deterministic representative audit abstention. The retained target
+series is shown without a constructed counterfactual because fewer than three
+qualified distinct physical donors were available. The protocol therefore
+records an unavailable common comparison and does not impute a placebo, effect,
+or interval.}
+\label{fig:case-studies-abstention}
 \end{figure}
 
 \subsection{Interpretation boundaries}

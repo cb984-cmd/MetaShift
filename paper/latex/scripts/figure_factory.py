@@ -9,6 +9,8 @@ from typing import Any
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.patches import FancyBboxPatch
+from matplotlib.text import Text
+from matplotlib.transforms import Bbox
 import numpy as np
 import pandas as pd
 
@@ -86,6 +88,114 @@ TIER_COLORS = {
 
 SaveFigure = Callable[[plt.Figure, Path, str, list[str], list[dict[str, Any]]], None]
 FormatDecimal = Callable[[float, int], str]
+FINAL_PRINT_WIDTH_PT = 453.54
+MIN_NORMAL_FONT_PT = 8.5
+MIN_NODE_FONT_PT = 9.0
+MIN_PANEL_TITLE_PT = 10.0
+NODE_HORIZONTAL_PADDING_PT = 6.0
+NODE_VERTICAL_PADDING_PT = 4.0
+MIN_TEXT_GAP_PT = 3.0
+
+
+class LayoutNode:
+    """A measured text-and-patch pair in axes-fraction coordinates."""
+
+    def __init__(
+        self,
+        identifier: str,
+        axis: plt.Axes,
+        patch: FancyBboxPatch,
+        text: Text,
+        center: tuple[float, float],
+        width: float,
+        height: float,
+    ) -> None:
+        self.identifier = identifier
+        self.axis = axis
+        self.patch = patch
+        self.text = text
+        self.center = center
+        self.width = width
+        self.height = height
+
+
+class FigureLayoutState:
+    def __init__(self) -> None:
+        self.nodes: list[LayoutNode] = []
+        self.connectors: list[LayoutConnector] = []
+
+
+class LayoutConnector:
+    def __init__(
+        self,
+        source: LayoutNode,
+        destination: LayoutNode,
+        color: str,
+        style: str,
+        artist: Any,
+    ) -> None:
+        self.source = source
+        self.destination = destination
+        self.color = color
+        self.style = style
+        self.artist = artist
+
+
+def text_inside_padded_box(
+    text_box: Bbox,
+    node_box: Bbox,
+    *,
+    horizontal_padding_px: float,
+    vertical_padding_px: float,
+) -> bool:
+    """Return whether text is fully inside its node after required padding."""
+
+    return bool(
+        text_box.x0 >= node_box.x0 + horizontal_padding_px
+        and text_box.x1 <= node_box.x1 - horizontal_padding_px
+        and text_box.y0 >= node_box.y0 + vertical_padding_px
+        and text_box.y1 <= node_box.y1 - vertical_padding_px
+    )
+
+
+def boxes_violate_minimum_gap(
+    first: Bbox, second: Bbox, *, minimum_gap_px: float
+) -> bool:
+    """Return whether two independent text boxes overlap or approach too closely."""
+
+    return bool(
+        not (
+        first.x1 + minimum_gap_px <= second.x0
+        or second.x1 + minimum_gap_px <= first.x0
+        or first.y1 + minimum_gap_px <= second.y0
+        or second.y1 + minimum_gap_px <= first.y0
+        )
+    )
+
+
+def _layout_state(figure: plt.Figure) -> FigureLayoutState:
+    state = getattr(figure, "_metashift_layout_state", None)
+    if state is None:
+        state = FigureLayoutState()
+        setattr(figure, "_metashift_layout_state", state)
+    return state
+
+
+def _points_to_pixels(figure: plt.Figure, points: float) -> float:
+    return points * figure.dpi / 72.0
+
+
+def _identifier_fragment(text: str) -> str:
+    cleaned = "".join(character.lower() if character.isalnum() else "_" for character in text)
+    return cleaned.strip("_")[:48] or "empty"
+
+
+def _element_identifier(
+    text: Text, category: str, seen_identifiers: dict[str, int]
+) -> str:
+    base = text.get_gid() or f"{category}:{_identifier_fragment(text.get_text())}"
+    seen_identifiers[base] = seen_identifiers.get(base, 0) + 1
+    return f"{base}:{seen_identifiers[base]}"
 
 
 def configure_figure_style() -> None:
@@ -93,14 +203,14 @@ def configure_figure_style() -> None:
 
     plt.rcParams.update(
         {
-            "font.size": 9,
+            "font.size": 9.5,
             "font.family": "DejaVu Serif",
             "mathtext.fontset": "dejavuserif",
-            "axes.titlesize": 9.5,
-            "axes.labelsize": 8.5,
-            "xtick.labelsize": 8,
-            "ytick.labelsize": 8,
-            "legend.fontsize": 8,
+            "axes.titlesize": 10.5,
+            "axes.labelsize": 9,
+            "xtick.labelsize": 8.5,
+            "ytick.labelsize": 8.5,
+            "legend.fontsize": 9,
             "figure.dpi": 160,
             "pdf.fonttype": 42,
             "ps.fonttype": 42,
@@ -120,10 +230,40 @@ def _box(
     *,
     facecolor: str,
     edgecolor: str = "#334155",
-    fontsize: float = 8.5,
+    fontsize: float = 9.5,
     hatch: str | None = None,
     weight: str = "normal",
-) -> None:
+    identifier: str | None = None,
+) -> LayoutNode:
+    """Draw a node after sizing it against its rendered text bounds."""
+
+    figure = axis.figure
+    required_fontsize = max(fontsize, MIN_NODE_FONT_PT)
+    text_artist = axis.text(
+        x,
+        y,
+        text,
+        ha="center",
+        va="center",
+        fontsize=required_fontsize,
+        fontweight=weight,
+        color="#FFFFFF"
+        if facecolor in {"#2563EB", "#B45309", "#64748B"}
+        else "#111827",
+        transform=axis.transAxes,
+        clip_on=False,
+    )
+    figure.canvas.draw()
+    renderer = figure.canvas.get_renderer()
+    text_box = text_artist.get_window_extent(renderer)
+    axis_box = axis.get_window_extent(renderer)
+    horizontal_padding = _points_to_pixels(figure, NODE_HORIZONTAL_PADDING_PT)
+    vertical_padding = _points_to_pixels(figure, NODE_VERTICAL_PADDING_PT)
+    measured_width = (text_box.width + 2 * horizontal_padding) / axis_box.width
+    measured_height = (text_box.height + 2 * vertical_padding) / axis_box.height
+    width = max(width, measured_width)
+    height = max(height, measured_height)
+    node_identifier = identifier or f"node:{_identifier_fragment(text)}"
     patch = FancyBboxPatch(
         (x - width / 2, y - height / 2),
         width,
@@ -136,21 +276,15 @@ def _box(
         hatch=hatch,
         clip_on=False,
     )
+    patch.set_gid(f"{node_identifier}:patch")
     axis.add_patch(patch)
-    axis.text(
-        x,
-        y,
-        text,
-        ha="center",
-        va="center",
-        fontsize=fontsize,
-        fontweight=weight,
-        color="#FFFFFF"
-        if facecolor in {"#2563EB", "#B45309", "#64748B"}
-        else "#111827",
-        transform=axis.transAxes,
-        wrap=True,
+    text_artist.set_gid(node_identifier)
+    text_artist.set_zorder(patch.get_zorder() + 1)
+    node = LayoutNode(
+        node_identifier, axis, patch, text_artist, (x, y), width, height
     )
+    _layout_state(figure).nodes.append(node)
+    return node
 
 
 def _arrow(
@@ -160,8 +294,8 @@ def _arrow(
     *,
     color: str = "#475569",
     style: str = "-",
-) -> None:
-    axis.annotate(
+) -> Any:
+    arrow = axis.annotate(
         "",
         xy=end,
         xytext=start,
@@ -174,6 +308,43 @@ def _arrow(
             "shrinkA": 0,
             "shrinkB": 0,
         },
+    )
+    arrow.set_gid("connector")
+    return arrow
+
+
+def _node_edge_toward(node: LayoutNode, destination: tuple[float, float]) -> tuple[float, float]:
+    delta_x = destination[0] - node.center[0]
+    delta_y = destination[1] - node.center[1]
+    if delta_x == 0 and delta_y == 0:
+        return node.center
+    scale = 1.0 / max(
+        abs(delta_x) / (node.width / 2),
+        abs(delta_y) / (node.height / 2),
+    )
+    return (node.center[0] + delta_x * scale, node.center[1] + delta_y * scale)
+
+
+def _arrow_between(
+    source: LayoutNode,
+    destination: LayoutNode,
+    *,
+    color: str = "#475569",
+    style: str = "-",
+) -> None:
+    """Connect measured nodes at their borders rather than through their labels."""
+
+    if source.axis is not destination.axis:
+        raise ValueError("Measured node connectors require a shared axes.")
+    arrow = _arrow(
+        source.axis,
+        _node_edge_toward(source, destination.center),
+        _node_edge_toward(destination, source.center),
+        color=color,
+        style=style,
+    )
+    _layout_state(source.axis.figure).connectors.append(
+        LayoutConnector(source, destination, color, style, arrow)
     )
 
 
@@ -188,16 +359,311 @@ def _finalize_axes(axis: plt.Axes) -> None:
     axis.set_axisbelow(True)
 
 
+def _visible_text(text: Text) -> bool:
+    return bool(text.get_visible() and text.get_text().strip())
+
+
+def _collect_important_text(
+    figure: plt.Figure, state: FigureLayoutState
+) -> list[dict[str, Any]]:
+    node_identifiers = {id(node.text): node.identifier for node in state.nodes}
+    elements: list[dict[str, Any]] = []
+    seen_artists: set[int] = set()
+    seen_identifiers: dict[str, int] = {}
+
+    def add(text: Text, category: str) -> None:
+        if id(text) in seen_artists or not _visible_text(text):
+            return
+        seen_artists.add(id(text))
+        node_identifier = node_identifiers.get(id(text))
+        elements.append(
+            {
+                "identifier": _element_identifier(
+                    text, "node_label" if node_identifier else category, seen_identifiers
+                ),
+                "category": "node_label" if node_identifier else category,
+                "artist": text,
+            }
+        )
+
+    for axis in figure.axes:
+        add(axis.title, "panel_title")
+        add(getattr(axis, "_left_title", axis.title), "panel_title")
+        add(getattr(axis, "_right_title", axis.title), "panel_title")
+        add(axis.xaxis.label, "axis_label")
+        add(axis.yaxis.label, "axis_label")
+        for text in axis.texts:
+            add(text, "annotation")
+        legend = axis.get_legend()
+        if legend is not None:
+            for text in legend.get_texts():
+                add(text, "legend")
+    for legend in figure.legends:
+        for text in legend.get_texts():
+            add(text, "legend")
+    suptitle = getattr(figure, "_suptitle", None)
+    for text in figure.texts:
+        add(text, "figure_title" if text is suptitle else "explanatory_text")
+    return elements
+
+
+def _record_box(box: Bbox) -> dict[str, float]:
+    return {
+        "x0_px": round(float(box.x0), 2),
+        "y0_px": round(float(box.y0), 2),
+        "x1_px": round(float(box.x1), 2),
+        "y1_px": round(float(box.y1), 2),
+    }
+
+
+def _boxes_intersect(first: Bbox, second: Bbox) -> bool:
+    return not (
+        first.x1 <= second.x0
+        or second.x1 <= first.x0
+        or first.y1 <= second.y0
+        or second.y1 <= first.y0
+    )
+
+
+def _resize_nodes_for_final_layout(
+    figure: plt.Figure, state: FigureLayoutState
+) -> None:
+    """Re-measure nodes after tight_layout or subplots_adjust changes an axes."""
+
+    figure.canvas.draw()
+    renderer = figure.canvas.get_renderer()
+    horizontal_padding = _points_to_pixels(figure, NODE_HORIZONTAL_PADDING_PT)
+    vertical_padding = _points_to_pixels(figure, NODE_VERTICAL_PADDING_PT)
+    changed = False
+    for node in state.nodes:
+        text_box = node.text.get_window_extent(renderer)
+        axis_box = node.axis.get_window_extent(renderer)
+        required_width = (
+            text_box.width + 2 * horizontal_padding + 2.0
+        ) / axis_box.width
+        required_height = (
+            text_box.height + 2 * vertical_padding + 2.0
+        ) / axis_box.height
+        width = max(node.width, required_width)
+        height = max(node.height, required_height)
+        if width > node.width or height > node.height:
+            node.width = width
+            node.height = height
+            node.patch.set_bounds(
+                node.center[0] - width / 2,
+                node.center[1] - height / 2,
+                width,
+                height,
+            )
+            changed = True
+    if changed:
+        for connector in state.connectors:
+            connector.artist.remove()
+            connector.artist = _arrow(
+                connector.source.axis,
+                _node_edge_toward(connector.source, connector.destination.center),
+                _node_edge_toward(connector.destination, connector.source.center),
+                color=connector.color,
+                style=connector.style,
+            )
+        figure.canvas.draw()
+
+
+def inspect_figure_layout(figure: plt.Figure, figure_name: str) -> dict[str, Any]:
+    """Measure all report-facing text before a vector figure is written.
+
+    This check uses the Agg renderer used for generation, so a source build fails
+    before a crowded label or a too-small node can become part of the PDF.
+    """
+
+    state = _layout_state(figure)
+    _resize_nodes_for_final_layout(figure, state)
+    figure.canvas.draw()
+    renderer = figure.canvas.get_renderer()
+    text_elements = _collect_important_text(figure, state)
+    scale_to_final_width = (FINAL_PRINT_WIDTH_PT / 72.0) / figure.get_figwidth()
+    horizontal_padding = _points_to_pixels(figure, NODE_HORIZONTAL_PADDING_PT)
+    vertical_padding = _points_to_pixels(figure, NODE_VERTICAL_PADDING_PT)
+    minimum_gap = _points_to_pixels(figure, MIN_TEXT_GAP_PT)
+    canvas = figure.bbox
+    violations: list[dict[str, Any]] = []
+
+    node_records: list[dict[str, Any]] = []
+    for node in state.nodes:
+        text_box = node.text.get_window_extent(renderer)
+        patch_box = node.patch.get_window_extent(renderer)
+        fits = text_inside_padded_box(
+            text_box,
+            patch_box,
+            horizontal_padding_px=horizontal_padding,
+            vertical_padding_px=vertical_padding,
+        )
+        node_records.append(
+            {
+                "identifier": node.identifier,
+                "text_inside_node": fits,
+                "text_bounds": _record_box(text_box),
+                "node_bounds": _record_box(patch_box),
+            }
+        )
+        if not fits:
+            violations.append(
+                {
+                    "issue": "text_outside_required_node_padding",
+                    "element": node.identifier,
+                }
+            )
+
+    element_records: list[dict[str, Any]] = []
+    for element in text_elements:
+        text = element["artist"]
+        text_box = text.get_window_extent(renderer)
+        category = str(element["category"])
+        effective_font = float(text.get_fontsize()) * scale_to_final_width
+        required_font = (
+            MIN_NODE_FONT_PT
+            if category == "node_label"
+            else MIN_PANEL_TITLE_PT
+            if category in {"panel_title", "figure_title"}
+            else MIN_NORMAL_FONT_PT
+        )
+        inside_canvas = bool(
+            text_box.x0 >= canvas.x0
+            and text_box.x1 <= canvas.x1
+            and text_box.y0 >= canvas.y0
+            and text_box.y1 <= canvas.y1
+        )
+        if effective_font + 0.01 < required_font:
+            violations.append(
+                {
+                    "issue": "font_below_minimum",
+                    "element": element["identifier"],
+                    "category": category,
+                    "effective_font_pt": round(effective_font, 2),
+                    "minimum_font_pt": required_font,
+                }
+            )
+        if not inside_canvas:
+            violations.append(
+                {
+                    "issue": "text_outside_figure_canvas",
+                    "element": element["identifier"],
+                }
+            )
+        element_records.append(
+            {
+                "identifier": element["identifier"],
+                "category": category,
+                "font_size_source_pt": round(float(text.get_fontsize()), 2),
+                "font_size_print_pt": round(effective_font, 2),
+                "inside_canvas": inside_canvas,
+                "bounds": _record_box(text_box),
+            }
+        )
+
+    overlap_pairs: list[dict[str, str]] = []
+    for index, first in enumerate(text_elements):
+        first_box = first["artist"].get_window_extent(renderer)
+        for second in text_elements[index + 1 :]:
+            second_box = second["artist"].get_window_extent(renderer)
+            if boxes_violate_minimum_gap(
+                first_box, second_box, minimum_gap_px=minimum_gap
+            ):
+                overlap_pairs.append(
+                    {
+                        "first": str(first["identifier"]),
+                        "second": str(second["identifier"]),
+                    }
+                )
+    for pair in overlap_pairs:
+        violations.append({"issue": "text_overlap_or_insufficient_gap", **pair})
+
+    legend_overlap_records: list[dict[str, str]] = []
+    legends = [
+        *(legend for axis in figure.axes if (legend := axis.get_legend()) is not None),
+        *figure.legends,
+    ]
+    for legend in legends:
+        legend_box = legend.get_window_extent(renderer)
+        for axis_index, axis in enumerate(figure.axes):
+            if axis.has_data() and _boxes_intersect(legend_box, axis.get_window_extent(renderer)):
+                legend_overlap_records.append(
+                    {
+                        "legend": "axes_legend"
+                        if legend is axis.get_legend()
+                        else "shared_figure_legend",
+                        "data_axis": str(axis_index),
+                    }
+                )
+    for record in legend_overlap_records:
+        violations.append({"issue": "legend_over_data_region", **record})
+
+    rgba = np.asarray(figure.canvas.buffer_rgba())
+    luminance = (
+        0.2126 * rgba[..., 0].astype(float)
+        + 0.7152 * rgba[..., 1].astype(float)
+        + 0.0722 * rgba[..., 2].astype(float)
+    )
+    nonwhite = luminance[luminance < 248.0]
+    grayscale_contrast = (
+        float(np.percentile(nonwhite, 95) - np.percentile(nonwhite, 5))
+        if nonwhite.size
+        else 0.0
+    )
+    grayscale_passed = bool(nonwhite.size and grayscale_contrast >= 35.0)
+    if not grayscale_passed:
+        violations.append(
+            {
+                "issue": "insufficient_grayscale_luminance_contrast",
+                "contrast": round(grayscale_contrast, 2),
+            }
+        )
+
+    smallest_font = min(
+        (record["font_size_print_pt"] for record in element_records), default=0.0
+    )
+    return {
+        "figure": figure_name,
+        "final_print_width_pt": round(FINAL_PRINT_WIDTH_PT, 2),
+        "source_width_in": round(float(figure.get_figwidth()), 3),
+        "source_height_in": round(float(figure.get_figheight()), 3),
+        "print_scale": round(scale_to_final_width, 4),
+        "smallest_font_size_print_pt": round(float(smallest_font), 2),
+        "text_inside_nodes_passed": not any(
+            item["issue"] == "text_outside_required_node_padding" for item in violations
+        ),
+        "annotation_overlap_passed": not overlap_pairs,
+        "canvas_boundary_passed": not any(
+            item["issue"] == "text_outside_figure_canvas" for item in violations
+        ),
+        "legend_data_overlap_passed": not legend_overlap_records,
+        "typography_passed": not any(
+            item["issue"] == "font_below_minimum" for item in violations
+        ),
+        "grayscale_passed": grayscale_passed,
+        "grayscale_luminance_contrast": round(grayscale_contrast, 2),
+        "visual_inspection": {
+            "source_rendered_geometry": "passed" if not violations else "failed",
+            "final_page_crop_review": "pending_final_build",
+        },
+        "node_records": node_records,
+        "elements": element_records,
+        "overlap_pairs": overlap_pairs,
+        "violations": violations,
+        "all_checks_passed": not violations,
+    }
+
+
 def _synthetic_example_figure(
     example: dict[str, Any],
     figures: Path,
     save_figure: SaveFigure,
     outputs: list[dict[str, Any]],
 ) -> None:
-    figure, axes = plt.subplots(2, 2, figsize=(6.6, 4.9), sharex="col")
+    figure, axes = plt.subplots(2, 2, figsize=(6.3, 4.9), sharex="col")
     titles = {
-        "local": "Known local injection: target only",
-        "regional": "Known regional injection: target and donors",
+        "local": "Local injection\nTarget only",
+        "regional": "Regional injection\nTarget + donors",
     }
     for column, key in enumerate(("local", "regional")):
         frame = example["variants"][key]
@@ -229,21 +695,33 @@ def _synthetic_example_figure(
         )
         _comparison_shading(top)
         top.set_title(titles[key], fontweight="bold")
-        top.set_ylabel(r"Centered $\log(1+\mathrm{PM}_{2.5})$")
+        if column == 0:
+            top.set_ylabel(r"Centered $\log(1+\mathrm{PM}_{2.5})$")
+        else:
+            top.set_ylabel("")
         _finalize_axes(top)
 
         bottom.plot(days, frame["residual"], color="#7C3AED", linewidth=1.25)
         _comparison_shading(bottom)
         bottom.axhline(0, color="#111827", linewidth=0.8)
         bottom.set_xlabel("Days relative to pseudo-anchor")
-        bottom.set_ylabel("Centered log residual")
+        if column == 0:
+            bottom.set_ylabel("Centered log residual")
+        else:
+            bottom.set_ylabel("")
         bottom.set_xlim(-60, 60)
         _finalize_axes(bottom)
-    axes[0, 0].legend(loc="upper left", frameon=False)
+    figure.legend(
+        *axes[0, 0].get_legend_handles_labels(),
+        loc="lower center",
+        ncol=2,
+        frameon=False,
+        bbox_to_anchor=(0.5, 0.055),
+    )
     figure.suptitle(
         "Data-derived stable-window illustration (lexicographically first held-out case)",
-        fontsize=10.5,
-        y=0.995,
+        fontsize=11,
+        y=0.985,
     )
     figure.text(
         0.5,
@@ -251,9 +729,9 @@ def _synthetic_example_figure(
         "Blue: 60-day pre window. Amber: 60-day post window. "
         f"Frozen additive magnitude = {example['magnitude']:.2f} ug/m3.",
         ha="center",
-        fontsize=8,
+        fontsize=9,
     )
-    figure.tight_layout(rect=(0, 0.045, 1, 0.955))
+    figure.tight_layout(rect=(0, 0.105, 1, 0.95))
     save_figure(
         figure,
         figures / "fig_stable_synthetic_example.pdf",
@@ -282,47 +760,60 @@ def _donor_construction_figure(
         labels=["0", "1", "2", "3+"],
     ).value_counts().reindex(["0", "1", "2", "3+"], fill_value=0)
     figure, axes = plt.subplots(
-        1, 2, figsize=(6.6, 3.15), gridspec_kw={"width_ratios": [1.12, 0.88]}
+        1, 2, figsize=(6.3, 3.35), gridspec_kw={"width_ratios": [1.18, 0.82]}
     )
     schematic, distribution = axes
     schematic.axis("off")
-    _box(
+    target = _box(
         schematic,
-        0.14,
-        0.64,
-        0.22,
-        0.22,
-        "Target site\nand POC",
-        facecolor="#E0F2FE",
-    )
-    _box(
-        schematic,
-        0.14,
-        0.28,
-        0.22,
+        0.13,
+        0.68,
+        0.24,
         0.18,
-        "Same-site POC\nnot a donor",
+        "Target site\n+ POC",
+        facecolor="#E0F2FE",
+        identifier="donor_target_site",
+    )
+    same_site = _box(
+        schematic,
+        0.13,
+        0.28,
+        0.24,
+        0.16,
+        "Same-site POC\nexcluded",
         facecolor="#FEE2E2",
         edgecolor="#B91C1C",
         hatch="//",
+        identifier="donor_same_site_poc",
     )
-    _arrow(schematic, (0.14, 0.52), (0.14, 0.39), color="#B91C1C", style="--")
+    _arrow_between(target, same_site, color="#B91C1C", style="--")
+    donor_nodes: list[LayoutNode] = []
     for x, label in (
-        (0.43, "Donor A\nranked POC"),
-        (0.66, "Donor B\nranked POC"),
-        (0.89, "Donor C+\nranked POC"),
+        (0.43, "Donor A"),
+        (0.66, "Donor B"),
+        (0.89, "Donor C+"),
     ):
-        _box(
-            schematic, x, 0.64, 0.16, 0.22, label, facecolor="#DCFCE7", fontsize=7.5
+        donor_nodes.append(
+            _box(
+                schematic,
+                x,
+                0.68,
+                0.14,
+                0.14,
+                label,
+                facecolor="#DCFCE7",
+                identifier=f"donor_{label.split()[1].lower().replace('+', 'plus')}",
+            )
         )
-        _arrow(schematic, (0.25, 0.64), (x - 0.09, 0.64))
+    for donor in donor_nodes:
+        _arrow_between(target, donor)
     schematic.text(
-        0.58,
-        0.065,
-        "Physical identity = State + County + Site.\nOne retained POC per donor site.",
+        0.54,
+        0.075,
+        "Physical identity: State + County + Site.\nEach donor box represents one retained POC.",
         ha="center",
         va="center",
-        fontsize=7.5,
+        fontsize=9,
         transform=schematic.transAxes,
     )
     schematic.set_title("Distinct physical-donor construction", fontweight="bold")
@@ -341,12 +832,12 @@ def _donor_construction_figure(
             str(int(value)),
             ha="center",
             va="bottom",
-            fontsize=8,
+            fontsize=9,
         )
-    distribution.set_ylim(bottom=0)
+    distribution.set_ylim(0, float(categories.max()) * 1.20)
     distribution.set_xlabel("Prequalified distinct donors")
     distribution.set_ylabel("Metadata anchors")
-    distribution.set_title("Availability before input-window checks", fontweight="bold")
+    distribution.set_title("Donor availability", fontweight="bold")
     _finalize_axes(distribution)
     figure.tight_layout()
     save_figure(
@@ -368,7 +859,7 @@ def _window_protocol_figure(
     outputs: list[dict[str, Any]],
 ) -> None:
     windows = window_config["windows"]
-    figure, axis = plt.subplots(figsize=(6.6, 2.8))
+    figure, axis = plt.subplots(figsize=(6.3, 2.8))
     rows = (
         ("Calibration / fitting / residual centering", "calibration", "#C7D2FE"),
         ("Effect pre window", "pre", "#DBEAFE"),
@@ -385,18 +876,18 @@ def _window_protocol_figure(
             f"{start} to {end} ({record['inclusive_calendar_dates']} dates)",
             ha="center",
             va="center",
-            fontsize=8,
+            fontsize=9,
         )
     axis.axvspan(-60, -15, color="#F59E0B", alpha=0.18, zorder=0)
     axis.axvline(0, color="#B91C1C", linestyle="--", linewidth=1.1)
-    axis.text(2, 2.36, r"$t_0$ anchor", color="#B91C1C", fontsize=8)
+    axis.text(2, 2.36, r"$t_0$ anchor", color="#B91C1C", fontsize=9)
     axis.text(
         -37.5,
         -0.67,
         f"{windows['calibration_pre_overlap_calendar_dates']}-date calibration/pre overlap",
         ha="center",
         va="top",
-        fontsize=8,
+        fontsize=9,
         color="#92400E",
     )
     axis.set_yticks(range(3), [label for label, _, _ in rows[::-1]])
@@ -404,7 +895,7 @@ def _window_protocol_figure(
     axis.set_xticks([-240, -180, -120, -60, 0, 60])
     axis.set_xlabel(r"Calendar-day offset from $t_0$")
     axis.set_ylim(-0.95, 2.65)
-    axis.set_title("Inclusive date-window implementation for the frozen audit", fontweight="bold")
+    axis.set_title("Frozen inclusive date windows", fontweight="bold")
     _finalize_axes(axis)
     figure.tight_layout()
     save_figure(
@@ -429,59 +920,116 @@ def _workflow_figure(
 ) -> None:
     real = summary["real_event_audit"]
     tiers = summary["evidence_tiers"]
-    figure, axis = plt.subplots(figsize=(6.6, 5.8))
+    figure, axis = plt.subplots(figsize=(6.3, 5.85))
     axis.axis("off")
-    _box(axis, 0.5, 0.93, 0.31, 0.10, "Public EPA bulk archives", facecolor="#E0F2FE", weight="bold")
-    _box(axis, 0.5, 0.78, 0.42, 0.12, "Canonical daily series + persistent metadata anchors", facecolor="#DBEAFE")
-    _arrow(axis, (0.5, 0.88), (0.5, 0.84))
-    _box(axis, 0.25, 0.60, 0.33, 0.14, "Stable regimes\nknown local and regional perturbations", facecolor="#FEF3C7")
-    _box(axis, 0.75, 0.60, 0.33, 0.14, f"All {real['total_anchors']} real anchors\ndistinct physical-donor screening", facecolor="#EDE9FE")
-    _arrow(axis, (0.5, 0.72), (0.25, 0.67))
-    _arrow(axis, (0.5, 0.72), (0.75, 0.67))
-    _box(axis, 0.25, 0.38, 0.33, 0.14, "66 calibration targets\nfreeze thresholds", facecolor="#FEF3C7")
-    _box(axis, 0.25, 0.18, 0.33, 0.15, "80 held-out targets\nmetrics + paired uncertainty", facecolor="#FEF3C7")
-    _arrow(axis, (0.25, 0.53), (0.25, 0.45))
-    _arrow(axis, (0.25, 0.31), (0.25, 0.26))
-    _box(
+    archives = _box(
+        axis,
+        0.5,
+        0.92,
+        0.28,
+        0.10,
+        "Public EPA\nbulk archives",
+        facecolor="#E0F2FE",
+        weight="bold",
+        identifier="workflow_archives",
+    )
+    anchors = _box(
+        axis,
+        0.5,
+        0.77,
+        0.38,
+        0.11,
+        "Canonical daily series\n+ metadata anchors",
+        facecolor="#DBEAFE",
+        identifier="workflow_anchors",
+    )
+    stable = _box(
+        axis,
+        0.25,
+        0.58,
+        0.33,
+        0.13,
+        "Stable regimes\nknown synthetic truth",
+        facecolor="#FEF3C7",
+        identifier="workflow_stable_regimes",
+    )
+    real_anchors = _box(
         axis,
         0.75,
-        0.38,
+        0.58,
         0.33,
-        0.14,
-        f"{real['complete_comparisons']} common comparisons\nor explicit failure reason",
+        0.13,
+        f"All {real['total_anchors']} anchors\ndistinct donor screen",
         facecolor="#EDE9FE",
+        identifier="workflow_real_anchors",
     )
-    _arrow(axis, (0.75, 0.53), (0.75, 0.45))
-    _box(
+    calibration = _box(
         axis,
-        0.56,
-        0.18,
-        0.24,
-        0.15,
+        0.25,
+        0.37,
+        0.31,
+        0.12,
+        "66 calibration targets\nfreeze thresholds",
+        facecolor="#FEF3C7",
+        identifier="workflow_calibration",
+    )
+    evaluation = _box(
+        axis,
+        0.25,
+        0.16,
+        0.31,
+        0.12,
+        "80 held-out targets\nfixed metrics",
+        facecolor="#FEF3C7",
+        identifier="workflow_evaluation",
+    )
+    comparisons = _box(
+        axis,
+        0.75,
+        0.37,
+        0.34,
+        0.13,
+        f"{real['complete_comparisons']} comparisons\nor recorded abstention",
+        facecolor="#EDE9FE",
+        identifier="workflow_comparisons",
+    )
+    diagnostics = _box(
+        axis,
+        0.60,
+        0.16,
+        0.25,
+        0.12,
         f"Diagnostics\nintervals, placebos, LOO",
         facecolor="#F1F5F9",
+        identifier="workflow_diagnostics",
     )
-    _box(
+    tiers_node = _box(
         axis,
-        0.87,
-        0.18,
-        0.22,
-        0.15,
-        f"Three-way audit tiers\n{tiers['supported_candidate_discontinuity']} / "
+        0.88,
+        0.16,
+        0.20,
+        0.12,
+        f"Audit tiers\n{tiers['supported_candidate_discontinuity']} / "
         f"{tiers['not_supported_by_available_evidence']} / "
         f"{tiers['inconclusive_insufficient_evidence']}",
         facecolor="#F1F5F9",
-        fontsize=8,
+        identifier="workflow_tiers",
     )
-    _arrow(axis, (0.75, 0.31), (0.56, 0.26))
-    _arrow(axis, (0.75, 0.31), (0.87, 0.26))
+    _arrow_between(archives, anchors)
+    _arrow_between(anchors, stable)
+    _arrow_between(anchors, real_anchors)
+    _arrow_between(stable, calibration)
+    _arrow_between(calibration, evaluation)
+    _arrow_between(real_anchors, comparisons)
+    _arrow_between(comparisons, diagnostics)
+    _arrow_between(comparisons, tiers_node)
     axis.text(
         0.5,
         0.025,
-        "Parallel branches share frozen inputs but serve different questions: known-truth evaluation versus complete observational audit.",
+        "Separate branches: known-truth evaluation versus complete observational audit.",
         ha="center",
         va="bottom",
-        fontsize=8,
+        fontsize=9,
         transform=axis.transAxes,
     )
     save_figure(
@@ -504,19 +1052,9 @@ def _split_integrity_figure(
     save_figure: SaveFigure,
     outputs: list[dict[str, Any]],
 ) -> None:
-    figure, axis = plt.subplots(figsize=(6.6, 3.65))
+    figure, axis = plt.subplots(figsize=(6.3, 3.85))
     axis.axis("off")
     split_audit = data["split_audit"]
-    axis.text(
-        0.5,
-        0.94,
-        "Whole target-plus-donor connected components are assigned before any held-out metric",
-        ha="center",
-        va="center",
-        fontsize=9.5,
-        fontweight="bold",
-        transform=axis.transAxes,
-    )
     layouts = (
         (
             0.25,
@@ -535,9 +1073,9 @@ def _split_integrity_figure(
     )
     for x, title, targets, inputs, color in layouts:
         patch = FancyBboxPatch(
-            (x - 0.20, 0.17),
-            0.40,
-            0.63,
+            (x - 0.21, 0.15),
+            0.42,
+            0.66,
             boxstyle="round,pad=0.014,rounding_size=0.02",
             transform=axis.transAxes,
             facecolor=color,
@@ -545,17 +1083,18 @@ def _split_integrity_figure(
             linewidth=0.9,
         )
         axis.add_patch(patch)
-        axis.text(
+        _box(
+            axis,
             x,
-            0.73,
-            f"{title}\n{targets} target sites | {inputs} physical inputs",
-            ha="center",
-            va="center",
-            fontsize=8.5,
-            fontweight="bold",
-            transform=axis.transAxes,
+            0.74,
+            0.37,
+            0.12,
+            f"{title}\n{targets} targets | {inputs} inputs",
+            facecolor="#FFFFFF",
+            weight="bold",
+            identifier=f"split_{title.lower().replace(' ', '_')}",
         )
-        for offset_x, offset_y in ((-0.10, 0.49), (0.09, 0.49), (0.0, 0.30)):
+        for offset_x, offset_y in ((-0.10, 0.50), (0.09, 0.50), (0.0, 0.31)):
             target_x, target_y = x + offset_x, offset_y
             axis.plot(
                 target_x,
@@ -586,15 +1125,15 @@ def _split_integrity_figure(
         axis.text(
             x,
             0.20,
-            "Illustrative component insets:\nblue target, gray donor physical site",
+            "Illustrative component insets:\nblue target; gray donor site",
             ha="center",
             va="center",
-            fontsize=8,
+            fontsize=9,
             transform=axis.transAxes,
         )
     axis.plot(
         [0.5, 0.5],
-        [0.13, 0.84],
+        [0.13, 0.83],
         color="#B91C1C",
         linestyle="--",
         linewidth=1.2,
@@ -602,23 +1141,29 @@ def _split_integrity_figure(
     )
     axis.text(
         0.5,
-        0.49,
-        f"0 shared\nphysical inputs",
+        0.88,
+        "0 shared physical inputs",
         ha="center",
         va="center",
-        fontsize=8,
+        fontsize=9,
         fontweight="bold",
         color="#991B1B",
         transform=axis.transAxes,
+        bbox={"boxstyle": "round,pad=0.22", "facecolor": "#FFFFFF", "edgecolor": "none"},
     )
     axis.text(
         0.5,
-        0.045,
-        "Component-level allocation prevents a target or any of its donor physical sites from crossing the calibration/evaluation boundary.",
+        0.04,
+        "Whole components prevent any target or donor physical site from crossing the split.",
         ha="center",
         va="center",
-        fontsize=8,
+        fontsize=9,
         transform=axis.transAxes,
+    )
+    figure.suptitle(
+        "Whole target-plus-donor components are assigned before held-out metrics",
+        fontsize=11,
+        y=0.985,
     )
     save_figure(
         figure,
@@ -646,11 +1191,11 @@ def _synthetic_metrics_figure(
         .loc[list(METHOD_ORDER)]
     )
     specs = (
-        ("local_effect_mae_log", "Local-effect MAE", "Lower is better", (0.0, 0.13), 3),
-        ("macro_f1", "Macro-F1", "Higher is better", (0.0, 1.0), 3),
-        ("false_positive_rate", "Regional FPR", "Lower is better", (0.0, 1.0), 3),
+        ("local_effect_mae_log", "Local-effect MAE", "Lower is better", (0.0, 0.145), 3),
+        ("macro_f1", "Macro-F1", "Higher is better", (0.0, 1.18), 3),
+        ("false_positive_rate", "Regional FPR", "Lower is better", (0.0, 1.18), 3),
     )
-    figure, axes = plt.subplots(1, 3, figsize=(6.6, 3.3), sharey=True)
+    figure, axes = plt.subplots(1, 3, figsize=(6.3, 3.45), sharey=True)
     positions = np.arange(len(METHOD_ORDER))
     for axis, (column, title, direction, limits, places) in zip(
         axes, specs, strict=True
@@ -670,24 +1215,27 @@ def _synthetic_metrics_figure(
                 zorder=3,
             )
             axis.text(
-                min(value + (limits[1] - limits[0]) * 0.025, limits[1] * 0.94),
+                min(
+                    value + (limits[1] - limits[0]) * 0.045,
+                    limits[1] - (limits[1] - limits[0]) * 0.16,
+                ),
                 position,
                 format_decimal(value, places),
                 va="center",
-                fontsize=8,
+                fontsize=9,
             )
         axis.set_xlim(*limits)
         axis.set_title(f"{title}\n{direction}", fontweight="bold")
-        axis.set_xlabel("Held-out aggregate value")
+        axis.set_xlabel("Held-out value")
         _finalize_axes(axis)
     axes[0].set_yticks(positions, [METHOD_LABELS[method] for method in METHOD_ORDER])
     axes[0].invert_yaxis()
     figure.suptitle(
         "Frozen held-out stable-synthetic comparison: 80 physical targets",
-        fontsize=10.5,
-        y=0.99,
+        fontsize=11,
+        y=0.985,
     )
-    figure.tight_layout(rect=(0, 0, 1, 0.92))
+    figure.subplots_adjust(left=0.25, right=0.97, top=0.79, bottom=0.18, wspace=0.62)
     save_figure(
         figure,
         figures / "fig_synthetic_metrics.pdf",
@@ -715,7 +1263,12 @@ def _perturbation_figure(
         metrics["perturbation_family"].isin(families)
         & metrics["method"].isin(METHOD_ORDER)
     ].set_index(["method", "perturbation_family"])
-    figure, axes = plt.subplots(1, 2, figsize=(6.6, 4.2), gridspec_kw={"width_ratios": [1.04, 0.96]})
+    figure, axes = plt.subplots(
+        1,
+        2,
+        figsize=(6.3, 4.35),
+        gridspec_kw={"width_ratios": [1.04, 0.96]},
+    )
     estimate_axis, class_axis = axes
     comparators = (
         "metashift_v1_fixed",
@@ -756,25 +1309,6 @@ def _perturbation_figure(
         fontweight="bold",
     )
     _finalize_axes(estimate_axis)
-    estimate_axis.legend(
-        [
-            Line2D(
-                [0],
-                [0],
-                color="none",
-                marker=METHOD_MARKERS[method],
-                markerfacecolor=METHOD_COLORS[method],
-                markeredgecolor="#111827",
-                label=METHOD_LABELS[method],
-            )
-            for method in comparators
-        ],
-        [METHOD_LABELS[method] for method in comparators],
-        loc="lower left",
-        frameon=False,
-        handletextpad=0.35,
-    )
-
     positions = np.arange(len(ALL_METHOD_ORDER))
     for position, method in zip(positions, ALL_METHOD_ORDER, strict=True):
         value = float(aggregate.loc[method, "macro_f1"])
@@ -788,22 +1322,45 @@ def _perturbation_figure(
             linewidth=0.4,
             zorder=3,
         )
-        class_axis.text(min(value + 0.026, 0.94), position, format_decimal(value, 3), va="center", fontsize=8)
+        class_axis.text(
+            min(value + 0.035, 0.91),
+            position,
+            format_decimal(value, 3),
+            va="center",
+            fontsize=9,
+        )
     class_axis.axhline(3.5, color="#94A3B8", linewidth=0.8)
-    class_axis.text(0.02, 3.1, "Cross-site", fontsize=8, color="#334155")
-    class_axis.text(0.02, 4.1, "Single-series", fontsize=8, color="#334155")
-    class_axis.set_xlim(0.0, 1.0)
+    class_axis.set_xlim(0.0, 1.10)
     class_axis.set_yticks(positions, [METHOD_LABELS[method] for method in ALL_METHOD_ORDER])
     class_axis.invert_yaxis()
     class_axis.set_xlabel("Aggregate Macro-F1")
-    class_axis.set_title("Attribution classification\nhigher is better", fontweight="bold")
+    class_axis.set_title("Attribution\nhigher is better", fontweight="bold")
     _finalize_axes(class_axis)
     figure.suptitle(
-        "Main-text perturbation comparison; the complete all-method matrix is in the appendix",
-        fontsize=10.2,
-        y=0.995,
+        "Frozen perturbation comparison (full matrix in appendix)",
+        fontsize=11,
+        y=0.985,
     )
-    figure.tight_layout(rect=(0, 0, 1, 0.94))
+    figure.legend(
+        [
+            Line2D(
+                [0],
+                [0],
+                color="none",
+                marker=METHOD_MARKERS[method],
+                markerfacecolor=METHOD_COLORS[method],
+                markeredgecolor="#111827",
+            )
+            for method in comparators
+        ],
+        [METHOD_LABELS[method] for method in comparators],
+        loc="lower center",
+        ncol=3,
+        frameon=False,
+        bbox_to_anchor=(0.5, 0.025),
+        handletextpad=0.35,
+    )
+    figure.subplots_adjust(left=0.22, right=0.985, top=0.82, bottom=0.20, wspace=0.72)
     save_figure(
         figure,
         figures / "fig_perturbation_metrics.pdf",
@@ -829,7 +1386,7 @@ def _paired_bootstrap_figure(
     lowers = np.array([float(bootstrap.loc[item[0], "bootstrap_95ci_lower"]) for item in pairs])
     uppers = np.array([float(bootstrap.loc[item[0], "bootstrap_95ci_upper"]) for item in pairs])
     extent = max(abs(lowers).max(), abs(uppers).max()) * 1.25
-    figure, axis = plt.subplots(figsize=(6.15, 2.8))
+    figure, axis = plt.subplots(figsize=(6.3, 2.8))
     positions = np.array([1, 0])
     axis.axvline(0, color="#111827", linestyle="--", linewidth=1)
     for position, (_, label, method), center, lower, upper in zip(
@@ -852,7 +1409,7 @@ def _paired_bootstrap_figure(
             -extent * 0.97,
             position - 0.19,
             f"Delta={format_decimal(center, 5)}  [{format_decimal(lower, 5)}, {format_decimal(upper, 5)}]",
-            fontsize=8,
+            fontsize=9,
             ha="left",
         )
     axis.set_xlim(-extent, extent)
@@ -860,8 +1417,8 @@ def _paired_bootstrap_figure(
     axis.set_yticks(positions, [pair[1] for pair in pairs])
     axis.set_xlabel("Paired MAE difference: MetaShift - Standard SC")
     axis.set_title("Held-out paired bootstrap intervals (95%)", fontweight="bold")
-    axis.text(-extent * 0.94, -0.37, "Negative: favors MetaShift", fontsize=8, ha="left")
-    axis.text(extent * 0.94, -0.37, "Positive: favors Standard SC", fontsize=8, ha="right")
+    axis.text(-extent * 0.94, -0.37, "Negative: favors MetaShift", fontsize=9, ha="left")
+    axis.text(extent * 0.94, -0.37, "Positive: favors Standard SC", fontsize=9, ha="right")
     _finalize_axes(axis)
     figure.tight_layout()
     save_figure(
@@ -897,9 +1454,9 @@ def _event_accounting_figure(
     complete_inconclusive = int(
         tier_counts.loc["complete", "inconclusive_insufficient_evidence"]
     )
-    figure, axis = plt.subplots(figsize=(6.6, 5.25))
+    figure, axis = plt.subplots(figsize=(6.3, 5.45))
     axis.axis("off")
-    _box(
+    all_anchors = _box(
         axis,
         0.50,
         0.88,
@@ -908,18 +1465,20 @@ def _event_accounting_figure(
         f"{total}\nprimary metadata anchors",
         facecolor="#E0F2FE",
         weight="bold",
+        identifier="accounting_all_anchors",
     )
-    _box(
+    donor_insufficient_node = _box(
         axis,
         0.23,
         0.63,
         0.27,
         0.14,
-        f"{donor_insufficient}\nfewer than 3 donors\ninconclusive",
+        f"{donor_insufficient}\ndonor insufficient",
         facecolor="#E2E8F0",
         hatch="//",
+        identifier="accounting_donor_insufficient",
     )
-    _box(
+    donor_eligible_node = _box(
         axis,
         0.68,
         0.63,
@@ -927,30 +1486,35 @@ def _event_accounting_figure(
         0.14,
         f"{complete + input_failure}\nat least 3 distinct donors",
         facecolor="#DBEAFE",
+        identifier="accounting_donor_eligible",
     )
-    _arrow(axis, (0.43, 0.825), (0.31, 0.70))
-    _arrow(axis, (0.57, 0.825), (0.61, 0.70))
-    _box(
+    input_failure_node = _box(
         axis,
-        0.48,
+        0.39,
         0.38,
         0.24,
         0.14,
-        f"{input_failure}\ninput-window failure\ninconclusive",
+        f"{input_failure}\ninput-window failure",
         facecolor="#E2E8F0",
         hatch="//",
+        identifier="accounting_input_failure",
     )
-    _box(
+    complete_node = _box(
         axis,
         0.80,
         0.38,
-        0.25,
-        0.14,
+        0.29,
+        0.15,
         f"{complete}\ncomplete common comparison",
         facecolor="#EDE9FE",
+        identifier="accounting_complete",
     )
-    _arrow(axis, (0.64, 0.56), (0.53, 0.45), color="#B91C1C", style="--")
-    _arrow(axis, (0.73, 0.56), (0.76, 0.45))
+    _arrow_between(all_anchors, donor_insufficient_node)
+    _arrow_between(all_anchors, donor_eligible_node)
+    _arrow_between(
+        donor_eligible_node, input_failure_node, color="#B91C1C", style="--"
+    )
+    _arrow_between(donor_eligible_node, complete_node)
     leaves = (
         (
             0.28,
@@ -974,17 +1538,31 @@ def _event_accounting_figure(
             None,
         ),
     )
+    leaf_nodes: list[LayoutNode] = []
     for x, y, label, color, hatch in leaves:
-        _box(axis, x, y, 0.23, 0.14, label, facecolor=color, hatch=hatch, fontsize=8)
-        _arrow(axis, (0.80, 0.31), (x, 0.22))
+        leaf_nodes.append(
+            _box(
+                axis,
+                x,
+                y,
+                0.23,
+                0.14,
+                label,
+                facecolor=color,
+                hatch=hatch,
+                identifier=f"accounting_leaf_{int(x * 100)}",
+            )
+        )
+    for node in leaf_nodes:
+        _arrow_between(complete_node, node)
     axis.text(
         0.50,
-        0.015,
+        0.025,
         f"Reconciliation: {donor_insufficient} + {input_failure} + {complete} = {total}; "
         f"{supported} + {not_supported} + {complete_inconclusive} = {complete}.",
         ha="center",
         va="center",
-        fontsize=8,
+        fontsize=9,
         transform=axis.transAxes,
     )
     save_figure(
@@ -1014,24 +1592,72 @@ def _placebo_figure(
     at_100 = int((complete["placebo_count"] >= 100).sum())
     at_50_to_99 = complete_count - at_100
     unavailable = 228 - complete_count
-    figure, axes = plt.subplots(1, 2, figsize=(6.6, 3.15), gridspec_kw={"width_ratios": [0.94, 1.06]})
+    figure, axes = plt.subplots(
+        1, 2, figsize=(6.3, 3.3), gridspec_kw={"width_ratios": [0.94, 1.06]}
+    )
     flow, histogram = axes
     flow.axis("off")
-    _box(flow, 0.15, 0.55, 0.24, 0.16, "228\ncomplete comparisons", facecolor="#EDE9FE")
-    _box(flow, 0.49, 0.68, 0.26, 0.16, f"{complete_count}\n>=50 stable dates", facecolor="#DBEAFE")
-    _box(flow, 0.49, 0.29, 0.25, 0.16, f"{unavailable}\n<50 dates: unavailable", facecolor="#E2E8F0", hatch="//")
-    _arrow(flow, (0.27, 0.59), (0.36, 0.68))
-    _arrow(flow, (0.27, 0.51), (0.36, 0.29), color="#B91C1C", style="--")
-    _box(flow, 0.84, 0.79, 0.23, 0.16, f"{at_100}\n100 dates", facecolor="#C7D2FE")
-    _box(flow, 0.84, 0.51, 0.23, 0.16, f"{at_50_to_99}\n50--99 dates", facecolor="#DBEAFE")
-    _arrow(flow, (0.62, 0.70), (0.72, 0.79))
-    _arrow(flow, (0.62, 0.66), (0.72, 0.51))
+    complete_node = _box(
+        flow,
+        0.15,
+        0.55,
+        0.24,
+        0.16,
+        "228\ncomplete",
+        facecolor="#EDE9FE",
+        identifier="placebo_complete",
+    )
+    available_node = _box(
+        flow,
+        0.49,
+        0.68,
+        0.26,
+        0.16,
+        f"{complete_count}\n50+ dates",
+        facecolor="#DBEAFE",
+        identifier="placebo_available",
+    )
+    unavailable_node = _box(
+        flow,
+        0.49,
+        0.29,
+        0.25,
+        0.16,
+        f"{unavailable}\nunder 50",
+        facecolor="#E2E8F0",
+        hatch="//",
+        identifier="placebo_unavailable",
+    )
+    at_100_node = _box(
+        flow,
+        0.84,
+        0.79,
+        0.23,
+        0.16,
+        f"{at_100}\n100 dates",
+        facecolor="#C7D2FE",
+        identifier="placebo_100_dates",
+    )
+    at_50_to_99_node = _box(
+        flow,
+        0.84,
+        0.51,
+        0.23,
+        0.16,
+        f"{at_50_to_99}\n50--99 dates",
+        facecolor="#DBEAFE",
+        identifier="placebo_50_to_99_dates",
+    )
+    _arrow_between(complete_node, available_node)
+    _arrow_between(complete_node, unavailable_node, color="#B91C1C", style="--")
+    _arrow_between(available_node, at_100_node)
+    _arrow_between(available_node, at_50_to_99_node)
     flow.text(
         0.5,
         0.06,
-        "The 100-date cohort is nested within the >=50-date cohort.",
+        "100-date cohort is nested in the 50+-date cohort.",
         ha="center",
-        fontsize=8,
+        fontsize=9,
         transform=flow.transAxes,
     )
     flow.set_title("Nested time-placebo availability", fontweight="bold")
@@ -1043,11 +1669,17 @@ def _placebo_figure(
         edgecolor="#FFFFFF",
     )
     histogram.axvline(0.10, color="#B91C1C", linestyle="--", linewidth=1)
-    histogram.text(0.12, histogram.get_ylim()[1] * 0.93, "Frozen 0.10 screen", color="#991B1B", fontsize=8)
+    histogram.text(
+        0.12,
+        histogram.get_ylim()[1] * 0.93,
+        "Frozen 0.10 screen",
+        color="#991B1B",
+        fontsize=9,
+    )
     histogram.set_xlim(0, 1)
-    histogram.set_xlabel("Saved raw within-event placebo probability")
+    histogram.set_xlabel("Raw placebo probability")
     histogram.set_ylabel("Complete events")
-    histogram.set_title("Diagnostic probability distribution", fontweight="bold")
+    histogram.set_title("Placebo probability", fontweight="bold")
     _finalize_axes(histogram)
     figure.tight_layout()
     save_figure(
@@ -1076,7 +1708,7 @@ def _interval_coverage_figure(
         & (coverage["split"] == "evaluation")
         & (coverage["stratum_type"] == "all")
     ].set_index("method").loc[list(METHOD_ORDER)]
-    figure, axes = plt.subplots(1, 2, figsize=(6.6, 3.5), sharey=True)
+    figure, axes = plt.subplots(1, 2, figsize=(6.3, 3.65), sharey=True)
     coverage_axis, width_axis = axes
     positions = np.arange(len(METHOD_ORDER))
     for position, method in zip(positions, METHOD_ORDER, strict=True):
@@ -1096,7 +1728,14 @@ def _interval_coverage_figure(
                 s=38,
                 zorder=3,
             )
-            coverage_axis.text(min(value + 0.025, 0.98), position + offset, f"{value * 100:.1f}%", va="center", fontsize=8)
+            coverage_axis.text(
+                value - 0.020 if value >= 0.93 else value + 0.020,
+                position + offset,
+                f"{value * 100:.1f}%",
+                ha="right" if value >= 0.93 else "left",
+                va="center",
+                fontsize=9,
+            )
             width = float(subset.loc[method, "mean_interval_width_log"])
             width_axis.scatter(
                 width,
@@ -1108,17 +1747,25 @@ def _interval_coverage_figure(
                 s=38,
                 zorder=3,
             )
-            width_axis.text(width + 0.012, position + offset, f"{width:.3f}", va="center", fontsize=8)
+            width_axis.text(
+                width + 0.016,
+                position + offset,
+                f"{width:.3f}",
+                va="center",
+                fontsize=9,
+            )
     coverage_axis.axvline(0.95, color="#334155", linestyle="--", linewidth=0.9)
     coverage_axis.axvline(0.90, color="#334155", linestyle=":", linewidth=1.1)
-    coverage_axis.text(0.95, -0.52, "95%", ha="center", fontsize=8)
-    coverage_axis.text(0.90, -0.82, "90%", ha="center", fontsize=8)
     coverage_axis.set_xlim(0, 1.04)
     coverage_axis.set_xlabel("Empirical coverage (full 0--100% scale)")
     coverage_axis.set_title("Held-out coverage", fontweight="bold")
     coverage_axis.set_yticks(positions, [METHOD_LABELS[method] for method in METHOD_ORDER])
     coverage_axis.invert_yaxis()
-    width_axis.set_xlim(0, 0.66)
+    maximum_width = max(
+        conditional["mean_interval_width_log"].max(),
+        conformal["mean_interval_width_log"].max(),
+    )
+    width_axis.set_xlim(0, float(maximum_width) * 1.32 + 0.03)
     width_axis.set_xlabel("Mean interval width (log units)")
     width_axis.set_title("Width alongside coverage", fontweight="bold")
     for axis in axes:
@@ -1127,14 +1774,21 @@ def _interval_coverage_figure(
         [
             Line2D([0], [0], color="#111827", marker="o", linestyle="none"),
             Line2D([0], [0], color="#111827", marker="D", linestyle="none"),
+            Line2D([0], [0], color="#334155", linestyle="--"),
+            Line2D([0], [0], color="#334155", linestyle=":"),
         ],
-        ["Conditional bootstrap (95% nominal)", "Split conformal (90% nominal)"],
+        [
+            "Conditional bootstrap (95% nominal)",
+            "Split conformal (90% nominal)",
+            "95% nominal guide",
+            "90% nominal guide",
+        ],
         loc="lower center",
         ncol=2,
         frameon=False,
-        bbox_to_anchor=(0.5, -0.02),
+        bbox_to_anchor=(0.5, 0.015),
     )
-    figure.tight_layout(rect=(0, 0.08, 1, 1))
+    figure.tight_layout(rect=(0, 0.17, 1, 1))
     save_figure(
         figure,
         figures / "fig_interval_coverage.pdf",
@@ -1156,7 +1810,9 @@ def _screening_sensitivity_figure(
     screening = data["screening"].loc[
         data["screening"]["minimum_donors_required"] == 3
     ].set_index("setting")
-    figure, axes = plt.subplots(1, 2, figsize=(6.6, 3.3), gridspec_kw={"width_ratios": [1.04, 0.96]})
+    figure, axes = plt.subplots(
+        1, 2, figsize=(6.3, 3.55), gridspec_kw={"width_ratios": [1.04, 0.96]}
+    )
     tiers_axis, radius_axis = axes
     bottom = np.zeros(len(sensitivity), dtype=float)
     tier_specs = (
@@ -1186,13 +1842,12 @@ def _screening_sensitivity_figure(
                     ha="center",
                     va="center",
                     color="#FFFFFF",
-                    fontsize=8,
+                    fontsize=9,
                 )
         bottom += proportions
-    tiers_axis.set_ylim(0, 100)
+    tiers_axis.set_ylim(0, 112)
     tiers_axis.set_ylabel("All anchors (%)")
-    tiers_axis.set_title("Tier composition under frozen rule settings", fontweight="bold")
-    tiers_axis.legend(loc="upper left", frameon=False)
+    tiers_axis.set_title("Tier composition\nunder frozen rules", fontweight="bold")
     _finalize_axes(tiers_axis)
 
     radii = np.array([50, 100, 200])
@@ -1213,22 +1868,28 @@ def _screening_sensitivity_figure(
         linewidth=1.3,
     )
     for radius, value in zip(radii, values, strict=True):
-        radius_axis.text(radius, value + 10, str(int(value)), ha="center", fontsize=8)
+        radius_axis.text(radius, value + 10, str(int(value)), ha="center", fontsize=9)
     radius_axis.set_xlim(40, 210)
     radius_axis.set_ylim(0, max(values) * 1.16)
     radius_axis.set_xticks(radii)
     radius_axis.set_xlabel("Maximum donor radius (km)")
-    radius_axis.set_ylabel("Anchors with >=3 donors")
-    radius_axis.set_title("Predeclared donor-radius sensitivity", fontweight="bold")
+    radius_axis.set_ylabel("Anchors with 3+ donors")
+    radius_axis.set_title("Donor-radius\nsensitivity", fontweight="bold")
     _finalize_axes(radius_axis)
     figure.text(
         0.5,
-        0.005,
+        0.10,
         "Strict: p,q<=0.05 and LOO>=0.95; primary: <=0.10 and >=0.90; lenient: <=0.20 and >=0.80.",
         ha="center",
-        fontsize=8,
+        fontsize=9,
     )
-    figure.tight_layout(rect=(0, 0.06, 1, 1))
+    figure.legend(
+        loc="lower center",
+        ncol=3,
+        frameon=False,
+        bbox_to_anchor=(0.5, 0.005),
+    )
+    figure.subplots_adjust(left=0.13, right=0.98, top=0.80, bottom=0.27, wspace=0.80)
     save_figure(
         figure,
         figures / "fig_screening_sensitivity.pdf",
@@ -1244,24 +1905,26 @@ def _screening_sensitivity_figure(
 
 def _draw_ladder(axis: plt.Axes, title: str, steps: list[tuple[str, int]], color: str) -> None:
     axis.axis("off")
-    axis.set_title(title, fontsize=9.2, fontweight="bold", pad=5)
+    axis.set_title(title, fontsize=10.5, fontweight="bold", pad=5)
     positions = np.linspace(0.80, 0.18, len(steps))
+    previous: LayoutNode | None = None
     for index, ((label, value), y) in enumerate(zip(steps, positions, strict=True)):
         face = color if index == len(steps) - 1 else "#E2E8F0"
         hatch = "//" if value == 0 else None
-        _box(
+        node = _box(
             axis,
             0.5,
             float(y),
-            0.68,
+            0.72,
             0.14,
-            f"{value}: {label}",
+            f"{value}\n{label}",
             facecolor=face,
             hatch=hatch,
-            fontsize=8,
+            identifier=f"ladder_{_identifier_fragment(title)}_{index + 1}",
         )
-        if index < len(steps) - 1:
-            _arrow(axis, (0.5, float(y - 0.08)), (0.5, float(positions[index + 1] + 0.08)))
+        if previous is not None:
+            _arrow_between(previous, node)
+        previous = node
 
 
 def _external_evidence_figure(
@@ -1278,7 +1941,7 @@ def _external_evidence_figure(
     secondary_donor_eligible = int(
         (secondary_audit["audit_status"] != "insufficient_geographic_donors").sum()
     )
-    figure, axes = plt.subplots(2, 2, figsize=(6.6, 5.1))
+    figure, axes = plt.subplots(2, 2, figsize=(6.3, 5.3))
     poc = summary["hourly_same_site_poc"]
     _draw_ladder(
         axes[0, 0],
@@ -1286,7 +1949,7 @@ def _external_evidence_figure(
         [
             ("candidate anchors", int(poc["candidate_events"])),
             ("paired hourly windows", int(poc["usable_paired_events"])),
-            ("daily/hourly direction agreement", int(poc["daily_hourly_direction_agreement"])),
+            ("daily/hourly agreement", int(poc["daily_hourly_direction_agreement"])),
         ],
         "#DBEAFE",
     )
@@ -1295,9 +1958,9 @@ def _external_evidence_figure(
         "QA collocation context",
         [
             ("QA candidates", int(qa["candidates"])),
-            ("target POC matched", int(qa["target_poc_matched"])),
+            ("target POC match", int(qa["target_poc_matched"])),
             (
-                "adequate matched\npre/post windows",
+                "adequate paired windows",
                 int(qa["adequate_matched_pre_post"]),
             ),
         ],
@@ -1309,7 +1972,7 @@ def _external_evidence_figure(
         "Official-document context",
         [
             ("reviewed records", int(documents["reviewed_events"])),
-            ("dated site-specific confirmations", int(documents["site_specific_dated_confirmations"])),
+            ("dated site confirmation", int(documents["site_specific_dated_confirmations"])),
         ],
         "#FEE2E2",
     )
@@ -1319,19 +1982,21 @@ def _external_evidence_figure(
         "Separate 88502 pipeline",
         [
             ("metadata anchors", int(secondary["eligible_anchors"])),
-            (">=3 distinct donor-eligible", secondary_donor_eligible),
+            ("3+ donor eligible", secondary_donor_eligible),
             ("complete common comparisons", secondary_complete),
         ],
         "#EDE9FE",
     )
     figure.text(
         0.5,
-        0.01,
-        "All pathways are contextual evidence or feasibility checks; none establishes a physical cause of a metadata transition.",
+        0.015,
+        "All pathways are contextual evidence or feasibility checks.\n"
+        "None establishes a physical cause of a metadata transition.",
         ha="center",
-        fontsize=8,
+        va="bottom",
+        fontsize=9,
     )
-    figure.tight_layout(rect=(0, 0.055, 1, 1))
+    figure.tight_layout(rect=(0, 0.075, 1, 1))
     save_figure(
         figure,
         figures / "fig_external_evidence.pdf",
@@ -1348,235 +2013,212 @@ def _external_evidence_figure(
     )
 
 
-def _case_study_figure(
+def _case_study_figures(
     cases: list[dict[str, Any]],
     figures: Path,
     save_figure: SaveFigure,
-    format_decimal: FormatDecimal,
     outputs: list[dict[str, Any]],
 ) -> None:
+    """Separate complete-case evidence from the intentionally unavailable case."""
+
+    complete_cases = [case for case in cases if case["audit_status"] == "complete"]
+    abstention_cases = [case for case in cases if case["audit_status"] != "complete"]
+    if len(complete_cases) != 2 or len(abstention_cases) != 1:
+        raise RuntimeError("The deterministic case contract must contain two complete cases and one abstention.")
+
     figure, axes = plt.subplots(
-        4,
-        len(cases),
-        figsize=(6.6, 8.3),
+        3,
+        len(complete_cases),
+        figsize=(6.3, 6.55),
         squeeze=False,
-        gridspec_kw={"height_ratios": [1.1, 1.0, 0.82, 0.90]},
+        gridspec_kw={"height_ratios": [1.14, 0.94, 0.90]},
     )
     complete_effect_bounds = [
         value
-        for case in cases
-        if case["audit_status"] == "complete"
+        for case in complete_cases
         for value in (*case["fixed_interval"], *case["nested_interval"], case["log_effect"])
         if value is not None
     ]
     effect_extent = max(abs(float(value)) for value in complete_effect_bounds) * 1.25
-    for column, case in enumerate(cases):
-        top, residual_axis, placebo_axis, interval_axis = axes[:, column]
+    for column, case in enumerate(complete_cases):
+        top, residual_axis, interval_axis = axes[:, column]
         anchor_date = case["anchor_date"]
+        group = case["case_group"]
         target = case["target"].loc[case["visible_start"] : case["visible_end"]]
-        group = case["case_group"].replace(": no qualified counterfactual", "")
-        top.set_title(
-            f"{group}\nanchor {anchor_date.date().isoformat()}",
-            fontsize=8.5,
-            fontweight="bold",
+        counterfactual = case["counterfactual"].loc[
+            case["visible_start"] : case["visible_end"]
+        ]
+        residual = case["residual"].loc[case["visible_start"] : case["visible_end"]]
+        display = pd.concat(
+            [
+                target.rename("target"),
+                counterfactual.rename("counterfactual"),
+                residual.rename("residual"),
+            ],
+            axis="columns",
+        ).dropna()
+        days = (display.index - anchor_date).days
+        top.plot(days, display["target"], color="#111827", linewidth=1.1, label="Target")
+        top.plot(
+            days,
+            display["counterfactual"],
+            color="#4C566A",
+            linewidth=1.0,
+            linestyle="--",
+            label="Reliability-prior composite",
         )
-        if case["audit_status"] == "complete":
-            counterfactual = case["counterfactual"].loc[
-                case["visible_start"] : case["visible_end"]
-            ]
-            residual = case["residual"].loc[
-                case["visible_start"] : case["visible_end"]
-            ]
-            display = pd.concat(
-                [
-                    target.rename("target"),
-                    counterfactual.rename("counterfactual"),
-                    residual.rename("residual"),
-                ],
-                axis="columns",
-            ).dropna()
-            days = (display.index - anchor_date).days
-            top.plot(
-                days,
-                display["target"],
-                color="#111827",
-                linewidth=1.1,
-                label="Target",
-            )
-            top.plot(
-                days,
-                display["counterfactual"],
-                color="#4C566A",
-                linewidth=1.0,
-                linestyle="--",
-                label="Reliability-prior composite",
-            )
-            residual_axis.plot(
-                days, display["residual"], color="#7C3AED", linewidth=1.1
-            )
-            _comparison_shading(residual_axis)
-            residual_axis.axhline(0, color="#111827", linewidth=0.7)
-            residual_axis.set_xlim(-60, 60)
-
-            actual = case["placebo_actual_score"]
-            median = case["placebo_median_score"]
-            if actual is not None and median is not None:
-                placebo_axis.plot(
-                    [median, actual],
-                    [0, 1],
-                    color="#475569",
-                    linewidth=0.9,
-                    zorder=2,
-                )
-                placebo_axis.scatter(
-                    [median, actual],
-                    [0, 1],
-                    color=["#64748B", "#7C3AED"],
-                    marker="o",
-                    s=30,
-                    edgecolor="#111827",
-                    linewidth=0.35,
-                    zorder=3,
-                )
-                placebo_axis.set_yticks(
-                    [0, 1],
-                    ["Median", "Anchor"] if column == 0 else [],
-                )
-                placebo_axis.set_xlabel("Score")
-                placebo_axis.set_title(
-                    f"Saved summary: n={int(case['placebo_count'])}; "
-                    f"p={case['placebo_p_value']:.3f}",
-                    fontsize=8,
-                    pad=2,
-                )
-                _finalize_axes(placebo_axis)
-            else:
-                placebo_axis.axis("off")
-            fixed_lower, fixed_upper = case["fixed_interval"]
-            nested_lower, nested_upper = case["nested_interval"]
-            effect = float(case["log_effect"])
-            interval_axis.axvline(0, color="#111827", linewidth=0.8)
-            interval_axis.plot(
-                [fixed_lower, fixed_upper],
-                [1, 1],
-                color="#3B82F6",
-                linewidth=2.0,
-                solid_capstyle="butt",
-            )
-            interval_axis.plot(effect, 1, marker="^", color="#3B82F6", markersize=4.8)
-            interval_axis.plot(
-                [nested_lower, nested_upper],
-                [0, 0],
-                color="#7C3AED",
-                linewidth=1.6,
-                linestyle="--",
-                solid_capstyle="butt",
-            )
-            interval_axis.plot(effect, 0, marker="D", color="#7C3AED", markersize=4.3)
-            interval_axis.set_xlim(-effect_extent, effect_extent)
-            interval_axis.set_yticks(
-                [0, 1],
-                ["Nested", "Fixed"] if column == 0 else [],
-            )
-            interval_axis.set_xlabel("Log effect")
-            interval_axis.text(
-                0.5,
-                0.04,
-                f"{group}\nLOO={case['leave_one_donor_out_fraction']:.2f}",
-                ha="center",
-                va="bottom",
-                fontsize=8,
-                transform=interval_axis.transAxes,
-            )
-            _finalize_axes(interval_axis)
-        else:
-            residual_axis.axis("off")
-            residual_axis.text(
-                0.5,
-                0.58,
-                "No qualified geographic\ncounterfactual is constructed.",
-                ha="center",
-                va="center",
-                fontsize=8.5,
-                fontweight="bold",
-                transform=residual_axis.transAxes,
-            )
-            residual_axis.text(
-                0.5,
-                0.25,
-                "Reason: fewer than three\nprequalified distinct physical donors.",
-                ha="center",
-                va="center",
-                fontsize=8,
-                transform=residual_axis.transAxes,
-            )
-            placebo_axis.axis("off")
-            placebo_axis.text(
-                0.5,
-                0.55,
-                "No complete comparison\nso no time-placebo diagnostic.",
-                ha="center",
-                va="center",
-                fontsize=8.5,
-                transform=placebo_axis.transAxes,
-            )
-            interval_axis.axis("off")
-            interval_axis.text(
-                0.5,
-                0.55,
-                "Audit abstention\nNo effect estimate or interval is imputed.",
-                ha="center",
-                va="center",
-                fontsize=8.5,
-                transform=interval_axis.transAxes,
-            )
-            days = (target.index - anchor_date).days
-            top.plot(days, target, color="#111827", linewidth=1.1, label="Target")
         _comparison_shading(top)
         top.set_xlim(-60, 60)
-        for axis in (top, residual_axis):
-            if axis.axison:
-                _finalize_axes(axis)
-                axis.set_xticks([-60, 0, 60])
+        top.set_title(
+            f"{group}\nanchor {anchor_date.date().isoformat()}",
+            fontsize=10.5,
+            fontweight="bold",
+        )
+        _finalize_axes(top)
+
+        residual_axis.plot(days, display["residual"], color="#7C3AED", linewidth=1.1)
+        _comparison_shading(residual_axis)
+        residual_axis.axhline(0, color="#111827", linewidth=0.7)
+        residual_axis.set_xlim(-60, 60)
+        residual_axis.set_xlabel("Days relative to anchor")
+        _finalize_axes(residual_axis)
+
+        fixed_lower, fixed_upper = case["fixed_interval"]
+        nested_lower, nested_upper = case["nested_interval"]
+        effect = float(case["log_effect"])
+        interval_axis.axvline(0, color="#111827", linewidth=0.8)
+        interval_axis.plot(
+            [fixed_lower, fixed_upper],
+            [1, 1],
+            color="#3B82F6",
+            linewidth=2.0,
+            solid_capstyle="butt",
+        )
+        interval_axis.plot(effect, 1, marker="^", color="#3B82F6", markersize=5.0)
+        interval_axis.plot(
+            [nested_lower, nested_upper],
+            [0, 0],
+            color="#7C3AED",
+            linewidth=1.6,
+            linestyle="--",
+            solid_capstyle="butt",
+        )
+        interval_axis.plot(effect, 0, marker="D", color="#7C3AED", markersize=4.5)
+        interval_axis.set_xlim(-effect_extent, effect_extent)
+        interval_axis.set_yticks([0, 1], ["Nested", "Fixed"] if column == 0 else [])
+        interval_axis.set_xlabel("Log effect")
+        interval_axis.text(
+            0.5,
+            0.05,
+            f"Saved placebo n={int(case['placebo_count'])}; p={case['placebo_p_value']:.3f}\n"
+            f"LOO direction={case['leave_one_donor_out_fraction']:.2f}",
+            ha="center",
+            va="bottom",
+            fontsize=9,
+            transform=interval_axis.transAxes,
+        )
+        _finalize_axes(interval_axis)
         if column == 0:
             top.set_ylabel(r"PM$_{2.5}$ (ug/m$^3$)")
             residual_axis.set_ylabel("Centered log residual")
-        else:
-            top.set_ylabel("")
-            if residual_axis.axison:
-                residual_axis.set_ylabel("")
-        if column == 0:
-            top.legend(loc="upper left", frameon=False, fontsize=8)
-    figure.text(0.01, 0.90, "Series", rotation=90, va="center", fontsize=8.5)
-    figure.text(0.01, 0.66, "Residual", rotation=90, va="center", fontsize=8.5)
-    figure.text(0.01, 0.42, "Placebo", rotation=90, va="center", fontsize=8.5)
-    figure.text(0.01, 0.18, "Intervals + tier", rotation=90, va="center", fontsize=8.5)
+
     figure.suptitle(
-        "Deterministically selected audit cases: source series, residual, placebo summary, and diagnostic intervals",
-        fontsize=9.5,
-        y=0.996,
+        "Deterministically selected complete comparisons",
+        fontsize=11,
+        y=0.985,
+    )
+    figure.legend(
+        *axes[0, 0].get_legend_handles_labels(),
+        loc="lower center",
+        ncol=2,
+        frameon=False,
+        bbox_to_anchor=(0.5, 0.015),
     )
     figure.subplots_adjust(
         left=0.15,
         right=0.985,
-        top=0.94,
-        bottom=0.08,
-        wspace=0.42,
-        hspace=0.72,
+        top=0.87,
+        bottom=0.13,
+        wspace=0.36,
+        hspace=0.58,
     )
+    case_sources = [
+        "artifacts/real_transition_88101_evidence_tiers.csv",
+        "artifacts/real_transition_88101_method_results.csv",
+        "artifacts/real_transition_88101_event_intervals.csv",
+        "artifacts/time_placebo_summary.csv",
+        "paper/latex/configs/case_study_rendering_v2.json",
+        "artifacts/data_gate/source_manifest.json",
+        "artifacts/data_gate/geographic_controls.csv",
+    ]
     save_figure(
         figure,
-        figures / "fig_case_studies.pdf",
-        "Standardized deterministic representative audit cases",
-        [
-            "artifacts/real_transition_88101_evidence_tiers.csv",
-            "artifacts/real_transition_88101_method_results.csv",
-            "artifacts/real_transition_88101_event_intervals.csv",
-            "artifacts/time_placebo_summary.csv",
-            "paper/latex/configs/case_study_rendering_v2.json",
-            "artifacts/data_gate/source_manifest.json",
-            "artifacts/data_gate/geographic_controls.csv",
-        ],
+        figures / "fig_case_studies_complete.pdf",
+        "Deterministic complete representative audit cases",
+        case_sources,
+        outputs,
+    )
+
+    abstention = abstention_cases[0]
+    figure, axes = plt.subplots(
+        1,
+        2,
+        figsize=(6.3, 3.2),
+        gridspec_kw={"width_ratios": [1.30, 0.70]},
+    )
+    series_axis, decision_axis = axes
+    anchor_date = abstention["anchor_date"]
+    target = abstention["target"].loc[
+        abstention["visible_start"] : abstention["visible_end"]
+    ]
+    days = (target.index - anchor_date).days
+    series_axis.plot(days, target, color="#111827", linewidth=1.15)
+    _comparison_shading(series_axis)
+    series_axis.set_xlim(-60, 60)
+    series_axis.set_xlabel("Days relative to anchor")
+    series_axis.set_ylabel(r"PM$_{2.5}$ (ug/m$^3$)")
+    series_axis.set_title(
+        f"Inconclusive anchor\n{anchor_date.date().isoformat()}",
+        fontsize=10.5,
+        fontweight="bold",
+    )
+    _finalize_axes(series_axis)
+    decision_axis.axis("off")
+    no_counterfactual = _box(
+        decision_axis,
+        0.5,
+        0.68,
+        0.72,
+        0.19,
+        "No common cross-site\ncounterfactual",
+        facecolor="#E2E8F0",
+        hatch="//",
+        weight="bold",
+        identifier="abstention_no_counterfactual",
+    )
+    reason = _box(
+        decision_axis,
+        0.5,
+        0.31,
+        0.72,
+        0.19,
+        "Reason: fewer than 3\nqualified physical donors",
+        facecolor="#FEE2E2",
+        edgecolor="#B91C1C",
+        identifier="abstention_reason",
+    )
+    _arrow_between(no_counterfactual, reason, color="#B91C1C", style="--")
+    figure.suptitle(
+        "Deterministic abstention example: no counterfactual is imputed",
+        fontsize=11,
+        y=0.985,
+    )
+    figure.subplots_adjust(left=0.12, right=0.98, top=0.74, bottom=0.17, wspace=0.34)
+    save_figure(
+        figure,
+        figures / "fig_case_studies_abstention.pdf",
+        "Deterministic representative audit abstention",
+        case_sources,
         outputs,
     )
 
@@ -1589,7 +2231,7 @@ def _applicability_map_figure(
 ) -> None:
     audit = summary["real_event_audit"]
     tiers = summary["evidence_tiers"]
-    figure, axis = plt.subplots(figsize=(6.6, 3.65))
+    figure, axis = plt.subplots(figsize=(6.3, 4.15))
     axis.axis("off")
     headers = (
         (0.17, "Observed condition"),
@@ -1603,29 +2245,26 @@ def _applicability_map_figure(
             label,
             ha="center",
             va="center",
-            fontsize=8.8,
+            fontsize=10.5,
             fontweight="bold",
             transform=axis.transAxes,
         )
     rows = (
         (
-            "Fewer than three\nphysical donors\n"
-            f"({audit['insufficient_geographic_donors']})",
-            "Inconclusive:\nno cross-site comparison",
-            "No conclusion about\nan underlying site change",
+            f"Donor insufficient\n{audit['insufficient_geographic_donors']} anchors",
+            "Inconclusive:\ncomparison unavailable",
+            "No physical cause\nestablished",
             "#E2E8F0",
         ),
         (
-            "Input-window failure\n"
-            f"({audit['estimator_input_failure']})",
+            f"Input-window failure\n{audit['estimator_input_failure']} anchors",
             "Inconclusive:\ninput unavailable",
             "No imputed effect\nor interval",
             "#E2E8F0",
         ),
         (
-            "Complete comparison\n"
-            f"({audit['complete_comparisons']})",
-            "Diagnostic tier:\n"
+            f"Complete comparison\n{audit['complete_comparisons']} anchors",
+            "Audit tiers:\n"
             f"{tiers['supported_candidate_discontinuity']} / "
             f"{tiers['not_supported_by_available_evidence']} / "
             f"{audit['complete_comparisons'] - tiers['supported_candidate_discontinuity'] - tiers['not_supported_by_available_evidence']}",
@@ -1633,19 +2272,48 @@ def _applicability_map_figure(
             "#EDE9FE",
         ),
     )
-    for y, (left, middle, right, color) in zip((0.72, 0.47, 0.22), rows, strict=True):
-        _box(axis, 0.17, y, 0.28, 0.17, left, facecolor=color, fontsize=8)
-        _box(axis, 0.50, y, 0.28, 0.17, middle, facecolor="#DBEAFE", fontsize=8)
-        _box(axis, 0.83, y, 0.28, 0.17, right, facecolor="#FEF3C7", fontsize=8)
-        _arrow(axis, (0.32, y), (0.35, y))
-        _arrow(axis, (0.65, y), (0.68, y))
+    for index, (y, (left, middle, right, color)) in enumerate(
+        zip((0.71, 0.45, 0.20), rows, strict=True)
+    ):
+        left_node = _box(
+            axis,
+            0.17,
+            y,
+            0.28,
+            0.18,
+            left,
+            facecolor=color,
+            identifier=f"applicability_observed_{index + 1}",
+        )
+        middle_node = _box(
+            axis,
+            0.50,
+            y,
+            0.28,
+            0.18,
+            middle,
+            facecolor="#DBEAFE",
+            identifier=f"applicability_output_{index + 1}",
+        )
+        right_node = _box(
+            axis,
+            0.83,
+            y,
+            0.28,
+            0.18,
+            right,
+            facecolor="#FEF3C7",
+            identifier=f"applicability_boundary_{index + 1}",
+        )
+        _arrow_between(left_node, middle_node)
+        _arrow_between(middle_node, right_node)
     axis.text(
         0.5,
-        0.04,
-        "Applicability map, not a classifier: further station records and human technical review are required for any equipment-level hypothesis.",
+        0.025,
+        "Applicability map, not a classifier: station records and human technical review remain required.",
         ha="center",
         va="center",
-        fontsize=8,
+        fontsize=9,
         transform=axis.transAxes,
     )
     save_figure(
@@ -1682,14 +2350,23 @@ def _anchor_concentration_figure(
     pair_one = int(pair_counts.loc[("236", "636")])
     pair_two = int(pair_counts.loc[("238", "638")])
     other = int(len(anchors_2023) - pair_one - pair_two)
-    figure, axes = plt.subplots(1, 2, figsize=(6.6, 3.15), gridspec_kw={"width_ratios": [0.9, 1.1]})
+    figure, axes = plt.subplots(
+        1, 2, figsize=(6.3, 3.4), gridspec_kw={"width_ratios": [0.9, 1.1]}
+    )
     years_axis, pair_axis = axes
     colors = ["#94A3B8"] * len(year_counts)
     colors[list(year_counts.index).index(2023)] = "#B45309"
     bars = years_axis.bar(year_counts.index.astype(str), year_counts.to_numpy(), color=colors, edgecolor="#334155", linewidth=0.4)
     for bar, value in zip(bars, year_counts.to_numpy(), strict=True):
-        years_axis.text(bar.get_x() + bar.get_width() / 2, value + 7, str(int(value)), ha="center", fontsize=8)
-    years_axis.set_ylim(0, max(year_counts) * 1.17)
+        years_axis.text(
+            bar.get_x() + bar.get_width() / 2,
+            value + 9,
+            str(int(value)),
+            ha="center",
+            fontsize=9,
+        )
+    years_axis.set_ylim(0, max(year_counts) * 1.23)
+    years_axis.tick_params(axis="x", labelrotation=30)
     years_axis.set_ylabel("Reported metadata anchors")
     years_axis.set_title("Anchor dates in the frozen snapshot", fontweight="bold")
     _finalize_axes(years_axis)
@@ -1698,19 +2375,27 @@ def _anchor_concentration_figure(
     values = [pair_one, pair_two, other]
     bars = pair_axis.barh(labels, values, color=["#B45309", "#D97706", "#94A3B8"], edgecolor="#334155", linewidth=0.4)
     for bar, value in zip(bars, values, strict=True):
-        pair_axis.text(value + 4, bar.get_y() + bar.get_height() / 2, str(value), va="center", fontsize=8)
-    pair_axis.set_xlim(0, max(values) * 1.18)
+        pair_axis.text(
+            value + 6,
+            bar.get_y() + bar.get_height() / 2,
+            str(value),
+            va="center",
+            fontsize=9,
+        )
+    pair_axis.set_xlim(0, max(values) * 1.30 + 12)
     pair_axis.set_xlabel("2023 metadata anchors")
     pair_axis.set_title("Named code-pair concentration", fontweight="bold")
     _finalize_axes(pair_axis)
     figure.text(
         0.5,
-        0.005,
-        "The two new-code labels include “Network Data Alignment enabled”; this association does not establish why records changed.",
+        0.015,
+        "Alignment-enabled new-code labels are descriptive metadata.\n"
+        "They do not establish why records changed.",
         ha="center",
-        fontsize=8,
+        va="bottom",
+        fontsize=9,
     )
-    figure.tight_layout(rect=(0, 0.055, 1, 1))
+    figure.tight_layout(rect=(0, 0.08, 1, 1))
     save_figure(
         figure,
         figures / "fig_anchor_concentration.pdf",
@@ -1748,6 +2433,6 @@ def create_revised_figures(
     _interval_coverage_figure(data, figures, save_figure, outputs)
     _screening_sensitivity_figure(data, figures, save_figure, outputs)
     _external_evidence_figure(summary, data, external_config, figures, save_figure, outputs)
-    _case_study_figure(cases, figures, save_figure, format_decimal, outputs)
+    _case_study_figures(cases, figures, save_figure, outputs)
     _applicability_map_figure(summary, figures, save_figure, outputs)
     _anchor_concentration_figure(data, figures, save_figure, outputs)

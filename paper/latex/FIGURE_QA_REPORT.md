@@ -29,21 +29,24 @@ These are recorded figure-by-figure in `FIGURE_AUDIT.md`.
 | No non-vector scientific figure, placeholder, Type 3 font, or unembedded font remains | Figure/font validators |
 | Every final-PDF page is rendered and visually inspected | Build preflight plus manual page review |
 
+## Stricter measured-layout requirements
+
+The active gate is stricter than the historical sign-off below. It measures
+final source-rendered positions and requires 6-pt horizontal and 4-pt vertical
+node padding, 3-pt minimum separation between independent text boxes, no text
+or node overflow, no legend over a data axes, and grayscale luminance contrast
+of at least 35. It rejects report-facing text below 8.5 pt, node text below 9
+pt, or titles below 10 pt at the measured final print width. The current source
+set contains 17 figures because the former combined case-study display is now
+separate complete-comparison and abstention figures.
+
 ## Status
 
-**Technical sign-off is complete:** a final-mode build from clean source commit
-`bd4164242638f723eb6f5aec72c822507e098030` produced
-`MetaShift_Bench_Yau_2026.pdf` with SHA-256
-`efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc`,
-1,050,437 bytes, 41 rendered pages, and zero overfull-box warnings.
-`verify_figures.py` passed all 10 checks for 16 vector figures;
-`verify_formal_report.py` passed 14/14 checks; and `pdffonts` found zero Type 3
-or unembedded fonts across the final PDF and 16 figure PDFs (17 PDFs and 120
-font records total).
-
-The rendered-page preflight produced 41 nontrivial page images. The technical
-visual review corrected the donor-construction label collision and a nearly
-empty trailing page, then rechecked the final donor, accounting, interval,
-external-evidence, representative-case, appendix, reference, and disclosure
-pages. This is a presentation and reproducibility sign-off only; student and
-teacher completion of the human-only disclosures remains required.
+**The prior 16-figure technical sign-off is superseded.** The current
+source-level preflight passes 11 checks for 17 vector figures and records the
+measured layout in `generated/figure_layout_qa.json`. Final-PDF placement
+checks, 150/300-DPI crop generation, and rendered-page inspection are pending a
+clean final build. The historical PDF statistics above are no longer a sign-off
+for this source revision. This remains a presentation and reproducibility
+review only; student and teacher completion of the human-only disclosures is
+still required.

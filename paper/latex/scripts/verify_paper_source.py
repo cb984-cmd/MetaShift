@@ -85,7 +85,8 @@ REQUIRED_GENERATED_FIGURES = (
     "fig_interval_coverage.pdf",
     "fig_screening_sensitivity.pdf",
     "fig_external_evidence.pdf",
-    "fig_case_studies.pdf",
+    "fig_case_studies_complete.pdf",
+    "fig_case_studies_abstention.pdf",
     "fig_applicability_map.pdf",
     "fig_anchor_concentration.pdf",
 )
@@ -94,6 +95,7 @@ LEGACY_FIGURE_NAMES = (
     "fig_data_construction.pdf",
     "fig_event_flow.pdf",
     "fig_evidence_tiers.pdf",
+    "fig_case_studies.pdf",
 )
 REQUIRED_MACRO_USAGES = (
     r"\EvidenceTag",
@@ -297,6 +299,7 @@ def main() -> None:
         "generated/claim_value_manifest.json",
         "generated/case_study_manifest.json",
         "generated/synthetic_motivating_example_manifest.json",
+        "generated/figure_layout_qa.json",
         *(
             "generated/tables/" + generated_input.rsplit("/", 1)[-1] + ".tex"
             for generated_input in REQUIRED_GENERATED_INPUTS
@@ -312,7 +315,7 @@ def main() -> None:
                 "paths": missing_asset_manifest_records,
             }
         )
-    if asset_manifest.get("schema_version") != 3:
+    if asset_manifest.get("schema_version") != 4:
         violations.append(
             {
                 "issue": "asset_manifest_schema_version_mismatch",
@@ -326,9 +329,9 @@ def main() -> None:
                 "actual": asset_manifest.get("result_label"),
             }
         )
-    if len(outputs) < 36:
+    if len(outputs) < 38:
         violations.append(
-            {"issue": "insufficient_generated_assets", "actual": len(outputs), "minimum": 36}
+            {"issue": "insufficient_generated_assets", "actual": len(outputs), "minimum": 38}
         )
     for relative_path in sorted(required_asset_paths):
         path = LATEX_ROOT / relative_path

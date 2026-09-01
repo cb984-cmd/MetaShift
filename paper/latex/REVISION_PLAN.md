@@ -30,22 +30,25 @@ no-calibrated-real-interval boundaries.
 ## Current execution state
 
 The earlier 36-page PDF and its 13-check formal-compliance record are a
-superseded presentation baseline, not the current sign-off. The completed
-revision replaces generic or logically ambiguous graphics with data-derived,
-hash-pinned figures; records the exact inclusive window implementation and
-its 46-date calibration/pre overlap; and adds the external QA availability
-ladder and appendix-only 2023 descriptive concentration analysis.
+superseded presentation baseline, not the current sign-off. The active
+remediation replaces the prior visual gate with text-measured geometry and
+splits the crowded combined representative-case figure into separate complete
+comparison and abstention displays. It retains the data-derived, hash-pinned
+figures; exact inclusive-window implementation and its 46-date
+calibration/pre overlap; external-QA availability ladder; and appendix-only
+2023 descriptive concentration analysis.
 
-The clean final-mode source commit
-`bd4164242638f723eb6f5aec72c822507e098030` generates 36 presentation assets and maps 39
-quantitative claims to frozen evidence. Its new figure QA checks 16 figures
-for source hashes, vector structure, full-event accounting, input-footprint
+The current source generates 38 presentation assets and maps 39 quantitative
+claims through 70 frozen evidence-asset references. Its source QA checks 17
+figures for hashes, vector structure, full-event accounting, input-footprint
 isolation, nested-placebo arithmetic, interval construction, external
-availability counts, deterministic case reconstruction, and descriptive
-concentration arithmetic. Its final build produced a 41-page PDF with SHA-256
-`efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc`, zero
-overfull boxes, 14/14 formal-report checks, and 41 rendered review pages.
-Technical presentation work is complete.
+availability counts, deterministic case reconstruction, descriptive
+concentration arithmetic, and measured geometry. The geometry record requires
+node padding, independent-text separation, canvas containment, readable final
+print typography, legend/data separation, and grayscale contrast. A clean
+final build, 150/300-DPI page and crop inspection, final font audit, and
+formal-report validation remain pending. Technical presentation work is
+therefore in progress.
 
 No new data, analysis, tuning, taxonomy work, or evidence-release change is
 permitted during this revision. The CI-safe public-document checker writes to

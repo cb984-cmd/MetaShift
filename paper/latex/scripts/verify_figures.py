@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import re
+import zlib
 from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
@@ -22,6 +23,7 @@ SUMMARY_PATH = ROOT / "configs" / "current_evidence_summary_v2.json"
 WINDOW_CONFIG_PATH = LATEX_ROOT / "configs" / "window_protocol_audit_v1.json"
 EXTERNAL_CONFIG_PATH = LATEX_ROOT / "configs" / "external_evidence_rendering_v1.json"
 CASE_MANIFEST_PATH = LATEX_ROOT / "generated" / "case_study_manifest.json"
+LAYOUT_QA_PATH = LATEX_ROOT / "generated" / "figure_layout_qa.json"
 DEFAULT_OUTPUT = LATEX_ROOT / "generated" / "figure_qa_validation.json"
 
 REQUIRED_FIGURES = (
@@ -38,7 +40,8 @@ REQUIRED_FIGURES = (
     "fig_interval_coverage.pdf",
     "fig_screening_sensitivity.pdf",
     "fig_external_evidence.pdf",
-    "fig_case_studies.pdf",
+    "fig_case_studies_complete.pdf",
+    "fig_case_studies_abstention.pdf",
     "fig_applicability_map.pdf",
     "fig_anchor_concentration.pdf",
 )
@@ -94,7 +97,12 @@ REQUIRED_FIGURE_SOURCES = {
         "artifacts/external_document_review_summary.json",
         "artifacts/real_transition_88502_event_audit.csv",
     },
-    "fig_case_studies.pdf": {
+    "fig_case_studies_complete.pdf": {
+        "paper/latex/configs/case_study_rendering_v2.json",
+        "artifacts/real_transition_88101_method_results.csv",
+        "artifacts/time_placebo_summary.csv",
+    },
+    "fig_case_studies_abstention.pdf": {
         "paper/latex/configs/case_study_rendering_v2.json",
         "artifacts/real_transition_88101_method_results.csv",
         "artifacts/time_placebo_summary.csv",
@@ -130,6 +138,18 @@ def sha256(path: Path) -> str:
         for block in iter(lambda: source.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def decoded_pdf_stream_content(content: bytes) -> bytes:
+    """Inspect decoded content streams rather than random compressed byte runs."""
+
+    decoded = []
+    for stream in re.findall(rb"stream\r?\n(.*?)\r?\nendstream", content, re.DOTALL):
+        try:
+            decoded.append(zlib.decompress(stream))
+        except zlib.error:
+            continue
+    return b"\n".join(decoded).lower()
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -249,7 +269,10 @@ def main() -> None:
             figure_violations.append({"issue": "not_pdf", "figure": name})
         if re.search(rb"/Subtype\s*/Image\b", content):
             figure_violations.append({"issue": "embedded_raster", "figure": name})
-        if any(token in content.lower() for token in (b"todo", b"tbd", b"placeholder")):
+        decoded_content = decoded_pdf_stream_content(content)
+        if any(
+            token in decoded_content for token in (b"todo", b"tbd", b"placeholder")
+        ):
             figure_violations.append({"issue": "placeholder_text", "figure": name})
         if sha256(path) != record.get("sha256"):
             figure_violations.append({"issue": "manifest_hash_mismatch", "figure": name})
@@ -287,6 +310,77 @@ def main() -> None:
                     }
                 )
     checks.append(check("vector_figures_and_hashed_sources", figure_violations))
+
+    layout_violations: list[dict[str, Any]] = []
+    layout_qa = load_json(LAYOUT_QA_PATH)
+    if layout_qa.get("frozen_evidence") != summary.get("frozen_evidence"):
+        layout_violations.append({"issue": "layout_qa_frozen_evidence_mismatch"})
+    if layout_qa.get("result_label") != "stable_full_v2":
+        layout_violations.append({"issue": "layout_qa_result_label_mismatch"})
+    layout_records = {
+        str(record.get("figure")): record
+        for record in layout_qa.get("figures", [])
+        if isinstance(record, dict) and isinstance(record.get("figure"), str)
+    }
+    if (
+        layout_qa.get("schema_version") != 1
+        or layout_qa.get("required_figure_count") != len(REQUIRED_FIGURES)
+        or layout_qa.get("all_checks_passed") is not True
+    ):
+        layout_violations.append({"issue": "invalid_figure_layout_qa_header"})
+    for name in REQUIRED_FIGURES:
+        layout_record = layout_records.get(name)
+        manifest_layout = output_records.get(
+            f"generated/figures/{name}", {}
+        ).get("layout_qa")
+        if not isinstance(layout_record, dict):
+            layout_violations.append({"issue": "missing_layout_record", "figure": name})
+            continue
+        if layout_record != manifest_layout:
+            layout_violations.append(
+                {"issue": "layout_record_does_not_match_asset_manifest", "figure": name}
+            )
+        required_flags = (
+            "all_checks_passed",
+            "text_inside_nodes_passed",
+            "annotation_overlap_passed",
+            "canvas_boundary_passed",
+            "legend_data_overlap_passed",
+            "typography_passed",
+            "grayscale_passed",
+        )
+        failed_flags = [
+            flag for flag in required_flags if layout_record.get(flag) is not True
+        ]
+        if failed_flags:
+            layout_violations.append(
+                {
+                    "issue": "layout_check_failed",
+                    "figure": name,
+                    "checks": failed_flags,
+                }
+            )
+        if float(layout_record.get("final_print_width_pt", 0.0)) < 450.0:
+            layout_violations.append(
+                {"issue": "figure_print_width_too_small", "figure": name}
+            )
+        if float(layout_record.get("smallest_font_size_print_pt", 0.0)) < 8.5:
+            layout_violations.append(
+                {"issue": "figure_text_below_8_5pt", "figure": name}
+            )
+        visual_inspection = layout_record.get("visual_inspection")
+        if not isinstance(visual_inspection, dict) or visual_inspection.get(
+            "source_rendered_geometry"
+        ) != "passed":
+            layout_violations.append(
+                {"issue": "source_rendered_geometry_not_passed", "figure": name}
+            )
+    checks.append(
+        check(
+            "measured_typography_geometry_and_grayscale",
+            layout_violations,
+        )
+    )
 
     accounting_violations: list[dict[str, Any]] = []
     audit = pd.read_csv(ROOT / "artifacts" / "real_transition_88101_event_audit.csv")
@@ -387,9 +481,18 @@ def main() -> None:
                 "unavailable": unavailable,
             }
         )
-    case_record = output_records.get("generated/figures/fig_case_studies.pdf", {})
-    if "artifacts/time_placebo_scores.csv" in case_record.get("sources", []):
-        placebo_violations.append({"issue": "case_figure_uses_unfrozen_score_series"})
+    for case_figure in (
+        "fig_case_studies_complete.pdf",
+        "fig_case_studies_abstention.pdf",
+    ):
+        case_record = output_records.get(f"generated/figures/{case_figure}", {})
+        if "artifacts/time_placebo_scores.csv" in case_record.get("sources", []):
+            placebo_violations.append(
+                {
+                    "issue": "case_figure_uses_unfrozen_score_series",
+                    "figure": case_figure,
+                }
+            )
     checks.append(check("nested_placebo_availability", placebo_violations))
 
     interval_violations: list[dict[str, Any]] = []

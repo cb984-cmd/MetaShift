@@ -2,12 +2,12 @@
 
 ## Scope and status
 
-This file records the final technical review of the formal report built from
+This file records the active technical review of the formal report built from
 the frozen `v0.3.2-evidence-final` evidence release
 (`57d678ecabebff724d898abe626c9ef80538775b`). It reviews the report source,
-deterministic presentation assets, and canonical PDF. It is not a
-student-authorship statement, a Method Code taxonomy review, or a completed
-competition submission.
+deterministic presentation assets, and canonical PDF. It is not a completed
+technical sign-off, student-authorship statement, a Method Code taxonomy review,
+or a completed competition submission.
 
 ## Superseded presentation baseline
 
@@ -31,38 +31,31 @@ as the current report sign-off.
 | Intervals | Fixed-weight coverage under-covers and split-conformal coverage over-covers under the frozen synthetic design. | Real-event nested intervals are conditional diagnostics, not calibrated physical-bias confidence intervals. |
 | Reproducibility | Frozen evidence and the presentation layer are connected by SHA-256-verified manifests. | The two-environment statement applies only to the 34 designated core artifacts. |
 
-## Final technical-build record
+## Active stricter visual-review record
 
-- The clean final-mode source commit is
-  `bd4164242638f723eb6f5aec72c822507e098030`.
-- The canonical and named-build PDFs match at SHA-256
-  `efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc`; the
-  canonical PDF is **1,050,437** bytes and has **41** rendered pages.
-- The build reports **zero** overfull boxes. Its `pdffonts` audit covers the
-  final PDF plus 16 vector figures (**17** PDFs and **120** font records), with
-  zero Type 3 and zero unembedded fonts.
-- The figure validator passes **10/10** checks for **16** source-bound vector
-  figures. The asset-determinism validator finds matching hashes for **36**
-  generated outputs.
-- The claim ledger maps **39** claims to frozen evidence through **69**
-  evidence-asset references. Source and reference validation cover **33**
-  citations and **33** bibliography entries.
-- The formal-report compliance gate passes **14/14** checks. It estimates
-  **9,634** scientific source words and preserves `human_blocked` taxonomy
-  status.
+- The current source contains **17** source-bound vector figures and **38**
+  deterministic generated assets.
+- `generated/figure_layout_qa.json` records passing measured source geometry:
+  6-pt horizontal and 4-pt vertical node padding, 3-pt independent-text
+  separation, no overflow, no legend/data collision, minimum print typography,
+  and grayscale contrast.
+- The figure validator passes **11/11** checks for the current 17-figure set.
+  The claim ledger maps **39** claims through **70** evidence-asset references;
+  source and reference validation cover **33** citations and **33**
+  bibliography entries.
+- A clean final build, 150/300-DPI page and figure-crop review, final PDF/font
+  audit, and final formal-report gate remain required before technical sign-off.
+  The `human_blocked` taxonomy status is unchanged.
 
-## Final presentation review
+## Superseded 16-figure final-build snapshot
 
-All final-PDF pages have a nontrivial rendered image in the automated
-preflight. The technical visual review covered the cover, abstract, table of
-contents, definitions, figures and tables, real-event accounting, interval
-coverage, representative cases, limitations, reproducibility, references,
-appendix matrix, and disclosure template. It corrected and rechecked the
-donor-construction label collision and the nearly empty trailing page. The
-revised layout uses landscape pages for the two wide audit matrices and
-preserves the human-only disclosure template. Table, figure, and case-study
-ordering is source-order consistent after float barriers at the results
-boundary.
+The following values are historical only and do not sign off the current
+17-figure source: clean source commit
+`bd4164242638f723eb6f5aec72c822507e098030`; PDF SHA-256
+`efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc`; 41
+pages; 36 assets; 10/10 figure checks; 69 evidence-asset references; 14/14
+formal-report checks; and zero Type 3 or unembedded fonts. The strict
+remediation must independently reproduce the final PDF and visual evidence.
 
 ## Required follow-up
 

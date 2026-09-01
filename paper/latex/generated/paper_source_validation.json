@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-01T02:24:51.270193+00:00",
+  "generated_at_utc": "2026-09-01T03:04:19.262103+00:00",
   "source_files": [
     "main.tex",
     "metadata.tex",
@@ -22,7 +22,7 @@
   ],
   "citation_count": 33,
   "bibliography_entry_count": 33,
-  "asset_output_count": 36,
+  "asset_output_count": 38,
   "all_checks_passed": true,
   "violations": []
 }

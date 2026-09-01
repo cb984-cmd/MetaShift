@@ -5,18 +5,24 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shutil
 import struct
 import subprocess
 import sys
+import tempfile
+import xml.etree.ElementTree as ET
 from datetime import UTC, datetime
 from pathlib import Path
+
+from matplotlib import image as mpl_image
 
 
 LATEX_ROOT = Path(__file__).resolve().parents[1]
 ROOT = LATEX_ROOT.parents[1]
 BUILD_DIR = LATEX_ROOT / "build"
 RENDER_DIR = LATEX_ROOT / "rendered_pages"
+QA_CROP_DIR = LATEX_ROOT / "qa_page_crops"
 PDF_PATH = BUILD_DIR / "main.pdf"
 NAMED_BUILD_PDF = BUILD_DIR / "MetaShift_Bench_Yau_2026.pdf"
 FINAL_PDF = LATEX_ROOT / "MetaShift_Bench_Yau_2026.pdf"
@@ -24,6 +30,8 @@ REPORT_PATH = LATEX_ROOT / "generated" / "build_report.json"
 CLEAN_BUILD_PATH = LATEX_ROOT / "generated" / "clean_build_record.json"
 VISUAL_PREFLIGHT_PATH = LATEX_ROOT / "generated" / "visual_preflight.json"
 FONT_AUDIT_PATH = LATEX_ROOT / "generated" / "font_audit.json"
+FIGURE_LAYOUT_QA_PATH = LATEX_ROOT / "generated" / "figure_layout_qa.json"
+FINAL_FIGURE_QA_PATH = LATEX_ROOT / "generated" / "final_figure_placement_qa.json"
 KNOWN_BUILD_OUTPUTS = (
     "main.aux",
     "main.bbl",
@@ -38,6 +46,35 @@ KNOWN_BUILD_OUTPUTS = (
     "MetaShift_Bench_Yau_2026.pdf",
 )
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+FINAL_PRINT_WIDTH_PT = 453.54
+FIGURE_CAPTION_MARKERS = {
+    "fig_stable_synthetic_example.pdf": ("dataderived", "stablewindow", "illustration"),
+    "fig_audit_pipeline.pdf": ("metashiftbench", "evidence", "workflow"),
+    "fig_donor_construction.pdf": ("distinct", "physicaldonor", "construction"),
+    "fig_window_protocol.pdf": ("inclusive", "datewindow", "implementation"),
+    "fig_split_integrity.pdf": ("leakageresistant", "stablecase", "split"),
+    "fig_synthetic_metrics.pdf": ("heldout", "stableregime", "synthetic", "comparison"),
+    "fig_perturbation_metrics.pdf": ("maintext", "perturbation", "comparison"),
+    "fig_paired_bootstrap.pdf": ("pairedeventcluster", "bootstrap", "intervals"),
+    "fig_event_accounting.pdf": ("hierarchical", "accounting", "anchors"),
+    "fig_placebos.pdf": ("timeplacebo", "availability", "distribution"),
+    "fig_interval_coverage.pdf": ("empirical", "heldout", "coverage", "width"),
+    "fig_screening_sensitivity.pdf": ("predeclared", "evidencetier", "sensitivity"),
+    "fig_external_evidence.pdf": ("contextualevidence", "ladders", "unavailable"),
+    "fig_case_studies_complete.pdf": (
+        "deterministically",
+        "selected",
+        "complete",
+        "representative",
+    ),
+    "fig_case_studies_abstention.pdf": (
+        "deterministic",
+        "representative",
+        "abstention",
+    ),
+    "fig_applicability_map.pdf": ("applicability", "failuremode", "map"),
+    "fig_anchor_concentration.pdf": ("appendixonly", "descriptive", "concentration"),
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -45,7 +82,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--skip-final-compliance",
         action="store_true",
-        help="Build and record diagnostics without invoking the final compliance handoff.",
+        help=(
+            "Compatibility option allowed only with --staged-only; final builds always "
+            "run final compliance before publishing the canonical PDF."
+        ),
     )
     parser.add_argument(
         "--staged-only",
@@ -56,6 +96,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     return parser.parse_args()
+
+
+def validate_build_options(args: argparse.Namespace) -> None:
+    if args.skip_final_compliance and not args.staged_only:
+        raise ValueError(
+            "--skip-final-compliance is only permitted with --staged-only; "
+            "a final build must pass final compliance before publication."
+        )
 
 
 def run(command: list[str], cwd: Path) -> None:
@@ -111,6 +159,13 @@ def clean_known_build_outputs() -> list[str]:
     for page in RENDER_DIR.glob("page-*.png"):
         page.unlink()
         removed.append(str(page.relative_to(ROOT)).replace("\\", "/"))
+    for dpi in (150, 300):
+        for directory_name in ("pages", "crops"):
+            directory = QA_CROP_DIR / f"{directory_name}-{dpi}"
+            directory.mkdir(parents=True, exist_ok=True)
+            for page in directory.glob("*.png"):
+                page.unlink()
+                removed.append(str(page.relative_to(ROOT)).replace("\\", "/"))
     return removed
 
 
@@ -133,11 +188,282 @@ def pdf_info(pdfinfo: str, path: Path) -> dict[str, str]:
     }
 
 
+def pdf_page_size_points(pdfinfo: str, path: Path) -> tuple[float, float]:
+    page_size = pdf_info(pdfinfo, path).get("Page size", "")
+    match = re.search(r"([0-9.]+)\s+x\s+([0-9.]+)\s+pts", page_size)
+    if match is None:
+        raise RuntimeError(f"Could not determine PDF page size for {path}: {page_size}")
+    return float(match.group(1)), float(match.group(2))
+
+
+def render_pages(
+    pdftoppm: str, pdf: Path, directory: Path, dpi: int
+) -> list[tuple[Path, int, int]]:
+    directory.mkdir(parents=True, exist_ok=True)
+    run([pdftoppm, "-png", "-r", str(dpi), str(pdf), str(directory / "page")], LATEX_ROOT)
+    pages = sorted(directory.glob("page-*.png"))
+    if not pages:
+        raise RuntimeError(f"PDF rendering produced no pages at {dpi} DPI.")
+    records = []
+    for page in pages:
+        width, height = png_dimensions(page)
+        if width < 500 or height < 500 or page.stat().st_size == 0:
+            raise RuntimeError(f"Rendered page failed visual preflight: {page}")
+        records.append((page, width, height))
+    return records
+
+
+def _normalized_word(value: str) -> str:
+    return "".join(character.lower() for character in value if character.isalnum())
+
+
+def extract_caption_locations(
+    pdftotext: str, pdf: Path
+) -> dict[str, dict[str, float | int]]:
+    """Locate each final-PDF caption from Poppler word coordinates."""
+
+    output = subprocess.check_output(
+        [pdftotext, "-bbox", str(pdf), "-"],
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    try:
+        root = ET.fromstring(output)
+    except ET.ParseError as error:
+        raise RuntimeError("Could not parse pdftotext bounding-box output.") from error
+    pages = [element for element in root.iter() if element.tag.rsplit("}", 1)[-1] == "page"]
+    matches: dict[str, dict[str, float | int]] = {}
+    for page_number, page in enumerate(pages, start=1):
+        words = [
+            (
+                _normalized_word(word.text or ""),
+                float(word.attrib["yMin"]),
+                float(word.attrib["yMax"]),
+            )
+            for word in page.iter()
+            if word.tag.rsplit("}", 1)[-1] == "word" and (word.text or "").strip()
+        ]
+        normalized_words = [word[0] for word in words]
+        for figure_name, markers in FIGURE_CAPTION_MARKERS.items():
+            if figure_name in matches:
+                continue
+            for index, (token, y_min, y_max) in enumerate(words):
+                if token != "figure":
+                    continue
+                nearby = set(normalized_words[index + 1 : index + 56])
+                if all(marker in nearby for marker in markers):
+                    matches[figure_name] = {
+                        "page": page_number,
+                        "caption_y_min_pt": y_min,
+                        "caption_y_max_pt": y_max,
+                        "page_width_pt": float(page.attrib["width"]),
+                        "page_height_pt": float(page.attrib["height"]),
+                    }
+                    break
+    missing = sorted(set(FIGURE_CAPTION_MARKERS) - set(matches))
+    if missing:
+        raise RuntimeError(
+            "Could not locate final-PDF captions for: " + ", ".join(missing)
+        )
+    return matches
+
+
+def crop_figure_from_page(
+    source: Path,
+    destination: Path,
+    *,
+    page_width_pt: float,
+    page_height_pt: float,
+    caption_y_min_pt: float,
+    figure_width_pt: float,
+    figure_height_pt: float,
+) -> tuple[int, int]:
+    image = mpl_image.imread(source)
+    image_height, image_width = image.shape[:2]
+    left_pt = max(0.0, (page_width_pt - figure_width_pt) / 2.0 - 18.0)
+    right_pt = min(page_width_pt, (page_width_pt + figure_width_pt) / 2.0 + 18.0)
+    top_pt = max(0.0, caption_y_min_pt - figure_height_pt - 14.0)
+    bottom_pt = min(page_height_pt, caption_y_min_pt + 54.0)
+    left = max(0, int(round(left_pt / page_width_pt * image_width)))
+    right = min(image_width, int(round(right_pt / page_width_pt * image_width)))
+    top = max(0, int(round(top_pt / page_height_pt * image_height)))
+    bottom = min(image_height, int(round(bottom_pt / page_height_pt * image_height)))
+    if right - left < 200 or bottom - top < 100:
+        raise RuntimeError(
+            f"Final-page crop for {source.name} is unexpectedly small: "
+            f"{right - left}x{bottom - top} pixels."
+        )
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    mpl_image.imsave(destination, image[top:bottom, left:right])
+    if not destination.is_file() or destination.stat().st_size == 0:
+        raise RuntimeError(f"Failed to write final-page crop: {destination}")
+    return png_dimensions(destination)
+
+
+def write_final_figure_placement_qa(
+    pdftoppm: str, pdftotext: str, pdfinfo: str, pdf: Path
+) -> dict[str, object]:
+    if not FIGURE_LAYOUT_QA_PATH.is_file():
+        raise FileNotFoundError(f"Missing source geometry record: {FIGURE_LAYOUT_QA_PATH}")
+    layout_qa = json.loads(FIGURE_LAYOUT_QA_PATH.read_text(encoding="utf-8"))
+    layout_records = {
+        str(record.get("figure")): record
+        for record in layout_qa.get("figures", [])
+        if isinstance(record, dict) and isinstance(record.get("figure"), str)
+    }
+    missing_layouts = sorted(set(FIGURE_CAPTION_MARKERS) - set(layout_records))
+    if missing_layouts:
+        raise RuntimeError(
+            "Missing source geometry records for: " + ", ".join(missing_layouts)
+        )
+    caption_locations = extract_caption_locations(pdftotext, pdf)
+    rendered_by_dpi = {
+        dpi: render_pages(pdftoppm, pdf, QA_CROP_DIR / f"pages-{dpi}", dpi)
+        for dpi in (150, 300)
+    }
+    figure_records: list[dict[str, object]] = []
+    failures: list[dict[str, object]] = []
+    for figure_name in FIGURE_CAPTION_MARKERS:
+        location = caption_locations[figure_name]
+        source_figure = LATEX_ROOT / "generated" / "figures" / figure_name
+        source_width_pt, source_height_pt = pdf_page_size_points(pdfinfo, source_figure)
+        printed_width_pt = float(layout_records[figure_name]["final_print_width_pt"])
+        printed_height_pt = source_height_pt / source_width_pt * printed_width_pt
+        page_number = int(location["page"])
+        dpi_records: dict[str, object] = {}
+        for dpi, pages in rendered_by_dpi.items():
+            if page_number > len(pages):
+                failures.append(
+                    {
+                        "issue": "caption_page_outside_rendered_page_range",
+                        "figure": figure_name,
+                        "dpi": dpi,
+                    }
+                )
+                continue
+            page_path, _, _ = pages[page_number - 1]
+            crop_path = (
+                QA_CROP_DIR
+                / f"crops-{dpi}"
+                / f"{Path(figure_name).stem}-page-{page_number:02d}.png"
+            )
+            crop_width, crop_height = crop_figure_from_page(
+                page_path,
+                crop_path,
+                page_width_pt=float(location["page_width_pt"]),
+                page_height_pt=float(location["page_height_pt"]),
+                caption_y_min_pt=float(location["caption_y_min_pt"]),
+                figure_width_pt=printed_width_pt,
+                figure_height_pt=printed_height_pt,
+            )
+            dpi_records[str(dpi)] = {
+                "path": str(crop_path.relative_to(ROOT)).replace("\\", "/"),
+                "width_px": crop_width,
+                "height_px": crop_height,
+                "bytes": crop_path.stat().st_size,
+            }
+        figure_records.append(
+            {
+                "figure": figure_name,
+                "page": page_number,
+                "caption_y_min_pt": round(float(location["caption_y_min_pt"]), 2),
+                "final_print_width_pt": round(printed_width_pt, 2),
+                "final_print_height_pt": round(printed_height_pt, 2),
+                "source_layout_checks_passed": layout_records[figure_name].get(
+                    "all_checks_passed"
+                )
+                is True,
+                "page_crops": dpi_records,
+                "visual_inspection": "150_and_300_dpi_crops_rendered",
+            }
+        )
+    expected_crops = len(FIGURE_CAPTION_MARKERS) * 2
+    actual_crops = sum(len(record["page_crops"]) for record in figure_records)
+    report = {
+        "schema_version": 1,
+        "source_pdf": str(pdf.relative_to(ROOT)).replace("\\", "/"),
+        "source_pdf_sha256": sha256(pdf),
+        "required_figure_count": len(FIGURE_CAPTION_MARKERS),
+        "crop_dpi": [150, 300],
+        "rendered_page_counts": {
+            str(dpi): len(pages) for dpi, pages in rendered_by_dpi.items()
+        },
+        "expected_crop_count": expected_crops,
+        "actual_crop_count": actual_crops,
+        "figures": figure_records,
+        "visual_overflow_failures": len(failures),
+        "failures": failures,
+        "all_checks_passed": (
+            not failures
+            and actual_crops == expected_crops
+            and all(bool(record["source_layout_checks_passed"]) for record in figure_records)
+        ),
+    }
+    write_json(FINAL_FIGURE_QA_PATH, report)
+    return report
+
+
+def copy_pdf(source: Path, destination: Path) -> None:
+    try:
+        shutil.copy2(source, destination)
+    except PermissionError as error:
+        raise RuntimeError(
+            "The canonical final PDF is locked by another application. Close the "
+            "viewer for paper\\latex\\MetaShift_Bench_Yau_2026.pdf and rebuild."
+        ) from error
+
+
+def publish_verified_pdf(candidate: Path) -> None:
+    """Atomically publish a candidate only after its staged compliance check passed."""
+
+    candidate_hash = sha256(candidate)
+    previous_pdf: Path | None = None
+    previous_hash = ""
+    if FINAL_PDF.is_file():
+        with tempfile.NamedTemporaryFile(
+            dir=BUILD_DIR,
+            prefix=".previous_canonical_",
+            suffix=".pdf",
+            delete=False,
+        ) as temporary:
+            previous_pdf = Path(temporary.name)
+        copy_pdf(FINAL_PDF, previous_pdf)
+        previous_hash = sha256(previous_pdf)
+
+    published = False
+    try:
+        copy_pdf(candidate, FINAL_PDF)
+        published = True
+        if sha256(FINAL_PDF) != candidate_hash:
+            raise RuntimeError("Canonical final PDF differs from the verified candidate.")
+        run([sys.executable, "scripts/verify_formal_report.py"], LATEX_ROOT)
+    except Exception:
+        if published:
+            if not FINAL_PDF.is_file() or sha256(FINAL_PDF) != candidate_hash:
+                raise RuntimeError(
+                    "Cannot safely restore the previous canonical PDF because it changed "
+                    "after the candidate publication attempt."
+                )
+            if previous_pdf is None:
+                FINAL_PDF.unlink()
+            else:
+                copy_pdf(previous_pdf, FINAL_PDF)
+                if sha256(FINAL_PDF) != previous_hash:
+                    raise RuntimeError("Restored canonical PDF does not match its backup.")
+        raise
+    finally:
+        if previous_pdf is not None and previous_pdf.is_file():
+            previous_pdf.unlink()
+
+
 def main() -> None:
     args = parse_args()
+    validate_build_options(args)
     pdflatex = require_command("pdflatex")
     bibtex = require_command("bibtex")
     pdftoppm = require_command("pdftoppm")
+    pdftotext = require_command("pdftotext")
     pdfinfo = require_command("pdfinfo")
     source_commit = git_commit()
     source_worktree_status = git_worktree_status()
@@ -203,32 +529,13 @@ def main() -> None:
             + ", ".join(unresolved)
         )
 
-    shutil.copy2(PDF_PATH, NAMED_BUILD_PDF)
+    copy_pdf(PDF_PATH, NAMED_BUILD_PDF)
     staged_only = args.staged_only
-    if not staged_only:
-        try:
-            shutil.copy2(PDF_PATH, FINAL_PDF)
-        except PermissionError as error:
-            raise RuntimeError(
-                "The canonical final PDF is locked by another application. Close the "
-                "viewer for paper\\latex\\MetaShift_Bench_Yau_2026.pdf and rebuild."
-            ) from error
-        if sha256(NAMED_BUILD_PDF) != sha256(FINAL_PDF):
-            raise RuntimeError("Named build PDF and final PDF differ.")
-    audited_pdf = NAMED_BUILD_PDF if staged_only else FINAL_PDF
+    audited_pdf = NAMED_BUILD_PDF
 
-    run(
-        [pdftoppm, "-png", "-r", "144", str(audited_pdf), str(RENDER_DIR / "page")],
-        LATEX_ROOT,
-    )
-    pages = sorted(RENDER_DIR.glob("page-*.png"))
-    if not pages:
-        raise RuntimeError("PDF page rendering did not produce page images.")
+    rendered_pages = render_pages(pdftoppm, audited_pdf, RENDER_DIR, 144)
     page_records = []
-    for page in pages:
-        width, height = png_dimensions(page)
-        if width < 500 or height < 500 or page.stat().st_size == 0:
-            raise RuntimeError(f"Rendered page failed visual preflight: {page}")
+    for page, width, height in rendered_pages:
         page_records.append(
             {
                 "page": page.name,
@@ -237,6 +544,11 @@ def main() -> None:
                 "height_px": height,
             }
         )
+    final_figure_qa = write_final_figure_placement_qa(
+        pdftoppm, pdftotext, pdfinfo, audited_pdf
+    )
+    if final_figure_qa.get("all_checks_passed") is not True:
+        raise RuntimeError("Final-page figure crop QA did not pass.")
     write_json(
         VISUAL_PREFLIGHT_PATH,
         {
@@ -247,11 +559,18 @@ def main() -> None:
             "page_count": len(page_records),
             "all_pages_rendered_and_nontrivial": True,
             "pages": page_records,
+            "high_resolution_page_renders": final_figure_qa["rendered_page_counts"],
+            "final_figure_placement_qa": str(
+                FINAL_FIGURE_QA_PATH.relative_to(ROOT)
+            ).replace("\\", "/"),
         },
     )
-    font_command = [sys.executable, "scripts/verify_pdf_fonts.py"]
-    if staged_only:
-        font_command.extend(["--pdf", "build/MetaShift_Bench_Yau_2026.pdf"])
+    font_command = [
+        sys.executable,
+        "scripts/verify_pdf_fonts.py",
+        "--pdf",
+        "build/MetaShift_Bench_Yau_2026.pdf",
+    ]
     run(font_command, LATEX_ROOT)
 
     metadata = pdf_info(pdfinfo, audited_pdf)
@@ -262,6 +581,8 @@ def main() -> None:
         "source_worktree_status_at_start": source_worktree_status,
         "build_mode": "staged_only" if staged_only else "final",
         "build_pdf": str(NAMED_BUILD_PDF.relative_to(ROOT)).replace("\\", "/"),
+        "candidate_pdf": str(NAMED_BUILD_PDF.relative_to(ROOT)).replace("\\", "/"),
+        "candidate_pdf_sha256": sha256(NAMED_BUILD_PDF),
         "final_pdf": (
             None
             if staged_only
@@ -270,7 +591,7 @@ def main() -> None:
         "pdf_bytes": audited_pdf.stat().st_size,
         "pdf_sha256": sha256(audited_pdf),
         "build_pdf_sha256": sha256(NAMED_BUILD_PDF),
-        "rendered_page_count": len(pages),
+        "rendered_page_count": len(rendered_pages),
         "overfull_hbox_warnings": overfull,
         "pdf_metadata": {
             "Title": metadata.get("Title", ""),
@@ -280,6 +601,9 @@ def main() -> None:
         "frozen_evidence_summary": "configs/current_evidence_summary_v2.json",
         "clean_build_record": str(CLEAN_BUILD_PATH.relative_to(ROOT)).replace("\\", "/"),
         "visual_preflight": str(VISUAL_PREFLIGHT_PATH.relative_to(ROOT)).replace("\\", "/"),
+        "final_figure_placement_qa": str(
+            FINAL_FIGURE_QA_PATH.relative_to(ROOT)
+        ).replace("\\", "/"),
         "font_audit": str(FONT_AUDIT_PATH.relative_to(ROOT)).replace("\\", "/"),
         "build_commands": [
             "generate_paper_assets --write",
@@ -289,14 +613,31 @@ def main() -> None:
             "verify_references",
             "verify_paper_asset_determinism",
             "pdflatex, bibtex, pdflatex, pdflatex",
-            "pdftoppm -png -r 144",
+            "pdftoppm -png -r 144, 150, 300",
+            "pdftotext -bbox for figure-page crop locations",
             "verify_pdf_fonts",
         ]
-        + ([] if staged_only else ["verify_formal_report"]),
+        + (
+            []
+            if staged_only
+            else [
+                "verify_formal_report --candidate-pdf build/MetaShift_Bench_Yau_2026.pdf",
+                "verify_formal_report after transactional canonical publication",
+            ]
+        ),
     }
     write_json(REPORT_PATH, report)
-    if not args.skip_final_compliance and not staged_only:
-        run([sys.executable, "scripts/verify_formal_report.py"], LATEX_ROOT)
+    if not staged_only:
+        run(
+            [
+                sys.executable,
+                "scripts/verify_formal_report.py",
+                "--candidate-pdf",
+                "build/MetaShift_Bench_Yau_2026.pdf",
+            ],
+            LATEX_ROOT,
+        )
+        publish_verified_pdf(NAMED_BUILD_PDF)
     print(json.dumps(report, indent=2))
 
 

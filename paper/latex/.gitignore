@@ -1,5 +1,6 @@
 build/
 rendered_pages/
+qa_page_crops/
 *.aux
 *.bbl
 *.blg

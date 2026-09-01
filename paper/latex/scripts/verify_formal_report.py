@@ -34,6 +34,8 @@ CLEAN_BUILD_PATH = LATEX_ROOT / "generated" / "clean_build_record.json"
 VISUAL_PREFLIGHT_PATH = LATEX_ROOT / "generated" / "visual_preflight.json"
 FONT_AUDIT_PATH = LATEX_ROOT / "generated" / "font_audit.json"
 FIGURE_QA_PATH = LATEX_ROOT / "generated" / "figure_qa_validation.json"
+FIGURE_LAYOUT_QA_PATH = LATEX_ROOT / "generated" / "figure_layout_qa.json"
+FINAL_FIGURE_QA_PATH = LATEX_ROOT / "generated" / "final_figure_placement_qa.json"
 FINAL_PDF_PATH = LATEX_ROOT / "MetaShift_Bench_Yau_2026.pdf"
 NAMED_BUILD_PDF_PATH = LATEX_ROOT / "build" / "MetaShift_Bench_Yau_2026.pdf"
 RENDER_DIR = LATEX_ROOT / "rendered_pages"
@@ -49,6 +51,14 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=DEFAULT_OUTPUT,
         help="Report path, relative to the LaTeX project by default.",
+    )
+    parser.add_argument(
+        "--candidate-pdf",
+        type=Path,
+        help=(
+            "Verify a staged final-build candidate before it replaces the canonical "
+            "PDF. The build report must identify the same candidate."
+        ),
     )
     return parser.parse_args()
 
@@ -119,6 +129,10 @@ def source_word_count() -> int:
 def main() -> None:
     args = parse_args()
     output_path = resolve_from_latex(args.output)
+    candidate_pdf = (
+        resolve_from_latex(args.candidate_pdf) if args.candidate_pdf is not None else None
+    )
+    audited_pdf = candidate_pdf if candidate_pdf is not None else FINAL_PDF_PATH
     record_violations: list[dict[str, object]] = []
     summary = load_json(SUMMARY_PATH, record_violations, "frozen_evidence_summary")
     assets = load_json(ASSET_MANIFEST_PATH, record_violations, "asset_manifest")
@@ -135,6 +149,12 @@ def main() -> None:
     )
     font_audit = load_json(FONT_AUDIT_PATH, record_violations, "font_audit")
     figure_qa = load_json(FIGURE_QA_PATH, record_violations, "figure_qa_validation")
+    figure_layout_qa = load_json(
+        FIGURE_LAYOUT_QA_PATH, record_violations, "figure_layout_qa"
+    )
+    final_figure_qa = load_json(
+        FINAL_FIGURE_QA_PATH, record_violations, "final_figure_placement_qa"
+    )
 
     checks: list[dict[str, object]] = []
     main_source = read_text(MAIN_PATH)
@@ -259,23 +279,38 @@ def main() -> None:
     add_check(
         checks,
         "generated_asset_determinism",
-        assets.get("schema_version") == 3
-        and len(assets.get("outputs", [])) >= 32
+        assets.get("schema_version") == 4
+        and len(assets.get("outputs", [])) >= 38
         and asset_determinism.get("all_hashes_match") is True
-        and asset_determinism.get("output_count", 0) >= 32,
-        "Two independent paper-asset generations have identical hashes for 36 or more outputs.",
+        and asset_determinism.get("output_count", 0) >= 38,
+        "Two independent paper-asset generations have identical hashes for 38 or more outputs.",
     )
 
     figure_qa_ok = (
         figure_qa.get("all_checks_passed") is True
-        and figure_qa.get("required_figure_count") == 16
-        and len(figure_qa.get("checks", [])) >= 10
+        and figure_qa.get("required_figure_count") == 17
+        and len(figure_qa.get("checks", [])) >= 11
     )
     add_check(
         checks,
         "figure_logical_and_vector_validation",
         figure_qa_ok,
-        "All 16 figures pass source-hash, vector, accounting, isolation, interval, and display-contract checks.",
+        "All 17 figures pass source-hash, vector, accounting, isolation, interval, and display-contract checks.",
+    )
+
+    final_figure_qa_ok = (
+        figure_layout_qa.get("all_checks_passed") is True
+        and figure_layout_qa.get("required_figure_count") == 17
+        and final_figure_qa.get("all_checks_passed") is True
+        and final_figure_qa.get("required_figure_count") == 17
+        and final_figure_qa.get("source_pdf_sha256") == build.get("pdf_sha256")
+        and final_figure_qa.get("crop_dpi") == [150, 300]
+    )
+    add_check(
+        checks,
+        "final_print_geometry_and_crop_review",
+        final_figure_qa_ok,
+        "All 17 figures have measured source geometry plus 150- and 300-DPI final-page crop records.",
     )
 
     normalized_sections = normalized(all_sections)
@@ -294,19 +329,32 @@ def main() -> None:
     )
 
     pages = sorted(RENDER_DIR.glob("page-*.png"))
-    pdf_hash = sha256(FINAL_PDF_PATH) if FINAL_PDF_PATH.is_file() else ""
+    pdf_hash = sha256(audited_pdf) if audited_pdf.is_file() else ""
     named_pdf_hash = sha256(NAMED_BUILD_PDF_PATH) if NAMED_BUILD_PDF_PATH.is_file() else ""
+    candidate_path = (
+        str(candidate_pdf.relative_to(ROOT)).replace("\\", "/")
+        if candidate_pdf is not None and candidate_pdf.is_file()
+        else ""
+    )
+    candidate_contract_ok = (
+        candidate_pdf is None
+        or (
+            candidate_pdf == NAMED_BUILD_PDF_PATH
+            and build.get("candidate_pdf") == candidate_path
+            and build.get("candidate_pdf_sha256") == pdf_hash
+        )
+    )
     pdf_ok = (
-        FINAL_PDF_PATH.is_file()
-        and FINAL_PDF_PATH.stat().st_size > 100_000
-        and FINAL_PDF_PATH.read_bytes()[:5] == b"%PDF-"
+        audited_pdf.is_file()
+        and audited_pdf.stat().st_size > 100_000
+        and audited_pdf.read_bytes()[:5] == b"%PDF-"
         and NAMED_BUILD_PDF_PATH.is_file()
         and pdf_hash == named_pdf_hash
         and build.get("final_pdf") == "paper/latex/MetaShift_Bench_Yau_2026.pdf"
         and build.get("build_pdf") == "paper/latex/build/MetaShift_Bench_Yau_2026.pdf"
         and build.get("build_mode") == "final"
         and build.get("source_worktree_clean_at_start") is True
-        and build.get("pdf_bytes") == FINAL_PDF_PATH.stat().st_size
+        and build.get("pdf_bytes") == audited_pdf.stat().st_size
         and build.get("pdf_sha256") == pdf_hash
         and build.get("build_pdf_sha256") == named_pdf_hash
         and build.get("rendered_page_count") == len(pages)
@@ -315,6 +363,7 @@ def main() -> None:
         and build.get("pdf_metadata", {}).get("Title")
         == "MetaShift-Bench: A Metadata-Anchored Audit Benchmark for PM2.5 Method-Transition Discontinuities"
         and build.get("pdf_metadata", {}).get("Author") == "Human completion required"
+        and candidate_contract_ok
     )
     add_check(
         checks,
@@ -356,7 +405,7 @@ def main() -> None:
 
     font_ok = (
         font_audit.get("all_checks_passed") is True
-        and font_audit.get("pdf_count", 0) >= 17
+        and font_audit.get("pdf_count", 0) >= 18
         and font_audit.get("font_count", 0) > 0
         and build.get("font_audit") == "paper/latex/generated/font_audit.json"
     )
@@ -394,10 +443,12 @@ def main() -> None:
     report = {
         "generated_at_utc": datetime.now(UTC).isoformat(),
         "formal_report": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
+        "verification_mode": "candidate" if candidate_pdf is not None else "canonical",
+        "verified_pdf": str(audited_pdf.relative_to(ROOT)).replace("\\", "/"),
         "frozen_evidence": frozen,
         "source_word_count_estimate": word_count,
         "compiled_pdf": {
-            "bytes": FINAL_PDF_PATH.stat().st_size if FINAL_PDF_PATH.is_file() else 0,
+            "bytes": audited_pdf.stat().st_size if audited_pdf.is_file() else 0,
             "sha256": pdf_hash,
             "rendered_page_count": len(pages),
         },

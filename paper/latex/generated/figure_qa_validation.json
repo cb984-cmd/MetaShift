@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-01T02:24:51.001788+00:00",
+  "generated_at_utc": "2026-09-01T03:05:22.749222+00:00",
   "frozen_evidence": {
     "tag": "v0.3.2-evidence-final",
     "commit": "57d678ecabebff724d898abe626c9ef80538775b",
@@ -10,7 +10,7 @@
     ]
   },
   "result_label": "stable_full_v2",
-  "required_figure_count": 16,
+  "required_figure_count": 17,
   "checks": [
     {
       "name": "frozen_figure_manifest_identity",
@@ -19,6 +19,11 @@
     },
     {
       "name": "vector_figures_and_hashed_sources",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "name": "measured_typography_geometry_and_grayscale",
       "passed": true,
       "violations": []
     },

@@ -14,10 +14,12 @@ python scripts\build_paper.py
 python scripts\verify_formal_report.py
 ```
 
-`generated/` contains reproducible tables, vector figures, evidence macros,
-and manifests. `build/` and `rendered_pages/` are local compilation outputs.
-The final PDF is copied to `MetaShift_Bench_Yau_2026.pdf` only after a
-successful build.
+`generated/` contains reproducible tables, 17 vector figures, evidence macros,
+and manifests. `generated/figure_layout_qa.json` records measured node padding,
+text separation, canvas boundaries, final print width, typography, and
+grayscale checks. `build/`, `rendered_pages/`, and the 150/300-DPI
+`qa_page_crops/` are local compilation outputs. The final PDF is copied to
+`MetaShift_Bench_Yau_2026.pdf` only after a successful build.
 
 Do not replace `HUMAN COMPLETION REQUIRED` identity, contribution, advisor,
 AI-use, or attestation fields with invented content. The Method Code taxonomy

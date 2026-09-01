@@ -22,6 +22,7 @@ GENERATED = LATEX_ROOT / "generated"
 TABLES = GENERATED / "tables"
 FIGURES = GENERATED / "figures"
 MANIFEST_PATH = GENERATED / "asset_manifest.json"
+LAYOUT_QA_PATH = GENERATED / "figure_layout_qa.json"
 SUMMARY_PATH = ROOT / "configs" / "current_evidence_summary_v2.json"
 CASE_RENDERING_CONFIG_PATH = LATEX_ROOT / "configs" / "case_study_rendering_v2.json"
 SYNTHETIC_EXAMPLE_CONFIG_PATH = (
@@ -51,7 +52,7 @@ from metashift.counterfactual import (
 )
 from metashift.synthetic import PerturbationKind, inject_perturbation
 
-from figure_factory import create_revised_figures
+from figure_factory import create_revised_figures, inspect_figure_layout
 
 REQUIRED_ARTIFACTS = (
     "artifacts/data_gate/summary.json",
@@ -1965,10 +1966,10 @@ def create_tables(
                 ]
             )
     perturbation_lines = [
-        r"{\scriptsize",
-        r"\setlength{\tabcolsep}{2pt}",
-        r"\renewcommand{\arraystretch}{0.88}",
-        r"\begin{longtable}{@{}p{0.22\linewidth}p{0.17\linewidth}rrrr@{}}",
+        r"{\footnotesize",
+        r"\setlength{\tabcolsep}{3pt}",
+        r"\renewcommand{\arraystretch}{1.03}",
+        r"\begin{longtable}{@{}p{0.20\linewidth}p{0.20\linewidth}rrrr@{}}",
         r"\caption{Perturbation-family-specific held-out synthetic metrics for all methods.}"
         r"\label{tab:perturbation-metrics}\\",
         r"\toprule",
@@ -2104,6 +2105,18 @@ def create_tables(
             return "N/A"
         return "[" + format_decimal(lower, 5) + ", " + format_decimal(upper, 5) + "]"
 
+    def display_case_anchor(anchor_id: str) -> str:
+        parts = anchor_id.split("-")
+        if len(parts) != 7:
+            return r"\texttt{" + latex_escape(anchor_id) + "}"
+        return (
+            r"\texttt{"
+            + latex_escape("-".join(parts[:3]))
+            + r"}\newline\texttt{"
+            + latex_escape("-".join(parts[3:]))
+            + "}"
+        )
+
     case_rows = []
     for case in cases:
         group_label = (
@@ -2111,27 +2124,36 @@ def create_tables(
             if case["case_group"].startswith("Inconclusive")
             else case["case_group"]
         )
+        if case["audit_status"] == "complete":
+            diagnostic = (
+                "Effect "
+                + metric_display(case["log_effect"], 5)
+                + "; fixed "
+                + interval_text(case["fixed_interval"])
+                + "; nested "
+                + interval_text(case["nested_interval"])
+            )
+            disposition = "Complete"
+        else:
+            diagnostic = "No counterfactual, effect, or interval is imputed."
+            disposition = "Donor insufficient"
         case_rows.append(
             [
                 group_label,
-                r"\texttt{" + latex_escape(case["anchor_id"]) + "}",
-                latex_escape(case["audit_status"]),
-                metric_display(case["log_effect"], 5),
-                interval_text(case["fixed_interval"]),
-                interval_text(case["nested_interval"]),
+                display_case_anchor(str(case["anchor_id"])),
+                disposition,
+                diagnostic,
             ]
         )
     tables[TABLES / "table_case_studies.tex"] = latex_table(
         "case-studies",
         "Deterministically selected representative audit cases.",
-        "llrrrr",
+        r"p{0.16\linewidth}p{0.23\linewidth}p{0.17\linewidth}p{0.34\linewidth}",
         [
-            "Case type",
+            "Case",
             "Metadata anchor",
-            "Audit disposition",
-            "Log effect",
-            "Fixed interval",
-            "Nested interval",
+            "Disposition",
+            "Saved diagnostic summary",
         ],
         case_rows,
         "Supported and not-supported cases minimize absolute distance to their "
@@ -2139,8 +2161,7 @@ def create_tables(
         "inconclusive case is the lexicographically first donor-insufficient "
         "anchor and deliberately has no counterfactual or interval. Intervals are "
         "diagnostic, not calibrated physical-bias confidence intervals.",
-        size=r"\scriptsize",
-        scale_to_width=True,
+        size=r"\footnotesize",
     )
     anchor_dates = pd.to_datetime(audit["anchor_date"], errors="raise")
     anchors_2023 = audit.loc[anchor_dates.dt.year == 2023].copy()
@@ -2179,40 +2200,51 @@ def create_tables(
     top_state_count = int(
         (anchors_2023["target_state"].astype(str) == top_state).sum()
     )
-    concentration_rows = [
-        [
-            "Anchors dated in 2023",
-            f"{len(anchors_2023)}/{len(audit)} ({percent(len(anchors_2023) / len(audit), 1)})",
-        ],
-    ]
+    def abbreviated_reported_name(name: str) -> str:
+        model = "T640X" if "T640X" in name else "T640" if "T640" in name else "reported method"
+        status = (
+            "alignment-enabled"
+            if "Network Data Alignment enabled" in name
+            else "baseline reported name"
+        )
+        return f"{model}, {status}"
+
+    concentration_rows = []
     for (old_code, new_code, old_name, new_name), count in top_pairs.items():
         concentration_rows.append(
             [
+                latex_escape(old_code),
+                latex_escape(new_code),
                 latex_escape(
-                    f"{old_code} -> {new_code}: {old_name} -> {new_name}"
+                    abbreviated_reported_name(str(old_name))
+                    + " -> "
+                    + abbreviated_reported_name(str(new_name))
                 ),
                 str(int(count)),
             ]
         )
-    concentration_rows.extend(
-        [
-            [
-                "Top two named code-pair transitions among 2023 anchors",
-                f"{paired_count}/{len(anchors_2023)} ({percent(paired_count / len(anchors_2023), 1)})",
-            ],
-            ["Largest single 2023 date", f"{top_date.date().isoformat()}: {top_date_count}"],
-            ["Largest 2023 state-code subtotal", f"{top_state}: {top_state_count}"],
-        ]
-    )
     tables[TABLES / "table_anchor_concentration.tex"] = latex_table(
         "anchor-concentration",
         "Appendix-only temporal concentration of reported 88101 metadata anchors.",
-        r"p{0.76\linewidth}r",
-        ["Descriptive observation", "Count"],
+        r"rrp{0.52\linewidth}r",
+        ["Old code", "New code", "Abbreviated reported metadata change", "Count"],
         concentration_rows,
-        "Method Code names are reported AQS metadata. The clustering is descriptive and "
-        "does not establish a hardware, agency, policy, data-processing, or administrative cause.",
-        size=r"\scriptsize",
+        "Of "
+        + str(len(anchors_2023))
+        + " 2023 anchors, these two pairs account for "
+        + str(paired_count)
+        + " ("
+        + percent(paired_count / len(anchors_2023), 1)
+        + "). The largest date is "
+        + top_date.date().isoformat()
+        + " ("
+        + str(top_date_count)
+        + "), and the largest state-code subtotal is "
+        + str(top_state)
+        + " ("
+        + str(top_state_count)
+        + "). Descriptions abbreviate reported AQS Method Name strings; they do not establish a cause.",
+        size=r"\footnotesize",
     )
     return tables
 
@@ -2220,11 +2252,18 @@ def create_tables(
 def save_figure(
     figure: plt.Figure, path: Path, title: str, sources: list[str], outputs: list[dict[str, Any]]
 ) -> None:
+    layout_qa = inspect_figure_layout(figure, path.name)
+    if not layout_qa["all_checks_passed"]:
+        raise RuntimeError(
+            "Figure layout QA failed for "
+            + path.name
+            + ": "
+            + json.dumps(layout_qa["violations"], sort_keys=True)
+        )
     path.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(
         path,
         format="pdf",
-        bbox_inches="tight",
         metadata={
             "Title": title,
             "Creator": "MetaShift-Bench formal-paper asset generator",
@@ -2238,6 +2277,7 @@ def save_figure(
             "path": str(path.relative_to(LATEX_ROOT)).replace("\\", "/"),
             "kind": "vector_figure",
             "sources": sources,
+            "layout_qa": layout_qa,
         }
     )
 
@@ -3120,6 +3160,9 @@ def write_assets() -> None:
     GENERATED.mkdir(parents=True, exist_ok=True)
     TABLES.mkdir(parents=True, exist_ok=True)
     FIGURES.mkdir(parents=True, exist_ok=True)
+    legacy_case_figure = FIGURES / "fig_case_studies.pdf"
+    if legacy_case_figure.is_file():
+        legacy_case_figure.unlink()
     outputs: list[dict[str, Any]] = []
 
     macros_path = GENERATED / "evidence_macros.tex"
@@ -3237,9 +3280,44 @@ def write_assets() -> None:
         format_decimal,
         outputs,
     )
+    figure_layouts = [
+        output["layout_qa"]
+        for output in outputs
+        if output.get("kind") == "vector_figure"
+        and isinstance(output.get("layout_qa"), dict)
+    ]
+    if len(figure_layouts) != 17:
+        raise RuntimeError(
+            "Expected 17 current formal-report figures, found "
+            f"{len(figure_layouts)} layout records."
+        )
+    write_text(
+        LAYOUT_QA_PATH,
+        json.dumps(
+            {
+                "schema_version": 1,
+                "frozen_evidence": summary["frozen_evidence"],
+                "result_label": summary["result_label"],
+                "required_figure_count": 17,
+                "figures": figure_layouts,
+                "all_checks_passed": all(
+                    bool(record["all_checks_passed"]) for record in figure_layouts
+                ),
+            },
+            indent=2,
+        )
+        + "\n",
+    )
+    outputs.append(
+        {
+            "path": str(LAYOUT_QA_PATH.relative_to(LATEX_ROOT)).replace("\\", "/"),
+            "kind": "figure_layout_qa",
+            "sources": ["configs/current_evidence_summary_v2.json"],
+        }
+    )
     add_output_hashes(outputs)
     manifest = {
-        "schema_version": 3,
+        "schema_version": 4,
         "generator": "paper/latex/scripts/generate_paper_assets.py",
         "frozen_evidence": summary["frozen_evidence"],
         "result_label": summary["result_label"],

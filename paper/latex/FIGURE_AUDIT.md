@@ -62,11 +62,23 @@ arithmetically correct; and no figure contains a placeholder, a causal
 instrument assertion, a hidden truncated coverage axis, or a claim unsupported
 by its sources.
 
-**Status: baseline audit complete; the revised 16-figure set passed all 10
-machine checks and final rendered-page review. The clean-source final build at
-`bd4164242638f723eb6f5aec72c822507e098030` produced a 41-page PDF with SHA-256
-`efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc`, zero
-overfull boxes, and a 17-PDF/120-font audit with zero Type 3 or unembedded
-fonts. The donor-construction, event-accounting, representative-case, and
-QA-ladder layouts were rechecked after final rendering. This technical
-presentation sign-off does not complete any human-only submission item.**
+## Stricter measured layout gate
+
+The earlier 16-figure sign-off is superseded for the current visual acceptance
+standard. The current source generates 17 figures after splitting the complete
+representative cases from the abstention display. Before the revised PDF can be
+signed off, every figure must have:
+
+1. a text-measured node layout with at least 6-pt horizontal and 4-pt vertical
+   internal padding;
+2. at least 3 pt between independent important text boxes, no text beyond the
+   figure canvas, and no legend over a data region;
+3. normal labels at least 8.5 pt, node labels at least 9 pt, and panel titles
+   at least 10 pt at final print width;
+4. a grayscale contrast check; and
+5. a 150-DPI and 300-DPI final-page crop record.
+
+**Status: source-layout preflight is passing for 17 figures, but the previous
+41-page PDF and its 16-figure visual sign-off are historical only. A clean
+final build and rendered-page inspection remain required. This presentation
+work does not complete any human-only submission item.**

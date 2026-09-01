@@ -18,25 +18,18 @@ any equipment-level hypothesis.}
 \end{figure}
 
 \FloatBarrier
-\begingroup
+\clearpage
+\begin{table}[p]
+\centering
 \small
-\setlength{\LTleft}{0pt}
-\setlength{\LTright}{0pt}
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.06}
-\begin{longtable}{@{}p{0.14\linewidth}p{0.31\linewidth}p{0.24\linewidth}p{0.22\linewidth}@{}}
 \caption{Threats to validity, mitigation, residual consequence, and needed
 future evidence.}\label{tab:threats-validity}\\
+\begin{tabular}{@{}p{0.14\textwidth}p{0.33\textwidth}p{0.25\textwidth}p{0.23\textwidth}@{}}
 \toprule
 Validity class & Risk and current mitigation & Residual consequence & Needed future evidence \\
 \midrule
-\endfirsthead
-\toprule
-Validity class & Risk and current mitigation & Residual consequence & Needed future evidence \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
 Construct &
 \textbf{Risk.} A Method Code or POC may not encode a physical device, calibration, siting, or maintenance event.\newline
 \textbf{Mitigation.} Treat records as metadata anchors; prohibit fault, replacement, bias, and correction claims. &
@@ -60,8 +53,10 @@ External &
 \textbf{Mitigation.} Separate 88502 pipeline, complete event accounting, and parameter-specific reporting. &
 Results do not establish performance for other pollutants, countries, networks, eras, or perturbation mechanisms. &
 Independent publicly reproducible benchmarks with precommitted footprint-disjoint evaluation. \\
-\end{longtable}
-\endgroup
+\bottomrule
+\end{tabular}
+\end{table}
+\clearpage
 
 \subsection{Construct validity}
 

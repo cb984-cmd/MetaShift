@@ -1487,6 +1487,100 @@ def _synthetic_metrics_figure(
     )
 
 
+def _cross_site_scope_metrics_figure(
+    data: dict[str, Any],
+    figures: Path,
+    save_figure: SaveFigure,
+    format_decimal: FormatDecimal,
+    outputs: list[dict[str, Any]],
+) -> None:
+    """Contrast cross-site and target-only scope ranking on frozen held-out data."""
+
+    aggregate = (
+        data["metrics"]
+        .loc[data["metrics"]["perturbation_family"].isna()]
+        .set_index("method")
+    )
+    cross_site_methods = list(METHOD_ORDER)
+    target_only_methods = [
+        method for method in ALL_METHOD_ORDER if method not in cross_site_methods
+    ]
+    methods = [*cross_site_methods, *target_only_methods]
+    positions = np.arange(len(methods))
+    figure, axes = plt.subplots(1, 2, figsize=(6.3, 4.45), sharey=True)
+    specifications = (
+        ("average_precision", "AUPRC", "Higher is better"),
+        ("macro_f1", "Macro-F1", "Higher is better"),
+    )
+    for axis, (column, title, direction) in zip(axes, specifications, strict=True):
+        axis.axhspan(-0.5, len(cross_site_methods) - 0.5, color="#EFF6FF", zorder=0)
+        axis.axhspan(
+            len(cross_site_methods) - 0.5,
+            len(methods) - 0.5,
+            color="#F8FAFC",
+            zorder=0,
+        )
+        axis.axvline(0.5, color="#64748B", linestyle="--", linewidth=0.9, zorder=1)
+        for position, method in zip(positions, methods, strict=True):
+            value = float(aggregate.loc[method, column])
+            color = (
+                METHOD_COLORS[method]
+                if method in cross_site_methods
+                else "#94A3B8"
+            )
+            axis.scatter(
+                value,
+                position,
+                color=color,
+                marker=METHOD_MARKERS[method],
+                s=43,
+                edgecolor="#111827",
+                linewidth=0.45,
+                zorder=3,
+            )
+            axis.text(
+                min(value + 0.022, 1.005),
+                position,
+                format_decimal(value, 3),
+                va="center",
+                fontsize=9,
+                zorder=4,
+            )
+        axis.axhline(
+            len(cross_site_methods) - 0.5,
+            color="#94A3B8",
+            linewidth=0.8,
+            zorder=2,
+        )
+        axis.set_xlim(0.45, 1.03)
+        axis.set_xlabel("Held-out value")
+        axis.set_title(f"{title}\n{direction}", fontweight="bold")
+        _finalize_axes(axis)
+    axes[0].set_yticks(positions, [METHOD_LABELS[method] for method in methods])
+    axes[0].invert_yaxis()
+    figure.suptitle(
+        "Cross-site information separates the constructed scope task",
+        fontsize=11,
+        y=0.985,
+    )
+    figure.text(
+        0.5,
+        0.015,
+        "Dashed line: chance-level ranking. Blue band: cross-site methods; gray band: target-only methods.",
+        ha="center",
+        va="bottom",
+        fontsize=9,
+    )
+    figure.subplots_adjust(left=0.31, right=0.98, top=0.83, bottom=0.16, wspace=0.42)
+    save_figure(
+        figure,
+        figures / "fig_cross_site_scope_metrics.pdf",
+        "Cross-site versus target-only scope-ranking metrics",
+        ["artifacts/stable_synthetic_stable_full_v2_metrics.csv"],
+        outputs,
+    )
+
+
 def _perturbation_figure(
     data: dict[str, Any],
     figures: Path,
@@ -2710,6 +2804,9 @@ def create_revised_figures(
     _workflow_figure(data, figures, save_figure, outputs)
     _split_integrity_figure(data, figures, save_figure, outputs)
     _synthetic_metrics_figure(data, figures, save_figure, format_decimal, outputs)
+    _cross_site_scope_metrics_figure(
+        data, figures, save_figure, format_decimal, outputs
+    )
     _perturbation_figure(data, figures, save_figure, format_decimal, outputs)
     _paired_bootstrap_figure(data, figures, save_figure, format_decimal, outputs)
     _event_accounting_figure(summary, data, figures, save_figure, outputs)

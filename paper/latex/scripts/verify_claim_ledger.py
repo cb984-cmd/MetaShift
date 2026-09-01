@@ -47,11 +47,11 @@ MANUSCRIPT_LOCATIONS = {
     ),
     "Results RQ1": (
         "sections/results.tex",
-        r"\subsection{RQ3: Cross-site comparison helps, but MetaShift has no supported aggregate advantage}",
+        r"\subsection{RQ3: Cross-site comparison separates the constructed task, but estimator superiority is not supported}",
     ),
     "Results RQ2": (
         "sections/results.tex",
-        r"\subsection{RQ3: Cross-site comparison helps, but MetaShift has no supported aggregate advantage}",
+        r"\subsection{RQ3: Cross-site comparison separates the constructed task, but estimator superiority is not supported}",
     ),
     "Results RQ3": (
         "sections/results.tex",

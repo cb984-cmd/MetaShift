@@ -49,6 +49,10 @@ FIGURE_INPUT_FILES = {
     "fig_v05_risk_coverage.png": ("v05_policy_metrics.csv",),
     "fig_v05_certificate_validity.png": ("v05_certificate_validity.csv",),
     "fig_v05_failure_mode_map.png": ("v05_failure_mode_map.csv",),
+    "fig_v05_scope_boundary.png": (
+        "v05_scope_pair_results.csv",
+        "v05_failure_mode_map.csv",
+    ),
 }
 
 
@@ -423,7 +427,7 @@ def render_certificate_validity_figure(certificate: pd.DataFrame) -> plt.Figure:
             "Pair coverage",
             "Observed scope error",
             "Envelope violations",
-            "Oracle recovery",
+            "Reference recovery",
         ],
         colWidths=[0.14, 0.17, 0.25, 0.25, 0.19],
         cellLoc="center",
@@ -499,6 +503,116 @@ def render_failure_mode_figure(failure: pd.DataFrame) -> plt.Figure:
         colorbar = figure.colorbar(image, ax=axis, label=colorbar_label)
         colorbar.ax.yaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
         colorbar.update_ticks()
+    return figure
+
+
+def render_scope_boundary_figure(
+    pairs: pd.DataFrame, failure: pd.DataFrame
+) -> plt.Figure:
+    """Combine the preregistered margin, coverage, and error boundary views."""
+
+    q_order = ["q0.00", "q0.25", "q0.50", "q0.75", "q1.00"]
+    h_order = ["h0.04", "h0.08", "h0.12", "h0.20"]
+    pair_rows = pairs.loc[pairs["split"] == "evaluation"].copy()
+    pair_rows["normalized_margin"] = (
+        pair_rows["q_effective_min"] * pair_rows["h_min"]
+    ) / (pair_rows["local_error_bound"] + pair_rows["shared_error_bound"])
+    margin = pair_rows.pivot_table(
+        index="signal_h_name",
+        columns="nominal_q_name",
+        values="normalized_margin",
+        aggfunc="median",
+    ).reindex(index=h_order, columns=q_order)
+    certificate_coverage = pair_rows.pivot_table(
+        index="signal_h_name",
+        columns="nominal_q_name",
+        values="certificate_answered",
+        aggfunc="mean",
+    ).reindex(index=h_order, columns=q_order)
+
+    failure_rows = failure.loc[failure["split"] == "evaluation"]
+    forced_error_grouped = failure_rows.groupby(
+        ["signal_h_name", "nominal_q_name"], sort=False
+    ).agg(
+        forced_errors=("comparative_forced_error_events", "sum"),
+        total_pairs=("total_pair_rows", "sum"),
+    )
+    forced_error = (
+        forced_error_grouped["forced_errors"] / (2 * forced_error_grouped["total_pairs"])
+    ).unstack().reindex(index=h_order, columns=q_order)
+
+    panels = (
+        (
+            margin,
+            "Median margin ratio\n(>1 certifies separation)",
+            "RdYlGn",
+            0.0,
+            max(1.0, float(np.nanmax(margin.to_numpy(dtype=float)))),
+            _compact_decimal,
+        ),
+        (
+            certificate_coverage,
+            "Certificate pair coverage (%)",
+            "viridis",
+            0.0,
+            1.0,
+            lambda value: f"{100.0 * float(value):.0f}",
+        ),
+        (
+            forced_error,
+            "Forced comparative error (%)",
+            "magma_r",
+            0.0,
+            0.5,
+            lambda value: f"{100.0 * float(value):.0f}",
+        ),
+    )
+    figure, axes = plt.subplots(1, 3, figsize=(9.0, 4.1))
+    for index, (axis, (values, title, cmap, vmin, vmax, formatter)) in enumerate(
+        zip(axes, panels, strict=True)
+    ):
+        axis.imshow(
+            values.to_numpy(dtype=float),
+            cmap=cmap,
+            vmin=vmin,
+            vmax=vmax,
+            aspect="auto",
+        )
+        axis.set(
+            title=title,
+            xticks=np.arange(len(q_order)),
+            xticklabels=["0%", "25%", "50%", "75%", "100%"],
+            yticks=np.arange(len(h_order)),
+            xlabel="Donor participation $q$",
+        )
+        axis.tick_params(axis="x", labelsize=10)
+        axis.tick_params(axis="y", labelsize=10)
+        axis.title.set_fontsize(11)
+        axis.xaxis.label.set_fontsize(10.5)
+        if index == 0:
+            axis.set_yticklabels(["0.04", "0.08", "0.12", "0.20"])
+            axis.set_ylabel("Signal strength $H$", fontsize=10.5)
+        else:
+            axis.set_yticklabels([])
+        for row, h_name in enumerate(h_order):
+            for column, q_name in enumerate(q_order):
+                value = float(values.loc[h_name, q_name])
+                if index == 0:
+                    text_color = "white" if value < 0.55 else "#111827"
+                elif index == 1:
+                    text_color = "white" if value < 0.45 else "#111827"
+                else:
+                    text_color = "white" if value > 0.30 else "#111827"
+                axis.text(
+                    column,
+                    row,
+                    formatter(value),
+                    ha="center",
+                    va="center",
+                    fontsize=11,
+                    color=text_color,
+                )
+    figure.subplots_adjust(left=0.09, right=0.99, top=0.85, bottom=0.18, wspace=0.44)
     return figure
 
 
@@ -820,16 +934,16 @@ def render_certificate_table(certificate: pd.DataFrame) -> str:
             r"\begin{table}[!ht]",
             r"\centering",
             r"\caption{Certificate behavior by nominal donor participation on held-out",
-            r"target-fixed pairs. Oracle-region recovery is the share of predeclared",
-            r"simulation-information-oracle answerable pairs recovered by the",
+            r"target-fixed pairs. Reference-region recovery is the share of the",
+            r"predeclared simulation-information reference region recovered by the",
             r"certificate; it is undefined at $q=0$ because that negative-control",
-            r"stratum has no oracle-answerable pairs. Across these strata, 0 observed",
+            r"stratum has no reference-region pairs. Across these strata, 0 observed",
             r"errors means 0 of 179,994 answered scope arms, not population risk.}",
             r"\label{tab:v05-certificate}",
             r"\small",
             r"\begin{tabular}{lrrr}",
             r"\toprule",
-            r"Participation & Pair coverage & Observed error & Oracle-region recovery \\",
+            r"Participation & Pair coverage & Observed error & Reference recovery \\",
             r"\midrule",
             *rows,
             r"\bottomrule",
@@ -1218,6 +1332,9 @@ def build_assets() -> dict[str, Any]:
         ),
         "fig_v05_failure_mode_map.png": lambda: render_failure_mode_figure(
             results["failure"]
+        ),
+        "fig_v05_scope_boundary.png": lambda: render_scope_boundary_figure(
+            results["pairs"], results["failure"]
         ),
     }
     if set(figure_builders) != set(FIGURE_INPUT_FILES):

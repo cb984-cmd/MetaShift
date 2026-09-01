@@ -3,11 +3,9 @@
 ## Scope and current status
 
 This is a technical review of the answerability-first report source. The prior
-v0.3.2-only PDF sign-off is superseded. A clean final build from
-`61186839aefa3b7780134cf7936c5424dd39b1e6` produced a 57-page canonical PDF
-(1,569,094 bytes; SHA-256
-`399334fee9a19954e4b37c6f5d84aa2efa048899a5816ab7fe061415f62797c5`) and
-passed all 18 formal-compliance checks.
+v0.3.2-only PDF sign-off is superseded. The generated clean-build and
+formal-compliance records are the authoritative receipts for the current
+canonical PDF's page count, bytes, SHA-256, and release checks.
 
 The real-data release remains `v0.3.2-evidence-final`; the independent
 synthetic scope release is `v0.5-answerability-frontier`.
@@ -18,7 +16,7 @@ synthetic scope release is `v0.5-answerability-frontier`.
 | v0.5 target-fixed design | Scope labels vary while paired target arrays remain identical. | The conclusion applies to the frozen synthetic comparative channel. |
 | Target-only policies | At the reported finite-policy tolerances, target-only has no positive qualifying frontier coverage. | This is not a population-optimality or unrestricted-policy theorem. |
 | Comparative frontier | The held-out comparative frontier becomes nonzero at the prespecified 0.20 tolerance. | It is an observed finite-policy envelope, not a calibrated deployment guarantee. |
-| Structural certificate | The declared certificate has high synthetic-oracle efficiency and retains a nonpositive-margin abstention region. | It uses synthetic design information and does not prove real-world identifiability. |
+| Structural certificate | The declared certificate has high simulation-information reference-region recovery and retains a nonpositive-margin abstention region. | It uses synthetic design information and does not prove real-world identifiability. |
 | Endpoint and stress evidence | v0.4 remains an exact endpoint sanity check and raw-scale leakage-bound evidence. | It is not the primary v0.5 continuum result. |
 | Real anchors | v0.3.2 documents deployment coverage, missingness, and abstention behavior. | It supplies no labeled real-world scope accuracy or physical-fault validation. |
 | Method comparison | The held-out results do not support a general MetaShift superiority claim over standard synthetic control. | Negative results remain in the report. |
@@ -31,11 +29,10 @@ synthetic scope release is `v0.5-answerability-frontier`.
 - `V05_CLAIM_EVIDENCE_LEDGER.csv` has 12 v0.5 claims. Each maps to immutable evidence,
   receipt-bound generated assets, and an exact assertion in its declared
   manuscript file; it rejects manually written protected frozen result values.
-- Presentation source includes 17 legacy vector figures and five receipt-bound
-  v0.5 raster figures. The clean final build regenerated the combined
-  22-figure record with all 44 required 150/300-DPI crops; page-level visual
-  review found no clipping, collision, missing placement, or unreadable v0.5
-  label.
+- Presentation source includes 18 legacy vector figures and six receipt-bound
+  v0.5 raster figures. The clean final build regenerates the combined
+  24-figure record with 150/300-DPI crops and source-layout checks for every
+  figure.
 - The taxonomy status remains `human_blocked`. It blocks only taxonomy-based
   mechanism interpretation, not the synthetic scope theory or frozen v0.5
   evidence.

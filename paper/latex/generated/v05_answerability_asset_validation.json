@@ -26,7 +26,7 @@
     {
       "name": "raster_figure_resolution_and_layout",
       "passed": true,
-      "detail": "All five receipt-bound presentation figures meet the print-resolution and source-layout contract."
+      "detail": "All six receipt-bound presentation figures meet the print-resolution and source-layout contract."
     },
     {
       "name": "expected_frozen_result_values_rendered",

@@ -10,9 +10,9 @@
       "sha256": "cb735a022657524cdc6f1c5bd376a929c4a790d214cfa347da8a12e36768b0ce"
     },
     {
-      "bytes": 109746,
+      "bytes": 110100,
       "path": "generated/figures/fig_v05_certificate_validity.png",
-      "sha256": "4413ee2bc4b94d2f8c36ef37414888e854e00eaffc25755a9fe281a4a3fdf1e1"
+      "sha256": "77abcb8c60d7398f8ad41710e28e1e435e481e92fdd1f3835bc190ecff1c829e"
     },
     {
       "bytes": 237250,
@@ -25,14 +25,19 @@
       "sha256": "f11a07ae41bd3bbbd1623957d7f2b3e9ccbc8e8838e2eb0dcc7a17fa980384db"
     },
     {
+      "bytes": 212378,
+      "path": "generated/figures/fig_v05_scope_boundary.png",
+      "sha256": "d660f4b19e55ffcf3d7ccd4baa404f75e58a4529bde6b047606fda6b6d264181"
+    },
+    {
       "bytes": 237262,
       "path": "generated/figures/fig_v05_structural_margin.png",
       "sha256": "0e4408350412ee44a95214c9b9fa9965b233e0990ffcc290fc4ca4c37208c183"
     },
     {
-      "bytes": 862,
+      "bytes": 857,
       "path": "generated/tables/table_v05_certificate.tex",
-      "sha256": "23d2e80c133dc771172632e33ff7f02784ce1f66580de467505d5eda955c30bd"
+      "sha256": "9fdc31ab8a9c34270b29b4a56730a6564defa1c62415673e733e9e25bab2c65c"
     },
     {
       "bytes": 1013,
@@ -55,9 +60,9 @@
       "sha256": "4dadb6af4a3991972573080daecb6b05490ffba38634514a21372911188fa48c"
     },
     {
-      "bytes": 4516,
+      "bytes": 5523,
       "path": "generated/v05_figure_layout_qa.json",
-      "sha256": "d9a921d9922673a4d7849e6d7faa6d29771fce005a47b071c9ae29a1ab7c9fca"
+      "sha256": "75b1a037dd5ca2b226f349e354a40e785235f4a07560f31ee903ceef95be484c"
     }
   ],
   "presentation_figure_inputs": {
@@ -87,6 +92,18 @@
         "bytes": 27402,
         "path": "artifacts/v05_answerability_frontier/v05_policy_metrics.csv",
         "sha256": "9996a3a51cb57cbbf53867b6a74a8d9e3c93ce760862c7d03761ef81ece3b6ea"
+      }
+    ],
+    "fig_v05_scope_boundary.png": [
+      {
+        "bytes": 392650382,
+        "path": "artifacts/v05_answerability_frontier/v05_scope_pair_results.csv",
+        "sha256": "36649ebe9d1b91927a95766a5757a715cb53f657295fa3471ccf83303c225ede"
+      },
+      {
+        "bytes": 401049,
+        "path": "artifacts/v05_answerability_frontier/v05_failure_mode_map.csv",
+        "sha256": "69ba2d10d5281eec04cd77e1d2d8a7a52f7dbfcd51b5655a4f509e82f6b3bdc1"
       }
     ],
     "fig_v05_structural_margin.png": [

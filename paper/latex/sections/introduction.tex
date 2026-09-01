@@ -22,6 +22,12 @@ We call this \emph{information-constrained selective scope auditing}. Here,
 declared comparison network. It must be separated from detection and mechanism
 (Table~\ref{tab:three-questions}).
 
+The same information structure appears whenever a focal stream is compared with
+a reference network, including sensor operations, platform telemetry, and
+climate-record homogenization. This report evaluates neither those deployments
+nor their mechanisms; it studies the transferable question of what a specified
+observation channel can justify.
+
 \begin{table}[!ht]
 \centering
 \caption{Three distinct questions raised by a changing monitored time series.}
@@ -46,6 +52,11 @@ That distinction makes the real-data audit a test of comparison availability
 and principled abstention, rather than a source of unobserved scope or
 mechanism labels.
 
+A scope decision has practical consequences even when its mechanism remains
+unknown: it determines whether an investigator should prioritize target-specific
+records or a network-wide explanation. An unsupported local/shared label can
+therefore send a limited technical review toward the wrong evidence.
+
 MetaShift-Bench supplies a deliberately target-fixed synthetic test of the
 scope question. Every matched pair has exactly identical target observations in
 the local and shared arms; only donor participation changes. Consequently, a
@@ -68,9 +79,9 @@ The report asks five linked research questions:
   comparative channels achieve at prespecified error tolerances?
   \item \textbf{RQ2:} When does a structural certificate answer or abstain
   along the partial-scope boundary?
-  \item \textbf{RQ3:} How do cross-site and single-series methods compare, and
-  does MetaShift have a confidence-supported advantage over standard synthetic
-  control?
+  \item \textbf{RQ3:} Can cross-site methods separate the constructed scope
+  task from single-series methods, and is any MetaShift advantage over standard
+  synthetic control supported?
   \item \textbf{RQ4:} How often can a qualified cross-site audit be formed in
   the AQS deployment inventory, and what dispositions result?
   \item \textbf{RQ5:} What do interval calibration and contextual evidence
@@ -79,18 +90,21 @@ The report asks five linked research questions:
 
 Our contributions are fourfold:
 \begin{enumerate}[label=\textbf{C\arabic*.}]
-  \item \textbf{Formulate} a target-fixed benchmark that measures selective
-  local-versus-shared scope answerability by observation channel.
-  \item \textbf{Derive} an availability-normalized partial-scope residual
-  identity and a bounded interval-separation condition for structural
-  abstention.
-  \item \textbf{Evaluate} predeclared confidence and certificate policies on a
-  complete adverse-condition grid, retaining failures and identity controls.
-  \item \textbf{Audit} an independent AQS deployment inventory to measure
-  comparison availability, diagnostic dispositions, and the limits of
-  metadata-based interpretation.
+  \item \textbf{Introduce a new evaluation problem:} selective scope
+  answerability by observation channel, rather than unconditional scope
+  classification or estimator ranking.
+  \item \textbf{Construct paired information worlds} that hold every target
+  observation fixed while varying only donor-side scope information, including
+  observationally identical negative controls.
+  \item \textbf{Derive construction-specific theory:} an
+  availability-normalized partial-scope residual identity and a bounded
+  interval-separation condition for structural abstention.
+  \item \textbf{Audit the evaluation end to end} with predeclared policies, a
+  complete adverse-condition grid, retained failure cells, and an independent
+  AQS availability inventory.
 \end{enumerate}
 
 The framework builds on established selective classification, information
 refinement, change-point detection, and synthetic control. Its contribution is
-their bounded joint evaluation for an explicitly target-fixed scope question.
+their bounded joint evaluation for an explicitly target-fixed cross-site scope
+question.

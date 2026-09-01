@@ -29,6 +29,7 @@ EXPECTED_OUTPUTS = {
     "generated/figures/fig_v05_risk_coverage.png",
     "generated/figures/fig_v05_certificate_validity.png",
     "generated/figures/fig_v05_failure_mode_map.png",
+    "generated/figures/fig_v05_scope_boundary.png",
     "generated/v05_figure_layout_qa.json",
 }
 PRESENTATION_SOURCE_TYPE = "deterministic_receipt_bound_csv_presentation"
@@ -46,6 +47,10 @@ EXPECTED_FIGURE_INPUTS = {
     "fig_v05_risk_coverage.png": ("v05_policy_metrics.csv",),
     "fig_v05_certificate_validity.png": ("v05_certificate_validity.csv",),
     "fig_v05_failure_mode_map.png": ("v05_failure_mode_map.csv",),
+    "fig_v05_scope_boundary.png": (
+        "v05_scope_pair_results.csv",
+        "v05_failure_mode_map.csv",
+    ),
 }
 
 
@@ -231,7 +236,7 @@ def main() -> None:
         check(
             "raster_figure_resolution_and_layout",
             layout_ok,
-            "All five receipt-bound presentation figures meet the print-resolution and source-layout contract.",
+            "All six receipt-bound presentation figures meet the print-resolution and source-layout contract.",
         )
     )
 

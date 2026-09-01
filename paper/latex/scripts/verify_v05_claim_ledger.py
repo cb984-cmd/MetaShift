@@ -45,11 +45,11 @@ MANUSCRIPT_LOCATIONS = {
     ),
     "Results RQ1": (
         "sections/results.tex",
-        r"\subsection{RQ1: Comparative information expands answerability only at a relaxed tolerance}",
+        r"\subsection{RQ1: Comparative information expands the finite-policy frontier only at a relaxed tolerance}",
     ),
     "Results RQ2": (
         "sections/results.tex",
-        r"\subsection{RQ2: The structural certificate delineates a retained abstention boundary}",
+        r"\subsection{RQ2: Structural separation maps a retained abstention boundary}",
     ),
     "Reproducibility": (
         "sections/reproducibility.tex",

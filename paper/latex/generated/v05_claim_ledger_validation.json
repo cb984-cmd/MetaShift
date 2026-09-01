@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-09-01T22:39:22.616056+00:00",
+  "generated_at_utc": "2026-09-01T23:35:05.445076+00:00",
   "ledger": "paper/latex/V05_CLAIM_EVIDENCE_LEDGER.csv",
   "claim_count": 12,
-  "asset_reference_count": 30,
+  "asset_reference_count": 31,
   "verification_status_counts": {
     "verified_frozen_v05_evidence": 12
   },

@@ -556,6 +556,11 @@ def build_macros(
     nested: pd.DataFrame,
 ) -> str:
     aggregate = metrics.loc[metrics["perturbation_family"].isna()].set_index("method")
+    cross_site_auprc = aggregate.loc[list(METHOD_ORDER), "average_precision"]
+    target_only_methods = [
+        method for method in ALL_METHOD_ORDER if method not in METHOD_ORDER
+    ]
+    target_only_auprc = aggregate.loc[target_only_methods, "average_precision"]
     benchmark = summary["synthetic_benchmark"]
     fixed = benchmark["fixed_prior_metashift"]
     cv = benchmark["cross_validated_metashift"]
@@ -608,6 +613,10 @@ def build_macros(
         "CVAUPRC": format_decimal(cv["average_precision"], 5),
         "CVFOne": format_decimal(cv["macro_f1"], 5),
         "CVFPR": format_decimal(cv["regional_false_positive_rate"], 3),
+        "CrossSiteAUPRCLow": format_decimal(cross_site_auprc.min(), 3),
+        "CrossSiteAUPRCHigh": format_decimal(cross_site_auprc.max(), 3),
+        "TargetOnlyAUPRCLow": format_decimal(target_only_auprc.min(), 3),
+        "TargetOnlyAUPRCHigh": format_decimal(target_only_auprc.max(), 3),
         "CVPairedMAEDifference": format_decimal(
             cv["paired_mae_difference_vs_standard"], 5
         ),
@@ -1277,6 +1286,11 @@ def build_claim_value_manifest(
     )
     qa_counts = external_config["qa_collocation_evidence"]["expected_counts"]
     aggregate = metrics.loc[metrics["perturbation_family"].isna()].set_index("method")
+    cross_site_auprc = aggregate.loc[list(METHOD_ORDER), "average_precision"]
+    target_only_methods = [
+        method for method in ALL_METHOD_ORDER if method not in METHOD_ORDER
+    ]
+    target_only_auprc = aggregate.loc[target_only_methods, "average_precision"]
     audit_counts = audit["audit_status"].value_counts()
     complete_audit_count = int(audit_counts["complete"])
     fixed = summary["synthetic_benchmark"]["fixed_prior_metashift"]
@@ -1478,7 +1492,14 @@ def build_claim_value_manifest(
             format_decimal(standard_full_risk["local_effect_mae_log"], 5),
         ],
         "Q32": ["same", "confidence-supported"],
-        "Q33": [str(len(ALL_METHOD_ORDER)), "N/A"],
+        "Q33": [
+            str(len(ALL_METHOD_ORDER)),
+            "N/A",
+            format_decimal(cross_site_auprc.min(), 3),
+            format_decimal(cross_site_auprc.max(), 3),
+            format_decimal(target_only_auprc.min(), 3),
+            format_decimal(target_only_auprc.max(), 3),
+        ],
         "Q34": [
             str(len(FAMILY_ORDER)),
             str(
@@ -1956,13 +1977,13 @@ def create_tables(
     family_metrics = metrics.loc[metrics["perturbation_family"].notna()].set_index(
         ["perturbation_family", "method"]
     )
-    family_rows = []
+    family_rows: dict[str, list[list[str]]] = {}
     for family in FAMILY_ORDER:
+        family_rows[family] = []
         for method in ALL_METHOD_ORDER:
             row = family_metrics.loc[(family, method)]
-            family_rows.append(
+            family_rows[family].append(
                 [
-                    FAMILY_LABELS[family].replace("\n", " "),
                     METHOD_LABELS[method],
                     metric_display(row["local_effect_mae_log"], 5),
                     metric_display(row["average_precision"], 5),
@@ -1971,16 +1992,15 @@ def create_tables(
                 ]
             )
     perturbation_lines = [
-        r"{\footnotesize",
-        r"\setlength{\tabcolsep}{3pt}",
-        r"\renewcommand{\arraystretch}{1.03}",
-        r"\begin{longtable}{@{}p{0.20\linewidth}p{0.20\linewidth}rrrr@{}}",
+        r"{\small",
+        r"\setlength{\tabcolsep}{4pt}",
+        r"\renewcommand{\arraystretch}{1.06}",
+        r"\begin{longtable}{@{}p{0.36\linewidth}rrrr@{}}",
         r"\caption{Perturbation-family-specific held-out synthetic metrics for all methods.}"
         r"\label{tab:perturbation-metrics}\\",
         r"\toprule",
         latex_row(
             [
-                "Paired perturbation family",
                 "Method",
                 "MAE",
                 "AUPRC",
@@ -1990,11 +2010,10 @@ def create_tables(
         ),
         r"\midrule",
         r"\endfirsthead",
-        r"\multicolumn{6}{l}{\small\itshape Table \ref{tab:perturbation-metrics}, continued}\\",
+        r"\multicolumn{5}{l}{\small\itshape Table \ref{tab:perturbation-metrics}, continued}\\",
         r"\toprule",
         latex_row(
             [
-                "Paired perturbation family",
                 "Method",
                 "MAE",
                 "AUPRC",
@@ -2005,17 +2024,25 @@ def create_tables(
         r"\midrule",
         r"\endhead",
         r"\bottomrule",
-        r"\multicolumn{6}{p{0.92\linewidth}}{\footnotesize\textit{Note.} Each family"
+        r"\multicolumn{5}{p{0.92\linewidth}}{\footnotesize\textit{Note.} Each family"
         r" aggregates its target-only local perturbation and its matched target-and-donor"
         r" regional variant. Consequently, regional FPR is assessed within the same"
         r" paired family; the rows are not local-only effect estimates. N/A has the"
         r" same meaning as in Table~\ref{tab:all-methods}.}\\",
         r"\endfoot",
-        *(latex_row(row) for row in family_rows),
-        r"\end{longtable}",
-        r"}",
-        "",
     ]
+    for family in FAMILY_ORDER:
+        perturbation_lines.extend(
+            [
+                r"\addlinespace[2pt]",
+                r"\multicolumn{5}{@{}l}{\textbf{"
+                + latex_escape(FAMILY_LABELS[family].replace("\n", " "))
+                + r"}}\\",
+                r"\addlinespace[1pt]",
+                *(latex_row(row) for row in family_rows[family]),
+            ]
+        )
+    perturbation_lines.extend([r"\end{longtable}", r"}", ""])
     tables[TABLES / "table_perturbation_metrics.tex"] = "\n".join(perturbation_lines)
     tier_rules = json.loads(
         (ROOT / "configs" / "evidence_tier_primary_v1.json").read_text(encoding="utf-8")
@@ -3291,9 +3318,9 @@ def write_assets() -> None:
         if output.get("kind") == "vector_figure"
         and isinstance(output.get("layout_qa"), dict)
     ]
-    if len(figure_layouts) != 17:
+    if len(figure_layouts) != 18:
         raise RuntimeError(
-            "Expected 17 current formal-report figures, found "
+            "Expected 18 current formal-report figures, found "
             f"{len(figure_layouts)} layout records."
         )
     write_text(
@@ -3303,7 +3330,7 @@ def write_assets() -> None:
                 "schema_version": 1,
                 "frozen_evidence": summary["frozen_evidence"],
                 "result_label": summary["result_label"],
-                "required_figure_count": 17,
+                "required_figure_count": 18,
                 "figures": figure_layouts,
                 "all_checks_passed": all(
                     bool(record["all_checks_passed"]) for record in figure_layouts

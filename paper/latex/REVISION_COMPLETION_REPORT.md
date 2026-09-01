@@ -22,16 +22,15 @@ The v0.5 execution remains the sole authorized run at
 | Partial-scope and structural-margin theory | Integrated with explicit assumptions and abstention boundary |
 | v0.5 protocol and frozen results | Receipt-bound, independently verified, and preserved without retuning |
 | v0.5 claim-evidence ledger | 12 exact manuscript assertions tied to frozen evidence and generated assets |
-| Report figures | 17 legacy vector figures plus 5 v0.5 receipt-bound raster figures |
+| Report figures | 18 legacy vector figures plus 6 v0.5 receipt-bound raster figures |
 | Claim hierarchy | Detection, scope, and mechanism roles separated |
 | Negative results | MetaShift-versus-Standard-SC and v0.5 failure regions retained |
-| Clean final PDF record | 57 pages; 1,569,094 bytes; SHA-256 `399334fee9a19954e4b37c6f5d84aa2efa048899a5816ab7fe061415f62797c5`; 18/18 formal checks pass |
+| Clean final PDF record | The generated build and formal-compliance records are the authoritative release receipt |
 
-The final-mode build began with a clean worktree at
-`61186839aefa3b7780134cf7936c5424dd39b1e6`, produced zero overfull boxes, and
-completed the source, frozen-evidence, determinism, figure-layout, rendered
-page, font, candidate, and canonical-PDF gates. This technical completion does
-not satisfy any human-only submission requirement.
+The final-mode build begins with a clean worktree, produces zero overfull
+boxes, and completes the source, frozen-evidence, determinism, figure-layout,
+rendered-page, font, candidate, and canonical-PDF gates. This technical
+completion does not satisfy any human-only submission requirement.
 
 ## Interpretation preserved
 

@@ -29,13 +29,14 @@ arms within a component share its generated panel.
 \end{minipage}}
 \end{center}
 
-The $5\times4\times2^5=640$ grid crosses nominal participation
-$q\in\{0,.25,.50,.75,1\}$, signal strength $H\in\{.04,.08,.12,.20\}$, donor
-mismatch, availability loss, one-donor contamination, a common nonlinear
-raw-scale field, and bounded noise. Every cell produces one local and one
-shared arm. The target arrays must be exactly identical within a pair; at
-$q=0$, donor arrays must be identical as well. The protocol fails closed on
-target-identity violations, footprint leakage, stale hashes, incomplete cells,
+The $5\times4\times(2^5)=640$ grid crosses five nominal participation values
+$q\in\{0,.25,.50,.75,1\}$ and four signal strengths
+$H\in\{.04,.08,.12,.20\}$ with five binary stress factors: donor mismatch,
+availability loss, one-donor contamination, a common nonlinear raw-scale
+field, and bounded noise. Every cell produces one local and one shared arm.
+The target arrays must be exactly identical within a pair; at $q=0$, donor
+arrays must be identical as well. The protocol fails closed on target-identity
+violations, footprint leakage, stale hashes, incomplete cells,
 calibration/evaluation mixing, or outcome-dependent configuration changes.
 
 \subsection{Policies, thresholds, and uncertainty}

@@ -10,7 +10,7 @@
     ]
   },
   "result_label": "stable_full_v2",
-  "required_figure_count": 17,
+  "required_figure_count": 18,
   "figures": [
     {
       "figure": "fig_stable_synthetic_example.pdf",
@@ -1364,6 +1364,345 @@
             "y0_px": 519.28,
             "x1_px": 896.5,
             "y1_px": 543.72
+          }
+        }
+      ],
+      "overlap_pairs": [],
+      "violations": [],
+      "all_checks_passed": true
+    },
+    {
+      "figure": "fig_cross_site_scope_metrics.pdf",
+      "final_print_width_pt": 453.54,
+      "source_width_in": 6.3,
+      "source_height_in": 4.45,
+      "print_scale": 0.9999,
+      "smallest_font_size_print_pt": 9.0,
+      "text_inside_nodes_passed": true,
+      "annotation_overlap_passed": true,
+      "canvas_boundary_passed": true,
+      "legend_data_overlap_passed": true,
+      "typography_passed": true,
+      "grayscale_passed": true,
+      "strict_node_geometry_checked": false,
+      "strict_node_geometry_passed": true,
+      "grayscale_luminance_contrast": 240.16,
+      "visual_inspection": {
+        "source_rendered_geometry": "passed",
+        "final_page_crop_review": "pending_final_build"
+      },
+      "node_records": [],
+      "elements": [
+        {
+          "identifier": "panel_title:auprc_higher_is_better:1",
+          "category": "panel_title",
+          "font_size_source_pt": 10.5,
+          "font_size_print_pt": 10.5,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 347.52,
+            "y0_px": 596.35,
+            "x1_px": 556.52,
+            "y1_px": 652.36
+          }
+        },
+        {
+          "identifier": "axis_label:held_out_value:1",
+          "category": "axis_label",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 378.02,
+            "y0_px": 50.59,
+            "x1_px": 526.02,
+            "y1_px": 70.59
+          }
+        },
+        {
+          "identifier": "annotation:0_915:1",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 546.69,
+            "y0_px": 535.18,
+            "x1_px": 604.69,
+            "y1_px": 555.18
+          }
+        },
+        {
+          "identifier": "annotation:0_898:1",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 538.78,
+            "y0_px": 487.0,
+            "x1_px": 596.78,
+            "y1_px": 507.0
+          }
+        },
+        {
+          "identifier": "annotation:0_902:1",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 540.45,
+            "y0_px": 438.81,
+            "x1_px": 598.45,
+            "y1_px": 458.81
+          }
+        },
+        {
+          "identifier": "annotation:0_884:1",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 532.1,
+            "y0_px": 390.63,
+            "x1_px": 590.1,
+            "y1_px": 410.63
+          }
+        },
+        {
+          "identifier": "annotation:0_501:1",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 347.68,
+            "y0_px": 342.44,
+            "x1_px": 405.68,
+            "y1_px": 362.44
+          }
+        },
+        {
+          "identifier": "annotation:0_501:2",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 347.72,
+            "y0_px": 294.25,
+            "x1_px": 405.72,
+            "y1_px": 314.25
+          }
+        },
+        {
+          "identifier": "annotation:0_501:3",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 347.69,
+            "y0_px": 246.07,
+            "x1_px": 405.69,
+            "y1_px": 266.07
+          }
+        },
+        {
+          "identifier": "annotation:0_501:4",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 347.66,
+            "y0_px": 197.88,
+            "x1_px": 405.66,
+            "y1_px": 217.88
+          }
+        },
+        {
+          "identifier": "annotation:0_500:1",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 347.25,
+            "y0_px": 149.7,
+            "x1_px": 405.25,
+            "y1_px": 169.7
+          }
+        },
+        {
+          "identifier": "panel_title:macro_f1_higher_is_better:1",
+          "category": "panel_title",
+          "font_size_source_pt": 10.5,
+          "font_size_print_pt": 10.5,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 743.8,
+            "y0_px": 596.35,
+            "x1_px": 952.8,
+            "y1_px": 652.36
+          }
+        },
+        {
+          "identifier": "axis_label:held_out_value:2",
+          "category": "axis_label",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 774.3,
+            "y0_px": 50.59,
+            "x1_px": 922.3,
+            "y1_px": 70.59
+          }
+        },
+        {
+          "identifier": "annotation:0_816:1",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 895.65,
+            "y0_px": 535.18,
+            "x1_px": 953.65,
+            "y1_px": 555.18
+          }
+        },
+        {
+          "identifier": "annotation:0_795:1",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 885.42,
+            "y0_px": 487.0,
+            "x1_px": 943.42,
+            "y1_px": 507.0
+          }
+        },
+        {
+          "identifier": "annotation:0_809:1",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 892.16,
+            "y0_px": 438.81,
+            "x1_px": 950.16,
+            "y1_px": 458.81
+          }
+        },
+        {
+          "identifier": "annotation:0_789:1",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 882.24,
+            "y0_px": 390.63,
+            "x1_px": 940.24,
+            "y1_px": 410.63
+          }
+        },
+        {
+          "identifier": "annotation:0_500:2",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 743.23,
+            "y0_px": 342.44,
+            "x1_px": 801.23,
+            "y1_px": 362.44
+          }
+        },
+        {
+          "identifier": "annotation:0_500:3",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 743.52,
+            "y0_px": 294.25,
+            "x1_px": 801.52,
+            "y1_px": 314.25
+          }
+        },
+        {
+          "identifier": "annotation:0_497:1",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 742.06,
+            "y0_px": 246.07,
+            "x1_px": 800.06,
+            "y1_px": 266.07
+          }
+        },
+        {
+          "identifier": "annotation:0_494:1",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 740.65,
+            "y0_px": 197.88,
+            "x1_px": 798.65,
+            "y1_px": 217.88
+          }
+        },
+        {
+          "identifier": "annotation:0_500:4",
+          "category": "annotation",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 743.29,
+            "y0_px": 149.7,
+            "x1_px": 801.29,
+            "y1_px": 169.7
+          }
+        },
+        {
+          "identifier": "figure_title:cross_site_information_separates_the_constructed:1",
+          "category": "figure_title",
+          "font_size_source_pt": 11.0,
+          "font_size_print_pt": 11.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 142.0,
+            "y0_px": 676.88,
+            "x1_px": 866.0,
+            "y1_px": 701.32
+          }
+        },
+        {
+          "identifier": "explanatory_text:dashed_line__chance_level_ranking__blue_band__cr:1",
+          "category": "explanatory_text",
+          "font_size_source_pt": 9.0,
+          "font_size_print_pt": 9.0,
+          "inside_canvas": true,
+          "bounds": {
+            "x0_px": 4.0,
+            "y0_px": 10.68,
+            "x1_px": 1004.0,
+            "y1_px": 30.68
           }
         }
       ],

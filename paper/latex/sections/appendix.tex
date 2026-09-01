@@ -50,9 +50,10 @@ local-effect MAE is undefined by design.}
 \label{fig:perturbation-metrics}
 \end{figure}
 
-\begin{landscape}
+For legibility, the complete perturbation matrix groups rows by family on
+ordinary portrait pages; no method, perturbation family, or unfavorable cell is
+removed.
 \input{generated/tables/table_perturbation_metrics}
-\end{landscape}
 
 The reliability-prior ablations share the standard-control rows exactly to the
 configured numerical tolerance. They do not establish a stable MetaShift
@@ -78,6 +79,39 @@ finite-grid values, not population-risk estimates.
 denotes a finite-grid observation under the bounded generator, not a
 population-risk estimate.}
 \label{fig:v05-certificate-validity}
+\end{figure}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_v05_structural_margin.png}
+\caption{Supplementary normalized structural-margin phase diagram. The left
+panel shows median $q_{\min}H_{\min}/(B_L+B_S)$; values above one meet the
+sufficient interval-separation condition. The right panel shows certificate
+answered-pair coverage. Both panels average over the five adverse comparison
+factors and describe the bounded synthetic construction only.}
+\label{fig:v05-structural-margin}
+\end{figure}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=0.88\linewidth]{fig_v05_risk_coverage.png}
+\caption{Supplementary risk--coverage positions of the predeclared held-out
+policies. Forced comparative classification has full coverage but high error;
+strict confidence policies abstain completely. The certificate has lower
+coverage than forced comparison but no observed errors under its bounded
+construction.}
+\label{fig:v05-risk-coverage}
+\end{figure}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_v05_failure_mode_map.png}
+\caption{Supplementary retained failure map across signal and nominal donor
+participation. The left panel gives certificate coverage; the right panel gives
+comparative-forced error. Low signal and adverse comparison conditions remain
+in the evaluation rather than being filtered away. The $q=0$ column is an
+observational-identity negative control.}
+\label{fig:v05-failure-mode-map}
 \end{figure}
 
 \subsection{AQS audit protocol}
@@ -134,14 +168,7 @@ search for a favorable specification.}
 \label{fig:screening-sensitivity}
 \end{figure}
 
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_interval_coverage.pdf}
-\caption{Supplementary empirical held-out synthetic interval coverage and mean
-width. Fixed conditional intervals under-cover nominal 95\% coverage, whereas
-split-conformal intervals over-cover nominal 90\% coverage.}
-\label{fig:interval-coverage}
-\end{figure}
+\input{generated/tables/table_interval_coverage}
 
 \begin{figure}[tbp]
 \centering
@@ -226,15 +253,6 @@ independent labels, records, and human review. \\
 \bottomrule
 \end{tabularx}
 \end{table}
-
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_v05_failure_mode_map.png}
-\caption{Supplementary failure-mode map. Low signal and adverse comparison
-conditions remain visible as forced-comparative errors or certificate
-abstentions; $q=0$ is an observational-identity negative control.}
-\label{fig:v05-failure-mode-map-supplement}
-\end{figure}
 
 \begin{table}[tbp]
 \centering

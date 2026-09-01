@@ -23,6 +23,16 @@ label: the certificate abstains. This is useful precisely because the failed
 and unanswerable cells remain in the result rather than being discarded to
 improve a classifier score.
 
+\subsection{An evaluation-design lesson}
+
+Holding the target path fixed makes the information question testable. A
+target-only rule cannot receive credit for exploiting an accidental target-side
+cue, while donor-side variation can be made explicit and degraded
+continuously. This design does not make the generator realistic by itself; it
+makes the boundary of one carefully stated scope question auditable. The
+negative controls, intermediate participation levels, and retained failures are
+therefore part of the result rather than implementation details.
+
 \subsection{Why estimator complexity did not win}
 
 The stable-regime benchmark confirms that cross-site information is useful for
@@ -30,6 +40,12 @@ the constructed scope task, but it does not support a general MetaShift
 advantage. Standard synthetic control leads aggregate ranking and macro-F1;
 cross-validated MetaShift has the best point estimate for local-effect MAE, but
 its paired uncertainty interval versus standard synthetic control crosses zero.
+This is plausible within the stipulated benchmark: once qualified donor paths
+are available, a simple donor-weighted control already captures much of the
+cross-site contrast, and an additional reliability prior can trade bias against
+variance differently across perturbation families. This explanation is not a
+general ranking claim; the frozen comparison leaves the absence of a
+confidence-supported MetaShift advantage intact.
 The appropriate contribution is consequently the information-and-abstention
 framework, not a claim that a more complex estimator is universally better.
 

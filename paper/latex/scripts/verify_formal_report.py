@@ -343,16 +343,16 @@ def main() -> None:
 
     v05_presentation_ok = (
         v05_assets.get("schema_version") == 1
-        and len(v05_assets.get("outputs", [])) == 11
+        and len(v05_assets.get("outputs", [])) == 12
         and v05_asset_validation.get("all_checks_passed") is True
         and v05_asset_determinism.get("all_hashes_match") is True
-        and v05_asset_determinism.get("output_count") == 11
+        and v05_asset_determinism.get("output_count") == 12
     )
     add_check(
         checks,
         "v05_receipt_bound_presentation_assets",
         v05_presentation_ok,
-        "Five v0.5 figures, three tables, and claim-value metadata are receipt-bound.",
+        "Six v0.5 figures, three tables, and claim-value metadata are receipt-bound.",
     )
 
     v05_ledger_ok = (
@@ -371,19 +371,19 @@ def main() -> None:
 
     figure_qa_ok = (
         figure_qa.get("all_checks_passed") is True
-        and figure_qa.get("required_figure_count") == 17
+        and figure_qa.get("required_figure_count") == 18
         and len(figure_qa.get("checks", [])) >= 11
     )
     add_check(
         checks,
         "figure_logical_and_vector_validation",
         figure_qa_ok,
-        "All 17 figures pass source-hash, vector, accounting, isolation, interval, and display-contract checks.",
+        "All 18 figures pass source-hash, vector, accounting, isolation, interval, and display-contract checks.",
     )
 
     final_figure_qa_ok = (
         figure_layout_qa.get("all_checks_passed") is True
-        and figure_layout_qa.get("required_figure_count") == 17
+        and figure_layout_qa.get("required_figure_count") == 18
         and load_json(
             V05_ASSET_MANIFEST_PATH,
             record_violations,
@@ -391,7 +391,7 @@ def main() -> None:
         ).get("schema_version")
         == 1
         and final_figure_qa.get("all_checks_passed") is True
-        and final_figure_qa.get("required_figure_count") == 22
+        and final_figure_qa.get("required_figure_count") == 24
         and final_figure_qa.get("source_pdf_sha256") == build.get("pdf_sha256")
         and final_figure_qa.get("crop_dpi") == [150, 300]
     )
@@ -399,7 +399,7 @@ def main() -> None:
         checks,
         "final_print_geometry_and_crop_review",
         final_figure_qa_ok,
-        "All 22 figures have measured source geometry plus 150- and 300-DPI final-page crop records.",
+        "All 24 figures have measured source geometry plus 150- and 300-DPI final-page crop records.",
     )
 
     normalized_sections = normalized(all_sections)
@@ -452,7 +452,7 @@ def main() -> None:
         and len(pages) > 1
         and build.get("overfull_hbox_warnings") == 0
         and build.get("pdf_metadata", {}).get("Title")
-        == "When Is a Time-Series Change Local? MetaShift-Bench for Selective Scope Auditing"
+        == "When Is a Time-Series Change Local? MetaShift-Bench for Selective Cross-Site Auditing"
         and build.get("pdf_metadata", {}).get("Author") == "Human completion required"
         and candidate_contract_ok
     )

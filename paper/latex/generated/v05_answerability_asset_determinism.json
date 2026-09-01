@@ -1,10 +1,10 @@
 {
   "scope": "Deterministic receipt-bound v0.5 presentation-asset generation.",
   "generator": "paper/latex/scripts/generate_v05_answerability_assets.py",
-  "output_count": 11,
+  "output_count": 12,
   "manifest_hashes": {
-    "first": "7339a5a6e641c2cf60226939688d47ac45cb4d4faafccbbfd8cd66b1b88b116f",
-    "second": "7339a5a6e641c2cf60226939688d47ac45cb4d4faafccbbfd8cd66b1b88b116f",
+    "first": "d10872f61d92931bb1f9349fd33bcd637b8f68b23d8527600f59d1ada528a14b",
+    "second": "d10872f61d92931bb1f9349fd33bcd637b8f68b23d8527600f59d1ada528a14b",
     "match": true
   },
   "changed_outputs": {},

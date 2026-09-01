@@ -34,6 +34,7 @@ REQUIRED_FIGURES = (
     "fig_split_integrity.pdf",
     "fig_synthetic_metrics.pdf",
     "fig_perturbation_metrics.pdf",
+    "fig_cross_site_scope_metrics.pdf",
     "fig_paired_bootstrap.pdf",
     "fig_event_accounting.pdf",
     "fig_placebos.pdf",
@@ -80,6 +81,9 @@ REQUIRED_FIGURE_SOURCES = {
         "artifacts/stable_synthetic_stable_full_v2_metrics.csv",
     },
     "fig_perturbation_metrics.pdf": {
+        "artifacts/stable_synthetic_stable_full_v2_metrics.csv",
+    },
+    "fig_cross_site_scope_metrics.pdf": {
         "artifacts/stable_synthetic_stable_full_v2_metrics.csv",
     },
     "fig_paired_bootstrap.pdf": {

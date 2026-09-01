@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-01T22:33:46.665662+00:00",
+  "generated_at_utc": "2026-09-01T23:35:29.431103+00:00",
   "ledger": "paper/latex/CLAIM_EVIDENCE_LEDGER.csv",
   "frozen_evidence": {
     "tag": "v0.3.2-evidence-final",
@@ -12,7 +12,7 @@
   },
   "input_summary_sha256": "7a4c7219af77cb80c7c3aa5a2175a1ffa29f6ac826f8ec95305185d66f05bc55",
   "claim_count": 39,
-  "asset_reference_count": 70,
+  "asset_reference_count": 71,
   "verification_status_counts": {
     "verified_frozen_evidence": 39
   },

@@ -9,30 +9,31 @@
 \end{center}
 
 \section*{Abstract}
-\noindent When a monitored time series changes, a target-only detector can
-identify the break but cannot determine whether it is local to that target or
-shared with a comparison network. This distinction matters because a local
-anomaly and a regional common shock call for different follow-up actions, while
-many real monitoring records lack reliable scope labels. We formulate selective
-scope auditing as an information-constrained problem: at a stated error
-tolerance, which cases can an observation channel answer, and when should it
-abstain?
+\noindent A detector can recognize that a monitored time series changed without
+knowing whether the change is local to one target or shared across a comparison
+network. That distinction determines which follow-up evidence is relevant, yet
+real monitoring records rarely provide reliable scope labels. We formulate
+\emph{selective cross-site auditing} as an information-constrained problem: at
+a stated scope-error tolerance, which cases can an observation channel answer,
+and when should it abstain?
 
 \noindent MetaShift-Bench holds the target path exactly fixed across paired
 local and shared synthetic worlds and varies only donor-side participation. Its
 primary target-fixed experiment contains \VFiveEvaluationComponents{} held-out
 components, \VFiveEvaluationPairs{} matched pairs, and a complete
-$5\times4\times2^5$ adverse-condition grid. In the finite predeclared policy
-set, target-only information answers no held-out cases below 50\% tolerated
-error. Comparative information also answers none through $\alpha=.10$, then
-reaches \VFiveComparativeFrontierTwentyPercent{} coverage at $\alpha=.20$ with
-\VFiveComparativeRiskTwentyPercent{} observed conditional error. A structural
-interval-separation certificate answered \VFiveCertificateAnsweredPairs{} of
-\VFiveEvaluationPairs{} matched pairs (\VFiveCertificateCoveragePercent{}),
-with no observed errors among \VFiveCertificateAnsweredArms{} answered scope
-arms. It recovered \VFiveCertificateEfficiencyPercent{} of the pairs deemed
-answerable by the predeclared simulation-information oracle and abstained on
-the remaining \VFiveNonpositiveMarginPairs{} pairs
+$5\times4\times(2^5)=640$-cell adverse-condition grid: five donor-participation
+levels, four signal strengths, and five binary stress factors. In the finite
+predeclared policy set, target-only information has no positive held-out
+coverage below 50\% tolerated error. Comparative information also answers none
+through $\alpha=.10$, then reaches \VFiveComparativeFrontierTwentyPercent{}
+coverage at $\alpha=.20$ with \VFiveComparativeRiskTwentyPercent{} observed
+conditional error. A structural interval-separation certificate answered
+\VFiveCertificateAnsweredPairs{} of \VFiveEvaluationPairs{} matched pairs
+(\VFiveCertificateCoveragePercent{}), with no observed errors among
+\VFiveCertificateAnsweredArms{} answered scope arms. It recovered
+\VFiveCertificateEfficiencyPercent{} of the pairs in a predeclared
+simulation-information reference region and abstained on the remaining
+\VFiveNonpositiveMarginPairs{} pairs
 (\VFiveCertificateAbstentionPercent{}), including all \VFiveQZeroPairs{}
 observationally indistinguishable $q=0$ negative controls. These finite-grid
 results hold only under the bounded synthetic generator and do not constitute
@@ -42,12 +43,14 @@ a population-risk guarantee or a deployable real-network certificate.
 balanced target laws, derive the availability-normalized partial-scope residual
 gap, and give a sufficient condition for structural abstention. A separate AQS
 deployment audit measures comparison availability and abstention in real public
-records; it supplies neither scope labels nor mechanism truth. In its
-independent stable-regime benchmark, cross-site methods substantially exceed
-single-series baselines in local-versus-shared ranking, but MetaShift shows no
+records; it supplies neither scope labels nor mechanism truth. In an independent
+stable-regime benchmark, cross-site methods attain AUPRC
+\CrossSiteAUPRCLow{}--\CrossSiteAUPRCHigh{}, while target-only baselines remain
+at \TargetOnlyAUPRCLow{}--\TargetOnlyAUPRCHigh{}. MetaShift has no
 confidence-supported aggregate advantage over standard synthetic control. The
-central result is therefore an evaluation framework for answering only
-information-supported scope questions.
+central contribution is therefore not estimator superiority, but an evaluation
+framework in which an audit answers a scope question only when its comparison
+evidence can support that answer.
 
 \noindent\textbf{Keywords:} local-versus-shared change; time-series auditing;
 selective prediction; cross-site comparison; structural abstention.

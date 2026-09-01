@@ -80,6 +80,7 @@ REQUIRED_GENERATED_FIGURES = (
     "fig_split_integrity.pdf",
     "fig_synthetic_metrics.pdf",
     "fig_perturbation_metrics.pdf",
+    "fig_cross_site_scope_metrics.pdf",
     "fig_paired_bootstrap.pdf",
     "fig_event_accounting.pdf",
     "fig_placebos.pdf",
@@ -103,6 +104,7 @@ REQUIRED_V05_GENERATED_FIGURES = (
     "fig_v05_risk_coverage.png",
     "fig_v05_certificate_validity.png",
     "fig_v05_failure_mode_map.png",
+    "fig_v05_scope_boundary.png",
 )
 LEGACY_FIGURE_NAMES = (
     "fig_local_regional_schematic.pdf",
@@ -315,7 +317,7 @@ def main() -> None:
         violations.append({"issue": "taxonomy_human_block_missing"})
     metadata_checks = {
         "pdf_title": (
-            "pdftitle={When Is a Time-Series Change Local? MetaShift-Bench for Selective Scope Auditing}"
+            "pdftitle={When Is a Time-Series Change Local? MetaShift-Bench for Selective Cross-Site Auditing}"
             in metadata
         ),
         "pdf_author_placeholder": "pdfauthor={Human completion required}" in metadata,

@@ -2,7 +2,7 @@
 \suppressfloats[t]
 \label{sec:results}
 
-\subsection{RQ1: Comparative information expands answerability only at a relaxed tolerance}
+\subsection{RQ1: Comparative information expands the finite-policy frontier only at a relaxed tolerance}
 \label{sec:rq1-answerability}
 
 \textbf{Answer.} On the target-fixed held-out grid, the target-only forced
@@ -37,19 +37,9 @@ $[\VFiveComparativeGainLowerPercent{},\VFiveComparativeGainUpperPercent{}]$.
 This is a comparison among frozen policies on held-out synthetic components,
 not an estimate of a universal optimum or future population risk.
 
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=0.88\linewidth]{fig_v05_risk_coverage.png}
-\caption{Risk--coverage positions of the predeclared held-out policies.
-Forced comparative classification has full coverage but high error; strict
-confidence policies abstain completely. The certificate has lower coverage
-than forced comparison but no observed errors under its bounded construction.}
-\label{fig:v05-risk-coverage}
-\end{figure}
-
 \FloatBarrier
 
-\subsection{RQ2: The structural certificate delineates a retained abstention boundary}
+\subsection{RQ2: Structural separation maps a retained abstention boundary}
 \label{sec:rq2-certificate}
 
 \textbf{Answer.} The structural interval-separation certificate answered
@@ -58,7 +48,7 @@ than forced comparison but no observed errors under its bounded construction.}
 \VFiveCertificateObservedErrorDisplay{} among
 \VFiveCertificateAnsweredArms{} answered scope arms. It recovered
 \VFiveCertificateEfficiencyPercent{} of pairs in the predeclared
-simulation-information oracle region and abstained on the remaining
+simulation-information reference region and abstained on the remaining
 \VFiveNonpositiveMarginPairs{} pairs (\VFiveCertificateAbstentionPercent{}),
 including all \VFiveQZeroPairs{} observationally indistinguishable $q=0$
 negative controls. It had \VFiveEnvelopeViolations{} observed envelope
@@ -68,13 +58,14 @@ real-network certificate.
 
 \begin{figure}[tbp]
 \centering
-\includegraphics[width=\linewidth]{fig_v05_structural_margin.png}
-\caption{Normalized structural-margin phase diagram from the held-out grid.
-The left panel shows median $q_{\min}H_{\min}/(B_L+B_S)$; values above one
-meet the sufficient interval-separation threshold. The right panel shows
-certificate answered-pair coverage. Both panels average over the five adverse
-comparison factors and describe the bounded synthetic construction only.}
-\label{fig:v05-structural-margin}
+\includegraphics[width=\linewidth]{fig_v05_scope_boundary.png}
+\caption{Structural answerability boundary on the held-out grid. From left to
+right, the panels show the median normalized structural margin, certificate
+answered-pair coverage, and forced-comparative scope error. Values above one in
+the first panel meet the sufficient interval-separation condition. Each cell
+averages over the five adverse comparison factors; $q=0$ remains the
+observational-identity negative control.}
+\label{fig:v05-scope-boundary}
 \end{figure}
 
 \input{generated/tables/table_v05_certificate}
@@ -84,34 +75,35 @@ but it is intentionally incomplete under contamination, nonlinear raw fields,
 and heteroskedastic noise. In particular, the $q=0$ stratum contains
 \VFiveQZeroPairs{} matched pairs with identical target and donor observations
 in both arms, produces \VFiveQZeroCertificateAnsweredPairs{} certificate
-answers, and has no oracle-answerable pair. The result does not declare all
-real partial scope objectively ambiguous; it marks where this sufficient bound
-does not authorize an answer.
+answers, and has no reference-region pair authorized for an answer. The result
+does not declare all real partial scope objectively ambiguous; it marks where
+this sufficient bound does not authorize an answer.
 
 \input{generated/tables/table_v05_failure_accounting}
 
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_v05_failure_mode_map.png}
-\caption{Retained failure map across signal and nominal donor participation.
-The left panel gives certificate coverage; the right panel gives
-comparative-forced error. Low signal and adverse comparison conditions remain
-in the evaluation rather than being filtered away. The $q=0$ column is an
-observational-identity negative control.}
-\label{fig:v05-failure-mode-map}
-\end{figure}
-
 \FloatBarrier
 
-\subsection{RQ3: Cross-site comparison helps, but MetaShift has no supported aggregate advantage}
+\subsection{RQ3: Cross-site comparison separates the constructed task, but estimator superiority is not supported}
 \label{sec:rq3-methods}
 
 \textbf{Answer.} In the independent stable-regime benchmark, all four
-cross-site methods have aggregate AUPRC between 0.884 and 0.915, whereas the
-five target-only methods are near 0.50
+cross-site methods have aggregate AUPRC between \CrossSiteAUPRCLow{} and
+\CrossSiteAUPRCHigh{}, whereas the five target-only methods range only from
+\TargetOnlyAUPRCLow{} to \TargetOnlyAUPRCHigh{}
 (Table~\ref{tab:all-methods} in Appendix~\ref{sec:appendix-methods}). This
-illustrates the value of comparative information for the constructed
-local-versus-regional task, rather than a generic change-detection claim.
+positive information contrast is the intended behavior of the constructed
+local-versus-regional task, not a generic change-detection claim.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_cross_site_scope_metrics.pdf}
+\caption{Cross-site versus target-only ranking on the independent held-out
+stable-regime benchmark. All four cross-site methods separate the constructed
+local-versus-shared scope task, while the five target-only methods remain near
+chance. The comparison demonstrates an information contrast in this benchmark,
+not a universal method ranking or a real-network mechanism result.}
+\label{fig:cross-site-scope-metrics}
+\end{figure}
 
 \input{generated/tables/table_synthetic_metrics}
 
@@ -178,7 +170,15 @@ fixed-weight coverage ranges from 63.9\% to 67.3\% over
 \CoverageInstancesPerMethod{} instances per method, while nominal 90\%
 split-conformal coverage ranges from 98.8\% to 99.6\% and is conservative.
 
-\input{generated/tables/table_interval_coverage}
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_interval_coverage.pdf}
+\caption{Held-out synthetic interval coverage and mean width. Fixed conditional
+intervals under-cover their nominal 95\% target, whereas split-conformal
+intervals over-cover their nominal 90\% target. The figure reports a
+calibration limitation, not a real-event confidence guarantee.}
+\label{fig:interval-coverage}
+\end{figure}
 
 The real-data date-resampling diagnostic holds each event's pre-transition
 donor weights fixed and compares the mean standardized score at the metadata

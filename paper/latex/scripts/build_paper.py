@@ -62,7 +62,6 @@ FIGURE_CAPTION_MARKERS = {
         "structuralmargin",
         "phase",
         "diagram",
-        "grid",
         "certificate",
         "coverage",
     ),
@@ -90,6 +89,15 @@ FIGURE_CAPTION_MARKERS = {
         "nominal",
         "donor",
         "participation",
+    ),
+    "fig_v05_scope_boundary.png": (
+        "structural",
+        "answerability",
+        "boundary",
+        "heldout",
+        "margin",
+        "certificate",
+        "forcedcomparative",
     ),
     "fig_stable_synthetic_example.pdf": (
         "deterministic",
@@ -147,6 +155,15 @@ FIGURE_CAPTION_MARKERS = {
         "mae",
         "macrof1",
     ),
+    "fig_cross_site_scope_metrics.pdf": (
+        "crosssite",
+        "targetonly",
+        "independent",
+        "heldout",
+        "stableregime",
+        "scope",
+        "task",
+    ),
     "fig_paired_bootstrap.pdf": ("paired", "eventcluster", "bootstrap", "intervals"),
     "fig_event_accounting.pdf": (
         "aqs",
@@ -165,7 +182,7 @@ FIGURE_CAPTION_MARKERS = {
         "placeboscore",
         "distribution",
     ),
-    "fig_interval_coverage.pdf": ("empirical", "heldout", "coverage", "width"),
+    "fig_interval_coverage.pdf": ("heldout", "synthetic", "coverage", "width"),
     "fig_screening_sensitivity.pdf": ("predeclared", "evidencetier", "sensitivity"),
     "fig_external_evidence.pdf": ("contextualevidence", "ladders", "unavailable"),
     "fig_case_studies_complete.pdf": (
@@ -179,7 +196,7 @@ FIGURE_CAPTION_MARKERS = {
         "representative",
         "abstention",
     ),
-    "fig_applicability_map.pdf": ("claimboundary", "matrix", "frozen", "audit"),
+    "fig_applicability_map.pdf": ("claimboundary", "matrix", "aqs", "audit"),
     "fig_anchor_concentration.pdf": (
         "descriptive",
         "concentration",

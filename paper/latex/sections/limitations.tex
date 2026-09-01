@@ -18,50 +18,50 @@ any equipment-level hypothesis.}
 \end{figure}
 
 \FloatBarrier
-\begin{landscape}
+\begingroup
 \small
 \setlength{\LTleft}{0pt}
 \setlength{\LTright}{0pt}
-\setlength{\tabcolsep}{4pt}
+\setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.06}
-\begin{longtable}{@{}p{0.11\linewidth}p{0.21\linewidth}p{0.21\linewidth}p{0.21\linewidth}p{0.21\linewidth}@{}}
-\caption{Threats to validity, current mitigation, residual consequence, and
-needed future evidence.}\label{tab:threats-validity}\\
+\begin{longtable}{@{}p{0.14\linewidth}p{0.31\linewidth}p{0.24\linewidth}p{0.22\linewidth}@{}}
+\caption{Threats to validity, mitigation, residual consequence, and needed
+future evidence.}\label{tab:threats-validity}\\
 \toprule
-Validity class & Risk & Current mitigation & Residual consequence & Needed future evidence \\
+Validity class & Risk and current mitigation & Residual consequence & Needed future evidence \\
 \midrule
 \endfirsthead
 \toprule
-Validity class & Risk & Current mitigation & Residual consequence & Needed future evidence \\
+Validity class & Risk and current mitigation & Residual consequence & Needed future evidence \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
 Construct &
-A Method Code or POC may not encode a physical device, calibration, siting, or maintenance event. &
-Treat records as metadata anchors; prohibit fault, replacement, bias, and correction claims. &
+\textbf{Risk.} A Method Code or POC may not encode a physical device, calibration, siting, or maintenance event.\newline
+\textbf{Mitigation.} Treat records as metadata anchors; prohibit fault, replacement, bias, and correction claims. &
 Residual effects cannot identify a physical mechanism. &
 Dated station histories, calibration records, deployment logs, and independently reviewed taxonomy. \\
 \addlinespace
 Internal &
-Weather, smoke, emissions, processing, or donor instability can create a target-reference residual. &
-Pre-event matching, distinct physical donors, time and donor placebos, and leave-one-donor-out checks. &
+\textbf{Risk.} Weather, smoke, emissions, processing, or donor instability can create a target-reference residual.\newline
+\textbf{Mitigation.} Pre-event matching, distinct physical donors, time and donor placebos, and leave-one-donor-out checks. &
 Diagnostics can reject some explanations but do not establish randomized causal attribution. &
 Meteorological covariates, emissions records, network operations logs, and prospective comparator studies. \\
 \addlinespace
 Statistical &
-Donor selection, serial dependence, multiplicity, and incomplete resampling can invalidate naive uncertainty. &
-Fixed conditional and nested intervals, moving blocks, exploratory BH screening, and reported coverage failures. &
+\textbf{Risk.} Donor selection, serial dependence, multiplicity, and incomplete resampling can invalidate naive uncertainty.\newline
+\textbf{Mitigation.} Fixed conditional and nested intervals, moving blocks, exploratory BH screening, and reported coverage failures. &
 Real-event intervals are diagnostic rather than coverage-calibrated physical-bias confidence intervals. &
 A computationally feasible, predeclared full selection-aware synthetic coverage study on a new blind set. \\
 \addlinespace
 External &
-The 2019--2025 U.S. primary parameter, availability rules, stable perturbations, and donor radius may not transfer. &
-Separate 88502 pipeline, complete event accounting, and parameter-specific reporting. &
+\textbf{Risk.} The 2019--2025 U.S. primary parameter, availability rules, stable perturbations, and donor radius may not transfer.\newline
+\textbf{Mitigation.} Separate 88502 pipeline, complete event accounting, and parameter-specific reporting. &
 Results do not establish performance for other pollutants, countries, networks, eras, or perturbation mechanisms. &
 Independent publicly reproducible benchmarks with precommitted footprint-disjoint evaluation. \\
 \end{longtable}
-\end{landscape}
+\endgroup
 
 \subsection{Construct validity}
 

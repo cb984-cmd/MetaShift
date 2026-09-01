@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-09-01T02:21:37.364699+00:00",
-  "source_git_commit": "bd4164242638f723eb6f5aec72c822507e098030",
+  "generated_at_utc": "2026-09-01T03:08:38.952298+00:00",
+  "source_git_commit": "5ee437d8cf60db6dc381388e059d7998def0aa7d",
   "source_worktree_clean_at_start": true,
   "source_worktree_status_at_start": [],
   "build_directory": "paper/latex/build",
@@ -53,8 +53,7 @@
     "paper/latex/rendered_pages/page-38.png",
     "paper/latex/rendered_pages/page-39.png",
     "paper/latex/rendered_pages/page-40.png",
-    "paper/latex/rendered_pages/page-41.png",
-    "paper/latex/rendered_pages/page-42.png"
+    "paper/latex/rendered_pages/page-41.png"
   ],
   "known_output_names": [
     "main.aux",

@@ -2148,7 +2148,7 @@ def create_tables(
     tables[TABLES / "table_case_studies.tex"] = latex_table(
         "case-studies",
         "Deterministically selected representative audit cases.",
-        r"p{0.16\linewidth}p{0.23\linewidth}p{0.17\linewidth}p{0.34\linewidth}",
+        r"@{}p{0.16\linewidth}p{0.23\linewidth}p{0.17\linewidth}p{0.34\linewidth}@{}",
         [
             "Case",
             "Metadata anchor",

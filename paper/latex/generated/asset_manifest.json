@@ -394,8 +394,8 @@
       "sources": [
         "configs/current_evidence_summary_v2.json"
       ],
-      "bytes": 1245,
-      "sha256": "016686b948013d1d755f7e7e734dceb33522ee898109a5f02f0ecccc0edbd295"
+      "bytes": 1251,
+      "sha256": "281c04fbde43c5b940cae6bdf01dca553d24811344e991ae35dd5ff3c1203b07"
     },
     {
       "path": "generated/tables/table_anchor_concentration.tex",

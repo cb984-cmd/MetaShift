@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "source_pdf": "paper/latex/build/MetaShift_Bench_Yau_2026.pdf",
-  "source_pdf_sha256": "6268ee5570d44cfd4297ccb777b6611d2a875d2f8325888c5d9da86b84af0633",
+  "source_pdf_sha256": "641f95fa2d5a8d55466b320f6631f8f4082afeafde45c73f4615d214149a79d9",
   "required_figure_count": 22,
   "crop_dpi": [
     150,
@@ -63,7 +63,7 @@
     {
       "figure": "fig_v05_risk_coverage.png",
       "page": 24,
-      "caption_y_min_pt": 668.02,
+      "caption_y_min_pt": 502.23,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 278.35,
       "source_layout_checks_passed": true,
@@ -71,14 +71,14 @@
         "150": {
           "path": "paper/latex/qa_page_crops/crops-150/fig_v05_risk_coverage-page-24.png",
           "width_px": 1021,
-          "height_px": 721,
-          "bytes": 72722
+          "height_px": 722,
+          "bytes": 72750
         },
         "300": {
           "path": "paper/latex/qa_page_crops/crops-300/fig_v05_risk_coverage-page-24.png",
           "width_px": 2041,
-          "height_px": 1444,
-          "bytes": 180497
+          "height_px": 1443,
+          "bytes": 180501
         }
       },
       "visual_inspection": "150_and_300_dpi_crops_rendered"
@@ -109,7 +109,7 @@
     {
       "figure": "fig_v05_failure_mode_map.png",
       "page": 26,
-      "caption_y_min_pt": 657.67,
+      "caption_y_min_pt": 271.36,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 189.13,
       "source_layout_checks_passed": true,
@@ -118,13 +118,13 @@
           "path": "paper/latex/qa_page_crops/crops-150/fig_v05_failure_mode_map-page-26.png",
           "width_px": 1021,
           "height_px": 536,
-          "bytes": 107375
+          "bytes": 112550
         },
         "300": {
           "path": "paper/latex/qa_page_crops/crops-300/fig_v05_failure_mode_map-page-26.png",
           "width_px": 2041,
-          "height_px": 1071,
-          "bytes": 175031
+          "height_px": 1072,
+          "bytes": 184075
         }
       },
       "visual_inspection": "150_and_300_dpi_crops_rendered"
@@ -247,7 +247,7 @@
     {
       "figure": "fig_synthetic_metrics.pdf",
       "page": 27,
-      "caption_y_min_pt": 459.26,
+      "caption_y_min_pt": 373.2,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 248.37,
       "source_layout_checks_passed": true,
@@ -256,36 +256,36 @@
           "path": "paper/latex/qa_page_crops/crops-150/fig_synthetic_metrics-page-27.png",
           "width_px": 1021,
           "height_px": 659,
-          "bytes": 96771
+          "bytes": 97452
         },
         "300": {
           "path": "paper/latex/qa_page_crops/crops-300/fig_synthetic_metrics-page-27.png",
           "width_px": 2041,
-          "height_px": 1319,
-          "bytes": 168226
+          "height_px": 1318,
+          "bytes": 167437
         }
       },
       "visual_inspection": "150_and_300_dpi_crops_rendered"
     },
     {
       "figure": "fig_perturbation_metrics.pdf",
-      "page": 29,
-      "caption_y_min_pt": 407.88,
+      "page": 28,
+      "caption_y_min_pt": 554.03,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 313.16,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_perturbation_metrics-page-29.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_perturbation_metrics-page-28.png",
           "width_px": 1021,
           "height_px": 794,
-          "bytes": 131922
+          "bytes": 131668
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_perturbation_metrics-page-29.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_perturbation_metrics-page-28.png",
           "width_px": 2041,
           "height_px": 1589,
-          "bytes": 228612
+          "bytes": 228756
         }
       },
       "visual_inspection": "150_and_300_dpi_crops_rendered"
@@ -293,7 +293,7 @@
     {
       "figure": "fig_paired_bootstrap.pdf",
       "page": 29,
-      "caption_y_min_pt": 712.13,
+      "caption_y_min_pt": 388.56,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 201.57,
       "source_layout_checks_passed": true,
@@ -301,14 +301,14 @@
         "150": {
           "path": "paper/latex/qa_page_crops/crops-150/fig_paired_bootstrap-page-29.png",
           "width_px": 1021,
-          "height_px": 561,
-          "bytes": 77423
+          "height_px": 562,
+          "bytes": 77285
         },
         "300": {
           "path": "paper/latex/qa_page_crops/crops-300/fig_paired_bootstrap-page-29.png",
           "width_px": 2041,
           "height_px": 1123,
-          "bytes": 129179
+          "bytes": 129358
         }
       },
       "visual_inspection": "150_and_300_dpi_crops_rendered"

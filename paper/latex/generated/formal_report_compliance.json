@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-09-01T03:31:26.134554+00:00",
+  "generated_at_utc": "2026-09-01T16:02:45.295077+00:00",
   "formal_report": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
-  "verification_mode": "canonical",
-  "verified_pdf": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
+  "verification_mode": "candidate",
+  "verified_pdf": "paper/latex/build/MetaShift_Bench_Yau_2026.pdf",
   "frozen_evidence": {
     "tag": "v0.3.2-evidence-final",
     "commit": "57d678ecabebff724d898abe626c9ef80538775b",
@@ -12,11 +12,11 @@
       "v0.3.1-evidence-final"
     ]
   },
-  "source_word_count_estimate": 9642,
+  "source_word_count_estimate": 13342,
   "compiled_pdf": {
-    "bytes": 1048269,
-    "sha256": "08841e8ed3ed9e4a3a69ceddf62a42a385c0077e0a6cdf9d761c20a6ceb22d40",
-    "rendered_page_count": 44
+    "bytes": 1568994,
+    "sha256": "641f95fa2d5a8d55466b320f6631f8f4082afeafde45c73f4615d214149a79d9",
+    "rendered_page_count": 57
   },
   "human_completion_status": "required",
   "taxonomy_status": "human_blocked",
@@ -38,6 +38,11 @@
       "detail": "The report and generated assets bind to the immutable v0.3.2 evidence release."
     },
     {
+      "name": "frozen_v05_scope_answerability_binding",
+      "passed": true,
+      "detail": "The report's v0.5 tables and figures remain bound to the one-time frozen receipt."
+    },
+    {
       "name": "claim_ledger_validation",
       "passed": true,
       "detail": "All 39 quantitative formal-paper claims map to hash-verified sources and assets."
@@ -53,6 +58,16 @@
       "detail": "Two independent paper-asset generations have identical hashes for 38 or more outputs."
     },
     {
+      "name": "v05_receipt_bound_presentation_assets",
+      "passed": true,
+      "detail": "Five v0.5 figures, three tables, and claim-value metadata are receipt-bound."
+    },
+    {
+      "name": "v05_claim_ledger_validation",
+      "passed": true,
+      "detail": "All 12 v0.5 manuscript claims are recomputed from receipt-bound frozen evidence."
+    },
+    {
       "name": "figure_logical_and_vector_validation",
       "passed": true,
       "detail": "All 17 figures pass source-hash, vector, accounting, isolation, interval, and display-contract checks."
@@ -60,7 +75,7 @@
     {
       "name": "final_print_geometry_and_crop_review",
       "passed": true,
-      "detail": "All 17 figures have measured source geometry plus 150- and 300-DPI final-page crop records."
+      "detail": "All 22 figures have measured source geometry plus 150- and 300-DPI final-page crop records."
     },
     {
       "name": "scientific_and_human_boundaries",
@@ -90,7 +105,7 @@
     {
       "name": "self_review_and_completion_handoff",
       "passed": true,
-      "detail": "The review and completion records distinguish technical completion from human-only submission work."
+      "detail": "The review and completion records distinguish frozen v0.3.2/v0.5 evidence from human-only submission work."
     },
     {
       "name": "substantive_report_length",

@@ -2,18 +2,18 @@
 
 ## Technical status
 
-The formal-report revision is **technically staged, not submission-final**.
+The formal-report revision is **technically complete, not submission-final**.
 Its scientific content is bound to the frozen
 `v0.3.2-evidence-final` evidence release at
 `57d678ecabebff724d898abe626c9ef80538775b`. No frozen analysis artifact,
 experimental protocol, target partition, donor rule, model parameter, or
 scientific conclusion was changed during the presentation revision.
 
-The canonical PDF handoff remains pending because the previous canonical PDF
-is locked by an open viewer. The build system has an explicit staged-only mode
-for this situation: it produces and validates a named build PDF without
-silently replacing or misrepresenting the canonical final PDF. A clean
-worktree, final-mode build is required before completion can be recorded.
+The canonical `paper/latex/MetaShift_Bench_Yau_2026.pdf` was built from clean
+source commit `e9fbf3c8dda4fb0755fd0d5770fa966e7ebfe206`. Its 36 pages and the
+named build copy match at SHA-256
+`2cb941ca6acc91b7937bdf4626db04a9cdb34ceb0814ae4ea81db0c885437e08`.
+The final formal-report compliance gate passed all 13 checks.
 
 ## Revision deliverables
 
@@ -27,8 +27,8 @@ worktree, final-mode build is required before completion can be recorded.
 | Claims ledger | 36 claims and 65 evidence-asset references |
 | Deterministic presentation assets | 32 outputs |
 | Source/reference validation | 33 citations and 33 bibliography entries |
-| Staged PDF preflight | Rendered pages, no overfull boxes, embedded non-Type-3 fonts |
-| Canonical PDF and full formal compliance | Pending clean final-mode build |
+| Final PDF preflight | 36 rendered pages, no overfull boxes, embedded non-Type-3 fonts |
+| Canonical PDF and full formal compliance | Complete: matching PDF hash and 13/13 checks |
 
 ## Interpretation preserved
 

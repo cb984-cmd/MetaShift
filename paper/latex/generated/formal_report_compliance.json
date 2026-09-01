@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-08-31T22:00:10.734684+00:00",
+  "generated_at_utc": "2026-09-01T01:09:45.824693+00:00",
   "formal_report": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
   "frozen_evidence": {
     "tag": "v0.3.2-evidence-final",
@@ -10,11 +10,11 @@
       "v0.3.1-evidence-final"
     ]
   },
-  "source_word_count_estimate": 3930,
+  "source_word_count_estimate": 8677,
   "compiled_pdf": {
-    "bytes": 556809,
-    "sha256": "c0da1aaf799ac73a1c50970d8a08a30c9a301ee12f896cec72af3982b265f00d",
-    "rendered_page_count": 19
+    "bytes": 859080,
+    "sha256": "2cb941ca6acc91b7937bdf4626db04a9cdb34ceb0814ae4ea81db0c885437e08",
+    "rendered_page_count": 36
   },
   "human_completion_status": "required",
   "taxonomy_status": "human_blocked",
@@ -23,7 +23,7 @@
     {
       "name": "official_order_and_required_sections",
       "passed": true,
-      "detail": "A4 title page, abstract, keywords, contents, main sections, references, and disclosures are present in order."
+      "detail": "The formal narrative, references, appendix, and required disclosures appear in order."
     },
     {
       "name": "human_only_submission_fields_preserved",
@@ -38,17 +38,17 @@
     {
       "name": "claim_ledger_validation",
       "passed": true,
-      "detail": "Every quantitative formal-paper claim is mapped to hash-verified frozen evidence and an asset."
+      "detail": "All 36 quantitative formal-paper claims map to hash-verified sources and assets."
     },
     {
       "name": "source_and_citation_validation",
       "passed": true,
-      "detail": "All cited references are defined, used, and structurally complete."
+      "detail": "All cited references are defined, used, structurally complete, and broad enough for the report."
     },
     {
       "name": "generated_asset_determinism",
       "passed": true,
-      "detail": "Two independent paper-asset generations have identical asset and manifest hashes."
+      "detail": "Two independent paper-asset generations have identical hashes for 32 or more outputs."
     },
     {
       "name": "scientific_and_human_boundaries",
@@ -56,9 +56,34 @@
       "detail": "The report preserves no-superiority, no-causal-instrument, and no-calibrated-real-interval boundaries."
     },
     {
-      "name": "compiled_pdf_and_rendered_page_integrity",
+      "name": "compiled_pdf_and_metadata_integrity",
       "passed": true,
-      "detail": "The final PDF is nonempty, hash-recorded, rendered, and free of overfull boxes."
+      "detail": "Named build and final PDF copies match by SHA-256, include intended metadata, and have no overfull boxes."
+    },
+    {
+      "name": "clean_build_record",
+      "passed": true,
+      "detail": "Only named LaTeX intermediates and rendered review pages are removed before rebuilding."
+    },
+    {
+      "name": "rendered_page_preflight",
+      "passed": true,
+      "detail": "Every final-PDF page is rendered to a nontrivial PNG for presentation review."
+    },
+    {
+      "name": "non_type3_embedded_font_audit",
+      "passed": true,
+      "detail": "Final PDF and all generated vector figures have no Type 3 or unembedded font."
+    },
+    {
+      "name": "self_review_and_completion_handoff",
+      "passed": true,
+      "detail": "The review and completion records distinguish technical completion from human-only submission work."
+    },
+    {
+      "name": "substantive_report_length",
+      "passed": true,
+      "detail": "The formal report has at least 5,500 source words across its scientific narrative."
     }
   ],
   "all_checks_passed": true

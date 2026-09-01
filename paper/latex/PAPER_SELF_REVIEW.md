@@ -2,16 +2,18 @@
 
 ## Scope and status
 
-This review covers the formal-report revision built from the frozen
+This review covers the canonical formal-report revision built from the frozen
 `v0.3.2-evidence-final` evidence release
 (`57d678ecabebff724d898abe626c9ef80538775b`). It is a technical review of the
-report source, deterministic presentation assets, and staged PDF. It is not a
+report source, deterministic presentation assets, and final PDF. It is not a
 student-authorship statement, a Method Code taxonomy review, or a completed
 competition submission.
 
-The canonical `MetaShift_Bench_Yau_2026.pdf` must be regenerated from a clean
-committed worktree before this record can describe a final PDF handoff. A
-staged build is deliberately not treated as a final paper artifact.
+The canonical `MetaShift_Bench_Yau_2026.pdf` and its named build copy were
+generated from clean source commit `e9fbf3c8dda4fb0755fd0d5770fa966e7ebfe206`.
+They match at SHA-256
+`2cb941ca6acc91b7937bdf4626db04a9cdb34ceb0814ae4ea81db0c885437e08`
+and contain 36 rendered pages.
 
 ## Scientific claims reviewed
 
@@ -31,9 +33,10 @@ staged build is deliberately not treated as a final paper artifact.
 - The asset generator emits **32** deterministic presentation assets.
 - Source validation covers **33** cited and **33** defined bibliography
   entries.
-- The staged report has an estimated **8,677** source words.
-- The staged build renders every page, has no overfull boxes, and its
-  `pdffonts` audit reports zero Type 3 and zero unembedded fonts.
+- The final report has an estimated **8,677** source words.
+- Formal-report compliance passes **13** checks. The final build renders every
+  page, has no overfull boxes, and its `pdffonts` audit covers **15** PDFs and
+  **75** font records with zero Type 3 and zero unembedded fonts.
 - Representative cases are selected deterministically; complete-case
   reconstruction compares the display result to frozen fixed-MetaShift effects
   at an absolute tolerance of `1e-9`.
@@ -50,12 +53,10 @@ consistent after float barriers are applied at the results boundary.
 
 ## Required follow-up
 
-1. Build the canonical PDF from a clean committed worktree after the viewer
-   lock is released, then run the full formal-report compliance gate.
-2. Have student authors and supervising teachers replace the disclosure
+1. Have student authors and supervising teachers replace the disclosure
    template with truthful, verified information.
-3. Complete the human-only Method Code taxonomy review before any
+2. Complete the human-only Method Code taxonomy review before any
    taxonomy-stratified analysis or claim.
-4. Complete authorship, contribution, advisor/compensation, AI-use,
+3. Complete authorship, contribution, advisor/compensation, AI-use,
    signature, stamp, plagiarism, academic-integrity, and final-attestation
    requirements.

@@ -30,16 +30,19 @@ no-calibrated-real-interval boundaries.
 ## Current execution state
 
 The scientific narrative, deterministic display layer, and technical review are
-**staged**. The current staged PDF has 36 pages, 32 generated presentation
-assets, 36 evidence-ledger claims, 33 cited references, no overfull boxes, and
-no Type 3 or unembedded fonts. Its build record explicitly identifies the
-working tree as dirty at build start, so it is not a final paper handoff.
+**complete**. A clean-worktree final-mode build from
+`e9fbf3c8dda4fb0755fd0d5770fa966e7ebfe206` produced a 36-page canonical
+`MetaShift_Bench_Yau_2026.pdf`; it matches its named build copy at SHA-256
+`2cb941ca6acc91b7937bdf4626db04a9cdb34ceb0814ae4ea81db0c885437e08`.
+The report contains 32 generated presentation assets, 36 evidence-ledger
+claims, and 33 cited references. The final compliance gate passes 13 checks,
+with no overfull boxes and no Type 3 or unembedded fonts across its 15-PDF font
+audit.
 
-The remaining technical handoff is a clean-worktree, final-mode build that
-replaces `MetaShift_Bench_Yau_2026.pdf`, records matching canonical and named
-PDF SHA-256 values, and passes `verify_formal_report.py`. That step is blocked
-only by the active viewer lock on the prior canonical PDF. It does not require
-new data, analysis, tuning, taxonomy work, or an evidence-release change.
+No further technical handoff requires new data, analysis, tuning, taxonomy
+work, or an evidence-release change. The CI-safe public-document checker now
+writes to an ignored transient artifact by default, leaving the frozen
+release `results/document_consistency.json` unchanged.
 
 All contribution, identity, taxonomy, advisor, AI-use, signature, stamp,
 plagiarism, integrity-declaration, and final-attestation items remain human

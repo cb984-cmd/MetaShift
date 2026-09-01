@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-09-01T00:41:06.986552+00:00",
+  "generated_at_utc": "2026-09-01T01:08:22.096558+00:00",
   "review_type": "automated rendered-page preflight",
   "manual_review_required": true,
-  "source_pdf": "paper/latex/build/MetaShift_Bench_Yau_2026.pdf",
+  "source_pdf": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
   "page_count": 36,
   "all_pages_rendered_and_nontrivial": true,
   "pages": [

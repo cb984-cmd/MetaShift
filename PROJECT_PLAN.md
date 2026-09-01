@@ -32,8 +32,11 @@ replacement or measurement bias.
   input footprint. This establishes candidate availability, not eligibility or
   blindness. See
   [`paper/upgrade/PHASE_0_EVIDENCE_AND_CONTAMINATION_AUDIT.md`](paper/upgrade/PHASE_0_EVIDENCE_AND_CONTAMINATION_AUDIT.md).
-- [ ] **P1 -- Closest-work and novelty audit.** Verify primary literature and
-  test the narrow identifiability-aware selective-auditing novelty claim.
+- [x] **P1 -- Closest-work and novelty audit.** Twelve primary or official
+  sources, including six direct closest works, were checked against the
+  proposed contribution. The bounded, joint problem formulation survives the
+  comparison; no component method is claimed as new. See
+  [`paper/upgrade/NOVELTY_AUDIT.md`](paper/upgrade/NOVELTY_AUDIT.md).
 - [ ] **P2 -- Theory and task specification.** Define observational
   equivalence, selective-audit scope, residual assumptions, and truth-regime
   separation before any new experiment.

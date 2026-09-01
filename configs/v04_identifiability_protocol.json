@@ -1,0 +1,285 @@
+{
+  "schema_version": 1,
+  "protocol_id": "v0.4.0-identifiability-core",
+  "protocol_state": "protocol_only_freeze",
+  "purpose": "Test a theorem-aligned distinction between target-only change detection and cross-site change-scope auditing. This is not an algorithm-superiority, causal, instrument-failure, or external monitoring-network validation study.",
+  "immutable_baseline": {
+    "evidence_tag": "v0.3.2-evidence-final",
+    "evidence_commit": "57d678ecabebff724d898abe626c9ef80538775b",
+    "case_manifest_sha256": "065b1b65c231c5298fb4969a7b5669f3ae8850b9228d50afee7d98422575e099",
+    "modification_rule": "The v0.3.2 evidence, artifacts, configurations, and claims are not inputs to v0.4 threshold selection, model selection, or outcome interpretation."
+  },
+  "data_access": {
+    "primary_source": "New independently generated analysis-scale panels only.",
+    "forbidden_sources": [
+      "v0.3.2 stable synthetic calibration and evaluation outcomes",
+      "AQS candidate post-window observations",
+      "AQS candidate residuals, fitted weights, scores, tiers, or labels",
+      "parameter-88502 sensitivity outputs",
+      "2026 forward AQS data"
+    ],
+    "physical_footprint": "Synthetic component, target, and donor identifiers are generated from this protocol and have no physical-site identity or overlap with the v0.3.2 294-site footprint.",
+    "execution_input_allowlist": [
+      "configs/v04_identifiability_protocol.json",
+      "metashift/counterfactual.py",
+      "metashift/identifiability.py",
+      "metashift/metrics.py",
+      "metashift/synthetic.py",
+      "scripts/run_v04_identifiability_benchmark.py"
+    ],
+    "input_access_enforcement": "The execution entrypoint may read only the allowlisted tracked configuration and source files for its receipt. Panel data are created in memory. It must not call a CSV loader, AQS client, raw-data reader, v0.3.2 artifact reader, or generic input-path argument."
+  },
+  "synthetic_panel": {
+    "random_generator": "numpy.random.default_rng (PCG64)",
+    "base_seed": 20260901,
+    "split_seed_offsets": {
+      "calibration": 0,
+      "evaluation": 1000000
+    },
+    "component_seed_rule": "base_seed + split_seed_offsets[split] + zero_based_component_index",
+    "availability_seed_rule": "base_seed + 2000000 + split_seed_offsets[split] + zero_based_component_index",
+    "component_counts": {
+      "calibration": 120,
+      "evaluation": 240
+    },
+    "component_id_template": "v04-{split}-component-{index:03d}",
+    "days": 300,
+    "anchor_day_index": 180,
+    "donor_count": 4,
+    "analysis_scale_generator": {
+      "mean": 2.4,
+      "ar1_coefficient": 0.7,
+      "common_innovation_sd": 0.05,
+      "target_innovation_sd": 0.04,
+      "donor_innovation_sd": 0.04,
+      "donor_offsets": [-0.06, -0.02, 0.02, 0.06],
+      "common_process_initialization": "c_0 is one Normal(0, common_innovation_sd / sqrt(1 - ar1_coefficient^2)) draw.",
+      "common_process_recurrence": "For t=1,...,299, c_t = ar1_coefficient * c_(t-1) + epsilon_t, where epsilon_t is Normal(0, common_innovation_sd).",
+      "draw_order": [
+        "draw common c_0",
+        "draw the 299 chronological common innovations",
+        "draw 300 chronological target innovations",
+        "draw a 300 by 4 donor-innovation array in row-major chronological donor-column order"
+      ],
+      "target_analysis_scale": "maximum(minimum_analysis_scale, mean + c_t + target_innovation_t)",
+      "donor_analysis_scale": "maximum(minimum_analysis_scale, mean + c_t + donor_offsets[j] + donor_innovation_(t,j))",
+      "minimum_analysis_scale": 0.25,
+      "raw_conversion": "raw = exp(analysis_scale) - 1"
+    },
+    "donor_availability": {
+      "target_missingness": "none",
+      "rule": "On each date in chronological order, draw Uniform(0,1). If it is less than 0.10, draw one uniform integer in {0,1,2,3} and mark only that donor missing; otherwise mark none missing.",
+      "random_generator": "numpy.random.default_rng(availability_seed_rule)",
+      "minimum_available_donors_guaranteed": 3,
+      "shared_across_states": true
+    }
+  },
+  "states": {
+    "no_change": "N: base target and donor paths unchanged.",
+    "local": "L: add the declared analysis-scale schedule to the target only.",
+    "regional": "R: add the same declared analysis-scale schedule to the target and every available donor."
+  },
+  "matched_pairs": {
+    "pair_id_template": "v0.4.0-identifiability-core:{split}:{component_id}:{schedule_family}",
+    "schedule_seed_rule": "SHA-256-derived paired_schedule_seed(pair_id, base_seed=20260901); scope arm is not an input.",
+    "schedule_hash_rule": "Canonical SHA-256 of ISO timestamp and IEEE hexadecimal schedule values.",
+    "pre_anchor_rule": "Every schedule value before the anchor is exactly zero.",
+    "inverse_domain_rule": "Every affected observed analysis-scale value plus its schedule value must remain nonnegative before raw inversion.",
+    "local_regional_target_rule": "L and R receive the same base target and the same realized schedule; their stored target arrays must be exactly equal."
+  },
+  "schedule_families": [
+    {
+      "name": "constant_step",
+      "rule": "Record the pair-derived seed without consuming it. Set schedule[t]=0 for t<anchor and schedule[t]=0.12 for t>=anchor."
+    },
+    {
+      "name": "bounded_stochastic_step",
+      "rule": "Set schedule[t]=0 for t<anchor. Initialize numpy.random.default_rng(pair_seed), draw one chronological length-120 Uniform(-0.02,0.02) vector, and set schedule[t]=0.12+draw[t-anchor] for t>=anchor. Reuse this exact vector in L and R."
+    }
+  ],
+  "estimator": {
+    "analysis_transform": "log1p(max(raw, 0))",
+    "donor_weights": "fixed equal weights of 0.25 for the four generated donors; no outcome-dependent fitting or weight tuning",
+    "availability_normalization": "Use the existing availability-normalized donor composite on retained dates.",
+    "calibration_days": 120,
+    "calibration_buffer_days": 15,
+    "comparison_days": 60,
+    "minimum_window_observations": 40,
+    "minimum_available_donors": 3,
+    "numerical_invariance_tolerance": 1e-12
+  },
+  "evaluation": {
+    "target_only_detection_score": "absolute(median(post target analysis scale) - median(pre target analysis scale))",
+    "comparative_scope_score": "absolute estimate_metadata_anchor log_effect",
+    "target_only_scope_policy": "For L/R scope evaluation, always predict local after a target-only change decision. This deterministic tie rule operationalizes the information limit; it is not optimized.",
+    "comparative_scope_policy": "Predict local when the comparative scope score is at least the calibration-selected scope threshold; otherwise predict regional.",
+    "detection_threshold_selection": "Use metashift.metrics.select_macro_f1_threshold on all finite calibration target-only scores with label 1 for L/R and 0 for N. Its candidates are the sorted unique finite scores plus numpy.nextafter(minimum,-infinity) and numpy.nextafter(maximum,+infinity); maximize binary macro-F1 and choose the numerically higher threshold on an exact tie. Scores at least the threshold are positive.",
+    "scope_threshold_selection": "Use the same metashift.metrics.select_macro_f1_threshold algorithm on all finite calibration L/R comparative scope scores with label 1 for L and 0 for R.",
+    "nonfinite_score_policy": "Any nonfinite target-only score, comparative scope score, threshold, confidence, or bootstrap statistic is a run failure; no row may be silently dropped.",
+    "selective_policy": {
+      "confidence": "absolute(comparative scope score - calibration-selected scope threshold)",
+      "operating_quantiles": [0.0, 0.25, 0.5, 0.75],
+      "cutoff_selection": "Compute each quantile only from finite calibration L/R confidences with numpy.quantile(method='linear') and apply the unchanged numeric cutoff to evaluation L/R cases.",
+      "answer_rule": "Answer only if the target-only detection score reaches its calibration threshold and confidence reaches the selected cutoff. Otherwise emit below_detection_threshold or below_scope_confidence_cutoff; both reasons must be counted."
+    },
+    "reported_metrics": [
+      "complete N/L/R event accounting",
+      "target-only L/R score identity rate",
+      "N versus L/R detection macro-F1",
+      "L versus R forced-answer error and macro-F1",
+      "selective L/R answered-case error, coverage, abstention count, and abstention reason counts",
+      "component-cluster bootstrap intervals for evaluation metrics"
+    ],
+    "bootstrap": {
+      "cluster": "synthetic component_id; resample complete component records with replacement",
+      "repetitions": 1000,
+      "seed": 20260901,
+      "interval": "Percentile 95% using numpy.quantile(method='linear')"
+    }
+  },
+  "raw_scale_stress_suite": {
+    "role": "Assumption-stress diagnostics only. These tests cannot validate the exact analysis-scale theorem or establish external physical validity.",
+    "source": "The same new synthetic base panels, never AQS data.",
+    "stress_seed_rule": "For every split, component, and stress family, use paired_schedule_seed(protocol_id + ':' + split + ':' + component_id + ':' + stress_name + ':stress', base_seed=20260901).",
+    "families": [
+      {
+        "name": "raw_additive_step",
+        "regional_rule": "For every t>=anchor, add exactly 2.0 raw units to target and all available or missing donor storage values; missing values remain missing.",
+        "bound": "Use the sharp nonnegative-domain additive increment bound."
+      },
+      {
+        "name": "raw_proportional_step",
+        "regional_rule": "For every t>=anchor, multiply target and all available or missing donor storage values by exactly 1.15; missing values remain missing.",
+        "bound": "Use the global proportional increment Lipschitz bound with a=0.15."
+      },
+      {
+        "name": "raw_gradual_drift",
+        "regional_rule": "For t>=anchor, add 2.0*minimum((t-anchor)/30,1) raw units to target and all donors; the anchor-day increment is zero and the full increment begins 30 days after anchor.",
+        "bound": "Use the sharp nonnegative-domain additive bound pointwise."
+      },
+      {
+        "name": "raw_temporary_step",
+        "regional_rule": "For anchor<=t<anchor+30, add exactly 2.0 raw units to target and all donors; all other dates have zero increment.",
+        "bound": "Use the sharp nonnegative-domain additive bound on affected dates."
+      },
+      {
+        "name": "raw_variance_increase",
+        "regional_rule": "Let MAD be median(abs(y_t-median(y))) over all 180 pre-anchor target raw values. Initialize numpy.random.default_rng(stress_seed), draw 120 chronological Normal(0, 0.5*1.4826*MAD) innovations, and add the same innovation to target and every donor on each t>=anchor.",
+        "bound": "Use only the clipping-aware global one-Lipschitz signed-increment bound."
+      }
+    ],
+    "reported_metrics": [
+      "per-case maximum residual-leakage bound",
+      "per-case absolute median-effect leakage",
+      "bound satisfaction count",
+      "complete failure accounting"
+    ],
+    "interpretation_rule": "Report any bound failure as a generator or implementation defect. Do not report stress-suite classification accuracy as theorem validation."
+  },
+  "expected_accounting": {
+    "core_pairs": {
+      "calibration": 240,
+      "evaluation": 480,
+      "total": 720
+    },
+    "core_events": {
+      "calibration": 720,
+      "evaluation": 1440,
+      "total": 2160
+    },
+    "core_scope_events": {
+      "calibration": 480,
+      "evaluation": 960,
+      "total": 1440
+    },
+    "stress_events": 1800,
+    "failure_rule": "Any unexpected event count, unequal L/R target arrays, nonzero pre-anchor schedule, invalid inverse domain, unavailable minimum donor count, threshold use outside calibration, bootstrap cluster mismatch, output hash mismatch, or stress bound violation fails the run and prevents scientific interpretation."
+  },
+  "output_contract": {
+    "directory": "artifacts/v04_identifiability_core",
+    "protocol_freeze_tag": "v0.4.0-protocol-freeze",
+    "execution_freeze_tag": "v0.4.0-execution-freeze",
+    "attempt_record": "artifacts/.v04_identifiability_core_attempt.json",
+    "overwrite_rule": "The execution entrypoint must atomically create the attempt record with exclusive creation, refuse every later attempt if that record or output directory exists, and write durable started, failed, or completed state.",
+    "execution_preconditions": [
+      "git status --porcelain is empty",
+      "HEAD equals execution_freeze_tag resolved commit",
+      "the protocol hash at HEAD equals the protocol hash at execution_freeze_tag",
+      "all allowlisted input files are tracked and hashed in the receipt",
+      "no declared output file, output directory, or prior attempt record exists"
+    ],
+    "files": [
+      "v04_core_event_results.csv",
+      "v04_core_thresholds.json",
+      "v04_core_metrics.json",
+      "v04_core_bootstrap.json",
+      "v04_stress_results.csv",
+      "v04_execution_receipt.json"
+    ],
+    "receipt_requirements": [
+      "protocol SHA-256",
+      "execution Git commit",
+      "pre-outcome protocol tag",
+      "input count accounting",
+      "per-file SHA-256",
+      "failure count"
+    ],
+    "schemas": {
+      "v04_core_event_results.csv": [
+        "protocol_id",
+        "execution_tag",
+        "component_id",
+        "split",
+        "case_id",
+        "pair_id",
+        "state",
+        "schedule_family",
+        "schedule_seed",
+        "schedule_sha256",
+        "target_only_score",
+        "comparative_scope_score",
+        "local_regional_target_identity",
+        "detection_prediction",
+        "forced_scope_prediction"
+      ],
+      "v04_core_thresholds.json": [
+        "detection_threshold",
+        "scope_threshold",
+        "selective_confidence_cutoffs",
+        "calibration_case_counts"
+      ],
+      "v04_core_metrics.json": [
+        "complete_event_accounting",
+        "target_identity_rate",
+        "detection",
+        "forced_scope",
+        "selective_scope"
+      ],
+      "v04_core_bootstrap.json": [
+        "cluster",
+        "repetitions",
+        "seed",
+        "metrics"
+      ],
+      "v04_stress_results.csv": [
+        "protocol_id",
+        "component_id",
+        "split",
+        "stress_family",
+        "stress_seed",
+        "maximum_residual_leakage_bound",
+        "absolute_median_effect_leakage",
+        "bound_satisfied"
+      ],
+      "v04_execution_receipt.json": [
+        "state",
+        "protocol_sha256",
+        "execution_git_commit",
+        "execution_tag",
+        "allowed_input_hashes",
+        "output_hashes",
+        "failure_count"
+      ]
+    }
+  }
+}

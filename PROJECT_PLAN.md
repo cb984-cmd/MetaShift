@@ -50,9 +50,15 @@ replacement or measurement bias.
   [`paper/upgrade/THEORY_SPECIFICATION.md`](paper/upgrade/THEORY_SPECIFICATION.md),
   [`paper/upgrade/THEORY_ROUTE_DECISION.md`](paper/upgrade/THEORY_ROUTE_DECISION.md),
   and [`paper/upgrade/GATE_A_RECOVERY_LOG.md`](paper/upgrade/GATE_A_RECOVERY_LOG.md).
-- [ ] **P3 -- Pre-outcome v0.4 protocol freeze.** Freeze a physically
-  disjoint candidate manifest, thresholds, perturbations, and checks before
-  accessing any candidate post-window outcome.
+- [~] **P3 -- Pre-outcome v0.4 protocol freeze.** The tracked independent
+  synthetic-core protocol is specified before any full v0.4 outcomes exist,
+  but it is honestly marked as protocol-only until the runner is implemented
+  and execution-frozen.
+  It specifies component splits, matched schedules, no-change construction,
+  calibration-only thresholds, risk/coverage operating points, stress cases,
+  bootstrap, expected counts, one-time output behavior, and failure rules. It
+  excludes all AQS candidate outcomes. Gate B requires its verifier, full CI,
+  and an immutable protocol tag before implementation or execution.
 - [ ] **P4/P5 -- Implementation and one-time evaluation.** These phases may
   start only after the theory/novelty gate and pre-outcome freeze pass.
 - [ ] **P6-P8 -- Manuscript, figures, and adversarial review.** These phases

@@ -10,9 +10,11 @@ project began a separate `v0.4.0-identifiability-audit` reconstruction. Phase
 candidate v0.4 post-window observations, scores, or outcomes were read.
 
 The prior 44-page LaTeX report and its presentation checks remain an archived
-v0.3.2 presentation baseline, not the active manuscript. No manuscript,
-figure, or taxonomy-stratification work may resume until the v0.4 theory and
-novelty gate passes. Taxonomy stratification remains human-blocked.
+v0.3.2 presentation baseline, not the active manuscript. The v0.4 theory,
+novelty, and one-time result-integrity gates now support only its narrow
+synthetic-contract finding. **Manuscript, figure, and taxonomy-stratification
+work remain paused by user direction.** Taxonomy stratification remains
+human-blocked.
 
 ## Evidence rule
 
@@ -50,34 +52,36 @@ replacement or measurement bias.
   [`paper/upgrade/THEORY_SPECIFICATION.md`](paper/upgrade/THEORY_SPECIFICATION.md),
   [`paper/upgrade/THEORY_ROUTE_DECISION.md`](paper/upgrade/THEORY_ROUTE_DECISION.md),
   and [`paper/upgrade/GATE_A_RECOVERY_LOG.md`](paper/upgrade/GATE_A_RECOVERY_LOG.md).
-- [~] **P3 -- Pre-outcome v0.4 protocol freeze.** The tracked independent
-  synthetic-core protocol is specified before any full v0.4 outcomes exist,
-  and `v0.4.0-protocol-freeze` preserves its initial protocol-only revision.
-  A subsequently created but **unrun** `v0.4.0-execution-freeze` tag is also
-  retained: its audit found that a precommitted independent result verifier was
-  absent. No output directory or durable attempt record exists for either
-  predecessor. The corrected revision is again an execution-freeze candidate
-  until its runner, result verifier, input manifest, full CI, and separate
-  immutable tag bind it.
-  It specifies component splits, matched schedules, no-change construction,
-  calibration-only thresholds, risk/coverage operating points, stress cases,
-  bootstrap, expected counts, one-time output behavior, and failure rules. It
-  excludes all AQS candidate outcomes. To bind outcome-affecting choices, the
-  runner was implemented and tested before the final execution freeze; Gate B
-  requires its verifier, full CI, a source-hash manifest, a precommitted
-  post-execution result verifier that replays the frozen outputs in memory,
-  and an immutable locally and remotely annotated
-  `v0.4.1-execution-freeze` tag resolving to the same commit before execution.
-- [~] **P4 -- Frozen-protocol implementation.** The runner and in-memory
-  contract tests now exist but have not produced a full result or an attempt
-  record. It is an execution-freeze candidate only; no implementation change
-  may follow the final source-hash manifest and tag except a transparently
-  documented defect response.
-- [ ] **P5 -- One-time evaluation.** This may start only from a clean,
-  CI-passing `v0.4.1-execution-freeze` commit after its tag is visible on
-  `origin`; its atomic attempt receipt permanently blocks reruns.
-- [ ] **P6-P8 -- Manuscript, figures, and adversarial review.** These phases
-  remain blocked until v0.4 evidence supports them.
+- [x] **P3 -- Pre-outcome v0.4 protocol freeze.** The initial
+  `v0.4.0-protocol-freeze` and the unrun `v0.4.0-execution-freeze` tags remain
+  immutable historical records. The latter was superseded before output
+  because it lacked a precommitted result verifier. The replacement protocol,
+  source-hash manifest, runner, verifier, and tests were committed at
+  [`b286221`](https://github.com/cb984-cmd/MetaShift/commit/b286221f13b5da8c18dc30226114400d071421d1);
+  CI passed and the annotated
+  [`v0.4.1-execution-freeze`](https://github.com/cb984-cmd/MetaShift/tree/v0.4.1-execution-freeze)
+  tag was pushed with a peeled `origin` ref to that exact commit. The frozen
+  contract excludes all AQS candidate outcomes.
+- [x] **P4 -- Frozen-protocol implementation.** The input-bound runner permits
+  no external data path, requires a clean checkout, local annotated tag,
+  matching peeled `origin` tag, and tagged source hashes before atomically
+  recording its sole attempt. The separately frozen result verifier loads
+  authority from tagged blobs and independently replays deterministic outputs
+  in memory after completion.
+- [x] **P5 -- One-time evaluation and result audit.** The sole permitted
+  `v0.4.1-execution-freeze` execution completed with 2,160 core events
+  (720 calibration; 1,440 evaluation) and 1,800 stress events. The durable
+  receipt, payload hashes, all 14 post-execution checks, exact tagged-source
+  replay, calibration-only thresholds, component bootstrap, and stress bounds
+  passed. The narrow constructed result has target identity rate 1.0,
+  target-only scope error 0.5 on balanced L/R cases, comparative forced-scope
+  error 0.0, and detection macro-F1 0.953125 (95% bootstrap
+  0.924833--0.975036). See
+  [`paper/upgrade/V04_EXECUTION_AUDIT.md`](paper/upgrade/V04_EXECUTION_AUDIT.md).
+- [!] **P6-P8 -- Manuscript, figures, and adversarial review.** **Paused by
+  user direction.** P5 does not support an algorithm-superiority, causal,
+  instrument-fault, AQS, or external-validity claim, and it does not lift the
+  human block on taxonomy.
 
 ## Current checkpoint
 

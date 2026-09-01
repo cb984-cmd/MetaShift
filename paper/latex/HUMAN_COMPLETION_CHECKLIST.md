@@ -10,12 +10,17 @@ has happened.
   older POC-level donor results are superseded.
 - [ ] Every student author can explain why the frozen synthetic result does not
   establish an overall MetaShift advantage over standard synthetic control.
+- [ ] Every student author can explain the v0.5 target-fixed comparison,
+  target-only impossibility assumptions, finite-policy frontier, and why the
+  structural certificate is a synthetic-design condition rather than proof of
+  real-network identifiability.
 - [ ] Every student author can explain why a Method Code transition is an event
   anchor rather than proof of an instrument replacement, failure, or bias.
 - [ ] Every student author can explain why real-event interval results are
   diagnostic and not calibrated 95% confidence intervals.
 - [ ] Student author(s) and supervising teacher have independently reviewed the
-  final `v0.3.2-evidence-final` evidence release and the final PDF.
+  final `v0.3.2-evidence-final` release, the receipt-bound v0.5 frozen
+  evidence, and the exact final PDF proposed for submission.
 
 ## Taxonomy and factual review
 
@@ -26,6 +31,9 @@ has happened.
   is documented.
 - [ ] Student author(s) verify every identity, school, advisor, date, and
   factual statement that replaces a visible placeholder.
+- [ ] After any human completion changes the report source, student author(s)
+  and supervising teacher review the newly built exact PDF and its updated
+  final-build record before submission.
 - [ ] Student author(s) verify every citation and reference against the source
   actually consulted.
 

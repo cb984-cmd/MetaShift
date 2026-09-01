@@ -2,19 +2,27 @@
 
 **Deadline: September 15, 2026 24:00 (Beijing time)**
 
-## Technical readiness (autonomous — complete)
+## Technical readiness (automated — complete)
 
-- [x] Release gate 35/35 pass
-- [x] Public-document consistency machine-verified (12/12)
-- [x] Manuscript numbers machine-verified (57/57)
-- [x] Two-environment hash reproducibility confirmed
-- [x] 59 unit tests pass
-- [x] All v2 distinct-donor artifacts rebuilt
+- [x] v0.3.2 release gate 35/35 pass
+- [x] v0.3.2 public-document consistency machine-verified (12/12)
+- [x] v0.3.2 manuscript numbers machine-verified (57/57)
+- [x] v0.3.2 two-environment hash reproducibility confirmed
+- [x] 166 unit tests pass
+- [x] All v0.3.2 distinct-donor artifacts rebuilt
 - [x] Frozen release tag `v0.3.2-evidence-final` points to `57d678ecabebff724d898abe626c9ef80538775b`
 - [x] Evidence release published at https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final
 - [x] GitHub repo public at https://github.com/cb984-cmd/MetaShift
 - [x] Source code, configs, and documentation committed
 - [x] `.gitignore` excludes raw data, credentials, and generated artifacts
+- [x] v0.5 one-time scope-answerability execution frozen at
+  `14fd0fee4fb015e6c661299041e35ff704a27286`, receipt SHA-256
+  `954fc9b56a8f526644320aa7b1b15ed76844e400e1394ffd8f733729996a87c9`
+- [x] Final A4 report built from clean source commit
+  `61186839aefa3b7780134cf7936c5424dd39b1e6`: 57 pages, 1,569,094 bytes,
+  SHA-256 `399334fee9a19954e4b37c6f5d84aa2efa048899a5816ab7fe061415f62797c5`
+- [x] Final report checks pass: 18 formal gates, 22 figure placements, 44
+  150/300-DPI crops, zero overfull boxes, and no Type 3 or unembedded fonts
 
 ## Required materials (human action needed)
 
@@ -24,10 +32,12 @@
 - [ ] Select Computer Science (计算机) category
 
 ### 2. Research report (PDF)
-- [ ] Replace all `[Fill in]` placeholders in `paper/MANUSCRIPT_DRAFT.md`
+- [ ] Complete visible human-only placeholders in the authoritative
+  `paper\latex\` source, not the historical `paper/MANUSCRIPT_DRAFT.md`
 - [ ] Add student names, school, province/state, country
 - [ ] Add supervising teacher names and affiliations
-- [ ] Convert to PDF with proper formatting
+- [ ] Commit the completed source and run a new clean final-mode LaTeX build;
+  do not submit the technical template PDF with human-completion placeholders
 - [ ] Cover page with required fields
 - [ ] Verify all tables render correctly in PDF
 
@@ -57,13 +67,20 @@
 ### 7. Supplementary evidence (recommended)
 - [ ] Source code: link to https://github.com/cb984-cmd/MetaShift
 - [ ] Demo: consider a short video showing pipeline execution
-- [ ] Experimental logs: `results/release_gate.json` as evidence
-- [ ] Figures: all 16 generated figures in `figures/`
+- [ ] Experimental logs: preserve both the v0.3.2 release gate and v0.5
+  receipt/manifest for reviewer access, subject to team authorization
+- [ ] Figures: 17 legacy vector and 5 receipt-bound v0.5 raster figures in
+  the authoritative report
+- [ ] Do not publish or attach the local v0.5 evidence archive without a
+  verified team decision and applicable competition approval
 
 ## Pre-submission verification
 
 - [ ] Students independently read and understand every section
 - [ ] Students can answer questions about methods, data, limitations
-- [ ] All numbers match the latest `results/manuscript_number_verification.json`
+- [ ] Students can explain the detection/scope/mechanism distinction and the
+  limits of the v0.5 synthetic scope result
+- [ ] All legacy and v0.5 report numbers match their respective claim-ledger
+  and frozen-result validation records
 - [ ] No credentials, API keys, or raw data in submitted materials
 - [ ] Disclosure of any other competitions or submissions

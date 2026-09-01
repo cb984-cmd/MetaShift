@@ -7,13 +7,29 @@ benchmark from public EPA AQS AirData files. Raw downloads, AQS API responses,
 and generated results are excluded from Git because they are large, may be
 updated by EPA, or require local credentials.
 
-The frozen scientific-evidence source configuration is
+## Evidence roles and freeze boundaries
+
+| Evidence package | Permitted role | Status |
+| --- | --- | --- |
+| `v0.3.2-evidence-final` | Real-data deployment, missingness, and abstention context | Immutable historical release |
+| v0.4 | Exact endpoint and raw-scale leakage sanity checks | Immutable historical release |
+| `v0.5-answerability-frontier` | Synthetic scope-answerability boundary evidence | One-time immutable execution |
+
+The v0.5 experiment is not a reconstruction target. Its sole execution is
+bound to commit `14fd0fee4fb015e6c661299041e35ff704a27286`, tags
+`v0.5.0-answerability-freeze` and
+`v0.5.0-answerability-execution-claim`, and receipt SHA-256
+`954fc9b56a8f526644320aa7b1b15ed76844e400e1394ffd8f733729996a87c9`.
+Do not run `scripts\run_v05_answerability_frontier.py --execute`, replace its
+outputs, or tune a policy from its held-out evaluation data.
+
+The frozen v0.3.2 reconstruction configuration is
 [`configs/benchmark_release_v2.json`](configs/benchmark_release_v2.json).
 It defines the stable synthetic case split, effect-strength grid, estimator
 settings, and bootstrap seed. It also records the stable-case manifest hash
 expected for the current AirData snapshot.
 
-The CI-safe public evidence contract is
+The CI-safe v0.3.2 public evidence contract is
 [`configs/current_evidence_summary_v2.json`](configs/current_evidence_summary_v2.json).
 It records the frozen tag and commit, headline values, provenance boundary, and
 SHA-256 hashes for each local artifact source. Rebuild or verify it locally
@@ -34,6 +50,8 @@ python -m pip install -r requirements-lock.txt
 Python 3.13; package versions are also recorded in the generated run manifest.
 
 ## Full reconstruction
+
+### v0.3.2 real-data reconstruction
 
 Run from the repository root:
 
@@ -67,6 +85,23 @@ to repository files. Without API credentials, use `python run_all.py` to
 rebuild the public-data core; the release gate will explicitly mark external
 QA validation as incomplete.
 
+### v0.5 frozen-result verification
+
+Use an interpreter matching the runtime recorded in
+`artifacts\v05_answerability_frontier\v05_execution_receipt.json`. The
+provenance verifier fails closed if the runtime differs. It only reads frozen
+outputs and Git objects:
+
+```powershell
+$py = '<receipt-pinned Python interpreter>'
+& $py scripts\verify_v05_frozen_result_provenance.py --verify-results
+```
+
+The verifier checks the execution receipt, source and result hashes, one-time
+attempt chain, frozen tags, schemas, full deterministic result recomputation,
+and the absence of an unauthorized rerun. It is intentionally distinct from
+the v0.3.2 reconstruction pipeline.
+
 ## Generated outputs
 
 All generated files live under ignored `data/`, `artifacts/`, or `results/`.
@@ -86,11 +121,15 @@ Important outputs include:
 | `artifacts/external_validation_evidence.csv` | Same-site POC and QA evidence status |
 | `artifacts/data_gate_88502/data_manifest.csv` | Independent 88502 source provenance |
 | `results/release_gate.json` | Machine-readable release checklist |
+| `artifacts/v05_answerability_frontier/v05_execution_receipt.json` | One-time v0.5 receipt and result root |
+| `artifacts/v05_answerability_frontier/v05_answerability_frontier.csv` | Frozen finite-policy answerability envelope |
+| `artifacts/v05_answerability_frontier/v05_certificate_validity.csv` | Frozen structural-certificate diagnostics |
+| `configs/v05_frozen_result_manifest.json` | v0.5 result hash, schema, source, and tag binding |
 
 The `MODEL_DECISION.md` file documents why the project does not claim
 algorithmic superiority over standard synthetic control.
 
-## Public evidence bundle
+## v0.3.2 public evidence bundle
 
 After the full reconstruction, verify the frozen summary and create a safe
 evidence bundle for review:
@@ -105,6 +144,46 @@ clean source worktree. It contains summary results, hashes, manifests, figures,
 configuration, and audit tables. It rejects raw AirData archives and AQS API
 responses, and it does not include credentials.
 
+## Local v0.5 frozen-evidence archive
+
+After all tracked work is committed and the worktree is clean, make a local
+content-addressed archive without rerunning v0.5:
+
+```powershell
+$py = '<receipt-pinned Python interpreter>'
+& $py scripts\export_v05_frozen_evidence.py
+```
+
+The archive and sidecar manifest are ignored under `evidence_bundle\`. The
+exporter reads only existing evidence and Git objects, excludes credentials and
+raw AQS data, and does not publish an archive. Any release or submission
+sharing decision remains human-owned.
+
+## Formal report reproduction
+
+The authoritative report source is `paper\latex\`, not the historical
+`paper\MANUSCRIPT_DRAFT.md`. The clean final-mode build from source commit
+`61186839aefa3b7780134cf7936c5424dd39b1e6` produced the current 57-page
+canonical PDF, 1,569,094 bytes, SHA-256
+`399334fee9a19954e4b37c6f5d84aa2efa048899a5816ab7fe061415f62797c5`.
+It passed all 18 formal-report checks, including receipt-bound v0.5
+verification, 22 figure placements with 44 150/300-DPI crops, and a font
+audit.
+
+Future report-source edits require a clean-worktree final build:
+
+```powershell
+$py = '<receipt-pinned Python interpreter>'
+Push-Location paper\latex
+& $py scripts\build_paper.py
+Pop-Location
+```
+
+This technical build does not fill identity, contribution, advisor,
+compensation, AI-use, taxonomy, signature, stamp, plagiarism, or final
+truthfulness requirements. See
+`paper\latex\HUMAN_COMPLETION_CHECKLIST.md`.
+
 ## Complete public-safe archive
 
 To package every safe local result, figure, process record, and a source
@@ -118,15 +197,18 @@ The generated archive remains ignored by Git. It includes every safe file under
 `artifacts\`, `results\`, and `figures\`, plus the full source snapshot and Git
 history. It explicitly excludes raw EPA archives, raw AQS API responses,
 credentials, and virtual environments. Legacy development artifacts are
-included only as historical diagnostics; final claims remain limited to the
-passing release-gate evidence.
+included only as historical diagnostics; v0.3.2 real-data claims remain
+limited to the passing release-gate evidence.
 
-The verified complete and compact archives, their SHA-256 manifests, the
+The verified v0.3.2 complete and compact archives, their SHA-256 manifests, the
 35/35 release gate, the 12/12 document-consistency report, and the 57/57
 manuscript-number report are attached to the public
 [v0.3.2-evidence-final release](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final)
 at `57d678ecabebff724d898abe626c9ef80538775b`. The v0.1, v0.2, v0.3.0, and
-v0.3.1 releases are superseded and must not be cited for current results.
+v0.3.1 releases are superseded and must not be cited for v0.3.2 real-data
+results.
+The v0.5 evidence is separately receipt-bound and must be cited only within
+its synthetic scope-answerability boundary.
 
 ## Cross-environment consistency
 

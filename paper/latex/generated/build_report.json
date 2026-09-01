@@ -1,25 +1,15 @@
 {
-  "generated_at_utc": "2026-09-01T02:11:57.669412+00:00",
-  "source_git_commit": "d2168ec4c4e4c989f7c7b3d6943936ec093b0c91",
-  "source_worktree_clean_at_start": false,
-  "source_worktree_status_at_start": [
-    " M paper/latex/generated/asset_determinism_validation.json",
-    " M paper/latex/generated/build_report.json",
-    " M paper/latex/generated/claim_ledger_validation.json",
-    " M paper/latex/generated/clean_build_record.json",
-    " M paper/latex/generated/font_audit.json",
-    " M paper/latex/generated/paper_source_validation.json",
-    " M paper/latex/generated/reference_validation.json",
-    " M paper/latex/generated/visual_preflight.json",
-    "?? paper/latex/generated/figure_qa_validation.json"
-  ],
-  "build_mode": "staged_only",
+  "generated_at_utc": "2026-09-01T02:22:41.681787+00:00",
+  "source_git_commit": "bd4164242638f723eb6f5aec72c822507e098030",
+  "source_worktree_clean_at_start": true,
+  "source_worktree_status_at_start": [],
+  "build_mode": "final",
   "build_pdf": "paper/latex/build/MetaShift_Bench_Yau_2026.pdf",
-  "final_pdf": null,
-  "pdf_bytes": 1052819,
-  "pdf_sha256": "a1711aa64689e34272fdaa702c4000392c882ad9bae39e9323f1f7939ddb2588",
-  "build_pdf_sha256": "a1711aa64689e34272fdaa702c4000392c882ad9bae39e9323f1f7939ddb2588",
-  "rendered_page_count": 42,
+  "final_pdf": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
+  "pdf_bytes": 1050437,
+  "pdf_sha256": "efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc",
+  "build_pdf_sha256": "efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc",
+  "rendered_page_count": 41,
   "overfull_hbox_warnings": 0,
   "pdf_metadata": {
     "Title": "MetaShift-Bench: A Metadata-Anchored Audit Benchmark for PM2.5 Method-Transition Discontinuities",
@@ -39,6 +29,7 @@
     "verify_paper_asset_determinism",
     "pdflatex, bibtex, pdflatex, pdflatex",
     "pdftoppm -png -r 144",
-    "verify_pdf_fonts"
+    "verify_pdf_fonts",
+    "verify_formal_report"
   ]
 }

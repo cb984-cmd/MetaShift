@@ -1,27 +1,25 @@
 # Revision completion report
 
-## Status of the prior completion record
+## Technical completion status
 
-This is a **superseded prior completion record**, not the sign-off for the
-active figure-and-method revision. The prior formal-report revision was
-technically complete, not submission-final.
-Its scientific content is bound to the frozen
+The figure-and-method revision is technically complete, not submission-final.
+Its scientific content remains bound to the frozen
 `v0.3.2-evidence-final` evidence release at
 `57d678ecabebff724d898abe626c9ef80538775b`. No frozen analysis artifact,
 experimental protocol, target partition, donor rule, model parameter, or
 scientific conclusion was changed during the presentation revision.
 
 The canonical `paper/latex/MetaShift_Bench_Yau_2026.pdf` was built from clean
-source commit `e9fbf3c8dda4fb0755fd0d5770fa966e7ebfe206`. Its 36 pages and the
-named build copy match at SHA-256
-`2cb941ca6acc91b7937bdf4626db04a9cdb34ceb0814ae4ea81db0c885437e08`.
-The final formal-report compliance gate then passed all 13 checks. The active
-revision replaces that presentation baseline with new source-bound figures and
-methodological disclosure, and must receive a new clean-source build, visual
-review, and formal-compliance record before a revised completion report is
-issued.
+source commit `bd4164242638f723eb6f5aec72c822507e098030`. Its named build copy
+matches at SHA-256
+`efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc`; the
+canonical PDF is 1,050,437 bytes with 41 rendered pages and zero overfull-box
+warnings. `verify_formal_report.py` passed all 14 checks, including frozen
+evidence binding, source/claim/reference validation, deterministic assets,
+figure QA, PDF metadata, rendered-page preflight, fonts, and human-boundary
+preservation.
 
-## Revision deliverables
+## Final technical deliverables
 
 | Deliverable | Current state |
 | --- | --- |
@@ -30,11 +28,21 @@ issued.
 | Full held-out synthetic and real-event results | Added from generated v0.3.2 assets |
 | Interval, placebo, sensitivity, and external-context limitations | Added without post-hoc tuning |
 | Deterministic representative cases | Added with checksum-pinned reconstruction |
-| Claims ledger | 36 claims and 65 evidence-asset references |
-| Deterministic presentation assets | 32 outputs |
+| Claims ledger | 39 claims and 69 evidence-asset references |
+| Deterministic presentation assets | 36 outputs with matching independent hashes |
 | Source/reference validation | 33 citations and 33 bibliography entries |
-| Final PDF preflight | 36 rendered pages, no overfull boxes, embedded non-Type-3 fonts |
-| Canonical PDF and full formal compliance | Complete: matching PDF hash and 13/13 checks |
+| Final PDF preflight | 41 rendered pages, no overfull boxes, embedded non-Type-3 fonts |
+| Figure and font verification | 16 vector figures, 10/10 figure checks, 17 PDFs/120 font records, no Type 3 or unembedded fonts |
+| Canonical PDF and full formal compliance | Complete: matching PDF hash and 14/14 checks |
+
+## Superseded presentation baseline
+
+The previous 36-page PDF from clean source commit
+`e9fbf3c8dda4fb0755fd0d5770fa966e7ebfe206`, with SHA-256
+`2cb941ca6acc91b7937bdf4626db04a9cdb34ceb0814ae4ea81db0c885437e08`, is a
+historical presentation baseline only. It passed 13 checks before the
+figure-and-method audit identified deficiencies. It must not be cited as the
+current formal-report sign-off.
 
 ## Interpretation preserved
 

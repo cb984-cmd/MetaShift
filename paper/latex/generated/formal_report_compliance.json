@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-01T01:09:45.824693+00:00",
+  "generated_at_utc": "2026-09-01T02:25:23.205747+00:00",
   "formal_report": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
   "frozen_evidence": {
     "tag": "v0.3.2-evidence-final",
@@ -10,11 +10,11 @@
       "v0.3.1-evidence-final"
     ]
   },
-  "source_word_count_estimate": 8677,
+  "source_word_count_estimate": 9614,
   "compiled_pdf": {
-    "bytes": 859080,
-    "sha256": "2cb941ca6acc91b7937bdf4626db04a9cdb34ceb0814ae4ea81db0c885437e08",
-    "rendered_page_count": 36
+    "bytes": 1050437,
+    "sha256": "efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc",
+    "rendered_page_count": 41
   },
   "human_completion_status": "required",
   "taxonomy_status": "human_blocked",
@@ -38,7 +38,7 @@
     {
       "name": "claim_ledger_validation",
       "passed": true,
-      "detail": "All 36 quantitative formal-paper claims map to hash-verified sources and assets."
+      "detail": "All 39 quantitative formal-paper claims map to hash-verified sources and assets."
     },
     {
       "name": "source_and_citation_validation",
@@ -48,7 +48,12 @@
     {
       "name": "generated_asset_determinism",
       "passed": true,
-      "detail": "Two independent paper-asset generations have identical hashes for 32 or more outputs."
+      "detail": "Two independent paper-asset generations have identical hashes for 36 or more outputs."
+    },
+    {
+      "name": "figure_logical_and_vector_validation",
+      "passed": true,
+      "detail": "All 16 figures pass source-hash, vector, accounting, isolation, interval, and display-contract checks."
     },
     {
       "name": "scientific_and_human_boundaries",

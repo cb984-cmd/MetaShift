@@ -30,20 +30,22 @@ no-calibrated-real-interval boundaries.
 ## Current execution state
 
 The earlier 36-page PDF and its 13-check formal-compliance record are a
-superseded presentation baseline, not the current sign-off. The active
+superseded presentation baseline, not the current sign-off. The completed
 revision replaces generic or logically ambiguous graphics with data-derived,
 hash-pinned figures; records the exact inclusive window implementation and
 its 46-date calibration/pre overlap; and adds the external QA availability
 ladder and appendix-only 2023 descriptive concentration analysis.
 
-The current staged source generates 36 presentation assets and maps 39
+The clean final-mode source commit
+`bd4164242638f723eb6f5aec72c822507e098030` generates 36 presentation assets and maps 39
 quantitative claims to frozen evidence. Its new figure QA checks 16 figures
 for source hashes, vector structure, full-event accounting, input-footprint
 isolation, nested-placebo arithmetic, interval construction, external
 availability counts, deterministic case reconstruction, and descriptive
-concentration arithmetic. A clean-worktree final-mode build and final
-page-by-page review remain required before this revision can be called
-technically complete.
+concentration arithmetic. Its final build produced a 41-page PDF with SHA-256
+`efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc`, zero
+overfull boxes, 14/14 formal-report checks, and 41 rendered review pages.
+Technical presentation work is complete.
 
 No new data, analysis, tuning, taxonomy work, or evidence-release change is
 permitted during this revision. The CI-safe public-document checker writes to

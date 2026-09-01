@@ -1,18 +1,8 @@
 {
-  "generated_at_utc": "2026-09-01T02:10:54.996984+00:00",
-  "source_git_commit": "d2168ec4c4e4c989f7c7b3d6943936ec093b0c91",
-  "source_worktree_clean_at_start": false,
-  "source_worktree_status_at_start": [
-    " M paper/latex/generated/asset_determinism_validation.json",
-    " M paper/latex/generated/build_report.json",
-    " M paper/latex/generated/claim_ledger_validation.json",
-    " M paper/latex/generated/clean_build_record.json",
-    " M paper/latex/generated/font_audit.json",
-    " M paper/latex/generated/paper_source_validation.json",
-    " M paper/latex/generated/reference_validation.json",
-    " M paper/latex/generated/visual_preflight.json",
-    "?? paper/latex/generated/figure_qa_validation.json"
-  ],
+  "generated_at_utc": "2026-09-01T02:21:37.364699+00:00",
+  "source_git_commit": "bd4164242638f723eb6f5aec72c822507e098030",
+  "source_worktree_clean_at_start": true,
+  "source_worktree_status_at_start": [],
   "build_directory": "paper/latex/build",
   "removed_known_intermediates": [
     "paper/latex/build/main.aux",

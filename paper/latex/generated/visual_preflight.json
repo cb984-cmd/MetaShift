@@ -1,9 +1,9 @@
 {
-  "generated_at_utc": "2026-09-01T02:11:57.086166+00:00",
+  "generated_at_utc": "2026-09-01T02:22:37.791586+00:00",
   "review_type": "automated rendered-page preflight",
   "manual_review_required": true,
-  "source_pdf": "paper/latex/build/MetaShift_Bench_Yau_2026.pdf",
-  "page_count": 42,
+  "source_pdf": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
+  "page_count": 41,
   "all_pages_rendered_and_nontrivial": true,
   "pages": [
     {
@@ -26,7 +26,7 @@
     },
     {
       "page": "page-04.png",
-      "bytes": 141541,
+      "bytes": 142261,
       "width_px": 1191,
       "height_px": 1684
     },
@@ -68,7 +68,7 @@
     },
     {
       "page": "page-11.png",
-      "bytes": 317520,
+      "bytes": 311984,
       "width_px": 1191,
       "height_px": 1684
     },
@@ -134,7 +134,7 @@
     },
     {
       "page": "page-22.png",
-      "bytes": 251238,
+      "bytes": 250423,
       "width_px": 1191,
       "height_px": 1684
     },
@@ -200,61 +200,55 @@
     },
     {
       "page": "page-33.png",
-      "bytes": 369198,
+      "bytes": 359783,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-34.png",
-      "bytes": 30138,
+      "bytes": 253324,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-35.png",
-      "bytes": 253561,
+      "bytes": 452769,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-36.png",
-      "bytes": 452852,
+      "bytes": 391255,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-37.png",
-      "bytes": 391337,
+      "bytes": 253024,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-38.png",
-      "bytes": 252853,
-      "width_px": 1191,
-      "height_px": 1684
-    },
-    {
-      "page": "page-39.png",
-      "bytes": 365075,
+      "bytes": 364896,
       "width_px": 1684,
       "height_px": 1191
     },
     {
+      "page": "page-39.png",
+      "bytes": 189905,
+      "width_px": 1191,
+      "height_px": 1684
+    },
+    {
       "page": "page-40.png",
-      "bytes": 189887,
+      "bytes": 89251,
       "width_px": 1191,
       "height_px": 1684
     },
     {
       "page": "page-41.png",
-      "bytes": 89019,
-      "width_px": 1191,
-      "height_px": 1684
-    },
-    {
-      "page": "page-42.png",
-      "bytes": 347735,
+      "bytes": 347963,
       "width_px": 1191,
       "height_px": 1684
     }

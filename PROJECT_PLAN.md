@@ -1,14 +1,17 @@
 # MetaShift execution plan
 
-**Updated:** 2026-08-31
+**Updated:** 2026-09-01
 **Research status:** Integrity remediation complete (I0/I1/I2). The frozen
 evidence release is
 [`v0.3.2-evidence-final`](https://github.com/cb984-cmd/MetaShift/releases/tag/v0.3.2-evidence-final)
 at `57d678ecabebff724d898abe626c9ef80538775b`: release gate 35/35,
 document consistency 12/12, manuscript-number verification 57/57, and 34
-designated two-environment core-artifact hashes match. Formal competition-report
-figure-and-method revision is in progress; taxonomy stratification remains
-human-blocked.
+designated two-environment core-artifact hashes match. The formal
+competition-report figure-and-method revision is technically complete: clean
+source commit `bd4164242638f723eb6f5aec72c822507e098030` produced a 41-page
+PDF with SHA-256 `efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc`,
+zero overfull boxes, and 14/14 formal-report checks. Taxonomy stratification
+remains human-blocked.
 
 ## Evidence rule
 
@@ -235,14 +238,17 @@ the already viewed 80-site stable-synthetic evaluation set.
   evidence. The draft is machine-validated but remains a pre-submission
   document until the human handoff below is complete. Any new learned method
   additionally requires its own blind, input-disjoint test manifest.
-- [!] **E7b — Complete the formal report figure-and-method revision.** The
+- [x] **E7b — Complete the formal report figure-and-method revision.** The
   presentation layer now uses 16 source-bound vector figures, an explicit
   inclusive-window overlap audit, a QA evidence-availability ladder, and
   appendix-only 2023 descriptive concentration results. It has 39
-  ledger-mapped quantitative claims and passed staged machine validation; a
-  clean-source final build, full rendered-page inspection, and updated formal
-  compliance record are still required. This work does not modify frozen v0.3.2
-  evidence or lift the human block on taxonomy.
+  ledger-mapped quantitative claims and 69 evidence-asset references. The
+  clean-source final build at `bd4164242638f723eb6f5aec72c822507e098030`
+  passed figure QA (10/10 across 16 figures), formal-report compliance
+  (14/14), source/reference validation (33/33 citations), asset determinism
+  (36 outputs), and final font review (17 PDFs/120 font records; zero Type 3
+  and zero unembedded), and rendered all 41 final PDF pages. This work does
+  not modify frozen v0.3.2 evidence or lift the human block on taxonomy.
 
 ## Human submission handoff
 

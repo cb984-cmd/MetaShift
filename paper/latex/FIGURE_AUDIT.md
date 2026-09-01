@@ -62,7 +62,11 @@ arithmetically correct; and no figure contains a placeholder, a causal
 instrument assertion, a hidden truncated coverage axis, or a claim unsupported
 by its sources.
 
-**Status: baseline audit complete; the revised 16-figure set has passed its
-10 machine checks and staged visual review. The accounting, representative-case,
-and QA-ladder layouts were corrected after direct rendered-page inspection. A
-clean-source final build and final page-by-page sign-off remain pending.**
+**Status: baseline audit complete; the revised 16-figure set passed all 10
+machine checks and final rendered-page review. The clean-source final build at
+`bd4164242638f723eb6f5aec72c822507e098030` produced a 41-page PDF with SHA-256
+`efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc`, zero
+overfull boxes, and a 17-PDF/120-font audit with zero Type 3 or unembedded
+fonts. The donor-construction, event-accounting, representative-case, and
+QA-ladder layouts were rechecked after final rendering. This technical
+presentation sign-off does not complete any human-only submission item.**

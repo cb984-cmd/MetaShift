@@ -1,13 +1,109 @@
 {
-  "generated_at_utc": "2026-09-01T02:11:57.447265+00:00",
+  "generated_at_utc": "2026-09-01T02:22:41.475624+00:00",
   "tool": "pdffonts",
-  "pdf_count": 1,
-  "font_count": 72,
+  "pdf_count": 17,
+  "font_count": 120,
   "all_checks_passed": true,
   "audits": [
     {
-      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\build\\MetaShift_Bench_Yau_2026.pdf",
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\MetaShift_Bench_Yau_2026.pdf",
       "font_count": 72,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_anchor_concentration.pdf",
+      "font_count": 2,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_applicability_map.pdf",
+      "font_count": 3,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_audit_pipeline.pdf",
+      "font_count": 3,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_case_studies.pdf",
+      "font_count": 4,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_donor_construction.pdf",
+      "font_count": 3,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_event_accounting.pdf",
+      "font_count": 2,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_external_evidence.pdf",
+      "font_count": 4,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_interval_coverage.pdf",
+      "font_count": 3,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_paired_bootstrap.pdf",
+      "font_count": 3,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_perturbation_metrics.pdf",
+      "font_count": 4,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_placebos.pdf",
+      "font_count": 2,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_screening_sensitivity.pdf",
+      "font_count": 2,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_split_integrity.pdf",
+      "font_count": 2,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_stable_synthetic_example.pdf",
+      "font_count": 3,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_synthetic_metrics.pdf",
+      "font_count": 4,
+      "type3_fonts": [],
+      "unembedded_fonts": []
+    },
+    {
+      "path": "D:\\fall2026\\qiuchengton\\paper\\latex\\generated\\figures\\fig_window_protocol.pdf",
+      "font_count": 4,
       "type3_fonts": [],
       "unembedded_fonts": []
     }

@@ -31,9 +31,19 @@ These are recorded figure-by-figure in `FIGURE_AUDIT.md`.
 
 ## Status
 
-**Post-revision machine verification is complete:** `verify_figures.py`
-validated 16 referenced vector figures and 10 logical/source checks against the
-frozen v0.3.2 inputs. A staged build rendered 42 pages with no overfull boxes;
-the visual pass corrected and rechecked the event-accounting, representative-case,
-and QA-ladder layouts. A clean-source final-mode build, full final page
-inspection, and formal-report sign-off remain pending.
+**Technical sign-off is complete:** a final-mode build from clean source commit
+`bd4164242638f723eb6f5aec72c822507e098030` produced
+`MetaShift_Bench_Yau_2026.pdf` with SHA-256
+`efdc98810db8cf5937e6783ab683c44fb73857ec3438e9acacc205f39f8bbbcc`,
+1,050,437 bytes, 41 rendered pages, and zero overfull-box warnings.
+`verify_figures.py` passed all 10 checks for 16 vector figures;
+`verify_formal_report.py` passed 14/14 checks; and `pdffonts` found zero Type 3
+or unembedded fonts across the final PDF and 16 figure PDFs (17 PDFs and 120
+font records total).
+
+The rendered-page preflight produced 41 nontrivial page images. The technical
+visual review corrected the donor-construction label collision and a nearly
+empty trailing page, then rechecked the final donor, accounting, interval,
+external-evidence, representative-case, appendix, reference, and disclosure
+pages. This is a presentation and reproducibility sign-off only; student and
+teacher completion of the human-only disclosures remains required.

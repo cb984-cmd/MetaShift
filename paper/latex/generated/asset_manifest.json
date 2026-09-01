@@ -425,8 +425,8 @@
         "configs/benchmark_release_v2.json",
         "artifacts/real_transition_88101_event_audit.csv"
       ],
-      "bytes": 28255,
-      "sha256": "6ae2e748a0e72a9eb8f9144d7517acd58c7c8b7c1f2a34e8323caaeeb6cc46d1"
+      "bytes": 27274,
+      "sha256": "c5cb372ddd0e7e83f45e9bc81f1cedfabd8f38b07dd2f95988bedd59c20c7e63"
     },
     {
       "path": "generated/figures/fig_window_protocol.pdf",
@@ -497,8 +497,8 @@
         "artifacts/real_transition_88101_evidence_tiers.csv",
         "artifacts/real_transition_88101_evidence_tier_summary.json"
       ],
-      "bytes": 22032,
-      "sha256": "01f43a075b18483718bb89bc2549a660c282d4278abe06cd6d2cba646af573dc"
+      "bytes": 21491,
+      "sha256": "fad6f01e65ff4dd9e1d3d3188473375424de7c52773cb29ba4b79ec240efb971"
     },
     {
       "path": "generated/figures/fig_placebos.pdf",

@@ -590,6 +590,9 @@ def build_macros(
         "CompleteComparisons": str(real["complete_comparisons"]),
         "InsufficientDonorAnchors": str(real["insufficient_geographic_donors"]),
         "InputFailureAnchors": str(real["estimator_input_failure"]),
+        "UnavailableAtFormationAnchors": str(
+            real["insufficient_geographic_donors"] + real["estimator_input_failure"]
+        ),
         "SyntheticCases": str(benchmark["case_count"]),
         "CalibrationCases": str(benchmark["calibration_case_count"]),
         "EvaluationCases": str(benchmark["evaluation_case_count"]),

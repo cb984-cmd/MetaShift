@@ -219,8 +219,8 @@
       "sources": [
         "configs/current_evidence_summary_v2.json"
       ],
-      "bytes": 2942,
-      "sha256": "bd569a8ac36623bb12f990f5a408fedd3f9d619da816aa2c4ef670c2cc301159"
+      "bytes": 2991,
+      "sha256": "7bb4d6e0cfcbb9924472743613a4147d095f2258108ef9a67b4951f3e8b510c1"
     },
     {
       "path": "generated/claim_value_manifest.json",
@@ -464,15 +464,15 @@
             }
           },
           {
-            "identifier": "panel_title:regional_injection_target___donors:1",
+            "identifier": "panel_title:shared_injection_target___donors:1",
             "category": "panel_title",
             "font_size_source_pt": 10.5,
             "font_size_print_pt": 10.5,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 659.3,
+              "x0_px": 670.8,
               "y0_px": 618.75,
-              "x1_px": 897.3,
+              "x1_px": 885.8,
               "y1_px": 674.76
             }
           },
@@ -561,10 +561,10 @@
             "font_size_print_pt": 9.0,
             "inside_canvas": true,
             "bounds": {
-              "x0_px": 7.38,
-              "y0_px": 3.04,
-              "x1_px": 1000.62,
-              "y1_px": 23.04
+              "x0_px": 4.0,
+              "y0_px": 2.84,
+              "x1_px": 1004.0,
+              "y1_px": 26.84
             }
           }
         ],
@@ -572,8 +572,8 @@
         "violations": [],
         "all_checks_passed": true
       },
-      "bytes": 32850,
-      "sha256": "6c0f8a70b676ee349ae01c48b706b0f93ef470555fbd21168fa7265a55b4a4ed"
+      "bytes": 36547,
+      "sha256": "dcbdc72e95592fd85e3adc489a058ff6a9b47cac9d497108b85e581189d3cab5"
     },
     {
       "path": "generated/figures/fig_donor_construction.pdf",
@@ -4935,8 +4935,8 @@
       "sources": [
         "configs/current_evidence_summary_v2.json"
       ],
-      "bytes": 124485,
-      "sha256": "34f3b27e8230c3621456fcf3097c79f9ca6d3ffdbe12e93f6b2c77ca1e8484a9"
+      "bytes": 124481,
+      "sha256": "99f3340dcb8053a8c966adc0c3751513b189bb90b9ffd38ebcd2b5d5aa84802b"
     }
   ]
 }

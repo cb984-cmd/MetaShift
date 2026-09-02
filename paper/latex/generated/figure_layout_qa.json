@@ -61,15 +61,15 @@
           }
         },
         {
-          "identifier": "panel_title:regional_injection_target___donors:1",
+          "identifier": "panel_title:shared_injection_target___donors:1",
           "category": "panel_title",
           "font_size_source_pt": 10.5,
           "font_size_print_pt": 10.5,
           "inside_canvas": true,
           "bounds": {
-            "x0_px": 659.3,
+            "x0_px": 670.8,
             "y0_px": 618.75,
-            "x1_px": 897.3,
+            "x1_px": 885.8,
             "y1_px": 674.76
           }
         },
@@ -158,10 +158,10 @@
           "font_size_print_pt": 9.0,
           "inside_canvas": true,
           "bounds": {
-            "x0_px": 7.38,
-            "y0_px": 3.04,
-            "x1_px": 1000.62,
-            "y1_px": 23.04
+            "x0_px": 4.0,
+            "y0_px": 2.84,
+            "x1_px": 1004.0,
+            "y1_px": 26.84
           }
         }
       ],

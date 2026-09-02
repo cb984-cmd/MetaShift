@@ -815,7 +815,7 @@ def _synthetic_example_figure(
     figure, axes = plt.subplots(2, 2, figsize=(6.3, 4.9), sharex="col")
     titles = {
         "local": "Local injection\nTarget only",
-        "regional": "Regional injection\nTarget + donors",
+        "regional": "Shared injection\nTarget + donors",
     }
     for column, key in enumerate(("local", "regional")):
         frame = example["variants"][key]
@@ -879,7 +879,8 @@ def _synthetic_example_figure(
         0.5,
         0.01,
         "Blue: 60-day pre window. Amber: 60-day post window. "
-        f"Frozen additive magnitude = {example['magnitude']:.2f} ug/m3.",
+        f"Frozen additive magnitude = {example['magnitude']:.2f} "
+        r"$\mu\mathrm{g}\,\mathrm{m}^{-3}$.",
         ha="center",
         fontsize=9,
     )
@@ -887,7 +888,7 @@ def _synthetic_example_figure(
     save_figure(
         figure,
         figures / "fig_stable_synthetic_example.pdf",
-        "Data-derived stable-window local and regional synthetic example",
+        "Data-derived stable-window local and shared synthetic example",
         [
             "paper/latex/configs/synthetic_motivating_example_v1.json",
             "artifacts/stable_synthetic_cases.csv",

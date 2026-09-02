@@ -74,13 +74,13 @@ therefore the target--donor residual, distinguishes local from shared scope.
 \includegraphics[width=0.82\linewidth]{fig_stable_synthetic_example.pdf}
 \caption{A deterministic stable-regime synthetic illustration of the
 target-fixed paired construction. The injected target effect is identical in
-both arms: the local arm changes the target only, whereas the regional arm also
+both arms: the local arm changes the target only, whereas the shared arm also
 changes the donors. This constructed comparison is not physical-mechanism
 evidence from the underlying AQS paths.}
 \label{fig:stable-synthetic-example}
 \end{figure}
 
-The primary design extends a binary local-versus-regional endpoint into a
+The primary design extends a binary local-versus-shared endpoint into a
 donor-participation continuum. It crosses nominal participation
 $q\in\{0,.25,.50,.75,1\}$ with signal strength and adverse comparison
 conditions. A bounded structural certificate answers only when
@@ -103,20 +103,29 @@ The report asks five linked research questions:
   reveal about the limits of real-data auditing?
 \end{enumerate}
 
-Our contributions are fourfold:
+Our contributions are sixfold:
 \begin{enumerate}[label=\textbf{C\arabic*.}]
-  \item \textbf{Introduce a new evaluation problem:} selective scope
-  answerability by observation channel, rather than unconditional scope
-  classification or estimator ranking.
-  \item \textbf{Construct paired information worlds} that hold every target
-  observation fixed while varying only donor-side scope information, including
+  \item \textbf{Formulate selective scope answerability by observation channel}
+  rather than treating scope classification or estimator ranking as
+  unconditional.
+  \item \textbf{Construct target-fixed paired information worlds} that hold
+  every target observation fixed while varying only donor-side scope information, including
   observationally identical negative controls.
   \item \textbf{Derive construction-specific theory:} an
   availability-normalized partial-scope residual identity and a bounded
   interval-separation condition for structural abstention.
-  \item \textbf{Audit the evaluation end to end} with predeclared policies, a
-  complete adverse-condition grid, retained failure cells, and an independent
-  AQS availability inventory.
+  \item \textbf{Evaluate a frozen adverse-condition benchmark} with
+  predeclared policies, every failure cell retained, and an independent
+  stable-regime comparison.
+  \item \textbf{Audit all \TotalAnchors{} reported public AQS metadata anchors:}
+  \CompleteComparisons{} permit a complete comparison and
+  \UnavailableAtFormationAnchors{} are unavailable at comparison formation; the
+  audit records \SupportedCandidates{} supported audit candidates,
+  \NotSupportedEvents{} not-supported events, and \InconclusiveEvents{}
+  inconclusive events.
+  \item \textbf{Release checksummed frozen artifacts, tests, manuscript-number
+  checks, and two-environment reproduction records} that support rigor and
+  auditability rather than stand in for originality.
 \end{enumerate}
 
 The framework builds on established selective classification, information
@@ -128,8 +137,9 @@ question.
 In the target-fixed held-out construction, no predeclared target-only policy
 has positive finite-policy coverage below one-half tolerated scope error.
 Comparative policies reach positive coverage only at the least strict reported
-tolerance, $\alpha=.20$. The structural certificate abstains on most pairs and
-is not a real-network deployment policy. In the independent stable-regime
+20\% answered-case error tolerance ($\alpha=.20$). The structural certificate
+abstains on most pairs and is not a real-network deployment policy. In the
+independent stable-regime
 benchmark, cross-site methods outscore target-only baselines on constructed
 scope separation, but Standard SC remains a strong baseline and neither
 MetaShift variant has a confidence-supported aggregate advantage. The AQS

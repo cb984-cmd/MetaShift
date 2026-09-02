@@ -1930,6 +1930,7 @@ def create_tables(
         "Time and donor placebos are diagnostic falsifications. Same-site POC and "
         "document review provide contextual evidence only, not instrument ground truth.",
         size=r"\scriptsize",
+        placement="!ht",
     )
     verification = summary["verification"]
     tables[TABLES / "table_reproducibility.tex"] = latex_table(
@@ -1949,6 +1950,7 @@ def create_tables(
         ],
         "The two-environment statement applies only to the listed designated core "
         "artifacts in the frozen reproducibility comparison, not to every local file.",
+        placement="!ht",
     )
     all_method_rows = []
     for method in ALL_METHOD_ORDER:

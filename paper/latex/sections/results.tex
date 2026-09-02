@@ -17,7 +17,7 @@ at $.20$ reached a positive comparative envelope:
 \VFiveComparativeFrontierTwentyPercent{} coverage at
 \VFiveComparativeRiskTwentyPercent{} observed conditional error.
 
-\begin{figure}[tbp]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{fig_v05_answerability_frontier.png}
 \caption{Held-out finite-policy answerability frontiers by information
@@ -94,7 +94,7 @@ cross-site methods have aggregate AUPRC between \CrossSiteAUPRCLow{} and
 positive information contrast is the intended behavior of the constructed
 local-versus-regional task, not a generic change-detection claim.
 
-\begin{figure}[tbp]
+\begin{figure}[!ht]
 \centering
 \includegraphics[width=\linewidth]{fig_cross_site_scope_metrics.pdf}
 \caption{Cross-site versus target-only ranking on the independent held-out
@@ -188,7 +188,7 @@ $(1+\#\{\text{sampled placebo mean}\geq\text{anchor mean}\})/201 =
 \DateResamplingP{}$. It is a comparison with stable dates, not a causal
 probability or a physical-mechanism test.
 
-\FloatBarrier
+\input{generated/tables/table_placebo_external}
 
 \begin{figure}[tbp]
 \centering
@@ -199,7 +199,5 @@ intervals over-cover their nominal 90\% target. The figure reports a
 calibration limitation, not a real-event confidence guarantee.}
 \label{fig:interval-coverage}
 \end{figure}
-
-\input{generated/tables/table_placebo_external}
 
 \FloatBarrier

@@ -1,35 +1,35 @@
 {
   "schema_version": 1,
   "source_pdf": "paper/latex/build/MetaShift_Bench_Yau_2026.pdf",
-  "source_pdf_sha256": "102bbf93a054152967b0cb7247a1d8feaef318ff24b17dfe018c7457d1f184e7",
+  "source_pdf_sha256": "9e59afdedf2973e942574cc47378b278089691257042da51a67edbec0ec76562",
   "required_figure_count": 24,
   "crop_dpi": [
     150,
     300
   ],
   "rendered_page_counts": {
-    "150": 48,
-    "300": 48
+    "150": 45,
+    "300": 45
   },
   "expected_crop_count": 48,
   "actual_crop_count": 48,
   "figures": [
     {
       "figure": "fig_v05_answerability_frontier.png",
-      "page": 20,
+      "page": 19,
       "caption_y_min_pt": 312.53,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 261.69,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_v05_answerability_frontier-page-20.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_v05_answerability_frontier-page-19.png",
           "width_px": 1021,
           "height_px": 687,
           "bytes": 94729
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_v05_answerability_frontier-page-20.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_v05_answerability_frontier-page-19.png",
           "width_px": 2041,
           "height_px": 1373,
           "bytes": 154726
@@ -39,20 +39,20 @@
     },
     {
       "figure": "fig_v05_structural_margin.png",
-      "page": 36,
+      "page": 34,
       "caption_y_min_pt": 655.44,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 189.07,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_v05_structural_margin-page-36.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_v05_structural_margin-page-34.png",
           "width_px": 1021,
           "height_px": 536,
           "bytes": 111848
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_v05_structural_margin-page-36.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_v05_structural_margin-page-34.png",
           "width_px": 2041,
           "height_px": 1071,
           "bytes": 206729
@@ -62,20 +62,20 @@
     },
     {
       "figure": "fig_v05_risk_coverage.png",
-      "page": 37,
+      "page": 35,
       "caption_y_min_pt": 354.75,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 261.57,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_v05_risk_coverage-page-37.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_v05_risk_coverage-page-35.png",
           "width_px": 1021,
           "height_px": 687,
           "bytes": 81125
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_v05_risk_coverage-page-37.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_v05_risk_coverage-page-35.png",
           "width_px": 2041,
           "height_px": 1373,
           "bytes": 118227
@@ -85,20 +85,20 @@
     },
     {
       "figure": "fig_v05_certificate_validity.png",
-      "page": 36,
+      "page": 34,
       "caption_y_min_pt": 286.2,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 134.8,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_v05_certificate_validity-page-36.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_v05_certificate_validity-page-34.png",
           "width_px": 1021,
           "height_px": 423,
           "bytes": 68258
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_v05_certificate_validity-page-36.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_v05_certificate_validity-page-34.png",
           "width_px": 2041,
           "height_px": 845,
           "bytes": 128422
@@ -108,20 +108,20 @@
     },
     {
       "figure": "fig_v05_failure_mode_map.png",
-      "page": 37,
+      "page": 35,
       "caption_y_min_pt": 354.75,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 189.07,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_v05_failure_mode_map-page-37.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_v05_failure_mode_map-page-35.png",
           "width_px": 1021,
           "height_px": 536,
           "bytes": 67749
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_v05_failure_mode_map-page-37.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_v05_failure_mode_map-page-35.png",
           "width_px": 2041,
           "height_px": 1071,
           "bytes": 96651
@@ -131,20 +131,20 @@
     },
     {
       "figure": "fig_v05_scope_boundary.png",
-      "page": 21,
+      "page": 20,
       "caption_y_min_pt": 273.13,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 190.89,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_v05_scope_boundary-page-21.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_v05_scope_boundary-page-20.png",
           "width_px": 1021,
           "height_px": 540,
           "bytes": 115474
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_v05_scope_boundary-page-21.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_v05_scope_boundary-page-20.png",
           "width_px": 2041,
           "height_px": 1079,
           "bytes": 213837
@@ -223,20 +223,20 @@
     },
     {
       "figure": "fig_window_protocol.pdf",
-      "page": 38,
+      "page": 36,
       "caption_y_min_pt": 283.82,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 201.57,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_window_protocol-page-38.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_window_protocol-page-36.png",
           "width_px": 1021,
           "height_px": 562,
           "bytes": 68706
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_window_protocol-page-38.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_window_protocol-page-36.png",
           "width_px": 2041,
           "height_px": 1124,
           "bytes": 130782
@@ -246,20 +246,20 @@
     },
     {
       "figure": "fig_split_integrity.pdf",
-      "page": 34,
+      "page": 32,
       "caption_y_min_pt": 359.19,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 277.16,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_split_integrity-page-34.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_split_integrity-page-32.png",
           "width_px": 1021,
           "height_px": 719,
           "bytes": 78204
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_split_integrity-page-34.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_split_integrity-page-32.png",
           "width_px": 2041,
           "height_px": 1439,
           "bytes": 142949
@@ -269,20 +269,20 @@
     },
     {
       "figure": "fig_synthetic_metrics.pdf",
-      "page": 34,
+      "page": 32,
       "caption_y_min_pt": 715.48,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 248.37,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_synthetic_metrics-page-34.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_synthetic_metrics-page-32.png",
           "width_px": 1021,
           "height_px": 659,
           "bytes": 75520
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_synthetic_metrics-page-34.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_synthetic_metrics-page-32.png",
           "width_px": 2041,
           "height_px": 1318,
           "bytes": 128614
@@ -292,20 +292,20 @@
     },
     {
       "figure": "fig_perturbation_metrics.pdf",
-      "page": 35,
+      "page": 33,
       "caption_y_min_pt": 436.51,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 313.16,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_perturbation_metrics-page-35.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_perturbation_metrics-page-33.png",
           "width_px": 1021,
           "height_px": 794,
           "bytes": 116172
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_perturbation_metrics-page-35.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_perturbation_metrics-page-33.png",
           "width_px": 2041,
           "height_px": 1588,
           "bytes": 208271
@@ -315,43 +315,43 @@
     },
     {
       "figure": "fig_cross_site_scope_metrics.pdf",
-      "page": 22,
-      "caption_y_min_pt": 563.61,
+      "page": 21,
+      "caption_y_min_pt": 402.6,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 320.36,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_cross_site_scope_metrics-page-22.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_cross_site_scope_metrics-page-21.png",
           "width_px": 1021,
           "height_px": 809,
-          "bytes": 123346
+          "bytes": 122461
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_cross_site_scope_metrics-page-22.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_cross_site_scope_metrics-page-21.png",
           "width_px": 2041,
-          "height_px": 1618,
-          "bytes": 203320
+          "height_px": 1619,
+          "bytes": 202948
         }
       },
       "visual_inspection": "150_and_300_dpi_crops_rendered"
     },
     {
       "figure": "fig_paired_bootstrap.pdf",
-      "page": 23,
+      "page": 22,
       "caption_y_min_pt": 259.63,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 201.57,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_paired_bootstrap-page-23.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_paired_bootstrap-page-22.png",
           "width_px": 1021,
           "height_px": 561,
           "bytes": 63888
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_paired_bootstrap-page-23.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_paired_bootstrap-page-22.png",
           "width_px": 2041,
           "height_px": 1123,
           "bytes": 124400
@@ -361,43 +361,43 @@
     },
     {
       "figure": "fig_event_accounting.pdf",
-      "page": 24,
-      "caption_y_min_pt": 503.02,
+      "page": 23,
+      "caption_y_min_pt": 284.97,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 230.37,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_event_accounting-page-24.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_event_accounting-page-23.png",
           "width_px": 1021,
           "height_px": 621,
-          "bytes": 107157
+          "bytes": 95856
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_event_accounting-page-24.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_event_accounting-page-23.png",
           "width_px": 2041,
           "height_px": 1243,
-          "bytes": 202793
+          "bytes": 186672
         }
       },
       "visual_inspection": "150_and_300_dpi_crops_rendered"
     },
     {
       "figure": "fig_placebos.pdf",
-      "page": 40,
+      "page": 38,
       "caption_y_min_pt": 299.54,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 208.77,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_placebos-page-40.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_placebos-page-38.png",
           "width_px": 1021,
           "height_px": 577,
           "bytes": 67328
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_placebos-page-40.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_placebos-page-38.png",
           "width_px": 2041,
           "height_px": 1153,
           "bytes": 131679
@@ -407,20 +407,20 @@
     },
     {
       "figure": "fig_interval_coverage.pdf",
-      "page": 26,
+      "page": 24,
       "caption_y_min_pt": 345.01,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 262.77,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_interval_coverage-page-26.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_interval_coverage-page-24.png",
           "width_px": 1021,
           "height_px": 689,
           "bytes": 102605
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_interval_coverage-page-26.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_interval_coverage-page-24.png",
           "width_px": 2041,
           "height_px": 1379,
           "bytes": 190385
@@ -430,20 +430,20 @@
     },
     {
       "figure": "fig_screening_sensitivity.pdf",
-      "page": 39,
+      "page": 37,
       "caption_y_min_pt": 739.75,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 255.57,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_screening_sensitivity-page-39.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_screening_sensitivity-page-37.png",
           "width_px": 1021,
           "height_px": 674,
-          "bytes": 85462
+          "bytes": 85466
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_screening_sensitivity-page-39.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_screening_sensitivity-page-37.png",
           "width_px": 2041,
           "height_px": 1348,
           "bytes": 158952
@@ -453,43 +453,43 @@
     },
     {
       "figure": "fig_external_evidence.pdf",
-      "page": 40,
+      "page": 38,
       "caption_y_min_pt": 739.99,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 381.55,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_external_evidence-page-40.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_external_evidence-page-38.png",
           "width_px": 1021,
           "height_px": 936,
-          "bytes": 110690
+          "bytes": 110697
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_external_evidence-page-40.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_external_evidence-page-38.png",
           "width_px": 2041,
           "height_px": 1873,
-          "bytes": 196773
+          "bytes": 196775
         }
       },
       "visual_inspection": "150_and_300_dpi_crops_rendered"
     },
     {
       "figure": "fig_case_studies_complete.pdf",
-      "page": 42,
+      "page": 40,
       "caption_y_min_pt": 633.22,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 471.54,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_case_studies_complete-page-42.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_case_studies_complete-page-40.png",
           "width_px": 1021,
           "height_px": 1124,
           "bytes": 185626
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_case_studies_complete-page-42.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_case_studies_complete-page-40.png",
           "width_px": 2041,
           "height_px": 2249,
           "bytes": 340107
@@ -499,20 +499,20 @@
     },
     {
       "figure": "fig_case_studies_abstention.pdf",
-      "page": 43,
+      "page": 41,
       "caption_y_min_pt": 312.61,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 230.37,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_case_studies_abstention-page-43.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_case_studies_abstention-page-41.png",
           "width_px": 1021,
           "height_px": 622,
           "bytes": 98565
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_case_studies_abstention-page-43.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_case_studies_abstention-page-41.png",
           "width_px": 2041,
           "height_px": 1244,
           "bytes": 176557
@@ -522,20 +522,20 @@
     },
     {
       "figure": "fig_applicability_map.pdf",
-      "page": 44,
+      "page": 42,
       "caption_y_min_pt": 403.64,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 305.96,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_applicability_map-page-44.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_applicability_map-page-42.png",
           "width_px": 1021,
           "height_px": 779,
           "bytes": 109558
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_applicability_map-page-44.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_applicability_map-page-42.png",
           "width_px": 2041,
           "height_px": 1558,
           "bytes": 191564
@@ -545,20 +545,20 @@
     },
     {
       "figure": "fig_anchor_concentration.pdf",
-      "page": 44,
+      "page": 42,
       "caption_y_min_pt": 733.08,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 244.77,
       "source_layout_checks_passed": true,
       "page_crops": {
         "150": {
-          "path": "paper/latex/qa_page_crops/crops-150/fig_anchor_concentration-page-44.png",
+          "path": "paper/latex/qa_page_crops/crops-150/fig_anchor_concentration-page-42.png",
           "width_px": 1021,
           "height_px": 652,
           "bytes": 74724
         },
         "300": {
-          "path": "paper/latex/qa_page_crops/crops-300/fig_anchor_concentration-page-44.png",
+          "path": "paper/latex/qa_page_crops/crops-300/fig_anchor_concentration-page-42.png",
           "width_px": 2041,
           "height_px": 1304,
           "bytes": 139217

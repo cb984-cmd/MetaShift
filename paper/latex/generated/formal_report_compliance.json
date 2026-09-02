@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-01T22:38:42.108637+00:00",
+  "generated_at_utc": "2026-09-02T00:18:36.376264+00:00",
   "formal_report": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
   "verification_mode": "canonical",
   "verified_pdf": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
@@ -12,11 +12,11 @@
       "v0.3.1-evidence-final"
     ]
   },
-  "source_word_count_estimate": 9415,
+  "source_word_count_estimate": 9833,
   "compiled_pdf": {
-    "bytes": 1780551,
-    "sha256": "25800d031ca562dab208b56fc372da83133a9c69b44bbca74c3c6638bc704459",
-    "rendered_page_count": 48
+    "bytes": 2007240,
+    "sha256": "584b7a26d4ec680a890fca0823ad45d1516d5501a63a8be8be16d30688a41859",
+    "rendered_page_count": 47
   },
   "human_completion_status": "required",
   "taxonomy_status": "human_blocked",
@@ -60,7 +60,7 @@
     {
       "name": "v05_receipt_bound_presentation_assets",
       "passed": true,
-      "detail": "Five v0.5 figures, three tables, and claim-value metadata are receipt-bound."
+      "detail": "Six v0.5 figures, three tables, and claim-value metadata are receipt-bound."
     },
     {
       "name": "v05_claim_ledger_validation",
@@ -70,12 +70,12 @@
     {
       "name": "figure_logical_and_vector_validation",
       "passed": true,
-      "detail": "All 17 figures pass source-hash, vector, accounting, isolation, interval, and display-contract checks."
+      "detail": "All 18 figures pass source-hash, vector, accounting, isolation, interval, and display-contract checks."
     },
     {
       "name": "final_print_geometry_and_crop_review",
       "passed": true,
-      "detail": "All 22 figures have measured source geometry plus 150- and 300-DPI final-page crop records."
+      "detail": "All 24 figures have measured source geometry plus 150- and 300-DPI final-page crop records."
     },
     {
       "name": "scientific_and_human_boundaries",

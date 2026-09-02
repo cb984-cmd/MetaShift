@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-02T03:50:40.792259+00:00",
+  "generated_at_utc": "2026-09-02T04:39:05.468487+00:00",
   "formal_report": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
   "verification_mode": "canonical",
   "verified_pdf": "paper/latex/MetaShift_Bench_Yau_2026.pdf",
@@ -12,10 +12,10 @@
       "v0.3.1-evidence-final"
     ]
   },
-  "source_word_count_estimate": 10002,
+  "source_word_count_estimate": 9974,
   "compiled_pdf": {
-    "bytes": 2009759,
-    "sha256": "0e8963aff63fb2fa08494b9644dcb657e417db7aa6fa0df849f8d6c320fbc6cf",
+    "bytes": 2013574,
+    "sha256": "102bbf93a054152967b0cb7247a1d8feaef318ff24b17dfe018c7457d1f184e7",
     "rendered_page_count": 48
   },
   "human_completion_status": "required",

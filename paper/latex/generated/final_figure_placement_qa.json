@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "source_pdf": "paper/latex/build/MetaShift_Bench_Yau_2026.pdf",
-  "source_pdf_sha256": "0e8963aff63fb2fa08494b9644dcb657e417db7aa6fa0df849f8d6c320fbc6cf",
+  "source_pdf_sha256": "102bbf93a054152967b0cb7247a1d8feaef318ff24b17dfe018c7457d1f184e7",
   "required_figure_count": 24,
   "crop_dpi": [
     150,
@@ -164,13 +164,13 @@
           "path": "paper/latex/qa_page_crops/crops-150/fig_stable_synthetic_example-page-05.png",
           "width_px": 1021,
           "height_px": 877,
-          "bytes": 145145
+          "bytes": 144488
         },
         "300": {
           "path": "paper/latex/qa_page_crops/crops-300/fig_stable_synthetic_example-page-05.png",
           "width_px": 2041,
           "height_px": 1753,
-          "bytes": 291324
+          "bytes": 290628
         }
       },
       "visual_inspection": "150_and_300_dpi_crops_rendered"
@@ -178,7 +178,7 @@
     {
       "figure": "fig_audit_pipeline.pdf",
       "page": 14,
-      "caption_y_min_pt": 562.38,
+      "caption_y_min_pt": 388.21,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 305.96,
       "source_layout_checks_passed": true,
@@ -187,13 +187,13 @@
           "path": "paper/latex/qa_page_crops/crops-150/fig_audit_pipeline-page-14.png",
           "width_px": 1021,
           "height_px": 779,
-          "bytes": 117696
+          "bytes": 117646
         },
         "300": {
           "path": "paper/latex/qa_page_crops/crops-300/fig_audit_pipeline-page-14.png",
           "width_px": 2041,
-          "height_px": 1558,
-          "bytes": 201844
+          "height_px": 1559,
+          "bytes": 201932
         }
       },
       "visual_inspection": "150_and_300_dpi_crops_rendered"
@@ -201,7 +201,7 @@
     {
       "figure": "fig_donor_construction.pdf",
       "page": 12,
-      "caption_y_min_pt": 431.4,
+      "caption_y_min_pt": 700.41,
       "final_print_width_pt": 453.54,
       "final_print_height_pt": 349.15,
       "source_layout_checks_passed": true,
@@ -210,13 +210,13 @@
           "path": "paper/latex/qa_page_crops/crops-150/fig_donor_construction-page-12.png",
           "width_px": 1021,
           "height_px": 869,
-          "bytes": 131927
+          "bytes": 131741
         },
         "300": {
           "path": "paper/latex/qa_page_crops/crops-300/fig_donor_construction-page-12.png",
           "width_px": 2041,
-          "height_px": 1739,
-          "bytes": 238363
+          "height_px": 1738,
+          "bytes": 238290
         }
       },
       "visual_inspection": "150_and_300_dpi_crops_rendered"

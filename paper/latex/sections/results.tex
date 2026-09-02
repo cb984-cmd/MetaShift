@@ -170,16 +170,14 @@ fixed-weight coverage ranges from 63.9\% to 67.3\% over
 \CoverageInstancesPerMethod{} instances per method, while nominal 90\%
 split-conformal coverage ranges from 98.8\% to 99.6\% and is conservative.
 
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\linewidth]{fig_interval_coverage.pdf}
-\caption{Held-out synthetic interval coverage and mean width. Fixed conditional
-intervals under-cover their nominal 95\% target, whereas split-conformal
-intervals over-cover their nominal 90\% target. The figure reports a
-calibration limitation, not a real-event confidence guarantee.}
-\label{fig:interval-coverage}
-\end{figure}
+\noindent Of \POCCandidates{} same-site POC candidates, \POCUsablePairs{} have
+usable paired hourly windows and \POCDirectionAgreements{} agree in daily/hourly
+direction. Targeted official-document review finds
+\ExternalReviewConfirmations{}/\ExternalReviewEvents{} dated site-specific
+confirmations. Missing documentation and unavailable POC data remain
+unavailable evidence; they are not evidence that nothing changed.
 
+\Needspace{14\baselineskip}
 The real-data date-resampling diagnostic holds each event's pre-transition
 donor weights fixed and compares the mean standardized score at the metadata
 anchor with one randomly selected stable post-transition date per eligible
@@ -190,13 +188,18 @@ $(1+\#\{\text{sampled placebo mean}\geq\text{anchor mean}\})/201 =
 \DateResamplingP{}$. It is a comparison with stable dates, not a causal
 probability or a physical-mechanism test.
 
-\input{generated/tables/table_placebo_external}
+\FloatBarrier
 
-Of \POCCandidates{} same-site POC candidates, \POCUsablePairs{} have usable
-paired hourly windows and \POCDirectionAgreements{} agree in daily/hourly
-direction. Targeted official-document review finds
-\ExternalReviewConfirmations{}/\ExternalReviewEvents{} dated site-specific
-confirmations. Missing documentation and unavailable POC data remain
-unavailable evidence; they are not evidence that nothing changed.
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{fig_interval_coverage.pdf}
+\caption{Held-out synthetic interval coverage and mean width. Fixed conditional
+intervals under-cover their nominal 95\% target, whereas split-conformal
+intervals over-cover their nominal 90\% target. The figure reports a
+calibration limitation, not a real-event confidence guarantee.}
+\label{fig:interval-coverage}
+\end{figure}
+
+\input{generated/tables/table_placebo_external}
 
 \FloatBarrier

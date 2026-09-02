@@ -2080,7 +2080,7 @@ def create_tables(
             ],
             [
                 "Fixed-weight conditional diagnostic interval",
-                "exclude 0",
+                "excludes 0",
                 r"Otherwise $\Rightarrow$ not supported",
             ],
             [
@@ -2129,6 +2129,7 @@ def create_tables(
         ],
         "These boundaries are design constraints, not post hoc caveats.",
         size=r"\scriptsize",
+        placement="!htbp",
     )
 
     def interval_text(interval: tuple[float | None, float | None]) -> str:

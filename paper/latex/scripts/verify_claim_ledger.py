@@ -35,6 +35,7 @@ REQUIRED_COLUMNS = (
 )
 MANUSCRIPT_LOCATIONS = {
     "Abstract": ("sections/frontmatter.tex", r"\section*{Abstract}"),
+    "Introduction": ("sections/introduction.tex", r"\section{Introduction}"),
     "Data": ("sections/data.tex", r"\section{AQS deployment audit data}"),
     "Problem": (
         "sections/problem.tex",

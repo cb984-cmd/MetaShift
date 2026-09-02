@@ -38,6 +38,7 @@ REQUIRED_COLUMNS = (
 REQUIRED_CLAIM_IDS = frozenset(f"V05-{index:02d}" for index in range(1, 13))
 MANUSCRIPT_LOCATIONS = {
     "Abstract": ("sections/frontmatter.tex", r"\section*{Abstract}"),
+    "Introduction": ("sections/introduction.tex", r"\section{Introduction}"),
     "Experiments": ("sections/experiments.tex", r"\section{Experimental design}"),
     "Framework": (
         "sections/framework.tex",

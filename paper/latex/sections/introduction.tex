@@ -1,17 +1,17 @@
 \section{Introduction}
-\suppressfloats[t]
 
-A PM$_{2.5}$ monitor can show an abrupt change near a reported Method Code
-transition. If nearby monitors move at the same time, the follow-up question is
-very different from the question raised by an isolated change. A target-only
-detector can identify a numerical break, but it cannot determine whether that
-break is local to the target or shared across the comparison network. Forcing a
-scope label when the necessary comparison is unavailable can misdirect a
-technical investigation just as readily as missing a change.
+A reported PM$_{2.5}$ Method Code transition can coincide with an abrupt change
+at one monitor. An isolated change directs attention toward target-specific
+records, whereas simultaneous changes at nearby monitors call for a
+network-wide explanation. A target-only detector can identify the numerical
+break, but it cannot determine whether its scope is local to the target or
+shared across the comparison network. Forcing a scope label when the necessary
+comparison is unavailable can misdirect a technical investigation just as
+readily as missing a change.
 
-This is an information-constrained inference problem in computer science:
-selective prediction over time-series observations with explicitly limited
-channels. The central question is not ``which estimator wins?'' It is:
+MetaShift-Bench frames this as selective prediction over explicitly limited
+time-series information. The central question is not ``which estimator wins?''
+It is:
 \begin{quote}
 \emph{Given a specified observation channel and an allowed scope-error rate,
 what fraction of scope questions can a system answer, and when must it abstain?}
@@ -65,6 +65,21 @@ stipulated experiment, while a policy receiving target and donor channels may
 do so. The benchmark measures the held-out coverage achieved by predeclared
 policies at stated answered-case error tolerances.
 
+Figure~\ref{fig:stable-synthetic-example} gives a compact constructed example.
+The target trace is identical in the two arms; only the donor response, and
+therefore the target--donor residual, distinguishes local from shared scope.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.82\linewidth]{fig_stable_synthetic_example.pdf}
+\caption{A deterministic stable-regime synthetic illustration of the
+target-fixed paired construction. The injected target effect is identical in
+both arms: the local arm changes the target only, whereas the regional arm also
+changes the donors. This constructed comparison is not physical-mechanism
+evidence from the underlying AQS paths.}
+\label{fig:stable-synthetic-example}
+\end{figure}
+
 The primary design extends a binary local-versus-regional endpoint into a
 donor-participation continuum. It crosses nominal participation
 $q\in\{0,.25,.50,.75,1\}$ with signal strength and adverse comparison
@@ -108,3 +123,18 @@ The framework builds on established selective classification, information
 refinement, change-point detection, and synthetic control. Its contribution is
 their bounded joint evaluation for an explicitly target-fixed cross-site scope
 question.
+
+\paragraph{Result preview.}
+In the target-fixed held-out construction, no predeclared target-only policy
+has positive finite-policy coverage below one-half tolerated scope error.
+Comparative policies reach positive coverage only at the least strict reported
+tolerance, $\alpha=.20$. The structural certificate abstains on most pairs and
+is not a real-network deployment policy. In the independent stable-regime
+benchmark, cross-site methods outscore target-only baselines on constructed
+scope separation, but Standard SC remains a strong baseline and neither
+MetaShift variant has a confidence-supported aggregate advantage. The AQS
+inventory reports comparison availability and diagnostic evidence tiers, not
+physical monitor mechanisms. These findings motivate evaluating whether a scope
+answer is justified, not merely whether a detector predicts one.
+
+\FloatBarrier

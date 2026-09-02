@@ -376,8 +376,8 @@
       "sources": [
         "configs/current_evidence_summary_v2.json"
       ],
-      "bytes": 1413,
-      "sha256": "ce3242d4144603ddfc40d0e1064e3a869f7f811638d6e8fcffe2ea59617f3074"
+      "bytes": 1414,
+      "sha256": "5b3b718bbfbb323ac3f82b7a4e7c53a86bf83d9259ee6e6a8a8b98aedd945ccc"
     },
     {
       "path": "generated/tables/table_claim_boundaries.tex",
@@ -385,8 +385,8 @@
       "sources": [
         "configs/current_evidence_summary_v2.json"
       ],
-      "bytes": 1226,
-      "sha256": "da95d009a4c75353a02e3aa062f0842921f9a5f7207d0be00aeab4449d2a53a3"
+      "bytes": 1228,
+      "sha256": "4a1644280e279c9a29ed61021dfa2e2b62f88e21dd7b7073d123d708903179a5"
     },
     {
       "path": "generated/tables/table_case_studies.tex",
